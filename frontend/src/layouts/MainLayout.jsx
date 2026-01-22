@@ -22,11 +22,9 @@ const MainLayout = () => {
             <CssBaseline />
             <Header open={open} handleDrawerToggle={handleDrawerToggle} />
             <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
                 <Toolbar /> {/* Spacer below AppBar */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 64px - 48px)' }}> {/* Adjust calc as needed */}
-                    <Outlet />
-                </Box>
+                <Outlet />
             </Box>
         </Box>
     );

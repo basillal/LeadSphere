@@ -12,8 +12,16 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import EventIcon from '@mui/icons-material/Event';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import HistoryIcon from '@mui/icons-material/History';
+import HubIcon from '@mui/icons-material/Hub';
+import LabelIcon from '@mui/icons-material/Label';
+import SearchIcon from '@mui/icons-material/Search';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Box from '@mui/material/Box';
 
 const drawerWidth = 240;
@@ -67,9 +75,16 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     const location = useLocation();
 
     const menuItems = [
-        { text: 'Home', icon: <HomeIcon />, path: '/' },
-        { text: 'About', icon: <InfoIcon />, path: '/about' },
-        { text: 'Contact', icon: <InfoIcon />, path: '/contact' },
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
+        { text: 'Leads', icon: <LeaderboardIcon />, path: '/leads' },
+        { text: 'Follow-Ups', icon: <EventIcon />, path: '/follow-ups' },
+        { text: 'Contacts', icon: <ContactsIcon />, path: '/contacts' },
+        { text: 'Activities', icon: <HistoryIcon />, path: '/activities' },
+        { text: 'Sources', icon: <HubIcon />, path: '/sources' },
+        { text: 'Status & Tags', icon: <LabelIcon />, path: '/status-tags' },
+        { text: 'Search', icon: <SearchIcon />, path: '/search' },
+        { text: 'Reports', icon: <AssessmentIcon />, path: '/reports' },
+        { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
     ];
 
     return (

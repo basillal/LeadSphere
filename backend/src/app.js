@@ -20,7 +20,9 @@ app.use(express.json()); // Parse JSON bodies
 const errorHandler = require('./middleware/errorHandler');
 
 // Routes
+const leadRoutes = require('./routes/leadRoutes');
 app.use('/api/users', userRoutes);
+app.use('/api/leads', leadRoutes);
 
 // Root Route
 app.get('/', (req, res) => {
