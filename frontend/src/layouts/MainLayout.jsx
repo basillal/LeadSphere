@@ -18,11 +18,11 @@ const MainLayout = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', width: '100%' }}>
             <CssBaseline />
             <Header open={open} handleDrawerToggle={handleDrawerToggle} />
             <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-            <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3, width: '100%' }}>
                 <Toolbar /> {/* Spacer below AppBar */}
                 <Outlet />
             </Box>

@@ -19,17 +19,13 @@ import {
     FormControlLabel,
     Switch,
     Chip,
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle
+    Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
-import LeadForm from './LeadForm';
 
 // --- Comparators ---
 function descendingComparator(a, b, orderBy) {
@@ -50,13 +46,13 @@ function getComparator(order, orderBy) {
 
 // --- Head Cells Configuration ---
 const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-    { id: 'companyName', numeric: false, disablePadding: false, label: 'Company' },
-    { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-    { id: 'source', numeric: false, disablePadding: false, label: 'Source' },
-    { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-    { id: 'priority', numeric: false, disablePadding: false, label: 'Priority' },
-    { id: 'actions', numeric: false, disablePadding: false, label: 'Actions' },
+    { id: 'name', numeric: false, disablePadding: true, label: 'Name', width: '20%' },
+    { id: 'companyName', numeric: false, disablePadding: false, label: 'Company', width: '15%' },
+    { id: 'phone', numeric: false, disablePadding: false, label: 'Phone', width: '15%' },
+    { id: 'source', numeric: false, disablePadding: false, label: 'Source', width: '15%' },
+    { id: 'status', numeric: false, disablePadding: false, label: 'Status', width: '10%' },
+    { id: 'priority', numeric: false, disablePadding: false, label: 'Priority', width: '10%' },
+    { id: 'actions', numeric: false, disablePadding: false, label: 'Actions', width: '15%' },
 ];
 
 // --- Enhanced Table Head ---
@@ -84,6 +80,7 @@ function EnhancedTableHead(props) {
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
+                        sx={{ width: headCell.width }}
                     >
                         {headCell.id !== 'actions' ? (
                             <TableSortLabel
@@ -169,10 +166,6 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    // Modal State
-    const [openDialog, setOpenDialog] = useState(false);
-    const [editingLead, setEditingLead] = useState(null);
-
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -244,29 +237,12 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
         }
     };
 
-    // Dialog Handlers
     const handleAddClick = () => {
-        setEditingLead(null);
-        setOpenDialog(true);
+        if (onCreate) onCreate();
     };
 
     const handleEditClick = (lead) => {
-        setEditingLead(lead);
-        setOpenDialog(true);
-    };
-
-    const handleDialogClose = () => {
-        setOpenDialog(false);
-        setEditingLead(null);
-    };
-
-    const handleFormSubmit = (formData) => {
-        if (editingLead) {
-            if (onEdit) onEdit({ ...editingLead, ...formData });
-        } else {
-            if (onCreate) onCreate(formData);
-        }
-        handleDialogClose();
+        if (onEdit) onEdit(lead);
     };
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -290,7 +266,7 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                 />
                 <TableContainer>
                     <Table
-                        sx={{ minWidth: 750 }}
+                        sx={{ minWidth: 750, width: '100%' }}
                         aria-labelledby="tableTitle"
                         size={dense ? 'small' : 'medium'}
                     >
@@ -376,25 +352,6 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
-
-            {/* Lead Form Dialog */}
-            <Dialog
-                open={openDialog}
-                onClose={handleDialogClose}
-                maxWidth="lg"
-                fullWidth
-            >
-                <DialogTitle>
-                    {editingLead ? 'Edit Lead' : 'Add New Lead'}
-                </DialogTitle>
-                <DialogContent>
-                    <LeadForm
-                        initialData={editingLead}
-                        onSubmit={handleFormSubmit}
-                        onCancel={handleDialogClose}
-                    />
-                </DialogContent>
-            </Dialog>
         </Box>
     );
 }

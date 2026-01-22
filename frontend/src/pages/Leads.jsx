@@ -33,6 +33,9 @@ const Leads = () => {
         severity: 'success'
     });
 
+    const [view, setView] = useState('list'); // 'list', 'create', 'edit'
+    const [editingLead, setEditingLead] = useState(null);
+
     const handleCloseSnackbar = () => {
         setSnackbar({ ...snackbar, open: false });
     };
@@ -64,6 +67,7 @@ const Leads = () => {
             await leadService.createLead(leadData);
             showSnackbar('Lead added successfully', 'success');
             fetchLeads();
+            setView('list');
         } catch (err) {
             console.error('Error creating lead:', err);
             const errMsg = err.response?.data?.message || 'Failed to create lead';
@@ -76,6 +80,8 @@ const Leads = () => {
             await leadService.updateLead(leadData._id, leadData);
             showSnackbar('Lead updated successfully', 'success');
             fetchLeads();
+            setView('list');
+            setEditingLead(null);
         } catch (err) {
             console.error('Error updating lead:', err);
             const errMsg = err.response?.data?.message || 'Failed to update lead';
@@ -96,14 +102,30 @@ const Leads = () => {
         }
     };
 
+    const handleShowCreate = () => {
+        setEditingLead(null);
+        setView('create');
+    };
 
+    const handleShowEdit = (lead) => {
+        setEditingLead(lead);
+        setView('edit');
+    };
 
-
+    const handleCancelForm = () => {
+        setView('list');
+        setEditingLead(null);
+    };
 
     return (
-        <Box sx={{ p: 1 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h4">Leads</Typography>
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, p: 3 }}>
+                <Typography variant="h4">
+                    {view === 'list' ? 'Leads' : view === 'create' ? 'Create New Lead' : 'Edit Lead'}
+                </Typography>
+                {view !== 'list' && (
+                    <Button variant="outlined" onClick={handleCancelForm}>Back to List</Button>
+                )}
             </Box>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -113,12 +135,26 @@ const Leads = () => {
                     <CircularProgress />
                 </Box>
             ) : (
-                <LeadsTable
-                    rows={leads}
-                    onCreate={handleCreateLead}
-                    onEdit={handleUpdateLead}
-                    onDelete={handleDeleteLead}
-                />
+                <>
+                    {view === 'list' && (
+                        <LeadsTable
+                            rows={leads}
+                            onCreate={handleShowCreate}
+                            onEdit={handleShowEdit}
+                            onDelete={handleDeleteLead}
+                        />
+                    )}
+                    {(view === 'create' || view === 'edit') && (
+                        <Paper sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
+                            <LeadForm
+                                key={editingLead ? editingLead._id : 'new'}
+                                initialData={editingLead}
+                                onSubmit={view === 'create' ? handleCreateLead : handleUpdateLead}
+                                onCancel={handleCancelForm}
+                            />
+                        </Paper>
+                    )}
+                </>
             )}
 
             <Snackbar

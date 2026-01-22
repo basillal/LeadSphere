@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Button,
@@ -18,68 +18,70 @@ import {
 } from '@mui/material';
 
 const LeadForm = ({ initialData, onSubmit, onCancel }) => {
-    const [formData, setFormData] = useState({
-        // 1. Basic Info
-        name: '',
-        phone: '',
-        alternatePhone: '',
-        email: '',
-        companyName: '',
-        designation: '',
-        website: '',
+    const [formData, setFormData] = useState(() => {
+        const initialState = {
+            // 1. Basic Info
+            name: '',
+            phone: '',
+            alternatePhone: '',
+            email: '',
+            companyName: '',
+            designation: '',
+            website: '',
 
-        // 2. Lead Source
-        source: 'Website',
-        sourceDetails: '',
-        campaignName: '',
-        referredBy: '',
+            // 2. Lead Source
+            source: 'Website',
+            sourceDetails: '',
+            campaignName: '',
+            referredBy: '',
 
-        // 3. Status & Priority
-        status: 'New',
-        priority: 'Medium',
-        leadTemperature: 'Warm',
-        isActive: true,
-        lostReason: '',
+            // 3. Status & Priority
+            status: 'New',
+            priority: 'Medium',
+            leadTemperature: 'Warm',
+            isActive: true,
+            lostReason: '',
 
-        // 4. Follow-Up
-        nextFollowUpDate: '',
-        followUpMode: '',
-        followUpRemarks: '',
-        followUpCount: 0,
+            // 4. Follow-Up
+            nextFollowUpDate: '',
+            followUpMode: '',
+            followUpRemarks: '',
+            followUpCount: 0,
 
-        // 5. Business Details
-        requirement: '',
-        budgetRange: '',
-        expectedClosureDate: '',
-        interestedProduct: '',
-        dealValue: '',
+            // 5. Business Details
+            requirement: '',
+            budgetRange: '',
+            expectedClosureDate: '',
+            interestedProduct: '',
+            dealValue: '',
 
-        // 6. Communication Preferences
-        preferredContactMode: '',
-        preferredContactTime: '',
-        doNotDisturb: false,
+            // 6. Communication Preferences
+            preferredContactMode: '',
+            preferredContactTime: '',
+            doNotDisturb: false,
 
-        // 7. Tags & Custom Fields
-        tags: [],
-        tagsInput: '', // Temporary for input
+            // 7. Tags & Custom Fields
+            tags: [],
+            tagsInput: '', // Temporary for input
 
-        // 8. Activity Tracking (Read-only/System populated mostly)
-        // 9. Notes
-        notes: '',
-        internalComments: ''
-    });
+            // 8. Activity Tracking (Read-only/System populated mostly)
+            // 9. Notes
+            notes: '',
+            internalComments: ''
+        };
 
-    useEffect(() => {
         if (initialData) {
-            setFormData(prev => ({
-                ...prev,
+            return {
+                ...initialState,
                 ...initialData,
                 // Ensure dates are strings for input type="date"
                 nextFollowUpDate: initialData.nextFollowUpDate ? initialData.nextFollowUpDate.split('T')[0] : '',
                 expectedClosureDate: initialData.expectedClosureDate ? initialData.expectedClosureDate.split('T')[0] : '',
-            }));
+            };
         }
-    }, [initialData]);
+
+        return initialState;
+    });
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -126,30 +128,30 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Box sx={{ p: 1 }}>
+            <Box sx={{ p: 2 }}>
                 {/* 1. Basic Lead Information */}
                 <SectionHeader title="1. Basic Lead Information" subtitle="Who is the lead?" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth required label="Full Name" name="name" value={formData.name} onChange={handleChange} />
+                        <TextField fullWidth required label="Full Name" name="name" value={formData.name} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth required label="Primary Phone" name="phone" value={formData.phone} onChange={handleChange} />
+                        <TextField fullWidth required label="Primary Phone" name="phone" value={formData.phone} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
+                        <TextField fullWidth label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Alternate Phone" name="alternatePhone" value={formData.alternatePhone} onChange={handleChange} />
+                        <TextField fullWidth label="Alternate Phone" name="alternatePhone" value={formData.alternatePhone} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Company Name" name="companyName" value={formData.companyName} onChange={handleChange} />
+                        <TextField fullWidth label="Company Name" name="companyName" value={formData.companyName} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Designation" name="designation" value={formData.designation} onChange={handleChange} />
+                        <TextField fullWidth label="Designation" name="designation" value={formData.designation} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Website" name="website" value={formData.website} onChange={handleChange} />
+                        <TextField fullWidth label="Website" name="website" value={formData.website} onChange={handleChange} size="small" />
                     </Grid>
                 </Grid>
 
@@ -157,7 +159,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                 <SectionHeader title="2. Lead Source Information" subtitle="Where did the lead come from?" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={3}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Source</InputLabel>
                             <Select name="source" value={formData.source} label="Source" onChange={handleChange}>
                                 {['Website', 'Referral', 'WhatsApp', 'Cold Call', 'Event', 'Other'].map(opt => (
@@ -167,13 +169,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField fullWidth label="Source Details" name="sourceDetails" value={formData.sourceDetails} onChange={handleChange} />
+                        <TextField fullWidth label="Source Details" name="sourceDetails" value={formData.sourceDetails} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField fullWidth label="Campaign Name" name="campaignName" value={formData.campaignName} onChange={handleChange} />
+                        <TextField fullWidth label="Campaign Name" name="campaignName" value={formData.campaignName} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField fullWidth label="Referred By" name="referredBy" value={formData.referredBy} onChange={handleChange} />
+                        <TextField fullWidth label="Referred By" name="referredBy" value={formData.referredBy} onChange={handleChange} size="small" />
                     </Grid>
                 </Grid>
 
@@ -181,7 +183,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                 <SectionHeader title="3. Lead Status & Priority" subtitle="Current state of the lead" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={3}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Status</InputLabel>
                             <Select name="status" value={formData.status} label="Status" onChange={handleChange}>
                                 {['New', 'Contacted', 'Follow-up', 'Converted', 'Lost'].map(opt => (
@@ -191,7 +193,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth size="small">
                             <InputLabel>Priority</InputLabel>
                             <Select name="priority" value={formData.priority} label="Priority" onChange={handleChange}>
                                 {['Low', 'Medium', 'High'].map(opt => (
@@ -201,7 +203,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth size="small">
                             <InputLabel>Temperature</InputLabel>
                             <Select name="leadTemperature" value={formData.leadTemperature} label="Temperature" onChange={handleChange}>
                                 {['Hot', 'Warm', 'Cold'].map(opt => (
@@ -212,13 +214,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                     </Grid>
                     <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'center' }}>
                         <FormControlLabel
-                            control={<Switch checked={formData.isActive} onChange={handleChange} name="isActive" />}
+                            control={<Switch checked={formData.isActive} onChange={handleChange} name="isActive" size="small" />}
                             label="Is Active"
                         />
                     </Grid>
                     {formData.status === 'Lost' && (
                         <Grid item xs={12}>
-                            <TextField fullWidth label="Lost Reason" name="lostReason" value={formData.lostReason} onChange={handleChange} />
+                            <TextField fullWidth label="Lost Reason" name="lostReason" value={formData.lostReason} onChange={handleChange} size="small" />
                         </Grid>
                     )}
                 </Grid>
@@ -235,10 +237,11 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                             value={formData.nextFollowUpDate}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth size="small">
                             <InputLabel>Follow-Up Mode</InputLabel>
                             <Select name="followUpMode" value={formData.followUpMode} label="Follow-Up Mode" onChange={handleChange}>
                                 {['Call', 'WhatsApp', 'Email', 'Meeting', 'None'].map(opt => (
@@ -248,10 +251,10 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth type="number" label="Follow-Up Count" name="followUpCount" value={formData.followUpCount} disabled />
+                        <TextField fullWidth type="number" label="Follow-Up Count" name="followUpCount" value={formData.followUpCount} disabled size="small" />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField fullWidth multiline rows={2} label="Follow-Up Remarks" name="followUpRemarks" value={formData.followUpRemarks} onChange={handleChange} />
+                        <TextField fullWidth multiline rows={2} label="Follow-Up Remarks" name="followUpRemarks" value={formData.followUpRemarks} onChange={handleChange} size="small" />
                     </Grid>
                 </Grid>
 
@@ -259,18 +262,18 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                 <SectionHeader title="5. Business Details" subtitle="Why are they interested?" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
-                        <TextField fullWidth multiline rows={3} label="Requirement" name="requirement" value={formData.requirement} onChange={handleChange} />
+                        <TextField fullWidth multiline rows={3} label="Requirement" name="requirement" value={formData.requirement} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={6}>
-                                <TextField fullWidth label="Interested Product" name="interestedProduct" value={formData.interestedProduct} onChange={handleChange} />
+                                <TextField fullWidth label="Interested Product" name="interestedProduct" value={formData.interestedProduct} onChange={handleChange} size="small" />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField fullWidth label="Budget Estimate" name="budgetRange" value={formData.budgetRange} onChange={handleChange} />
+                                <TextField fullWidth label="Budget Estimate" name="budgetRange" value={formData.budgetRange} onChange={handleChange} size="small" />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField fullWidth type="number" label="Deal Value" name="dealValue" value={formData.dealValue} onChange={handleChange} />
+                                <TextField fullWidth type="number" label="Deal Value" name="dealValue" value={formData.dealValue} onChange={handleChange} size="small" />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <TextField
@@ -281,6 +284,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                                     value={formData.expectedClosureDate}
                                     onChange={handleChange}
                                     InputLabelProps={{ shrink: true }}
+                                    size="small"
                                 />
                             </Grid>
                         </Grid>
@@ -291,7 +295,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                 <SectionHeader title="6. Communication Preferences" subtitle="How they want to be contacted" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth size="small">
                             <InputLabel>Preferred Contact Mode</InputLabel>
                             <Select name="preferredContactMode" value={formData.preferredContactMode} label="Preferred Contact Mode" onChange={handleChange}>
                                 {['Call', 'WhatsApp', 'Email', 'None'].map(opt => (
@@ -301,11 +305,11 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Preferred Time" name="preferredContactTime" placeholder="e.g. Morning, After 6PM" value={formData.preferredContactTime} onChange={handleChange} />
+                        <TextField fullWidth label="Preferred Time" name="preferredContactTime" placeholder="e.g. Morning, After 6PM" value={formData.preferredContactTime} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center' }}>
                         <FormControlLabel
-                            control={<Switch checked={formData.doNotDisturb} onChange={handleChange} name="doNotDisturb" color="error" />}
+                            control={<Switch checked={formData.doNotDisturb} onChange={handleChange} name="doNotDisturb" color="error" size="small" />}
                             label="Do Not Disturb (DND)"
                         />
                     </Grid>
@@ -323,10 +327,11 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                             onChange={handleChange}
                             onKeyDown={handleTagKeyDown}
                             placeholder="VIP, Urgent, Hot Lead..."
+                            size="small"
                         />
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
                             {formData.tags.map((tag, index) => (
-                                <Chip key={index} label={tag} onDelete={() => handleTagDelete(tag)} />
+                                <Chip key={index} label={tag} onDelete={() => handleTagDelete(tag)} size="small" />
                             ))}
                         </Box>
                     </Grid>
@@ -336,17 +341,17 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
                 <SectionHeader title="9. Notes & Internal Comments" />
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
-                        <TextField fullWidth multiline rows={3} label="Public Notes" name="notes" value={formData.notes} onChange={handleChange} />
+                        <TextField fullWidth multiline rows={3} label="Public Notes" name="notes" value={formData.notes} onChange={handleChange} size="small" />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField fullWidth multiline rows={3} label="Internal Private Comments" name="internalComments" value={formData.internalComments} onChange={handleChange} />
+                        <TextField fullWidth multiline rows={3} label="Internal Private Comments" name="internalComments" value={formData.internalComments} onChange={handleChange} size="small" />
                     </Grid>
                 </Grid>
 
                 {/* Actions */}
                 <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                     <Button variant="outlined" onClick={onCancel}>Cancel</Button>
-                    <Button type="submit" variant="contained" size="large">Save Lead</Button>
+                    <Button type="submit" variant="contained" size="large" sx={{ px: 5 }}>Save Lead</Button>
                 </Box>
             </Box>
         </form>
@@ -355,11 +360,11 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
 const SectionHeader = ({ title, subtitle }) => (
     <Box sx={{ mt: 3, mb: 2 }}>
-        <Typography variant="h6" color="primary" gutterBottom>
+        <Typography variant="subtitle1" color="primary" fontWeight="bold" gutterBottom>
             {title}
         </Typography>
         {subtitle && <Typography variant="caption" color="textSecondary">{subtitle}</Typography>}
-        <Divider />
+        <Divider sx={{ my: 1 }} />
     </Box>
 );
 
