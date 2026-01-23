@@ -145,7 +145,7 @@ const Leads = () => {
                         />
                     )}
                     {(view === 'create' || view === 'edit') && (
-                        <Paper sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
+                        <Paper sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
                             <LeadForm
                                 key={editingLead ? editingLead._id : 'new'}
                                 initialData={editingLead}

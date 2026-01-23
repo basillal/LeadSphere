@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/leads'; // TODO: Use env var
+const API_URL = '/api/leads'; // Relative path to use Vite proxy
 
 // Create new lead
 const createLead = async (leadData) => {

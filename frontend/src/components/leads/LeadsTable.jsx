@@ -19,7 +19,12 @@ import {
     FormControlLabel,
     Switch,
     Chip,
-    Button
+    Button,
+    Card,
+    CardContent,
+    CardActions,
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -114,6 +119,7 @@ function EnhancedTableToolbar(props) {
             sx={{
                 pl: { sm: 2 },
                 pr: { xs: 1, sm: 1 },
+                width: '100%',
                 ...(numSelected > 0 && {
                     bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
                 }),
@@ -165,6 +171,9 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -264,80 +273,123 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                     onDeleteSelected={handleDeleteSelected}
                     onAddClick={handleAddClick}
                 />
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750, width: '100%' }}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
-                    >
-                        <EnhancedTableHead
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                        />
-                        <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const isItemSelected = selected.includes(row._id);
-                                const labelId = `enhanced-table-checkbox-${index}`;
 
-                                return (
-                                    <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, row._id)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row._id || index}
-                                        selected={isItemSelected}
-                                        sx={{ cursor: 'pointer' }}
-                                    >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                                checked={isItemSelected}
-                                                inputProps={{ 'aria-labelledby': labelId }}
-                                            />
-                                        </TableCell>
-                                        <TableCell component="th" id={labelId} scope="row" padding="none">
-                                            {row.name}
-                                            <Typography variant="caption" display="block" color="text.secondary">
-                                                {row.email}
+                {isMobile ? (
+                    <Box sx={{ p: 2 }}>
+                        {visibleRows.map((row) => (
+                            <Card key={row._id} sx={{ mb: 2, boxShadow: 2 }}>
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                                        <Box>
+                                            <Typography variant="h6" component="div">
+                                                {row.name}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell align="left">{row.companyName || '-'}</TableCell>
-                                        <TableCell align="left">{row.phone}</TableCell>
-                                        <TableCell align="left">{row.source}</TableCell>
-                                        <TableCell align="left">
-                                            <Chip label={row.status} color={getStatusChipColor(row.status)} size="small" />
-                                        </TableCell>
-                                        <TableCell align="left">{row.priority}</TableCell>
-                                        <TableCell align="left">
-                                            <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); handleEditClick(row); }}>
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); onDelete(row._id); }}>
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </TableCell>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {row.companyName || '-'}
+                                            </Typography>
+                                        </Box>
+                                        <Chip label={row.status} color={getStatusChipColor(row.status)} size="small" />
+                                    </Box>
+
+                                    <Typography variant="body2" sx={{ mt: 1 }}>
+                                        <strong>Phone:</strong> {row.phone}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        <strong>Email:</strong> {row.email}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        <strong>Source:</strong> {row.source}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        <strong>Priority:</strong> {row.priority}
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <Button size="small" startIcon={<EditIcon />} onClick={() => handleEditClick(row)}>Edit</Button>
+                                    <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => onDelete(row._id)}>Delete</Button>
+                                </CardActions>
+                            </Card>
+                        ))}
+                        {visibleRows.length === 0 && (
+                            <Typography align="center" sx={{ py: 3 }}>No leads found</Typography>
+                        )}
+                    </Box>
+                ) : (
+                    <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750, width: '100%' }}
+                            aria-labelledby="tableTitle"
+                            size={dense ? 'small' : 'medium'}
+                        >
+                            <EnhancedTableHead
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={handleSelectAllClick}
+                                onRequestSort={handleRequestSort}
+                                rowCount={rows.length}
+                            />
+                            <TableBody>
+                                {visibleRows.map((row, index) => {
+                                    const isItemSelected = selected.includes(row._id);
+                                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={(event) => handleClick(event, row._id)}
+                                            role="checkbox"
+                                            aria-checked={isItemSelected}
+                                            tabIndex={-1}
+                                            key={row._id || index}
+                                            selected={isItemSelected}
+                                            sx={{ cursor: 'pointer' }}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </TableCell>
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                                {row.name}
+                                                <Typography variant="caption" display="block" color="text.secondary">
+                                                    {row.email}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="left">{row.companyName || '-'}</TableCell>
+                                            <TableCell align="left">{row.phone}</TableCell>
+                                            <TableCell align="left">{row.source}</TableCell>
+                                            <TableCell align="left">
+                                                <Chip label={row.status} color={getStatusChipColor(row.status)} size="small" />
+                                            </TableCell>
+                                            <TableCell align="left">{row.priority}</TableCell>
+                                            <TableCell align="left">
+                                                <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); handleEditClick(row); }}>
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); onDelete(row._id); }}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                                {visibleRows.length === 0 && (
+                                    <TableRow style={{ height: (dense ? 33 : 53) * 1 }}>
+                                        <TableCell colSpan={8} align="center">No leads found</TableCell>
                                     </TableRow>
-                                );
-                            })}
-                            {visibleRows.length === 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * 1 }}>
-                                    <TableCell colSpan={8} align="center">No leads found</TableCell>
-                                </TableRow>
-                            )}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                                    <TableCell colSpan={8} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                )}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                                        <TableCell colSpan={8} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
@@ -348,10 +400,12 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Dense padding"
-            />
+            {!isMobile && (
+                <FormControlLabel
+                    control={<Switch checked={dense} onChange={handleChangeDense} />}
+                    label="Dense padding"
+                />
+            )}
         </Box>
     );
 }

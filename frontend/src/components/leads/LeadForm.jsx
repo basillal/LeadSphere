@@ -128,7 +128,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Box sx={{ p: 2 }}>
+            <Box sx={{ p: { xs: 0, md: 2 } }}>
                 {/* 1. Basic Lead Information */}
                 <SectionHeader title="1. Basic Lead Information" subtitle="Who is the lead?" />
                 <Grid container spacing={2}>
