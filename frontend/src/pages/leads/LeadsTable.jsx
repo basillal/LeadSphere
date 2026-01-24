@@ -100,6 +100,22 @@ const Icons = {
       <path d="M12 5v14" />
     </svg>
   ),
+  Preview: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
 };
 
 // --- Comparators ---
@@ -125,9 +141,17 @@ const headCells = [
   { id: "actions", label: "Actions", width: "w-[15%]" },
 ];
 
-export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
+export default function LeadsTable({
+  rows = [],
+  onEdit,
+  onDelete,
+  onCreate,
+  onPreview,
+  filters = { search: "", status: "", source: "" },
+  onFilterChange,
+}) {
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
+  const [orderBy, setOrderBy] = useState("");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -185,7 +209,7 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
     switch (status) {
       case "NEW":
       case "New":
-        return "bg-blue-100 text-blue-800";
+        return "bg-gray-200 text-black";
       case "CONTACTED":
       case "Contacted":
         return "bg-indigo-100 text-indigo-800";
@@ -215,14 +239,16 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
   const totalPages = Math.ceil(rows.length / rowsPerPage);
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
       {/* Toolbar */}
       <div
-        className={`px-4 py-3 flex items-center justify-between border-b border-gray-200 ${selected.length > 0 ? "bg-blue-50" : ""}`}
+        className={`px-4 py-3 flex items-center justify-between border-b border-gray-200 ${
+          selected.length > 0 ? "bg-gray-100" : ""
+        }`}
       >
         {selected.length > 0 ? (
           <div className="flex items-center w-full justify-between">
-            <span className="text-sm font-medium text-blue-800">
+            <span className="text-sm font-medium text-black">
               {selected.length} selected
             </span>
             <button
@@ -233,20 +259,73 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
             </button>
           </div>
         ) : (
-          <div className="flex items-center justify-between w-full">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Leads Management
+          <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-3">
+            <h2 className="text-lg font-semibold text-gray-800 whitespace-nowrap">
+              Leads
             </h2>
-            <div className="flex gap-2">
-              {/* Placeholder for Search if needed */}
+
+            <div className="flex flex-1 w-full sm:w-auto items-center gap-3">
+              {/* Search */}
+              <div className="relative w-full sm:max-w-xs">
+                <input
+                  type="text"
+                  placeholder="Search leads..."
+                  value={filters.search}
+                  onChange={(e) => onFilterChange("search", e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                />
+                <div className="absolute left-2.5 top-2 text-gray-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <select
+                value={filters.status}
+                onChange={(e) => onFilterChange("status", e.target.value)}
+                className="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black bg-white"
+              >
+                <option value="">All Status</option>
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Converted">Converted</option>
+                <option value="Lost">Lost</option>
+              </select>
+
+              {/* Source Filter */}
+              <select
+                value={filters.source}
+                onChange={(e) => onFilterChange("source", e.target.value)}
+                className="hidden md:block px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black bg-white"
+              >
+                <option value="">All Sources</option>
+                <option value="Website">Website</option>
+                <option value="Referral">Referral</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Cold Call">Cold Call</option>
+                <option value="Event">Event</option>
+                <option value="Other">Other</option>
+              </select>
+
               <button
                 onClick={onCreate}
-                className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm"
+                className="inline-flex items-center gap-1 bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
               >
-                <Icons.Add /> Add Lead
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-md text-gray-500">
-                <Icons.Filter />
+                <Icons.Add /> <span className="hidden md:inline">Add Lead</span>
               </button>
             </div>
           </div>
@@ -261,8 +340,8 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
           visibleRows.map((row) => (
             <div
               key={row._id}
-              className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-3"
-              onClick={() => handleClick(row._id)}
+              className="bg-white p-4 rounded-lg shadow-sm border-b border-gray-100 last:border-0 mb-3"
+              onClick={() => onPreview && onPreview(row)}
             >
               <div className="flex justify-between items-start mb-2">
                 <div>
@@ -293,15 +372,26 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                 </p>
               </div>
 
-              <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+              <div className="flex justify-end gap-3 border-t border-gray-100 pt-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onPreview) onPreview(row);
+                  }}
+                  className="text-gray-500 hover:text-black text-sm font-medium flex items-center gap-1"
+                  title="Preview"
+                >
+                  <Icons.Preview />
+                </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onEdit(row);
                   }}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1"
+                  className="text-gray-600 hover:text-black text-sm font-medium flex items-center gap-1"
+                  title="Edit"
                 >
-                  <Icons.Edit /> Edit
+                  <Icons.Edit />
                 </button>
                 <button
                   onClick={(e) => {
@@ -309,8 +399,9 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                     onDelete(row._id);
                   }}
                   className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
+                  title="Delete"
                 >
-                  <Icons.Delete /> Delete
+                  <Icons.Delete />
                 </button>
               </div>
             </div>
@@ -328,7 +419,7 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                   type="checkbox"
                   onChange={handleSelectAllClick}
                   checked={rows.length > 0 && selected.length === rows.length}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                  className="rounded border-gray-300 text-black focus:ring-black h-4 w-4"
                 />
               </th>
               {headCells.map((headCell) => (
@@ -366,14 +457,14 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                   <tr
                     key={row._id}
                     onClick={() => handleClick(row._id)}
-                    className={`hover:bg-gray-50 cursor-pointer transition-colors ${isSelected ? "bg-blue-50" : ""}`}
+                    className={`hover:bg-gray-50 cursor-pointer transition-colors ${isSelected ? "bg-gray-100" : ""}`}
                   >
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={isSelected}
                         readOnly
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                        className="rounded border-gray-300 text-black focus:ring-black h-4 w-4"
                       />
                     </td>
                     <td className="px-4 py-3 font-medium text-gray-900">
@@ -398,9 +489,19 @@ export default function LeadsTable({ rows = [], onEdit, onDelete, onCreate }) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (onPreview) onPreview(row);
+                          }}
+                          className="p-1 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+                          title="Preview"
+                        >
+                          <Icons.Preview />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
                             onEdit(row);
                           }}
-                          className="p-1 hover:bg-blue-100 rounded text-blue-600 transition-colors"
+                          className="p-1 hover:bg-gray-200 rounded text-gray-600 transition-colors"
                           title="Edit"
                         >
                           <Icons.Edit />

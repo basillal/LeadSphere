@@ -6,6 +6,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 
+import Breadcrumbs from "../components/layout/Breadcrumbs";
+
 const MainLayout = () => {
   const [open, setOpen] = React.useState(false);
 
@@ -18,14 +20,15 @@ const MainLayout = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ display: "flex", width: "100%", overflow: "hidden" }}>
       <CssBaseline />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <Box component="main" sx={{ flexGrow: 1, p: 1, width: "100%" }}>
+      <main className="flex-grow p-3 md:p-4 ml-16 md:ml-0 w-full max-w-full overflow-x-hidden transition-all duration-300">
         <Toolbar /> {/* Spacer below AppBar */}
+        <Breadcrumbs />
         <Outlet />
-      </Box>
+      </main>
     </Box>
   );
 };

@@ -1,109 +1,9 @@
 import React, { useState } from "react";
-
-// Reusable Label Component
-const Label = ({ children, required }) => (
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    {children} {required && <span className="text-red-500">*</span>}
-  </label>
-);
-
-// Reusable Input Component
-const Input = ({
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  required,
-  className = "",
-  ...props
-}) => (
-  <div className={className}>
-    {label && <Label required={required}>{label}</Label>}
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-      required={required}
-      {...props}
-    />
-  </div>
-);
-
-// Reusable Select Component
-const Select = ({
-  label,
-  name,
-  value,
-  onChange,
-  options,
-  required,
-  className = "",
-  ...props
-}) => (
-  <div className={className}>
-    {label && <Label required={required}>{label}</Label>}
-    <div className="relative">
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white transition-colors"
-        required={required}
-        {...props}
-      >
-        {options.map((opt) => (
-          <option key={opt.value || opt} value={opt.value || opt}>
-            {opt.label || opt}
-          </option>
-        ))}
-      </select>
-      {/* Custom Arrow Icon */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-        <svg
-          className="fill-current h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-        </svg>
-      </div>
-    </div>
-  </div>
-);
-
-// Reusable Textarea Component
-const TextArea = ({
-  label,
-  name,
-  value,
-  onChange,
-  rows = 3,
-  className = "",
-  ...props
-}) => (
-  <div className={className}>
-    {label && <Label>{label}</Label>}
-    <textarea
-      name={name}
-      value={value}
-      onChange={onChange}
-      rows={rows}
-      className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-      {...props}
-    />
-  </div>
-);
-
-// Section Header Component
-const SectionHeader = ({ title, subtitle }) => (
-  <div className="mb-4 mt-8 border-b border-gray-200 pb-2">
-    <h3 className="text-lg font-semibold text-blue-600">{title}</h3>
-    {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
-  </div>
-);
+import Label from "../../components/common/fields/Label";
+import Input from "../../components/common/fields/Input";
+import Select from "../../components/common/fields/Select";
+import TextArea from "../../components/common/fields/TextArea";
+import SectionHeader from "../../components/common/SectionHeader";
 
 const LeadForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState(() => {
@@ -152,6 +52,8 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       tags: [],
       tagsInput: "", // Temporary for input
 
+      attachments: "",
+
       // 9. Notes
       notes: "",
       internalComments: "",
@@ -166,6 +68,9 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           : "",
         expectedClosureDate: initialData.expectedClosureDate
           ? initialData.expectedClosureDate.split("T")[0]
+          : "",
+        attachments: initialData.attachments
+          ? initialData.attachments.join("\n")
           : "",
       };
     }
@@ -211,11 +116,20 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     if (!cleanedData.expectedClosureDate)
       delete cleanedData.expectedClosureDate;
 
+    // Convert attachments string to array
+    if (cleanedData.attachments) {
+      cleanedData.attachments = cleanedData.attachments
+        .split("\n")
+        .filter((url) => url.trim() !== "");
+    } else {
+      cleanedData.attachments = [];
+    }
+
     onSubmit(cleanedData);
   };
 
   return (
-    <div className="mx-auto bg-white p-3 md:p-6 pb-20 rounded-lg shadow-sm">
+    <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
       <form onSubmit={handleSubmit}>
         {/* 1. Basic Lead Information */}
         <SectionHeader
@@ -364,7 +278,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
               name="isActive"
               checked={formData.isActive}
               onChange={handleChange}
-              className="h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              className="h-5 w-5 text-black rounded border-gray-300 focus:ring-black"
             />
             <label
               htmlFor="isActive"
@@ -530,19 +444,35 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium flex items-center"
+                className="px-3 py-1 bg-gray-200 text-black rounded-full text-sm font-medium flex items-center"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleTagDelete(tag)}
-                  className="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none"
+                  className="ml-2 text-gray-500 hover:text-black focus:outline-none"
                 >
                   &times;
                 </button>
               </span>
             ))}
           </div>
+        </div>
+
+        {/* 8. Attachments */}
+        <SectionHeader
+          title="8. Attachments"
+          subtitle="Add file URLs (one per line)"
+        />
+        <div className="space-y-2 mb-6">
+          <TextArea
+            label="Attachment URLs"
+            name="attachments"
+            value={formData.attachments}
+            onChange={handleChange}
+            placeholder="https://example.com/file1.pdf&#10;https://example.com/proposal.docx"
+            rows={3}
+          />
         </div>
 
         {/* 9. Notes & Attachments */}
@@ -575,7 +505,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
           >
             Save Lead
           </button>

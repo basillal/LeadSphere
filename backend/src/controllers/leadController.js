@@ -14,13 +14,14 @@ const getLeads = asyncHandler(async (req, res) => {
     // Filtering (Soft Delete Check)
     const query = { isDeleted: false };
 
-    // Search by name/phone/email
+    // Search by name/phone/email/company
     if (req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
         query.$or = [
             { name: searchRegex },
             { phone: searchRegex },
-            { email: searchRegex }
+            { email: searchRegex },
+            { companyName: searchRegex }
         ];
     }
 
@@ -32,6 +33,20 @@ const getLeads = asyncHandler(async (req, res) => {
     // Filter by source
     if (req.query.source) {
         query.source = req.query.source;
+    }
+
+    // Filter by Date Range (nextFollowUpDate)
+    if (req.query.startDate || req.query.endDate) {
+        query.nextFollowUpDate = {};
+        if (req.query.startDate) {
+            query.nextFollowUpDate.$gte = new Date(req.query.startDate);
+        }
+        if (req.query.endDate) {
+            // Set end date to end of day if it's the same as start date or just a date string
+             const end = new Date(req.query.endDate);
+             end.setHours(23, 59, 59, 999);
+            query.nextFollowUpDate.$lte = end;
+        }
     }
 
     const total = await Lead.countDocuments(query);
@@ -73,24 +88,17 @@ const getLead = asyncHandler(async (req, res) => {
 // @route   POST /api/leads
 // @access  Private
 const createLead = asyncHandler(async (req, res) => {
-    const { name, phone, email, source, status, priority, notes } = req.body;
 
     // Check if lead exists
-    const leadExists = await Lead.findOne({ phone, isDeleted: false });
-    if (leadExists) {
-        res.status(400);
-        throw new Error('Lead with this phone number already exists');
+    if (req.body.phone) {
+        const leadExists = await Lead.findOne({ phone: req.body.phone, isDeleted: false });
+        if (leadExists) {
+            res.status(400);
+            throw new Error('Lead with this phone number already exists');
+        }
     }
 
-    const lead = await Lead.create({
-        name,
-        phone,
-        email,
-        source,
-        status,
-        priority,
-        notes
-    });
+    const lead = await Lead.create(req.body);
 
     logger.info(`New lead created: ${lead.name}`);
 

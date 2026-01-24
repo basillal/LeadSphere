@@ -21,8 +21,10 @@ const errorHandler = require('./middleware/errorHandler');
 
 // Routes
 const leadRoutes = require('./routes/leadRoutes');
+const followUpRoutes = require('./routes/followUpRoutes');
 app.use('/api/users', userRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/follow-ups', followUpRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

@@ -1,16 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainLayout from './layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
-import Leads from './pages/Leads';
-import FollowUps from './pages/FollowUps';
-import Contacts from './pages/Contacts';
-import Activities from './pages/Activities';
-import SourceManagement from './pages/SourceManagement';
-import StatusTags from './pages/StatusTags';
-import Search from './pages/Search';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import './styles/App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import Dashboard from "./pages/Dashboard";
+import Leads from "./pages/leads/Leads";
+import FollowUps from "./pages/FollowUps";
+import Contacts from "./pages/Contacts";
+import Activities from "./pages/Activities";
+import SourceManagement from "./pages/SourceManagement";
+import StatusTags from "./pages/StatusTags";
+import Search from "./pages/Search";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import "./styles/App.css";
 
 function App() {
   return (
