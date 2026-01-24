@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import leadService from "../../services/leadService";
+import contactService from "../../services/contactService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
+import ConversionDialog from "../../components/leads/ConversionDialog";
 import Toast from "../../components/common/utils/Toast";
 
 // Simple Modal for Preview (Tailwind based)
@@ -193,6 +195,7 @@ const Leads = () => {
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [editingLead, setEditingLead] = useState(null);
   const [previewLead, setPreviewLead] = useState(null); // For preview Modal
+  const [convertingLead, setConvertingLead] = useState(null); // For conversion dialog
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -292,6 +295,31 @@ const Leads = () => {
     setPreviewLead(lead);
   };
 
+  const handleConvertToContact = (lead) => {
+    setConvertingLead(lead);
+  };
+
+  const handleConfirmConversion = async (conversionData) => {
+    try {
+      await contactService.convertLeadToContact(
+        convertingLead._id,
+        conversionData,
+      );
+      showSnackbar("Lead successfully converted to contact", "success");
+      setConvertingLead(null);
+      fetchLeads();
+    } catch (err) {
+      console.error("Error converting lead:", err);
+      const errMsg =
+        err.response?.data?.message || "Failed to convert lead to contact";
+      showSnackbar(errMsg, "error");
+    }
+  };
+
+  const handleCancelConversion = () => {
+    setConvertingLead(null);
+  };
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
@@ -344,6 +372,7 @@ const Leads = () => {
               onEdit={handleShowEdit}
               onDelete={handleDeleteLead}
               onPreview={handlePreview}
+              onConvert={handleConvertToContact}
               filters={filters}
               onFilterChange={handleFilterChange}
             />
@@ -373,6 +402,13 @@ const Leads = () => {
 
       {/* Preview Modal */}
       <PreviewModal lead={previewLead} onClose={() => setPreviewLead(null)} />
+
+      {/* Conversion Dialog */}
+      <ConversionDialog
+        lead={convertingLead}
+        onConfirm={handleConfirmConversion}
+        onCancel={handleCancelConversion}
+      />
     </div>
   );
 };

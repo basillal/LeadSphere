@@ -140,6 +140,10 @@ const LeadSchema = new mongoose.Schema({
     convertedAt: {
         type: Date
     },
+    isConverted: {
+        type: Boolean,
+        default: false
+    },
     lostAt: {
         type: Date
     },

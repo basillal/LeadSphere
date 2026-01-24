@@ -116,6 +116,24 @@ const Icons = {
       <circle cx="12" cy="12" r="3" />
     </svg>
   ),
+  Convert: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
 };
 
 // --- Comparators ---
@@ -147,6 +165,7 @@ export default function LeadsTable({
   onDelete,
   onCreate,
   onPreview,
+  onConvert,
   filters = { search: "", status: "", source: "" },
   onFilterChange,
 }) {
@@ -205,7 +224,12 @@ export default function LeadsTable({
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status, isConverted) => {
+    // If lead is converted to contact, show different color
+    if (status === "Converted" && isConverted) {
+      return "bg-gray-200 text-gray-700"; // Already converted to contact
+    }
+
     switch (status) {
       case "NEW":
       case "New":
@@ -218,7 +242,7 @@ export default function LeadsTable({
         return "bg-yellow-100 text-yellow-800";
       case "CONVERTED":
       case "Converted":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800"; // Ready to convert
       case "LOST":
       case "Lost":
         return "bg-red-100 text-red-800";
@@ -351,9 +375,12 @@ export default function LeadsTable({
                   </p>
                 </div>
                 <span
-                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status)}`}
+                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
                 >
                   {row.status}
+                  {row.status === "Converted" && row.isConverted && (
+                    <span className="ml-1">✓</span>
+                  )}
                 </span>
               </div>
 
@@ -393,6 +420,20 @@ export default function LeadsTable({
                 >
                   <Icons.Edit />
                 </button>
+                {row.status === "Converted" &&
+                  !row.isConverted &&
+                  onConvert && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onConvert(row);
+                      }}
+                      className="text-green-600 hover:text-green-800 text-sm font-medium flex items-center gap-1"
+                      title="Convert to Contact"
+                    >
+                      <Icons.Convert />
+                    </button>
+                  )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -478,9 +519,12 @@ export default function LeadsTable({
                     <td className="px-4 py-3">{row.source}</td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status)}`}
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
                       >
                         {row.status}
+                        {row.status === "Converted" && row.isConverted && (
+                          <span className="ml-1">✓</span>
+                        )}
                       </span>
                     </td>
                     <td className="px-4 py-3">{row.priority}</td>
@@ -506,6 +550,20 @@ export default function LeadsTable({
                         >
                           <Icons.Edit />
                         </button>
+                        {row.status === "Converted" &&
+                          !row.isConverted &&
+                          onConvert && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onConvert(row);
+                              }}
+                              className="p-1 hover:bg-green-100 rounded text-green-600 transition-colors"
+                              title="Convert to Contact"
+                            >
+                              <Icons.Convert />
+                            </button>
+                          )}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
