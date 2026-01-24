@@ -202,6 +202,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     { text: "Leads", icon: <Icons.Leads />, path: "/leads" },
     { text: "Follow-Ups", icon: <Icons.Calendar />, path: "/follow-ups" },
     { text: "Contacts", icon: <Icons.Contacts />, path: "/contacts" },
+    { text: "Referrers", icon: <Icons.Contacts />, path: "/referrers" },
     { text: "Activities", icon: <Icons.History />, path: "/activities" },
     { text: "Sources", icon: <Icons.Hub />, path: "/sources" },
     { text: "Status & Tags", icon: <Icons.Tag />, path: "/status-tags" },

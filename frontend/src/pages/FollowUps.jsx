@@ -9,6 +9,15 @@ import SectionHeader from "../components/common/SectionHeader";
 const FollowUps = () => {
   const [activeTab, setActiveTab] = useState("today");
   const [followUps, setFollowUps] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 1,
+  });
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
@@ -22,8 +31,13 @@ const FollowUps = () => {
   const fetchFollowUps = useCallback(async () => {
     setLoading(true);
     try {
-      // First fetch the list for the active tab
-      const params = {};
+      // Build params with pagination
+      const params = {
+        page: pagination.page,
+        limit: pagination.limit,
+      };
+
+      // Add tab-based filters
       if (activeTab === "today") params.range = "today";
       else if (activeTab === "upcoming") params.range = "upcoming";
       else if (activeTab === "missed") params.range = "overdue";
@@ -32,15 +46,30 @@ const FollowUps = () => {
       const response = await followUpService.getFollowUps(params);
       setFollowUps(response.data);
 
-      // Should ideally fetch stats from a dedicated endpoint.
-      // for now, we leave stats static or calculate simplified version
-      // In a real app, I'd add /api/follow-ups/stats
+      // Update pagination metadata if available
+      if (response.pagination) {
+        setPagination((prev) => ({
+          ...prev,
+          total: response.pagination.total || 0,
+          pages: response.pagination.pages || 1,
+        }));
+      }
+
+      // Calculate stats from all follow-ups
+      const allResponse = await followUpService.getFollowUps({});
+      const allFollowUps = allResponse.data;
+      setStats({
+        total: allFollowUps.length,
+        pending: allFollowUps.filter((f) => f.status === "Pending").length,
+        completed: allFollowUps.filter((f) => f.status === "Completed").length,
+        missed: allFollowUps.filter((f) => f.status === "Missed").length,
+      });
     } catch (error) {
       console.error("Error fetching follow-ups:", error);
     } finally {
       setLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab, pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchFollowUps();
@@ -84,7 +113,7 @@ const FollowUps = () => {
         await followUpService.createFollowUp(data);
       }
       setIsModalOpen(false);
-      fetchFollowUps();
+      fetchFollowUps(); // This will refresh both list and stats
     } catch (error) {
       console.error("Error saving follow-up:", error);
       alert("Failed to save follow-up. Please check if Lead field is valid.");
@@ -98,6 +127,37 @@ const FollowUps = () => {
     { id: "completed", label: "Completed" },
     { id: "all", label: "All Records" },
   ];
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+
+  const handleLimitChange = (newLimit) => {
+    setPagination({
+      page: 1,
+      limit: newLimit,
+      total: pagination.total,
+      pages: Math.ceil(pagination.total / newLimit),
+    });
+  };
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setPagination((prev) => ({ ...prev, page: 1 })); // Reset to page 1 on tab change
+  };
+
+  // Filter follow-ups based on search and filters
+  const filteredFollowUps = followUps.filter((followUp) => {
+    const matchesSearch =
+      !searchTerm ||
+      followUp.lead?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      followUp.lead?.phone?.includes(searchTerm);
+
+    const matchesStatus = !statusFilter || followUp.status === statusFilter;
+    const matchesType = !typeFilter || followUp.type === typeFilter;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   return (
     <div className="w-full max-w-full overflow-x-hidden">
@@ -125,7 +185,7 @@ const FollowUps = () => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab.id
                   ? "bg-white text-black shadow-sm"
@@ -138,6 +198,44 @@ const FollowUps = () => {
         </div>
       </div>
 
+      {/* Stats */}
+      <FollowUpStats stats={stats} />
+
+      {/* Search and Filters */}
+      <div className="mb-4 flex flex-col md:flex-row gap-3">
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Search by lead name or phone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+        >
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Missed">Missed</option>
+          <option value="Rescheduled">Rescheduled</option>
+        </select>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+        >
+          <option value="">All Types</option>
+          <option value="Call">Call</option>
+          <option value="Email">Email</option>
+          <option value="Meeting">Meeting</option>
+          <option value="Task">Task</option>
+        </select>
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-10">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -145,10 +243,13 @@ const FollowUps = () => {
       ) : (
         <div className="pb-20">
           <FollowUpList
-            followUps={followUps}
+            followUps={filteredFollowUps}
             onEdit={handleEdit}
             onDelete={handleDelete}
             onStatusChange={handleStatusChange}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
           />
         </div>
       )}

@@ -3,6 +3,7 @@ import Label from "../../components/common/fields/Label";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
 import TextArea from "../../components/common/fields/TextArea";
+import ReferrerAutocomplete from "../../components/common/fields/ReferrerAutocomplete";
 import SectionHeader from "../../components/common/SectionHeader";
 
 const ContactForm = ({ initialData, onSubmit, onCancel }) => {
@@ -20,6 +21,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
       // Relationship & Tags
       tags: [],
       relationshipType: "Business",
+      referredBy: null,
 
       // Social Profiles
       linkedInProfile: "",
@@ -212,6 +214,18 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             options={["Business", "Personal", "Professional", "Mixed"]}
             className="md:col-span-3"
           />
+          <div className="md:col-span-3">
+            <ReferrerAutocomplete
+              value={formData.referredBy}
+              onChange={(newValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  referredBy: newValue?._id || null,
+                }));
+              }}
+              className="w-full"
+            />
+          </div>
           <div className="md:col-span-6">
             <Label>Contact Tags</Label>
             <div className="flex flex-wrap gap-2 mt-2">

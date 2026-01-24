@@ -3,6 +3,7 @@ import leadService from "../../services/leadService";
 import contactService from "../../services/contactService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
+import LeadStats from "../../components/leads/LeadStats";
 import ConversionDialog from "../../components/leads/ConversionDialog";
 import Toast from "../../components/common/utils/Toast";
 
@@ -178,24 +179,36 @@ const PreviewModal = ({ lead, onClose }) => {
 
 const Leads = () => {
   const [leads, setLeads] = useState([]);
+  const [stats, setStats] = useState({
+    total: 0,
+    new: 0,
+    contacted: 0,
+    followUp: 0,
+    converted: 0,
+    lost: 0,
+  });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 1,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [view, setView] = useState("list"); // 'list', 'create', 'edit'
+  const [editingLead, setEditingLead] = useState(null);
+  const [previewLead, setPreviewLead] = useState(null);
+  const [convertingLead, setConvertingLead] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
-
   const [filters, setFilters] = useState({
     search: "",
     status: "",
     source: "",
   });
-
-  const [view, setView] = useState("list"); // 'list', 'create', 'edit'
-  const [editingLead, setEditingLead] = useState(null);
-  const [previewLead, setPreviewLead] = useState(null); // For preview Modal
-  const [convertingLead, setConvertingLead] = useState(null); // For conversion dialog
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -205,6 +218,32 @@ const Leads = () => {
     setSnackbar({ open: true, message, severity });
   };
 
+  // Fetch lead statistics
+  const fetchStats = async () => {
+    try {
+      const data = await leadService.getLeads({});
+      const allLeads = data.data;
+
+      const statsData = {
+        total: allLeads.length,
+        new: allLeads.filter((l) => l.status === "New").length,
+        contacted: allLeads.filter((l) => l.status === "Contacted").length,
+        followUp: allLeads.filter((l) => l.status === "Follow-up").length,
+        converted: allLeads.filter((l) => l.status === "Converted").length,
+        lost: allLeads.filter((l) => l.status === "Lost").length,
+      };
+
+      setStats(statsData);
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+    }
+  };
+
+  // Fetch stats on mount
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   // Debounce API calls, but update UI immediately
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -212,17 +251,34 @@ const Leads = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters]);
+  }, [filters, pagination.page, pagination.limit]);
 
   const fetchLeads = async () => {
     // setLoading(true); // Don't show full page spinner on filter
     try {
-      // Remove empty filters before sending
-      const params = Object.fromEntries(
-        Object.entries(filters).filter(([_, v]) => v !== ""),
-      );
+      // Build params with pagination
+      const params = {
+        page: pagination.page,
+        limit: pagination.limit,
+      };
+
+      // Add filters
+      if (filters.search) params.search = filters.search;
+      if (filters.status) params.status = filters.status;
+      if (filters.source) params.source = filters.source;
+
       const data = await leadService.getLeads(params);
       setLeads(data.data);
+
+      // Update pagination metadata if available
+      if (data.pagination) {
+        setPagination((prev) => ({
+          ...prev,
+          total: data.pagination.total || 0,
+          pages: data.pagination.pages || 1,
+        }));
+      }
+
       setError(null);
     } catch (err) {
       console.error("Error fetching leads:", err);
@@ -234,6 +290,20 @@ const Leads = () => {
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+    setPagination((prev) => ({ ...prev, page: 1 })); // Reset to page 1 on filter change
+  };
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+
+  const handleLimitChange = (newLimit) => {
+    setPagination({
+      page: 1,
+      limit: newLimit,
+      total: pagination.total,
+      pages: Math.ceil(pagination.total / newLimit),
+    });
   };
 
   const handleCreateLead = async (leadData) => {
@@ -241,6 +311,7 @@ const Leads = () => {
       await leadService.createLead(leadData);
       showSnackbar("Lead added successfully", "success");
       fetchLeads();
+      fetchStats();
       setView("list");
     } catch (err) {
       console.error("Error creating lead:", err);
@@ -254,6 +325,7 @@ const Leads = () => {
       await leadService.updateLead(leadData._id, leadData);
       showSnackbar("Lead updated successfully", "success");
       fetchLeads();
+      fetchStats();
       setView("list");
       setEditingLead(null);
     } catch (err) {
@@ -269,6 +341,7 @@ const Leads = () => {
         await leadService.deleteLead(id);
         showSnackbar("Lead deleted successfully", "success");
         fetchLeads();
+        fetchStats();
       } catch (err) {
         console.error("Error deleting lead:", err);
         showSnackbar("Failed to delete lead", "error");
@@ -299,15 +372,19 @@ const Leads = () => {
     setConvertingLead(lead);
   };
 
-  const handleConfirmConversion = async (conversionData) => {
+  const handleConfirmConversion = async (contactData) => {
     try {
-      await contactService.convertLeadToContact(
-        convertingLead._id,
-        conversionData,
-      );
-      showSnackbar("Lead successfully converted to contact", "success");
-      setConvertingLead(null);
+      await contactService.createContact(contactData);
+      // Mark lead as converted
+      await leadService.updateLead(convertingLead._id, {
+        ...convertingLead,
+        status: "Converted",
+        isConverted: true,
+      });
+      showSnackbar("Lead converted to contact successfully", "success");
       fetchLeads();
+      fetchStats();
+      setConvertingLead(null);
     } catch (err) {
       console.error("Error converting lead:", err);
       const errMsg =
@@ -366,16 +443,25 @@ const Leads = () => {
       ) : (
         <>
           {view === "list" && (
-            <LeadsTable
-              rows={leads}
-              onCreate={handleShowCreate}
-              onEdit={handleShowEdit}
-              onDelete={handleDeleteLead}
-              onPreview={handlePreview}
-              onConvert={handleConvertToContact}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
+            <>
+              {/* Stats */}
+              <LeadStats stats={stats} />
+
+              {/* Leads Table */}
+              <LeadsTable
+                rows={leads}
+                onCreate={handleShowCreate}
+                onEdit={handleShowEdit}
+                onDelete={handleDeleteLead}
+                onPreview={handlePreview}
+                onConvert={handleConvertToContact}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                pagination={pagination}
+                onPageChange={handlePageChange}
+                onLimitChange={handleLimitChange}
+              />
+            </>
           )}
           {(view === "create" || view === "edit") && (
             <div className="max-w-7xl mx-auto">

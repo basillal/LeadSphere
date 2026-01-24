@@ -50,7 +50,8 @@ const LeadSchema = new mongoose.Schema({
         type: String
     },
     referredBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Referrer'
     },
 
     // 3. Lead Status & Priority

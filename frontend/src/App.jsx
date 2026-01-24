@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/leads/Leads";
 import FollowUps from "./pages/FollowUps";
 import Contacts from "./pages/Contacts";
+import Referrers from "./pages/Referrers";
 import Activities from "./pages/Activities";
 import SourceManagement from "./pages/SourceManagement";
 import StatusTags from "./pages/StatusTags";
@@ -21,6 +22,7 @@ function App() {
           <Route path="leads" element={<Leads />} />
           <Route path="follow-ups" element={<FollowUps />} />
           <Route path="contacts" element={<Contacts />} />
+          <Route path="referrers" element={<Referrers />} />
           <Route path="activities" element={<Activities />} />
           <Route path="sources" element={<SourceManagement />} />
           <Route path="status-tags" element={<StatusTags />} />

@@ -24,11 +24,13 @@ const leadRoutes = require('./routes/leadRoutes');
 const followUpRoutes = require('./routes/followUpRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const activityRoutes = require('./routes/activityRoutes');
+const referrerRoutes = require('./routes/referrerRoutes');
 app.use('/api/users', userRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/activities', activityRoutes);
+app.use('/api/referrers', referrerRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

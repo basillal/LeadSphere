@@ -59,6 +59,10 @@ const ContactSchema = new mongoose.Schema({
         enum: ['Business', 'Personal', 'Professional', 'Mixed'],
         default: 'Business'
     },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Referrer'
+    },
 
     // 3. Social & Additional Contact Info
     linkedInProfile: {

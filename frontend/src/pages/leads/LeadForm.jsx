@@ -3,6 +3,7 @@ import Label from "../../components/common/fields/Label";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
 import TextArea from "../../components/common/fields/TextArea";
+import ReferrerAutocomplete from "../../components/common/fields/ReferrerAutocomplete";
 import SectionHeader from "../../components/common/SectionHeader";
 
 const LeadForm = ({ initialData, onSubmit, onCancel }) => {
@@ -21,7 +22,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       source: "Website",
       sourceDetails: "",
       campaignName: "",
-      referredBy: "",
+      referredBy: null,
 
       // 3. Status & Priority
       status: "New",
@@ -230,13 +231,18 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             onChange={handleChange}
             className="md:col-span-3"
           />
-          <Input
-            label="Referred By"
-            name="referredBy"
-            value={formData.referredBy}
-            onChange={handleChange}
-            className="md:col-span-3"
-          />
+          <div className="md:col-span-3">
+            <ReferrerAutocomplete
+              value={formData.referredBy}
+              onChange={(newValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  referredBy: newValue?._id || null,
+                }));
+              }}
+              className="w-full"
+            />
+          </div>
         </div>
 
         {/* 3. Lead Status & Priority */}
