@@ -2,23 +2,23 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Autocomplete from "./Autocomplete";
-import leadService from "../../../services/leadService";
+import contactService from "../../../services/contactService";
 
 /**
- * LeadAutocomplete - Specialized autocomplete for selecting leads
- * Uses the generic Autocomplete component with lead-specific configuration
+ * ContactAutocomplete - Specialized autocomplete for selecting contacts
+ * Uses the generic Autocomplete component with contact-specific configuration
  */
-const LeadAutocomplete = ({
-  label = "Select Lead",
+const ContactAutocomplete = ({
+  label = "Select Contact",
   value,
   onChange,
   required = false,
   disabled = false,
   className = "",
 }) => {
-  // Fetch leads with search and pagination
-  const fetchLeads = async ({ search, page, limit }) => {
-    const response = await leadService.getLeads({
+  // Fetch contacts with search and pagination
+  const fetchContacts = async ({ search, page, limit }) => {
+    const response = await contactService.getContacts({
       search,
       page,
       limit,
@@ -26,9 +26,9 @@ const LeadAutocomplete = ({
     return response;
   };
 
-  // Fetch single lead by ID
-  const fetchSingleLead = async (id) => {
-    const response = await leadService.getLead(id);
+  // Fetch single contact by ID
+  const fetchSingleContact = async (id) => {
+    const response = await contactService.getContact(id);
     return response;
   };
 
@@ -36,8 +36,8 @@ const LeadAutocomplete = ({
   const getOptionLabel = (option) => {
     if (!option) return "";
     if (typeof option === "string") return option;
-    return `${option.name || "Unknown"} - ${option.companyName || "N/A"} ${
-      option.phone ? `(${option.phone})` : ""
+    return `${option.name || "Unknown"} - ${option.phone || "N/A"}${
+      option.email ? ` (${option.email})` : ""
     }`;
   };
 
@@ -57,8 +57,8 @@ const LeadAutocomplete = ({
           color="text.secondary"
           sx={{ fontSize: "0.75rem" }}
         >
-          {option.companyName || "N/A"}
-          {option.phone && ` • ${option.phone}`}
+          {option.phone || "N/A"}
+          {option.email && ` • ${option.email}`}
         </Typography>
       </Box>
     </Box>
@@ -67,11 +67,11 @@ const LeadAutocomplete = ({
   return (
     <Autocomplete
       label={label}
-      placeholder="Search by name, company, or phone..."
+      placeholder="Search by name, phone, or email..."
       value={value}
       onChange={onChange}
-      fetchOptions={fetchLeads}
-      fetchSingleItem={fetchSingleLead}
+      fetchOptions={fetchContacts}
+      fetchSingleItem={fetchSingleContact}
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
       getOptionKey={(option) => option._id}
@@ -79,10 +79,10 @@ const LeadAutocomplete = ({
       disabled={disabled}
       pageSize={20}
       returnFullObject={true}
-      noOptionsText="No leads found"
+      noOptionsText="No contacts found"
       className={className}
     />
   );
 };
 
-export default LeadAutocomplete;
+export default ContactAutocomplete;
