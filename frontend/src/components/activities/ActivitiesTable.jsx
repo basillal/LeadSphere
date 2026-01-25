@@ -8,11 +8,63 @@ const ActivitiesTable = ({
   onView,
   filters,
   onFilterChange,
+  onDateFilterChange,
+  dateRange,
+  onDateRangeChange,
   pagination,
   onPageChange,
   onLimitChange,
 }) => {
   const [selectedActivities, setSelectedActivities] = useState([]);
+
+  // Helper function to determine date context
+  const getDateContext = (activityDate, status) => {
+    if (!activityDate) return "none";
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const actDate = new Date(activityDate);
+    const actDateOnly = new Date(
+      actDate.getFullYear(),
+      actDate.getMonth(),
+      actDate.getDate(),
+    );
+
+    const diffTime = actDateOnly - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "today";
+    if (diffDays === 1) return "tomorrow";
+    if (diffDays < 0 && status === "Scheduled") return "overdue";
+    if (diffDays < 0) return "past";
+    return "future";
+  };
+
+  // Helper function to format relative date
+  const getRelativeDate = (activityDate) => {
+    if (!activityDate) return "-";
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const actDate = new Date(activityDate);
+    const actDateOnly = new Date(
+      actDate.getFullYear(),
+      actDate.getMonth(),
+      actDate.getDate(),
+    );
+
+    const diffTime = actDateOnly - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Tomorrow";
+    if (diffDays === -1) return "Yesterday";
+    if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`;
+    if (diffDays < -1 && diffDays >= -7)
+      return `${Math.abs(diffDays)} days ago`;
+
+    return formatDate(activityDate);
+  };
 
   const getActivityTypeIcon = (type) => {
     const icons = {
@@ -80,6 +132,55 @@ const ActivitiesTable = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      {/* Quick Date Filters */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: "All", value: "" },
+            { label: "Today", value: "today" },
+            { label: "Tomorrow", value: "tomorrow" },
+            { label: "This Week", value: "thisWeek" },
+            { label: "This Month", value: "thisMonth" },
+            { label: "Overdue", value: "overdue" },
+          ].map((filter) => (
+            <button
+              key={filter.value}
+              onClick={() => onDateFilterChange(filter.value)}
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                filters.dateFilter === filter.value
+                  ? "bg-black text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+        {/* Custom Date Range Picker */}
+        <div className="mt-3 flex items-center gap-2 text-sm">
+          <label htmlFor="startDate" className="text-gray-600">
+            From:
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            value={dateRange.startDate || ""}
+            onChange={(e) => onDateRangeChange("startDate", e.target.value)}
+            className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-transparent"
+          />
+          <label htmlFor="endDate" className="text-gray-600">
+            To:
+          </label>
+          <input
+            type="date"
+            id="endDate"
+            value={dateRange.endDate || ""}
+            onChange={(e) => onDateRangeChange("endDate", e.target.value)}
+            className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-transparent"
+          />
+        </div>
+      </div>
+
       {/* Header with Search and Filters */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4">
@@ -182,140 +283,164 @@ const ActivitiesTable = ({
                 </td>
               </tr>
             ) : (
-              activities.map((activity) => (
-                <tr
-                  key={activity._id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedActivities.includes(activity._id)}
-                      onChange={() => handleSelectActivity(activity._id)}
-                      className="rounded border-gray-300"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-2xl">
-                      {getActivityTypeIcon(activity.activityType)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">
-                      {activity.title}
-                    </div>
-                    {activity.description && (
-                      <div className="text-sm text-gray-500 truncate max-w-xs">
-                        {activity.description}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm">
+              activities.map((activity) => {
+                const dateContext = getDateContext(
+                  activity.activityDate,
+                  activity.status,
+                );
+                const borderClass =
+                  dateContext === "today"
+                    ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+                    : dateContext === "overdue"
+                      ? "border-l-4 border-l-red-500 bg-red-50/30"
+                      : "";
+
+                return (
+                  <tr
+                    key={activity._id}
+                    className={`hover:bg-gray-50 transition-colors ${borderClass}`}
+                  >
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedActivities.includes(activity._id)}
+                        onChange={() => handleSelectActivity(activity._id)}
+                        className="rounded border-gray-300"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-2xl">
+                        {getActivityTypeIcon(activity.activityType)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">
-                        {activity.relatedName}
+                        {activity.title}
                       </div>
-                      <div className="text-gray-500 text-xs">
-                        {activity.relatedTo}
+                      {activity.description && (
+                        <div className="text-sm text-gray-500 truncate max-w-xs">
+                          {activity.description}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="text-sm">
+                        <div className="font-medium text-gray-900">
+                          {activity.relatedName}
+                        </div>
+                        <div className="text-gray-500 text-xs">
+                          {activity.relatedTo}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm text-gray-900">
-                      {formatDate(activity.activityDate)}
-                    </div>
-                    {activity.startTime && (
-                      <div className="text-xs text-gray-500">
-                        {activity.startTime}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="text-sm">
+                        <div
+                          className={`font-medium ${dateContext === "today" ? "text-blue-600 font-bold" : dateContext === "overdue" ? "text-red-600 font-bold" : "text-gray-900"}`}
+                        >
+                          {getRelativeDate(activity.activityDate)}
+                        </div>
+                        {activity.startTime && (
+                          <div className="text-xs text-gray-500">
+                            {activity.startTime}
+                          </div>
+                        )}
+                        {dateContext === "overdue" && (
+                          <div className="mt-1">
+                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-semibold">
+                              Overdue
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
-                    >
-                      {activity.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
-                    >
-                      {activity.priority}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => onView(activity)}
-                        className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                        title="View"
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => onEdit(activity)}
-                        className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
-                        title="Edit"
+                        {activity.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                        {activity.priority}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => onView(activity)}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          title="View"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => onDelete(activity._id)}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                        title="Delete"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => onEdit(activity)}
+                          className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+                          title="Edit"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => onDelete(activity._id)}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Delete"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -328,68 +453,97 @@ const ActivitiesTable = ({
             No activities found. Create your first activity!
           </div>
         ) : (
-          activities.map((activity) => (
-            <div key={activity._id} className="p-4 hover:bg-gray-50">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">
-                    {getActivityTypeIcon(activity.activityType)}
-                  </span>
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      {activity.title}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {activity.relatedName} • {activity.relatedTo}
+          activities.map((activity) => {
+            const dateContext = getDateContext(
+              activity.activityDate,
+              activity.status,
+            );
+            const borderClass =
+              dateContext === "today"
+                ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+                : dateContext === "overdue"
+                  ? "border-l-4 border-l-red-500 bg-red-50/30"
+                  : "";
+
+            return (
+              <div
+                key={activity._id}
+                className={`p-4 hover:bg-gray-50 ${borderClass}`}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">
+                      {getActivityTypeIcon(activity.activityType)}
+                    </span>
+                    <div>
+                      <div className="font-semibold text-gray-900">
+                        {activity.title}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {activity.relatedName} • {activity.relatedTo}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {activity.description && (
-                <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                  {activity.description}
-                </p>
-              )}
+                {activity.description && (
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {activity.description}
+                  </p>
+                )}
 
-              <div className="flex flex-wrap gap-2 mb-3">
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
-                >
-                  {activity.status}
-                </span>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
-                >
-                  {activity.priority}
-                </span>
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                  {formatDate(activity.activityDate)}
-                </span>
-              </div>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
+                  >
+                    {activity.status}
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
+                  >
+                    {activity.priority}
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      dateContext === "today"
+                        ? "bg-blue-100 text-blue-800"
+                        : dateContext === "overdue"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {getRelativeDate(activity.activityDate)}
+                  </span>
+                  {dateContext === "overdue" && (
+                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">
+                      Overdue
+                    </span>
+                  )}
+                </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => onView(activity)}
-                  className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => onEdit(activity)}
-                  className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(activity._id)}
-                  className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                >
-                  Delete
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onView(activity)}
+                    className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => onEdit(activity)}
+                    className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete(activity._id)}
+                    className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

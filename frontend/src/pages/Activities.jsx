@@ -334,6 +334,8 @@ const Activities = () => {
     emails: 0,
     recentActivities: 0,
     pendingFollowUps: 0,
+    todaysActivities: 0,
+    overdueActivities: 0,
   });
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
@@ -348,6 +350,11 @@ const Activities = () => {
     search: "",
     activityType: "",
     status: "",
+    dateFilter: "",
+  });
+  const [dateRange, setDateRange] = useState({
+    startDate: "",
+    endDate: "",
   });
 
   const showSnackbar = (message, severity = "success") => {
@@ -376,6 +383,19 @@ const Activities = () => {
 
       if (filters.status) params.status = filters.status;
 
+      // Date filter
+      if (filters.dateFilter) {
+        params.dateFilter = filters.dateFilter;
+        if (
+          filters.dateFilter === "custom" &&
+          dateRange.startDate &&
+          dateRange.endDate
+        ) {
+          params.startDate = dateRange.startDate;
+          params.endDate = dateRange.endDate;
+        }
+      }
+
       const response = await activityService.getActivities(params);
       setActivities(response.data);
       setPagination((prev) => ({
@@ -389,7 +409,7 @@ const Activities = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters, activeTab, pagination.page, pagination.limit]);
+  }, [filters, activeTab, pagination.page, pagination.limit, dateRange]);
 
   const fetchStats = async () => {
     try {
@@ -469,6 +489,23 @@ const Activities = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to page 1 on filter change
   };
 
+  const handleDateFilterChange = (dateFilter) => {
+    setFilters((prev) => ({ ...prev, dateFilter }));
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    // Reset date range if not custom
+    if (dateFilter !== "custom") {
+      setDateRange({ startDate: "", endDate: "" });
+    }
+  };
+
+  const handleDateRangeChange = (key, value) => {
+    setDateRange((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleStatClick = (filter) => {
+    handleDateFilterChange(filter);
+  };
+
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, page: newPage }));
   };
@@ -532,7 +569,7 @@ const Activities = () => {
           {view === "list" && (
             <>
               {/* Stats */}
-              <ActivityStats stats={stats} />
+              <ActivityStats stats={stats} onStatClick={handleStatClick} />
 
               {/* Tabs */}
               <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
@@ -563,6 +600,9 @@ const Activities = () => {
                   onView={handleView}
                   filters={filters}
                   onFilterChange={handleFilterChange}
+                  onDateFilterChange={handleDateFilterChange}
+                  dateRange={dateRange}
+                  onDateRangeChange={handleDateRangeChange}
                   pagination={pagination}
                   onPageChange={handlePageChange}
                   onLimitChange={handleLimitChange}

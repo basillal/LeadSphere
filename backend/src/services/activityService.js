@@ -3,7 +3,7 @@ const Activity = require('../models/Activity');
 class ActivityService {
     // Get all activities with filters and pagination
     async getActivities(filters = {}, pagination = {}) {
-        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', sortBy = 'activityDate', sortOrder = 'desc' } = { ...filters, ...pagination };
+        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', dateFilter = '', startDate = '', endDate = '', sortBy = 'activityDate', sortOrder = 'desc' } = { ...filters, ...pagination };
 
         const query = { isDeleted: false };
 
@@ -30,6 +30,78 @@ class ActivityService {
         // Related to filter (Contact or Lead)
         if (relatedTo) {
             query.relatedTo = relatedTo;
+        }
+
+        // Date filter
+        if (dateFilter) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            switch (dateFilter) {
+                case 'today':
+                    const endOfToday = new Date(today);
+                    endOfToday.setDate(endOfToday.getDate() + 1);
+                    query.activityDate = {
+                        $gte: today,
+                        $lt: endOfToday
+                    };
+                    break;
+
+                case 'tomorrow':
+                    const endOfTomorrow = new Date(tomorrow);
+                    endOfTomorrow.setDate(endOfTomorrow.getDate() + 1);
+                    query.activityDate = {
+                        $gte: tomorrow,
+                        $lt: endOfTomorrow
+                    };
+                    break;
+
+                case 'thisWeek':
+                    const startOfWeek = new Date(today);
+                    const dayOfWeek = startOfWeek.getDay();
+                    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Monday as start of week
+                    startOfWeek.setDate(startOfWeek.getDate() + diff);
+                    
+                    const endOfWeek = new Date(startOfWeek);
+                    endOfWeek.setDate(endOfWeek.getDate() + 7);
+                    
+                    query.activityDate = {
+                        $gte: startOfWeek,
+                        $lt: endOfWeek
+                    };
+                    break;
+
+                case 'thisMonth':
+                    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                    
+                    query.activityDate = {
+                        $gte: startOfMonth,
+                        $lt: endOfMonth
+                    };
+                    break;
+
+                case 'overdue':
+                    // Scheduled activities with dates in the past
+                    query.activityDate = { $lt: today };
+                    query.status = 'Scheduled';
+                    break;
+
+                case 'custom':
+                    if (startDate && endDate) {
+                        const start = new Date(startDate);
+                        const end = new Date(endDate);
+                        end.setDate(end.getDate() + 1); // Include end date
+                        
+                        query.activityDate = {
+                            $gte: start,
+                            $lt: end
+                        };
+                    }
+                    break;
+            }
         }
 
         const skip = (page - 1) * limit;
@@ -154,6 +226,27 @@ class ActivityService {
             followUpDate: { $gte: new Date() }
         });
 
+        // Get today's activities
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfToday = new Date(today);
+        endOfToday.setDate(endOfToday.getDate() + 1);
+        
+        const todaysActivities = await Activity.countDocuments({
+            isDeleted: false,
+            activityDate: {
+                $gte: today,
+                $lt: endOfToday
+            }
+        });
+
+        // Get overdue activities (scheduled activities with past dates)
+        const overdueActivities = await Activity.countDocuments({
+            isDeleted: false,
+            status: 'Scheduled',
+            activityDate: { $lt: today }
+        });
+
         return {
             total,
             callLogs,
@@ -161,7 +254,9 @@ class ActivityService {
             notes,
             emails,
             recentActivities,
-            pendingFollowUps
+            pendingFollowUps,
+            todaysActivities,
+            overdueActivities
         };
     }
 }
