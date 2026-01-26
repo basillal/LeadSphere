@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "seed": "node src/seeders/seedAuth.js",
+    "clean-data": "node src/seeders/cleanData.js"
   },
   "keywords": [],
   "author": "",
