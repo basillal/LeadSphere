@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import referrerService from "../services/referrerService";
-import ReferrerStats from "../components/referrers/ReferrerStats";
-import ReferrersTable from "../components/referrers/ReferrersTable";
-import ReferrerForm from "../components/referrers/ReferrerForm";
-import Toast from "../components/common/utils/Toast";
+import referrerService from "../../services/referrerService";
+import ReferrerStats from "./ReferrerStats";
+import ReferrersTable from "./ReferrersTable";
+import ReferrerForm from "./ReferrerForm";
+import Toast from "../../components/common/utils/Toast";
 
 // Preview Modal Component
 const PreviewModal = ({ referrer, stats, onClose }) => {

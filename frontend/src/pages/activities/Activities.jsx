@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import activityService from "../services/activityService";
-import ActivityStats from "../components/activities/ActivityStats";
-import ActivitiesTable from "../components/activities/ActivitiesTable";
-import ActivityForm from "../components/activities/ActivityForm";
-import Toast from "../components/common/utils/Toast";
+import activityService from "../../services/activityService";
+import ActivityStats from "./ActivityStats";
+import ActivitiesTable from "./ActivitiesTable";
+import ActivityForm from "./ActivityForm";
+import Toast from "../../components/common/utils/Toast";
 
 // Preview Modal Component
 const PreviewModal = ({ activity, onClose }) => {

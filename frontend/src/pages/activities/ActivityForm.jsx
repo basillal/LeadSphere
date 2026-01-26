@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Label from "../common/fields/Label";
-import Input from "../common/fields/Input";
-import Select from "../common/fields/Select";
-import TextArea from "../common/fields/TextArea";
-import ContactAutocomplete from "../common/fields/ContactAutocomplete";
-import LeadAutocomplete from "../common/fields/LeadAutocomplete";
-import SectionHeader from "../common/SectionHeader";
+import Label from "../../components/common/fields/Label";
+import Input from "../../components/common/fields/Input";
+import Select from "../../components/common/fields/Select";
+import TextArea from "../../components/common/fields/TextArea";
+import ContactAutocomplete from "../../components/common/fields/ContactAutocomplete";
+import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
+import SectionHeader from "../../components/common/SectionHeader";
 
 const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState(() => {

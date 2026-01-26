@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Label from "../common/fields/Label";
-import Input from "../common/fields/Input";
-import TextArea from "../common/fields/TextArea";
-import SectionHeader from "../common/SectionHeader";
+import Label from "../../components/common/fields/Label";
+import Input from "../../components/common/fields/Input";
+import TextArea from "../../components/common/fields/TextArea";
+import SectionHeader from "../../components/common/SectionHeader";
 
 const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState(() => {
