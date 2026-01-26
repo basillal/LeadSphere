@@ -65,7 +65,12 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         ...initialState,
         ...initialData,
         nextFollowUpDate: initialData.nextFollowUpDate
-          ? initialData.nextFollowUpDate.split("T")[0]
+          ? new Date(
+              new Date(initialData.nextFollowUpDate).getTime() -
+                new Date().getTimezoneOffset() * 60000,
+            )
+              .toISOString()
+              .slice(0, 16)
           : "",
         expectedClosureDate: initialData.expectedClosureDate
           ? initialData.expectedClosureDate.split("T")[0]

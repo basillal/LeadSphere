@@ -50,7 +50,7 @@ const refreshToken = async () => {
 // Setup Axios Interceptors
 export const setupAxiosInterceptors = (navigate) => {
     // Request Interceptor: Attach Token
-    api.interceptors.request.use(
+    const requestInterceptor = api.interceptors.request.use(
         (config) => {
             const token = getToken();
             if (token) {
@@ -62,7 +62,7 @@ export const setupAxiosInterceptors = (navigate) => {
     );
 
     // Response Interceptor: Handle 401
-    api.interceptors.response.use(
+    const responseInterceptor = api.interceptors.response.use(
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
@@ -85,6 +85,8 @@ export const setupAxiosInterceptors = (navigate) => {
             return Promise.reject(error);
         }
     );
+
+    return { requestInterceptor, responseInterceptor };
 };
 
 const authService = {

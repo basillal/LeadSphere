@@ -7,7 +7,7 @@ import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const FollowUps = () => {
-  const [activeTab, setActiveTab] = useState("today");
+  const [activeTab, setActiveTab] = useState("all");
   const [followUps, setFollowUps] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -121,11 +121,11 @@ const FollowUps = () => {
   };
 
   const tabs = [
+    { id: "all", label: `All Records (${stats.total})` },
     { id: "today", label: "Today's Actions" },
     { id: "upcoming", label: "Upcoming" },
-    { id: "missed", label: "Missed/Overdue" },
-    { id: "completed", label: "Completed" },
-    { id: "all", label: "All Records" },
+    { id: "missed", label: `Missed/Overdue (${stats.missed})` },
+    { id: "completed", label: `Completed (${stats.completed})` },
   ];
 
   const handlePageChange = (newPage) => {

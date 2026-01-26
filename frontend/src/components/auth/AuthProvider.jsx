@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService, { setupAxiosInterceptors } from "./authService";
 import { getToken } from "./tokenUtils";
+import api from "../../services/api";
 
 const AuthContext = createContext(null);
 
@@ -12,7 +13,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Setup interceptors with navigation capability
-    setupAxiosInterceptors(navigate);
+    const { requestInterceptor, responseInterceptor } =
+      setupAxiosInterceptors(navigate);
 
     // Check for existing token and load user
     const initAuth = async () => {
@@ -30,6 +32,21 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
+
+    return () => {
+      if (
+        requestInterceptor !== undefined &&
+        api.interceptors.request.handlers[requestInterceptor]
+      ) {
+        api.interceptors.request.eject(requestInterceptor);
+      }
+      if (
+        responseInterceptor !== undefined &&
+        api.interceptors.response.handlers[responseInterceptor]
+      ) {
+        api.interceptors.response.eject(responseInterceptor);
+      }
+    };
   }, [navigate]);
 
   const login = async (email, password) => {

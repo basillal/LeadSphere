@@ -21,7 +21,7 @@ export const LoadingProvider = ({ children }) => {
         return config;
       },
       (error) => {
-        if (!error.config?.skipLoader) {
+        if (!error?.config?.skipLoader) {
           setRequestCount((prev) => Math.max(0, prev - 1));
         }
         // If count hits 0, hide loader
@@ -40,7 +40,7 @@ export const LoadingProvider = ({ children }) => {
         return response;
       },
       (error) => {
-        if (!error.config?.skipLoader) {
+        if (!error?.config?.skipLoader) {
           setRequestCount((prev) => Math.max(0, prev - 1));
         }
         return Promise.reject(error);

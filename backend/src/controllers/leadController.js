@@ -1,4 +1,5 @@
 const Lead = require('../models/Lead');
+const FollowUp = require('../models/FollowUp');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
 
@@ -100,6 +101,24 @@ const createLead = asyncHandler(async (req, res) => {
 
     const lead = await Lead.create(req.body);
 
+    // Automatically create a Follow-up if date is provided
+    if (req.body.nextFollowUpDate) {
+        try {
+            await FollowUp.create({
+                lead: lead._id,
+                scheduledAt: req.body.nextFollowUpDate,
+                type: req.body.followUpMode || 'Call',
+                notes: req.body.followUpRemarks || 'Scheduled during lead creation',
+                status: 'Pending'
+            });
+            logger.info(`Auto-created follow-up for new lead: ${lead.name}`);
+        } catch (error) {
+            logger.error(`Failed to auto-create follow-up for lead ${lead._id}: ${error.message}`);
+            // Log stack trace for deeper debugging if needed
+            console.error(error);
+        }
+    }
+
     logger.info(`New lead created: ${lead.name}`);
 
     res.status(201).json({
@@ -119,10 +138,39 @@ const updateLead = asyncHandler(async (req, res) => {
         throw new Error('Lead not found');
     }
 
+    const oldFollowUpDate = lead.nextFollowUpDate ? new Date(lead.nextFollowUpDate).toISOString() : null;
+
     lead = await Lead.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
+
+    // Check if follow-up date changed or was added
+    const newFollowUpDate = req.body.nextFollowUpDate;
+    const storedFollowUpDate = lead.nextFollowUpDate;
+
+    // Helper to check if dates are effectively different
+    const isDateDifferent = (d1, d2) => {
+        if (!d1 && !d2) return false;
+        if (!d1 || !d2) return true;
+        return new Date(d1).getTime() !== new Date(d2).getTime();
+    };
+
+    if (newFollowUpDate && isDateDifferent(newFollowUpDate, oldFollowUpDate)) {
+         try {
+            await FollowUp.create({
+                lead: lead._id,
+                scheduledAt: req.body.nextFollowUpDate,
+                type: req.body.followUpMode || 'Call', 
+                notes: req.body.followUpRemarks || 'Scheduled during lead update',
+                status: 'Pending'
+            });
+            logger.info(`Auto-created follow-up for updated lead: ${lead.name}`);
+        } catch (error) {
+            logger.error(`Failed to auto-create follow-up for updated lead ${lead._id}: ${error.message}`);
+            console.error(error);
+        }
+    }
 
     res.status(200).json({
         success: true,
