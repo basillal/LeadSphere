@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 // Connect to Database
@@ -12,8 +14,12 @@ connectDB();
 
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Vite default port, adjust if needed for cookies to work
+    credentials: true // Important for cookies
+}));
 app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser()); // Parse cookies
 
 
 // Routes
@@ -25,7 +31,12 @@ const followUpRoutes = require('./routes/followUpRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 const referrerRoutes = require('./routes/referrerRoutes');
+const roleRoutes = require('./routes/roleRoutes');
+const permissionRoutes = require('./routes/permissionRoutes');
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/permissions', permissionRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
