@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./components/auth/AuthProvider";
+import { LoadingProvider } from "./context/LoadingProvider";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Login from "./pages/auth/Login";
 import MainLayout from "./layouts/MainLayout";
@@ -22,45 +23,47 @@ import "./styles/App.css";
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+      <LoadingProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="leads" element={<Leads />} />
-              <Route path="follow-ups" element={<FollowUps />} />
-              <Route path="contacts" element={<Contacts />} />
-              <Route path="referrers" element={<Referrers />} />
-              <Route path="activities" element={<Activities />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="leads" element={<Leads />} />
+                <Route path="follow-ups" element={<FollowUps />} />
+                <Route path="contacts" element={<Contacts />} />
+                <Route path="referrers" element={<Referrers />} />
+                <Route path="activities" element={<Activities />} />
 
-              <Route
-                path="admin/roles"
-                element={
-                  <RoleGuard role="Super Admin">
-                    <Roles />
-                  </RoleGuard>
-                }
-              />
-              <Route
-                path="admin/users"
-                element={
-                  <RoleGuard role="Super Admin">
-                    <Users />
-                  </RoleGuard>
-                }
-              />
+                <Route
+                  path="admin/roles"
+                  element={
+                    <RoleGuard role="Super Admin">
+                      <Roles />
+                    </RoleGuard>
+                  }
+                />
+                <Route
+                  path="admin/users"
+                  element={
+                    <RoleGuard role="Super Admin">
+                      <Users />
+                    </RoleGuard>
+                  }
+                />
 
-              <Route path="sources" element={<SourceManagement />} />
-              <Route path="status-tags" element={<StatusTags />} />
-              <Route path="search" element={<Search />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="settings" element={<Settings />} />
+                <Route path="sources" element={<SourceManagement />} />
+                <Route path="status-tags" element={<StatusTags />} />
+                <Route path="search" element={<Search />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </AuthProvider>
+          </Routes>
+        </AuthProvider>
+      </LoadingProvider>
     </BrowserRouter>
   );
 }

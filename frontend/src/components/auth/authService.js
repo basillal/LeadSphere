@@ -1,11 +1,11 @@
-import axios from 'axios';
+import api from '../../services/api';
 import { getToken, setToken, removeToken } from './tokenUtils';
 
 const API_URL = '/api/auth';
 
 // Login User
 const login = async (email, password) => {
-    const response = await axios.post(`${API_URL}/login`, { email, password });
+    const response = await api.post(`${API_URL}/login`, { email, password });
     if (response.data.accessToken) {
         setToken(response.data.accessToken);
     }
@@ -15,7 +15,7 @@ const login = async (email, password) => {
 // Logout User
 const logout = async () => {
     try {
-        await axios.post(`${API_URL}/logout`);
+        await api.post(`${API_URL}/logout`);
     } catch (error) {
         console.error('Logout failed', error);
     }
@@ -25,14 +25,18 @@ const logout = async () => {
 
 // Get Current User (Me)
 const getMe = async () => {
-    const response = await axios.get(`${API_URL}/me`);
+    const response = await api.get(`${API_URL}/me`);
     return response.data;
 };
 
 // Refresh Token
 const refreshToken = async () => {
     try {
-        const response = await axios.post(`${API_URL}/refresh`);
+        const response = await api.post(`${API_URL}/refresh`, {}, { skipLoader: true }); 
+        // Note: skipLoader optional if we don't want loader during background refresh
+        // But for now let's keep it visible so user knows if something is happening, 
+        // OR add skipLoader support in api.js interceptor if we want.
+        // My LoadingProvider supports config.skipLoader.
         if (response.data.accessToken) {
             setToken(response.data.accessToken);
             return response.data.accessToken;
@@ -46,7 +50,7 @@ const refreshToken = async () => {
 // Setup Axios Interceptors
 export const setupAxiosInterceptors = (navigate) => {
     // Request Interceptor: Attach Token
-    axios.interceptors.request.use(
+    api.interceptors.request.use(
         (config) => {
             const token = getToken();
             if (token) {
@@ -58,7 +62,7 @@ export const setupAxiosInterceptors = (navigate) => {
     );
 
     // Response Interceptor: Handle 401
-    axios.interceptors.response.use(
+    api.interceptors.response.use(
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
@@ -69,8 +73,9 @@ export const setupAxiosInterceptors = (navigate) => {
 
                 try {
                     const newToken = await refreshToken();
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-                    return axios(originalRequest);
+                    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+                    originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                    return api(originalRequest);
                 } catch (refreshError) {
                     removeToken();
                     if (navigate) navigate('/login');
