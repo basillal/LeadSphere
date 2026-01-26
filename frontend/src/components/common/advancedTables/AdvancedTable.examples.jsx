@@ -4,7 +4,7 @@
  * This file demonstrates how to use the AdvancedTable component
  */
 
-import AdvancedTable from "../components/common/AdvancedTable";
+import AdvancedTable from "./AdvancedTable";
 
 // Example 1: Basic Table
 const BasicExample = () => {

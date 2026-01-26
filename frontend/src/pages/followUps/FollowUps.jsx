@@ -4,7 +4,7 @@ import followUpService from "../../services/followUpService";
 import FollowUpList from "./FollowUpList";
 import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
-import SectionHeader from "../../components/common/SectionHeader";
+import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const FollowUps = () => {
   const [activeTab, setActiveTab] = useState("today");

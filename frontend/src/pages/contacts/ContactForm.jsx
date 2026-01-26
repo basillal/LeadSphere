@@ -4,7 +4,7 @@ import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
 import TextArea from "../../components/common/fields/TextArea";
 import ReferrerAutocomplete from "../../components/common/fields/ReferrerAutocomplete";
-import SectionHeader from "../../components/common/SectionHeader";
+import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const ContactForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState(() => {

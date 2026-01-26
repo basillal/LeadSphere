@@ -5,7 +5,7 @@ import Select from "../../components/common/fields/Select";
 import TextArea from "../../components/common/fields/TextArea";
 import ContactAutocomplete from "../../components/common/fields/ContactAutocomplete";
 import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
-import SectionHeader from "../../components/common/SectionHeader";
+import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState(() => {
