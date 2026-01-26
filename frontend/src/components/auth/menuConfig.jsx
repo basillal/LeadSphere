@@ -48,22 +48,29 @@ export const menuConfig = [
     permission: "ACTIVITY_READ",
   },
   {
+    label: "Team",
+    path: "/admin/users",
+    icon: <PeopleIcon />,
+    permission: "USER_MANAGE",
+  },
+  {
     label: "Admin",
     role: "Super Admin", // Only Super Admin
     icon: <SettingsIcon />,
     children: [
+      {
+        label: "Companies",
+        path: "/admin/companies",
+        icon: <DashboardIcon />, // Reusing Dashboard icon or similar
+        // permission: "COMPANY_MANAGE", // Or implicit super admin check
+      },
       {
         label: "Roles",
         path: "/admin/roles",
         icon: <SettingsIcon />,
         permission: "ROLE_MANAGE",
       },
-      {
-        label: "Users",
-        path: "/admin/users",
-        icon: <PeopleIcon />,
-        permission: "USER_MANAGE",
-      },
+      /* Users moved to top level Team menu */
       {
         label: "Sources",
         path: "/sources",

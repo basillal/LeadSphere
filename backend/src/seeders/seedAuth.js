@@ -65,13 +65,49 @@ const seedAuth = async () => {
              console.log('Super Admin Role permissions updated.');
         }
 
+        // Company Admin Role
+        let companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
+        if (!companyAdminRole) {
+            // All standard resource permissions + USER_MANAGE
+            const companyAdminPerms = Object.values(permissionIds).filter(id => {
+                // Get permission object to check name?
+                // permissionIds is Map: "NAME" -> ObjectId
+                // We need to filter based on name key.
+                return true; // Wait, we need keys.
+            });
+            // Better way:
+            const companyAdminPermKeys = Object.keys(permissionIds).filter(key => 
+                !['ROLE_MANAGE', 'PERMISSION_MANAGE'].includes(key)
+            );
+            const companyAdminPermIds = companyAdminPermKeys.map(key => permissionIds[key]);
+
+            companyAdminRole = await Role.create({
+                roleName: 'Company Admin',
+                permissions: companyAdminPermIds,
+                isSystemRole: true,
+                description: 'Admin for a specific company'
+            });
+            console.log('Company Admin Role created.');
+        }
+
         // Basic User Role (Read only for Leads) - Example
         let userRole = await Role.findOne({ roleName: 'User' });
         if (!userRole) {
-            const userPerms = [permissionIds['LEAD_READ'], permissionIds['CONTACT_READ'], permissionIds['ACTIVITY_READ']];
+            const userPerms = [
+                permissionIds['LEAD_READ'], 
+                permissionIds['LEAD_CREATE'], // Allow create
+                permissionIds['LEAD_UPDATE'],
+                permissionIds['CONTACT_READ'], 
+                permissionIds['CONTACT_CREATE'],
+                permissionIds['ACTIVITY_READ'],
+                permissionIds['ACTIVITY_CREATE'],
+                permissionIds['FOLLOWUP_READ'],
+                permissionIds['FOLLOWUP_CREATE'],
+                // Add more as needed for basic functionality
+            ];
             userRole = await Role.create({
                 roleName: 'User',
-                permissions: userPerms.filter(id => id), // Filter undefined if any
+                permissions: userPerms.filter(id => id), 
                 isSystemRole: false,
                 description: 'Standard user'
             });

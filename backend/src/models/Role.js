@@ -14,6 +14,11 @@ const RoleSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  scope: {
+      type: String,
+      enum: ['global', 'company'],
+      default: 'company'
+  },
   isSystemRole: {
     type: Boolean,
     default: false // Identifying system roles like Super Admin that cannot be deleted

@@ -11,10 +11,12 @@ const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     // Check for user
-    const user = await User.findOne({ email }).populate({
-        path: 'role',
-        populate: { path: 'permissions' }
-    });
+    const user = await User.findOne({ email })
+        .populate({
+            path: 'role',
+            populate: { path: 'permissions' }
+        })
+        .populate('company');
 
     if (user && (await user.matchPassword(password))) {
         if (!user.isActive) {
@@ -38,6 +40,7 @@ const login = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            company: user.company,
             accessToken
         });
     } else {
@@ -70,7 +73,9 @@ const refresh = asyncHandler(async (req, res) => {
 
     try {
         const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'refreshSecret123');
-        const user = await User.findById(decoded.id).populate('role');
+        const user = await User.findById(decoded.id)
+            .populate('role')
+            .populate('company');
 
         if (!user) {
             res.status(401);
@@ -89,16 +94,19 @@ const refresh = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user.id).populate({
-        path: 'role',
-        populate: { path: 'permissions' }
-    });
+    const user = await User.findById(req.user.id)
+        .populate({
+            path: 'role',
+            populate: { path: 'permissions' }
+        })
+        .populate('company');
 
     res.json({
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        company: user.company
     });
 });
 

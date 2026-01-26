@@ -15,6 +15,7 @@ import StatusTags from "./pages/StatusTags";
 import Search from "./pages/Search";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Companies from "./pages/admin/Companies";
 import Roles from "./pages/admin/Roles";
 import Users from "./pages/admin/Users";
 import RoleGuard from "./components/auth/RoleGuard";
@@ -38,6 +39,14 @@ function App() {
                 <Route path="activities" element={<Activities />} />
 
                 <Route
+                  path="admin/companies"
+                  element={
+                    <RoleGuard role="Super Admin">
+                      <Companies />
+                    </RoleGuard>
+                  }
+                />
+                <Route
                   path="admin/roles"
                   element={
                     <RoleGuard role="Super Admin">
@@ -45,14 +54,7 @@ function App() {
                     </RoleGuard>
                   }
                 />
-                <Route
-                  path="admin/users"
-                  element={
-                    <RoleGuard role="Super Admin">
-                      <Users />
-                    </RoleGuard>
-                  }
-                />
+                <Route path="admin/users" element={<Users />} />
 
                 <Route path="sources" element={<SourceManagement />} />
                 <Route path="status-tags" element={<StatusTags />} />

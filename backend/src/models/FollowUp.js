@@ -33,6 +33,11 @@ const FollowUpSchema = new mongoose.Schema({
     },
     createdBy: {
         type: String // In future could be ObjectId ref 'User'
+    },
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
     }
 }, { timestamps: true });
 

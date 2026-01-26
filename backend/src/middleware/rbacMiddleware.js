@@ -16,7 +16,15 @@ const checkPermission = (requiredPermission) => {
 
         const userPermissions = req.user.role.permissions.map(p => p.permissionName);
         
-        if (userPermissions.includes(requiredPermission)) {
+        // Handle array of required permissions (OR logic)
+        let hasPermission = false;
+        if (Array.isArray(requiredPermission)) {
+            hasPermission = requiredPermission.some(perm => userPermissions.includes(perm));
+        } else {
+            hasPermission = userPermissions.includes(requiredPermission);
+        }
+
+        if (hasPermission) {
             next();
         } else {
             res.status(403);

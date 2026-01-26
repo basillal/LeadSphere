@@ -67,8 +67,9 @@ export const setupAxiosInterceptors = (navigate) => {
         async (error) => {
             const originalRequest = error.config;
 
-            // If 401 and not retried yet, and NOT the refresh endpoint itself
-            if (error.response && error.response.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/refresh')) {
+            // If 401 and not retried yet, and NOT the refresh endpoint itself AND NOT login endpoint
+            if (error.response && error.response.status === 401 && !originalRequest._retry && 
+                !originalRequest.url.includes('/refresh') && !originalRequest.url.includes('/login')) {
                 originalRequest._retry = true;
 
                 try {

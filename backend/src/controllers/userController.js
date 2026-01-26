@@ -7,13 +7,30 @@ const { successResponse } = require('../utils/responseHandler'); // Assuming thi
 // @route   GET /api/users
 // @access  Private (Admin)
 const getAllUsers = asyncHandler(async (req, res) => {
-    const users = await User.find().populate('role').select('-password');
-    // successResponse(res, 'Users retrieved successfully', users); 
-    // Keeping consistency with other controllers which return JSON directly often, 
-    // but preserving existing pattern if preferred. 
-    // Let's stick to standard JSON for now for easier frontend consumption unless successResponse is standard.
-    // The previous file used successResponse, so I'll try to stick to it OR just return JSON.
-    // To be safe and consistent with authController, I will return JSON.
+    // 1. Determine Scope
+    const query = {};
+    
+    // If tenant middleware is logically used or we manual check:
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const companyId = req.user.company?._id;
+
+    if (!isSuperAdmin) {
+        if (!companyId) {
+             res.status(403);
+             throw new Error('Not authorized'); // Should interact with middleware, but safe fallback
+        }
+        query.company = companyId;
+    } else {
+        // Super Admin can filter by company if provided
+        if (req.query.company) {
+            query.company = req.query.company;
+        }
+    }
+
+    const users = await User.find(query)
+        .populate('role')
+        .populate('company', 'name') // Helpful to see company name
+        .select('-password');
     res.json(users);
 });
 
@@ -34,12 +51,31 @@ const getUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Private (Admin)
 const createUser = asyncHandler(async (req, res) => {
-    const { name, email, password, roleId, isActive } = req.body;
+    const { name, email, password, roleId, isActive, company: companyInput } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
         res.status(400);
         throw new Error('User already exists');
+    }
+
+    // Determine Company
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    let targetCompany = isSuperAdmin ? companyInput : req.user.company?._id;
+
+    if (!isSuperAdmin && !targetCompany) {
+         res.status(400);
+         throw new Error('Company context missing for new user.');
+    }
+
+    // Role Security Check
+    // Prevent non-Super Admin from creating Super Admins
+    if (roleId) {
+        const targetRole = await Role.findById(roleId);
+        if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
+             res.status(403);
+             throw new Error('Not authorized to assign Super Admin role');
+        }
     }
 
     // Hash password is handled in Model pre-save
@@ -48,6 +84,7 @@ const createUser = asyncHandler(async (req, res) => {
         email,
         password,
         role: roleId,
+        company: targetCompany,
         isActive: isActive !== undefined ? isActive : true
     });
 
@@ -57,6 +94,7 @@ const createUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            company: user.company,
             isActive: user.isActive
         });
     } else {
@@ -71,28 +109,54 @@ const createUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
 
-    if (user) {
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
-        if (req.body.roleId) {
-            user.role = req.body.roleId;
-        }
-        if (req.body.isActive !== undefined) {
-             user.isActive = req.body.isActive;
-        }
-        if (req.body.password) {
-            user.password = req.body.password;
-        }
-
-        const updatedUser = await user.save();
-        
-        // Return without password
-        const userResponse = await User.findById(updatedUser._id).populate('role').select('-password');
-        res.json(userResponse);
-    } else {
+    if (!user) {
         res.status(404);
         throw new Error('User not found');
     }
+
+    // Access Check
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
+    // Allow if Super Admin OR (Same Company AND (Is Owner OR Is Self?))
+    // Usually only Admins update other users.
+    
+    if (!isSuperAdmin) {
+        // Must be in same company
+        if (user.company?.toString() !== req.user.company?._id.toString()) {
+             res.status(404); // Hide
+             throw new Error('User not found');
+        }
+        // Must be Owner (Company Admin) or possibly manage permission?
+        // Utilizing 'Company Admin' role check or Owner check.
+        // For simplicity, let's assume Owner/Company Admin.
+        // TODO: Granular permissions check "USER_MANAGE"
+    }
+
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    
+    if (req.body.roleId) {
+        // Prevent escalating to Super Admin
+        const targetRole = await Role.findById(req.body.roleId);
+        if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
+             res.status(403);
+             throw new Error('Not authorized to assign Super Admin role');
+        }
+        user.role = req.body.roleId;
+    }
+    
+    if (req.body.isActive !== undefined) {
+            user.isActive = req.body.isActive;
+    }
+    if (req.body.password) {
+        user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+    
+    // Return without password
+    const userResponse = await User.findById(updatedUser._id).populate('role').populate('company').select('-password');
+    res.json(userResponse);
 });
 
 // @desc    Delete user
@@ -101,21 +165,30 @@ const updateUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
 
-    if (user) {
-        // Prevent deleting Super Admin
-        // Check if role is Super Admin
-        const role = await Role.findById(user.role);
-        if (role && role.isSystemRole && role.roleName === 'Super Admin') {
-            res.status(400);
-            throw new Error('Cannot delete Super Admin user');
-        }
-
-        await user.deleteOne();
-        res.json({ message: 'User removed' });
-    } else {
+    if (!user) {
         res.status(404);
         throw new Error('User not found');
     }
+
+    // Access Check
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    if (!isSuperAdmin) {
+        if (user.company?.toString() !== req.user.company?._id.toString()) {
+             res.status(404);
+             throw new Error('User not found');
+        }
+    }
+
+    // Prevent deleting Super Admin
+    // Check if role is Super Admin
+    const role = await Role.findById(user.role);
+    if (role && role.isSystemRole && role.roleName === 'Super Admin') {
+        res.status(400);
+        throw new Error('Cannot delete Super Admin user');
+    }
+
+    await user.deleteOne();
+    res.json({ message: 'User removed' });
 });
 
 // @desc    Reset user password to email

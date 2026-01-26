@@ -13,7 +13,7 @@ const { checkPermission } = require('../middleware/rbacMiddleware');
 router.use(protect); // Protect all routes
 
 router.route('/')
-    .get(checkPermission('ROLE_MANAGE'), getRoles)
+    .get(checkPermission(['ROLE_MANAGE', 'USER_MANAGE']), getRoles)
     .post(checkPermission('ROLE_MANAGE'), createRole);
 
 router.route('/:id')

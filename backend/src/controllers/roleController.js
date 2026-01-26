@@ -6,7 +6,12 @@ const User = require('../models/User');
 // @route   GET /api/roles
 // @access  Private (Admin)
 const getRoles = asyncHandler(async (req, res) => {
-    const roles = await Role.find({}).populate('permissions');
+    // If we want to hide "Super Admin" from non-Super Admins:
+    const query = {};
+    if (req.user.role?.roleName !== 'Super Admin') {
+        query.roleName = { $ne: 'Super Admin' };
+    }
+    const roles = await Role.find(query).populate('permissions');
     res.json(roles);
 });
 

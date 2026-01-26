@@ -33,10 +33,13 @@ const activityRoutes = require('./routes/activityRoutes');
 const referrerRoutes = require('./routes/referrerRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
+const companyRoutes = require('./routes/companyRoutes');
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
+app.use('/api/companies', companyRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
