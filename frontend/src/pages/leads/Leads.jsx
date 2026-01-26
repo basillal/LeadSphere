@@ -3,8 +3,8 @@ import leadService from "../../services/leadService";
 import contactService from "../../services/contactService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
-import LeadStats from "../../components/leads/LeadStats";
-import ConversionDialog from "../../components/leads/ConversionDialog";
+import LeadStats from "./LeadStats";
+import ConversionDialog from "./ConversionDialog";
 import Toast from "../../components/common/utils/Toast";
 
 // Simple Modal for Preview (Tailwind based)

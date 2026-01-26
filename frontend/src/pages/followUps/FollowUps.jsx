@@ -1,10 +1,10 @@
-import BasicModal from "../components/common/modals/BasicModal";
+import BasicModal from "../../components/common/modals/BasicModal";
 import React, { useState, useEffect, useCallback } from "react";
-import followUpService from "../services/followUpService";
-import FollowUpList from "../components/followUps/FollowUpList";
-import FollowUpForm from "../components/followUps/FollowUpForm";
-import FollowUpStats from "../components/followUps/FollowUpStats";
-import SectionHeader from "../components/common/SectionHeader";
+import followUpService from "../../services/followUpService";
+import FollowUpList from "./FollowUpList";
+import FollowUpForm from "./FollowUpForm";
+import FollowUpStats from "./FollowUpStats";
+import SectionHeader from "../../components/common/SectionHeader";
 
 const FollowUps = () => {
   const [activeTab, setActiveTab] = useState("today");

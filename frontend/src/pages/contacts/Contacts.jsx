@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import contactService from "../services/contactService";
-import ContactStats from "../components/contacts/ContactStats";
-import ContactsTable from "../components/contacts/ContactsTable";
-import ContactForm from "../components/contacts/ContactForm";
-import Toast from "../components/common/utils/Toast";
+import contactService from "../../services/contactService";
+import ContactStats from "./ContactStats";
+import ContactsTable from "./ContactsTable";
+import ContactForm from "./ContactForm";
+import Toast from "../../components/common/utils/Toast";
 
 // Preview Modal Component
 const PreviewModal = ({ contact, onClose }) => {

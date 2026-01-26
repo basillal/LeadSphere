@@ -1,5 +1,5 @@
 import React from "react";
-import AdvancedTable from "../common/AdvancedTable";
+import AdvancedTable from "../../components/common/AdvancedTable";
 
 const FollowUpList = ({
   followUps,

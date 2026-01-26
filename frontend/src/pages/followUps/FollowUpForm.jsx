@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Input from "../common/fields/Input";
-import Select from "../common/fields/Select";
-import TextArea from "../common/fields/TextArea";
-import LeadAutocomplete from "../common/fields/LeadAutocomplete";
+import Input from "../../components/common/fields/Input";
+import Select from "../../components/common/fields/Select";
+import TextArea from "../../components/common/fields/TextArea";
+import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
 import leadService from "../../services/leadService";
 
 const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
