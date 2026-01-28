@@ -32,12 +32,19 @@ const deleteLead = async (id) => {
     return response.data;
 };
 
+// Get lead stats
+const getLeadStats = async () => {
+    const response = await api.get(`${API_URL}/stats`);
+    return response.data;
+};
+
 const leadService = {
     createLead,
     getLeads,
     getLead,
     updateLead,
-    deleteLead
+    deleteLead,
+    getLeadStats
 };
 
 export default leadService;

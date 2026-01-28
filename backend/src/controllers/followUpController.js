@@ -16,19 +16,11 @@ const getFollowUps = asyncHandler(async (req, res) => {
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
 
     if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
-        // Regular user can only see follow-ups assigned to them or created by them
-        // Assuming 'assignedTo' or 'createdBy' is populated with User ID. 
-        // Logic: specific user sees their own followups.
-        // If followUp has 'assignedTo', we use that. If not, maybe 'createdBy'.
-        // LeadSphere seems to rely on 'assignedTo' for tasks. 
-        // For now, let's assume filtering by assignedTo if it exists, roughly.
-        // Actually, safer to filter by "lead.assignedTo" if possible? 
-        // No, that's complex query. Let's use simple assignedTo/createdBy on the FollowUp model if available, 
-        // or just restrict to leads they can see.
-        // Step 46 shows FollowUp has assignedTo (String) and createdBy (String). 
-        // Ideally these should be ObjectIds. 
-        // Let's rely on `createdBy` matching `req.user._id` for now as a safe default for personal visibility.
-        query.createdBy = req.user._id;
+        // Regular user can only see follow-ups assigned to them OR created by them
+        query.$or = [
+            { assignedTo: req.user._id },
+            { createdBy: req.user._id }
+        ];
     }
 
     // Filter by status
@@ -37,7 +29,6 @@ const getFollowUps = asyncHandler(async (req, res) => {
     }
 
     // Filter by Date Range (today, upcoming, overdue)
-    // Example: ?range=today, ?range=upcoming, ?range=overdue
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
@@ -55,7 +46,9 @@ const getFollowUps = asyncHandler(async (req, res) => {
     // Include Lead details
     const followUps = await FollowUp.find(query)
         .populate('lead', 'name phone email companyName status')
-        .sort({ scheduledAt: 1 }); // Sort by nearest date first
+        .populate('assignedTo', 'name')
+        .populate('createdBy', 'name')
+        .sort({ scheduledAt: 1 });
 
     res.status(200).json({
         success: true,
@@ -152,6 +145,8 @@ const deleteFollowUp = asyncHandler(async (req, res) => {
 // @access  Private
 const getLeadFollowUps = asyncHandler(async (req, res) => {
     const followUps = await FollowUp.find({ lead: req.params.leadId })
+        .populate('assignedTo', 'name')
+        .populate('createdBy', 'name')
         .sort({ scheduledAt: -1 });
 
     res.status(200).json({

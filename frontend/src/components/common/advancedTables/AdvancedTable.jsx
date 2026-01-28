@@ -37,6 +37,7 @@ const AdvancedTable = ({
   selection = { enabled: false },
   emptyMessage = "No data found",
   getRowId = (row) => row._id,
+  loading = false,
 }) => {
   // State
   const [order, setOrder] = useState("asc");
@@ -327,7 +328,18 @@ const AdvancedTable = ({
         </div>
       ) : (
         /* Desktop View - Table */
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden relative min-h-[200px]">
+          {/* Loading Overlay */}
+          {loading && (
+            <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+              <div className="flex flex-col items-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-3"></div>
+                <p className="text-sm font-medium text-gray-600">
+                  Loading data...
+                </p>
+              </div>
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">

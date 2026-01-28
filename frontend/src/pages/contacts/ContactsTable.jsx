@@ -13,6 +13,7 @@ const ContactsTable = ({
   onPageChange,
   onLimitChange,
   handleStartConversion, // New Prop
+  loading = false,
 }) => {
   // Helper functions
   const getTagColor = (tag) => {
@@ -268,6 +269,7 @@ const ContactsTable = ({
       columns={columns}
       actions={actions}
       toolbar={toolbar}
+      loading={loading}
       pagination={{
         enabled: true,
         external: true,

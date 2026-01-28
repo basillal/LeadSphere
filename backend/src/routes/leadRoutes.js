@@ -7,7 +7,8 @@ const {
     getLead,
     createLead,
     updateLead,
-    deleteLead
+    deleteLead,
+    getLeadStats
 } = require('../controllers/leadController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -19,6 +20,9 @@ router.use(tenantFilter);
 router.route('/')
     .get(getLeads)
     .post(createLead);
+
+router.route('/stats')
+    .get(getLeadStats);
 
 router.route('/:id')
     .get(getLead)

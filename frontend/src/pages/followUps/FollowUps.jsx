@@ -25,6 +25,9 @@ const FollowUps = () => {
     missed: 0,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOutcomeModalOpen, setIsOutcomeModalOpen] = useState(false);
+  const [followUpToUpdate, setFollowUpToUpdate] = useState(null);
+  const [outcomeRemark, setOutcomeRemark] = useState("");
   const [currentFollowUp, setCurrentFollowUp] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -97,11 +100,36 @@ const FollowUps = () => {
   };
 
   const handleStatusChange = async (followUp, newStatus) => {
+    if (newStatus === "Completed") {
+      setFollowUpToUpdate(followUp);
+      setOutcomeRemark("");
+      setIsOutcomeModalOpen(true);
+      return;
+    }
+
     try {
       await followUpService.updateFollowUp(followUp._id, { status: newStatus });
       fetchFollowUps();
     } catch (error) {
       console.error("Error updating status:", error);
+    }
+  };
+
+  const handleOutcomeSubmit = async (e) => {
+    e.preventDefault();
+    if (!outcomeRemark.trim()) return;
+
+    try {
+      await followUpService.updateFollowUp(followUpToUpdate._id, {
+        status: "Completed",
+        outcome: outcomeRemark,
+      });
+      setIsOutcomeModalOpen(false);
+      setFollowUpToUpdate(null);
+      setOutcomeRemark("");
+      fetchFollowUps();
+    } catch (error) {
+      console.error("Error updating status with outcome:", error);
     }
   };
 
@@ -236,23 +264,18 @@ const FollowUps = () => {
         </select>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
-        <div className="pb-20">
-          <FollowUpList
-            followUps={filteredFollowUps}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
-            pagination={pagination}
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-          />
-        </div>
-      )}
+      <div className="pb-20">
+        <FollowUpList
+          followUps={filteredFollowUps}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          loading={loading}
+        />
+      </div>
 
       {/* Modal */}
       <BasicModal
@@ -265,6 +288,50 @@ const FollowUps = () => {
           onSubmit={handleFormSubmit}
           onCancel={() => setIsModalOpen(false)}
         />
+      </BasicModal>
+
+      {/* Outcome Prompt Modal */}
+      <BasicModal
+        isOpen={isOutcomeModalOpen}
+        onClose={() => setIsOutcomeModalOpen(false)}
+        title="Follow-up Outcome"
+      >
+        <form onSubmit={handleOutcomeSubmit} className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Please provide a remark/outcome for this follow-up with{" "}
+            <span className="font-semibold">
+              {followUpToUpdate?.lead?.name}
+            </span>
+            .
+          </p>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">
+              Outcome / Remarks <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black min-h-[100px]"
+              placeholder="What was the result of this interaction?"
+              value={outcomeRemark}
+              onChange={(e) => setOutcomeRemark(e.target.value)}
+            />
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => setIsOutcomeModalOpen(false)}
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800"
+            >
+              Complete Follow-up
+            </button>
+          </div>
+        </form>
       </BasicModal>
     </div>
   );

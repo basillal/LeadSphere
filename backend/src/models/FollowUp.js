@@ -29,10 +29,12 @@ const FollowUpSchema = new mongoose.Schema({
         trim: true
     },
     assignedTo: {
-        type: String // In future could be ObjectId ref 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     createdBy: {
-        type: String // In future could be ObjectId ref 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,

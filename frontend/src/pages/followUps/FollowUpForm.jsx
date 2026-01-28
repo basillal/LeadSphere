@@ -4,6 +4,8 @@ import Select from "../../components/common/fields/Select";
 import TextArea from "../../components/common/fields/TextArea";
 import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
 import leadService from "../../services/leadService";
+import userService from "../../services/userService";
+import { useAuth } from "../../components/auth/AuthProvider";
 
 const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +15,27 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
     notes: "",
     outcome: "",
     lead: lead?._id || "",
+    assignedTo: "",
   });
+  const [users, setUsers] = useState([]);
+  const { user: currentUser } = useAuth();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const resp = await userService.getUsers();
+        // The service already returns response.data (the array)
+        setUsers(Array.isArray(resp) ? resp : resp.data || []);
+      } catch (err) {
+        console.error("Error fetching users", err);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const isAdmin =
+    currentUser?.role?.roleName === "Super Admin" ||
+    currentUser?.role?.roleName === "Company Admin";
 
   useEffect(() => {
     if (initialData) {
@@ -103,7 +125,35 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
             value={formData.outcome}
             onChange={handleChange}
             rows={2}
+            required
           />
+        )}
+
+        {isAdmin && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Select
+              label="Assigned To"
+              name="assignedTo"
+              value={formData.assignedTo}
+              onChange={handleChange}
+              options={[
+                { value: "", label: "Select User" },
+                ...users
+                  .filter((u) => {
+                    if (currentUser?.role?.roleName === "Super Admin")
+                      return true;
+                    // For others, exclude the company owner (who is typically the admin themselves)
+                    // If currentUser.company is an object and owner exists
+                    const ownerId =
+                      currentUser?.company?.owner?._id ||
+                      currentUser?.company?.owner;
+                    return u._id !== ownerId;
+                  })
+                  .map((u) => ({ value: u._id, label: u.name })),
+              ]}
+              className="md:col-span-2"
+            />
+          </div>
         )}
 
         <div className="flex justify-end gap-3 mt-6">

@@ -63,6 +63,20 @@ const getLeads = asyncHandler(async (req, res) => {
         }
     }
 
+    // Auto-update 'New' leads to 'Pending' if created before today
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    await Lead.updateMany(
+        { 
+            ...req.companyFilter,
+            status: 'New', 
+            createdAt: { $lt: startOfToday },
+            isDeleted: false 
+        },
+        { $set: { status: 'Pending' } }
+    );
+
     const total = await Lead.countDocuments(query);
     const leads = await Lead.find(query)
         .populate('assignedTo', 'name email')
@@ -138,7 +152,8 @@ const createLead = asyncHandler(async (req, res) => {
         req.body.company = req.user.company._id;
     }
     
-    // Auto-assign to Creator if not specified
+    // Auto-assign to Creator
+    req.body.createdBy = req.user._id;
     if (!req.body.assignedTo) {
         req.body.assignedTo = req.user._id;
     }
@@ -163,10 +178,13 @@ const createLead = asyncHandler(async (req, res) => {
         try {
             await FollowUp.create({
                 lead: lead._id,
+                company: lead.company,
                 scheduledAt: req.body.nextFollowUpDate,
                 type: req.body.followUpMode || 'Call',
                 notes: req.body.followUpRemarks || 'Scheduled during lead creation',
-                status: 'Pending'
+                status: 'Pending',
+                createdBy: req.user._id,
+                assignedTo: lead.assignedTo || req.user._id
             });
             logger.info(`Auto-created follow-up for new lead: ${lead.name}`);
         } catch (error) {
@@ -244,7 +262,9 @@ const updateLead = asyncHandler(async (req, res) => {
                 scheduledAt: req.body.nextFollowUpDate,
                 type: req.body.followUpMode || 'Call', 
                 notes: req.body.followUpRemarks || 'Scheduled during lead update',
-                status: 'Pending'
+                status: 'Pending',
+                createdBy: req.user._id,
+                assignedTo: lead.assignedTo || req.user._id
             });
             logger.info(`Auto-created follow-up for updated lead: ${lead.name}`);
         } catch (error) {
@@ -304,10 +324,50 @@ const deleteLead = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Get lead statistics
+// @route   GET /api/leads/stats
+// @access  Private
+const getLeadStats = asyncHandler(async (req, res) => {
+    const query = { ...req.companyFilter, isDeleted: false };
+    
+    // User isolation
+    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+        query.assignedTo = req.user._id;
+    }
+
+    const total = await Lead.countDocuments(query);
+    const newLeads = await Lead.countDocuments({ ...query, status: 'New' });
+    const pending = await Lead.countDocuments({ ...query, status: 'Pending' });
+    const inProgress = await Lead.countDocuments({ ...query, status: 'In Progress' });
+    const onHold = await Lead.countDocuments({ ...query, status: 'On Hold' });
+    const completed = await Lead.countDocuments({ ...query, status: 'Completed' });
+    const lost = await Lead.countDocuments({ ...query, status: 'Lost' });
+    const converted = await Lead.countDocuments({ ...query, isConverted: true });
+
+    res.status(200).json({
+        success: true,
+        data: {
+            total,
+            new: newLeads,
+            pending,
+            inProgress,
+            onHold,
+            completed,
+            lost,
+            converted
+        }
+    });
+});
+
 module.exports = {
     getLeads,
     getLead,
     createLead,
     updateLead,
-    deleteLead
+    deleteLead,
+    getLeadStats
 };

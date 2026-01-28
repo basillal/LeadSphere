@@ -397,49 +397,38 @@ const Referrers = () => {
         )}
       </div>
 
-      {loading && view === "list" ? (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
+      {view === "list" ? (
         <>
-          {view === "list" && (
-            <>
-              {/* Stats */}
-              <ReferrerStats stats={stats} />
+          {/* Stats */}
+          <ReferrerStats stats={stats} />
 
-              {/* Referrers Table */}
-              <div className="pb-20">
-                <ReferrersTable
-                  referrers={referrers}
-                  onCreate={handleCreate}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onView={handleView}
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                  pagination={pagination}
-                  onPageChange={handlePageChange}
-                  onLimitChange={handleLimitChange}
-                  referrerStats={referrerStats}
-                />
-              </div>
-            </>
-          )}
-
-          {(view === "create" || view === "edit") && (
-            <div className="max-w-7xl mx-auto">
-              <ReferrerForm
-                key={currentReferrer ? currentReferrer._id : "new"}
-                initialData={currentReferrer}
-                onSubmit={
-                  view === "create" ? handleFormSubmit : handleFormSubmit
-                }
-                onCancel={handleCancelForm}
-              />
-            </div>
-          )}
+          {/* Referrers Table */}
+          <div className="pb-20">
+            <ReferrersTable
+              referrers={referrers}
+              onCreate={handleCreate}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleView}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              referrerStats={referrerStats}
+              loading={loading}
+            />
+          </div>
         </>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          <ReferrerForm
+            key={currentReferrer ? currentReferrer._id : "new"}
+            initialData={currentReferrer}
+            onSubmit={handleFormSubmit}
+            onCancel={handleCancelForm}
+          />
+        </div>
       )}
 
       {/* Preview Modal */}

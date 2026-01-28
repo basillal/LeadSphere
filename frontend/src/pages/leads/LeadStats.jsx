@@ -16,9 +16,9 @@ const LeadStats = ({ stats }) => {
   );
 
   return (
-    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard
-        title="Total Leads"
+        title="Total"
         value={stats.total || 0}
         iconBg="bg-blue-100"
         iconColor="text-blue-600"
@@ -33,7 +33,29 @@ const LeadStats = ({ stats }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+            />
+            <circle cx="9" cy="7" r="4" />
+          </svg>
+        }
+      />
+      <StatCard
+        title="Converted"
+        value={stats.converted || 0}
+        iconBg="bg-emerald-100"
+        iconColor="text-emerald-600"
+        icon={
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
         }
@@ -60,29 +82,8 @@ const LeadStats = ({ stats }) => {
         }
       />
       <StatCard
-        title="Contacted"
-        value={stats.contacted || 0}
-        iconBg="bg-indigo-100"
-        iconColor="text-indigo-600"
-        icon={
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Follow-up"
-        value={stats.followUp || 0}
+        title="Pending"
+        value={stats.pending || 0}
         iconBg="bg-amber-100"
         iconColor="text-amber-600"
         icon={
@@ -102,10 +103,10 @@ const LeadStats = ({ stats }) => {
         }
       />
       <StatCard
-        title="Converted"
-        value={stats.converted || 0}
-        iconBg="bg-emerald-100"
-        iconColor="text-emerald-600"
+        title="In Progress"
+        value={stats.inProgress || 0}
+        iconBg="bg-indigo-100"
+        iconColor="text-indigo-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -117,7 +118,49 @@ const LeadStats = ({ stats }) => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+        }
+      />
+      <StatCard
+        title="On Hold"
+        value={stats.onHold || 0}
+        iconBg="bg-orange-100"
+        iconColor="text-orange-600"
+        icon={
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        }
+      />
+      <StatCard
+        title="Completed"
+        value={stats.completed || 0}
+        iconBg="bg-green-100"
+        iconColor="text-green-600"
+        icon={
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
             />
           </svg>
         }

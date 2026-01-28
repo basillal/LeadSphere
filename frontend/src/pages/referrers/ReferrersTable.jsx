@@ -13,6 +13,7 @@ const ReferrersTable = ({
   onPageChange,
   onLimitChange,
   referrerStats,
+  loading = false,
 }) => {
   // Column definitions
   const columns = [
@@ -38,6 +39,11 @@ const ReferrersTable = ({
       id: "companyName",
       label: "Company",
       render: (row) => row.companyName || "-",
+    },
+    {
+      id: "createdBy",
+      label: "Created By",
+      render: (row) => row.createdBy?.name || "System",
     },
     {
       id: "totalLeads",
@@ -244,6 +250,7 @@ const ReferrersTable = ({
         pagination={{ enabled: false }} // Using external pagination
         renderCard={renderCard}
         emptyMessage="No referrers found"
+        loading={loading}
       />
 
       {/* External pagination for backend pagination */}

@@ -261,7 +261,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            options={["New", "Contacted", "Follow-up", "Lost"]}
+            options={[
+              "New",
+              "Pending",
+              "In Progress",
+              "On Hold",
+              "Completed",
+              "Lost",
+            ]}
             required
             className="md:col-span-2"
           />

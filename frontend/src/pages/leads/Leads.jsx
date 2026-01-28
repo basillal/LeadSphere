@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import leadService from "../../services/leadService";
-import contactService from "../../services/contactService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
-import ConversionDialog from "./ConversionDialog";
 import Toast from "../../components/common/utils/Toast";
 
 // Simple Modal for Preview (Tailwind based)
@@ -198,7 +196,6 @@ const Leads = () => {
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [editingLead, setEditingLead] = useState(null);
   const [previewLead, setPreviewLead] = useState(null);
-  const [convertingLead, setConvertingLead] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -221,19 +218,8 @@ const Leads = () => {
   // Fetch lead statistics
   const fetchStats = async () => {
     try {
-      const data = await leadService.getLeads({});
-      const allLeads = data.data;
-
-      const statsData = {
-        total: allLeads.length,
-        new: allLeads.filter((l) => l.status === "New").length,
-        contacted: allLeads.filter((l) => l.status === "Contacted").length,
-        followUp: allLeads.filter((l) => l.status === "Follow-up").length,
-        converted: allLeads.filter((l) => l.status === "Converted").length,
-        lost: allLeads.filter((l) => l.status === "Lost").length,
-      };
-
-      setStats(statsData);
+      const resp = await leadService.getLeadStats();
+      setStats(resp.data);
     } catch (err) {
       console.error("Error fetching stats:", err);
     }
@@ -255,8 +241,8 @@ const Leads = () => {
   }, [filters, pagination.page, pagination.limit]);
 
   const fetchLeads = async () => {
-    // Only set loading if it's the initial load (already true)
-    // or if we explicitly want a loader (which we don't for filters per user request)
+    // Set loading to true for every fetch to trigger the AdvancedTable overlay
+    setLoading(true);
     try {
       // Build params with pagination
       const params = {
@@ -370,32 +356,6 @@ const Leads = () => {
     setPreviewLead(lead);
   };
 
-  const handleShowConvert = (lead) => {
-    setConvertingLead(lead);
-  };
-
-  const handleConfirmConversion = async (additionalData) => {
-    try {
-      await contactService.convertLeadToContact(
-        convertingLead._id,
-        additionalData,
-      );
-      showSnackbar("Lead converted to contact successfully", "success");
-      fetchLeads();
-      fetchStats();
-      setConvertingLead(null);
-    } catch (err) {
-      console.error("Error converting lead:", err);
-      const errMsg =
-        err.response?.data?.message || "Failed to convert lead to contact";
-      showSnackbar(errMsg, "error");
-    }
-  };
-
-  const handleCancelConversion = () => {
-    setConvertingLead(null);
-  };
-
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
@@ -435,46 +395,33 @@ const Leads = () => {
         </div>
       )}
 
-      {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
-      ) : (
+      {view === "list" ? (
         <>
-          {view === "list" && (
-            <>
-              {/* Stats */}
-              <LeadStats stats={stats} />
+          <LeadStats stats={stats} />
 
-              {/* Leads Table */}
-              <LeadsTable
-                rows={leads}
-                onCreate={handleShowCreate}
-                onEdit={handleShowEdit}
-                onDelete={handleDeleteLead}
-                onPreview={handlePreview}
-                onConvert={handleShowConvert}
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                pagination={pagination}
-                onPageChange={handlePageChange}
-                onLimitChange={handleLimitChange}
-              />
-            </>
-          )}
-          {(view === "create" || view === "edit") && (
-            <div className="max-w-7xl mx-auto">
-              <LeadForm
-                key={editingLead ? editingLead._id : "new"}
-                initialData={editingLead}
-                onSubmit={
-                  view === "create" ? handleCreateLead : handleUpdateLead
-                }
-                onCancel={handleCancelForm}
-              />
-            </div>
-          )}
+          <LeadsTable
+            rows={leads}
+            onCreate={handleShowCreate}
+            onEdit={handleShowEdit}
+            onDelete={handleDeleteLead}
+            onPreview={handlePreview}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            loading={loading}
+          />
         </>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          <LeadForm
+            key={editingLead ? editingLead._id : "new"}
+            initialData={editingLead}
+            onSubmit={view === "create" ? handleCreateLead : handleUpdateLead}
+            onCancel={handleCancelForm}
+          />
+        </div>
       )}
 
       {/* Custom Toast/Snackbar */}
@@ -487,15 +434,6 @@ const Leads = () => {
 
       {/* Preview Modal */}
       <PreviewModal lead={previewLead} onClose={() => setPreviewLead(null)} />
-
-      {/* Conversion Dialog */}
-      {convertingLead && (
-        <ConversionDialog
-          lead={convertingLead}
-          onConfirm={handleConfirmConversion}
-          onCancel={handleCancelConversion}
-        />
-      )}
     </div>
   );
 };

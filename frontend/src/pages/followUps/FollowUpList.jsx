@@ -9,6 +9,7 @@ const FollowUpList = ({
   pagination,
   onPageChange,
   onLimitChange,
+  loading = false,
 }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -91,6 +92,24 @@ const FollowUpList = ({
       render: (row) => (
         <span className="text-sm text-gray-500 line-clamp-2 max-w-xs">
           {row.notes || "-"}
+        </span>
+      ),
+    },
+    {
+      id: "createdBy",
+      label: "Created By",
+      render: (row) => (
+        <span className="text-sm text-gray-600">
+          {row.createdBy?.name || "System"}
+        </span>
+      ),
+    },
+    {
+      id: "assignedTo",
+      label: "Assigned To",
+      render: (row) => (
+        <span className="text-sm text-blue-600 font-medium">
+          {row.assignedTo?.name || "System"}
         </span>
       ),
     },
@@ -220,6 +239,7 @@ const FollowUpList = ({
         onRowsPerPageChange: onLimitChange,
       }}
       selection={{ enabled: false }}
+      loading={loading}
     />
   );
 };

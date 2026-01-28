@@ -603,68 +603,54 @@ const Contacts = () => {
         )}
       </div>
 
-      {loading && view === "list" ? (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
+      {view === "list" ? (
         <>
-          {view === "list" && (
-            <>
-              {/* Stats */}
-              <ContactStats stats={stats} />
+          <ContactStats stats={stats} />
 
-              {/* Tabs */}
-              <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-                <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                        activeTab === tab.id
-                          ? "bg-white text-black shadow-sm"
-                          : "text-gray-500 hover:text-gray-700"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Contacts Table */}
-              <div className="pb-20">
-                <ContactsTable
-                  contacts={contacts}
-                  onCreate={() => setView("create")}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onView={handleView}
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                  pagination={pagination}
-                  onPageChange={handlePageChange}
-                  onLimitChange={handleLimitChange}
-                  handleStartConversion={handleStartConversion}
-                />
-              </div>
-            </>
-          )}
-
-          {(view === "create" || view === "edit") && (
-            <div className="max-w-7xl mx-auto">
-              <ContactForm
-                key={currentContact ? currentContact._id : "new"}
-                initialData={currentContact}
-                onSubmit={
-                  view === "create" ? handleFormSubmit : handleFormSubmit
-                }
-                onCancel={handleCancelForm}
-              />
+          <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                    activeTab === tab.id
+                      ? "bg-white text-black shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
+
+          <div className="pb-20">
+            <ContactsTable
+              contacts={contacts}
+              onCreate={() => setView("create")}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleView}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              handleStartConversion={handleStartConversion}
+              loading={loading}
+            />
+          </div>
         </>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          <ContactForm
+            key={currentContact ? currentContact._id : "new"}
+            initialData={currentContact}
+            onSubmit={handleFormSubmit}
+            onCancel={handleCancelForm}
+          />
+        </div>
       )}
 
       {/* Lead Selection Modal */}

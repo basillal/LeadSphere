@@ -7,29 +7,31 @@ const LeadsTable = ({
   onDelete,
   onCreate,
   onPreview,
-  onConvert,
   filters = { search: "", status: "", source: "" },
   onFilterChange,
   pagination,
   onPageChange,
   onLimitChange,
+  loading = false,
 }) => {
   // Helper function for status colors
   const getStatusColor = (status, isConverted) => {
-    if (status === "Converted" && isConverted) {
-      return "bg-gray-200 text-gray-700";
+    if (isConverted) {
+      return "bg-emerald-100 text-emerald-800 border border-emerald-200";
     }
     switch (status) {
       case "New":
         return "bg-gray-200 text-black";
-      case "Contacted":
-        return "bg-indigo-100 text-indigo-800";
-      case "Follow-up":
-        return "bg-yellow-100 text-yellow-800";
-      case "Converted":
-        return "bg-green-100 text-green-800";
+      case "Pending":
+        return "bg-yellow-50 text-yellow-700 border border-yellow-200";
+      case "In Progress":
+        return "bg-blue-50 text-blue-700 border border-blue-200";
+      case "On Hold":
+        return "bg-orange-50 text-orange-700 border border-orange-200";
+      case "Completed":
+        return "bg-green-50 text-green-700 border border-green-200";
       case "Lost":
-        return "bg-red-100 text-red-800";
+        return "bg-red-50 text-red-700 border border-red-200";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -76,12 +78,9 @@ const LeadsTable = ({
       width: "w-[10%]",
       render: (row) => (
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
+          className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusColor(row.status, row.isConverted)}`}
         >
-          {row.status}
-          {row.status === "Converted" && row.isConverted && (
-            <span className="ml-1">✓</span>
-          )}
+          {row.isConverted ? "Converted" : row.status}
         </span>
       ),
     },
@@ -115,27 +114,6 @@ const LeadsTable = ({
       label: "Preview",
       onClick: onPreview,
       color: "text-gray-600 hover:bg-gray-200",
-    },
-    {
-      icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-          />
-        </svg>
-      ),
-      label: "Convert",
-      onClick: onConvert,
-      condition: (row) => !row.isConverted && row.status !== "Lost",
-      color: "text-green-600 hover:bg-green-100",
     },
 
     {
@@ -196,8 +174,10 @@ const LeadsTable = ({
         options: [
           { value: "", label: "All Status" },
           { value: "New", label: "New" },
-          { value: "Contacted", label: "Contacted" },
-          { value: "Follow-up", label: "Follow-up" },
+          { value: "Pending", label: "Pending" },
+          { value: "In Progress", label: "In Progress" },
+          { value: "On Hold", label: "On Hold" },
+          { value: "Completed", label: "Completed" },
           { value: "Lost", label: "Lost" },
         ],
       },
@@ -243,10 +223,7 @@ const LeadsTable = ({
         <span
           className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
         >
-          {row.status}
-          {row.status === "Converted" && row.isConverted && (
-            <span className="ml-1">✓</span>
-          )}
+          {row.isConverted ? "Converted" : row.status}
         </span>
       </div>
 
@@ -293,6 +270,7 @@ const LeadsTable = ({
       actions={actions}
       toolbar={toolbar}
       renderCard={renderCard}
+      loading={loading}
       emptyMessage="No leads found"
       getRowId={(row) => row._id}
       pagination={{
