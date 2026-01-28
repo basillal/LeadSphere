@@ -114,37 +114,87 @@ const seedAuth = async () => {
             console.log('User Role created.');
         }
 
-        // 3. Create Super Admin User
+        // 3. Create Default Company (Required for Super Admin)
+        const Company = require('../models/Company');
+        let defaultCompany = await Company.findOne({ name: 'LeadSphere Inc.' });
+        if (!defaultCompany) {
+            // We need an owner for the company. Use a placeholder ID first or the admin ID if we can predict it?
+            // Circular dependency: User needs Company, Company needs Owner(User).
+            // Solution: Create User without Company first (temporarily bypass validation if needed by schema, but schema says ref 'Company' is not strictly required at DB level unless validation logic enforces it).
+            // If User schema has required: true for company, we might have issue. 
+            // Checking User model: company is NOT required.
+            
+            // Wait, we need the Admin User ID to set as owner.
+            // AND we need Company ID to set on User.
+            // Let's create Admin User first without company.
+        }
+
+        // 3. Create Super Admin User & Default Company
         const adminEmail = process.env.ADMIN_EMAIL || 'admin@leadsphere.com';
         const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
         let adminUser = await User.findOne({ email: adminEmail });
+        
+        // Ensure Default Company Exists
+        if (!defaultCompany) {
+             // Create admin user first if not exists (to be owner)
+             if (!adminUser) {
+                 adminUser = await User.create({
+                    name: 'Super Admin',
+                    email: adminEmail,
+                    password: adminPassword,
+                    role: superAdminRole._id, // Will update company later
+                    isActive: true
+                });
+                console.log(`Super Admin User created (temp): ${adminEmail}`);
+             }
+
+             defaultCompany = await Company.create({
+                 name: 'LeadSphere Inc.',
+                 owner: adminUser._id,
+                 plan: 'Enterprise',
+                 isActive: true
+             });
+             console.log('Default Company (LeadSphere Inc.) created.');
+        }
+
+        // Now ensure Admin User has the company and role
         if (!adminUser) {
-            adminUser = await User.create({
+             // Should have been created above if not exists, but if default company DID exist but user didn't?
+             adminUser = await User.create({
                 name: 'Super Admin',
                 email: adminEmail,
                 password: adminPassword,
                 role: superAdminRole._id,
+                company: defaultCompany._id,
                 isActive: true
             });
             console.log(`Super Admin User created: ${adminEmail} / ${adminPassword}`);
         } else {
-             // Ensure role is correct
+             // Update existing admin
+             let needSave = false;
              if(!adminUser.role || adminUser.role.toString() !== superAdminRole._id.toString()) {
                  adminUser.role = superAdminRole._id;
-                 await adminUser.save();
-                 console.log('Super Admin User role corrected.');
+                 needSave = true;
+             }
+             if(!adminUser.company || adminUser.company.toString() !== defaultCompany._id.toString()) {
+                 adminUser.company = defaultCompany._id;
+                 needSave = true;
              }
              
-             // FORCE RESET PASSWORD due to potential hashing issues or previous bad runs
-             // We can't easily check match without async, so just overwrite it to be safe or check match
+             // Check Password
              const isMatch = await adminUser.matchPassword(adminPassword);
              if (!isMatch) {
-                 adminUser.password = adminPassword; // Triggers pre-save hook
+                 adminUser.password = adminPassword;
+                 needSave = true;
+                 console.log('Super Admin User password reset.');
+             }
+
+             if(needSave) {
                  await adminUser.save();
-                 console.log('Super Admin User password reset to default.');
+                 console.log('Super Admin User updated with correct Role/Company.');
              } else {
-                 console.log('Super Admin User already exists and password matches.');
+                 console.log('Super Admin User already up to date.');
              }
         }
 

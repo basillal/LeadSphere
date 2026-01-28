@@ -1,17 +1,17 @@
 import React from "react";
 
 const LeadStats = ({ stats }) => {
-  const StatCard = ({ title, value, bgColor, textColor, icon }) => (
-    <div
-      className={`${bgColor} p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow`}
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-gray-600 text-sm font-medium uppercase tracking-wide">
-          {title}
-        </span>
-        {icon && <div className={`${textColor} opacity-80`}>{icon}</div>}
+  const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
+    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
+      <div className="flex items-center gap-4">
+        <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
+        <div className="flex-1">
+          <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">
+            {title}
+          </p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
       </div>
-      <div className={`text-3xl font-bold ${textColor}`}>{value}</div>
     </div>
   );
 
@@ -20,8 +20,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="Total Leads"
         value={stats.total || 0}
-        bgColor="bg-gradient-to-br from-blue-50 to-blue-100"
-        textColor="text-blue-700"
+        iconBg="bg-blue-100"
+        iconColor="text-blue-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -41,8 +41,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="New"
         value={stats.new || 0}
-        bgColor="bg-gradient-to-br from-slate-50 to-slate-100"
-        textColor="text-slate-700"
+        iconBg="bg-slate-100"
+        iconColor="text-slate-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -62,8 +62,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="Contacted"
         value={stats.contacted || 0}
-        bgColor="bg-gradient-to-br from-indigo-50 to-indigo-100"
-        textColor="text-indigo-700"
+        iconBg="bg-indigo-100"
+        iconColor="text-indigo-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -83,8 +83,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="Follow-up"
         value={stats.followUp || 0}
-        bgColor="bg-gradient-to-br from-amber-50 to-amber-100"
-        textColor="text-amber-700"
+        iconBg="bg-amber-100"
+        iconColor="text-amber-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -104,8 +104,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="Converted"
         value={stats.converted || 0}
-        bgColor="bg-gradient-to-br from-emerald-50 to-emerald-100"
-        textColor="text-emerald-700"
+        iconBg="bg-emerald-100"
+        iconColor="text-emerald-600"
         icon={
           <svg
             className="w-6 h-6"
@@ -125,8 +125,8 @@ const LeadStats = ({ stats }) => {
       <StatCard
         title="Lost"
         value={stats.lost || 0}
-        bgColor="bg-gradient-to-br from-rose-50 to-rose-100"
-        textColor="text-rose-700"
+        iconBg="bg-rose-100"
+        iconColor="text-rose-600"
         icon={
           <svg
             className="w-6 h-6"

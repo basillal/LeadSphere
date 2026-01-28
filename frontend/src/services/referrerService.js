@@ -38,6 +38,12 @@ const getReferrerStatsById = async (id) => {
     return response.data;
 };
 
+// Get general stats for all referrers
+const getReferrerStats = async () => {
+    const response = await api.get(`${API_URL}/stats`);
+    return response.data;
+};
+
 // Get all leads for a specific referrer
 const getReferrerLeads = async (id, params = {}) => {
     const response = await api.get(`${API_URL}/${id}/leads`, { params });
@@ -50,6 +56,7 @@ const referrerService = {
     getReferrer,
     updateReferrer,
     deleteReferrer,
+    getReferrerStats,
     getReferrerStatsById,
     getReferrerLeads
 };

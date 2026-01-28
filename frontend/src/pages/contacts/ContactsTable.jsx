@@ -12,6 +12,7 @@ const ContactsTable = ({
   pagination,
   onPageChange,
   onLimitChange,
+  handleStartConversion, // New Prop
 }) => {
   // Helper functions
   const getTagColor = (tag) => {
@@ -50,8 +51,18 @@ const ContactsTable = ({
     },
     {
       id: "companyName",
-      label: "Company",
+      label: "Prospect Co.",
       render: (row) => row.companyName || "-",
+    },
+    {
+      id: "createdBy",
+      label: "Created By",
+      render: (row) => row.createdBy?.name || "System",
+    },
+    {
+      id: "tenant",
+      label: "Company (Tenant)",
+      render: (row) => row.company?.name || "-",
     },
     { id: "phone", label: "Phone" },
     {
@@ -182,6 +193,14 @@ const ContactsTable = ({
       label: "Add Contact",
       onClick: onCreate,
     },
+    extraButtons: [
+      {
+        label: "Convert Lead",
+        onClick: handleStartConversion,
+        className:
+          "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50",
+      },
+    ],
   };
 
   // Custom mobile card

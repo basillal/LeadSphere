@@ -242,6 +242,21 @@ const AdvancedTable = ({
                   </select>
                 ))}
 
+              {/* Extra Buttons */}
+              {toolbar.extraButtons &&
+                toolbar.extraButtons.map((btn, index) => (
+                  <button
+                    key={index}
+                    onClick={btn.onClick}
+                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                      btn.className ||
+                      "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {btn.label}
+                  </button>
+                ))}
+
               {/* Create Button */}
               {toolbar.onCreate && (
                 <button

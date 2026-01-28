@@ -109,7 +109,7 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
                 <p className="font-semibold mb-1">What happens next:</p>
                 <ul className="list-disc list-inside space-y-1 text-xs">
                   <li>A new contact will be created with all lead data</li>
-                  <li>The lead status will remain "Converted"</li>
+                  <li>The lead status will be updated to "Converted"</li>
                   <li>You can manage the contact in the Contacts page</li>
                 </ul>
               </div>

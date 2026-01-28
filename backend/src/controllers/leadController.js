@@ -16,7 +16,7 @@ const getLeads = asyncHandler(async (req, res) => {
     const query = { ...req.companyFilter, isDeleted: false };
 
     // User-Level Isolation: If not Super Admin AND not Company Owner
-    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin'; // Check role name too just in case
 
@@ -66,6 +66,8 @@ const getLeads = asyncHandler(async (req, res) => {
     const total = await Lead.countDocuments(query);
     const leads = await Lead.find(query)
         .populate('assignedTo', 'name email')
+        .populate('createdBy', 'name')
+        .populate('company', 'name')
         .sort({ createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -87,7 +89,10 @@ const getLeads = asyncHandler(async (req, res) => {
 // @access  Private
 const getLead = asyncHandler(async (req, res) => {
     // 1. Find Lead by ID
-    const lead = await Lead.findById(req.params.id).populate('assignedTo', 'name email');
+    const lead = await Lead.findById(req.params.id)
+        .populate('assignedTo', 'name email')
+        .populate('createdBy', 'name')
+        .populate('company', 'name');
 
     if (!lead || lead.isDeleted) {
         res.status(404);
@@ -95,13 +100,16 @@ const getLead = asyncHandler(async (req, res) => {
     }
 
     // 2. Check Company Isolation
-    if (lead.company.toString() !== req.user.company._id.toString() && req.user.role?.roleName !== 'Super Admin') {
-         res.status(404); // Hide existence
-         throw new Error('Lead not found');
+    // Safe-guard: Check Super Admin FIRST to avoid accessing req.user.company._id if it doesn't exist
+    if (req.user.role?.roleName !== 'Super Admin') {
+         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+             res.status(404);
+             throw new Error('Lead not found');
+         }
     }
 
     // 3. User-Level Isolation
-    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
 
@@ -188,12 +196,15 @@ const updateLead = asyncHandler(async (req, res) => {
     }
 
     // Check Permissions
-    if (lead.company.toString() !== req.user.company._id.toString() && req.user.role?.roleName !== 'Super Admin') {
-        res.status(404);
-        throw new Error('Lead not found');
+    // Safe-guard: Check Super Admin FIRST
+    if (req.user.role?.roleName !== 'Super Admin') {
+         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+             res.status(404);
+             throw new Error('Lead not found');
+         }
     }
 
-    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
 
@@ -260,12 +271,15 @@ const deleteLead = asyncHandler(async (req, res) => {
     }
 
     // Check Permissions
-    if (lead.company.toString() !== req.user.company._id.toString() && req.user.role?.roleName !== 'Super Admin') {
-        res.status(404);
-        throw new Error('Lead not found');
+    // Safe-guard: Check Super Admin FIRST
+    if (req.user.role?.roleName !== 'Super Admin') {
+         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+             res.status(404);
+             throw new Error('Lead not found');
+         }
     }
 
-    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import contactService from "../../services/contactService";
+import leadService from "../../services/leadService"; // Added import
 import ContactStats from "./ContactStats";
 import ContactsTable from "./ContactsTable";
 import ContactForm from "./ContactForm";
+import ConversionDialog from "../leads/ConversionDialog"; // Importing from leads for reuse, or should move it to common? Keeping it here for now.
 import Toast from "../../components/common/utils/Toast";
 
 // Preview Modal Component
@@ -245,6 +247,124 @@ const PreviewModal = ({ contact, onClose }) => {
   );
 };
 
+// Lead Selection Modal for Conversion
+const LeadSelectionModal = ({ onClose, onSelect }) => {
+  const [leads, setLeads] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const fetchLeads = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Fetch only unconverted leads
+      const response = await leadService.getLeads({
+        limit: 100, // Fetch reasonable amount, or implement pagination if needed
+        search,
+        // We ideally filter by status not being "Converted" or "Lost" if API supports exclusionary filters
+        // For now, simpler to fetch and filter client side if API doesn't support complex exclusionary queries easily
+        // But leadController supports `status` filter. `!Converted` isn't standard in basic query.
+        // Let's fetch all and filter client side or assume API returns active leads by default if we don't pass status?
+        // No, fetchLeads returns all.
+        // Let's try to filter by "New,Contacted,Follow-up" explicitly?
+        // Or just filter in UI.
+      });
+
+      const unconverted = response.data.filter(
+        (l) => !l.isConverted && l.status !== "Lost",
+      );
+      setLeads(unconverted);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchLeads();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [fetchLeads]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+          <h2 className="text-xl font-bold text-gray-900">
+            Select Lead to Convert
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-4 border-b border-gray-100">
+          <input
+            type="text"
+            placeholder="Search leads..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+          />
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-2 space-y-2">
+          {loading ? (
+            <div className="flex justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+            </div>
+          ) : leads.length === 0 ? (
+            <div className="text-center p-8 text-gray-500">
+              No unconverted leads found.
+            </div>
+          ) : (
+            leads.map((lead) => (
+              <div
+                key={lead._id}
+                onClick={() => onSelect(lead)}
+                className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex justify-between items-center group"
+              >
+                <div>
+                  <h3 className="font-semibold text-gray-900">{lead.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {lead.companyName || "-"}
+                  </p>
+                </div>
+                <span className="text-sm text-black font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Select →
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Contacts = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [contacts, setContacts] = useState([]);
@@ -266,6 +386,11 @@ const Contacts = () => {
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentContact, setCurrentContact] = useState(null);
   const [previewContact, setPreviewContact] = useState(null);
+
+  // Conversion States
+  const [showLeadPicker, setShowLeadPicker] = useState(false);
+  const [convertingLead, setConvertingLead] = useState(null);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -282,6 +407,37 @@ const Contacts = () => {
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleStartConversion = () => {
+    setShowLeadPicker(true);
+  };
+
+  const handleSelectLead = (lead) => {
+    setShowLeadPicker(false);
+    setConvertingLead(lead);
+  };
+
+  const handleCancelConversion = () => {
+    setConvertingLead(null);
+  };
+
+  const handleConfirmConversion = async (additionalData) => {
+    try {
+      await contactService.convertLeadToContact(
+        convertingLead._id,
+        additionalData,
+      );
+      showSnackbar("Lead converted to contact successfully", "success");
+      fetchContacts();
+      fetchStats();
+      setConvertingLead(null);
+    } catch (err) {
+      console.error("Error converting lead:", err);
+      const errMsg =
+        err.response?.data?.message || "Failed to convert lead to contact";
+      showSnackbar(errMsg, "error");
+    }
   };
 
   const fetchContacts = useCallback(async () => {
@@ -481,7 +637,7 @@ const Contacts = () => {
               <div className="pb-20">
                 <ContactsTable
                   contacts={contacts}
-                  onCreate={handleCreate}
+                  onCreate={() => setView("create")}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                   onView={handleView}
@@ -490,6 +646,7 @@ const Contacts = () => {
                   pagination={pagination}
                   onPageChange={handlePageChange}
                   onLimitChange={handleLimitChange}
+                  handleStartConversion={handleStartConversion}
                 />
               </div>
             </>
@@ -508,6 +665,23 @@ const Contacts = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* Lead Selection Modal */}
+      {showLeadPicker && (
+        <LeadSelectionModal
+          onClose={() => setShowLeadPicker(false)}
+          onSelect={handleSelectLead}
+        />
+      )}
+
+      {/* Conversion Dialog */}
+      {convertingLead && (
+        <ConversionDialog
+          lead={convertingLead}
+          onConfirm={handleConfirmConversion}
+          onCancel={handleCancelConversion}
+        />
       )}
 
       {/* Preview Modal */}

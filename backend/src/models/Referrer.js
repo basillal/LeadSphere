@@ -46,6 +46,18 @@ const ReferrerSchema = new mongoose.Schema({
         default: true
     },
     
+    // Multi-tenancy & Ownership
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: [true, 'Referrer must belong to a company']
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    
     // Soft Delete Flag
     isDeleted: {
         type: Boolean,
@@ -58,6 +70,7 @@ const ReferrerSchema = new mongoose.Schema({
 // Index for better query performance
 ReferrerSchema.index({ name: 1 });
 ReferrerSchema.index({ phone: 1 });
+ReferrerSchema.index({ company: 1 });
 ReferrerSchema.index({ isDeleted: 1 });
 
 module.exports = mongoose.model('Referrer', ReferrerSchema);

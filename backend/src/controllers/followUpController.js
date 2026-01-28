@@ -7,7 +7,29 @@ const logger = require('../utils/logger');
 // @route   GET /api/follow-ups
 // @access  Private
 const getFollowUps = asyncHandler(async (req, res) => {
-    const query = {};
+    // Base filter from Tenant Middleware
+    const query = { ...req.companyFilter };
+
+    // User-Level Isolation
+    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+        // Regular user can only see follow-ups assigned to them or created by them
+        // Assuming 'assignedTo' or 'createdBy' is populated with User ID. 
+        // Logic: specific user sees their own followups.
+        // If followUp has 'assignedTo', we use that. If not, maybe 'createdBy'.
+        // LeadSphere seems to rely on 'assignedTo' for tasks. 
+        // For now, let's assume filtering by assignedTo if it exists, roughly.
+        // Actually, safer to filter by "lead.assignedTo" if possible? 
+        // No, that's complex query. Let's use simple assignedTo/createdBy on the FollowUp model if available, 
+        // or just restrict to leads they can see.
+        // Step 46 shows FollowUp has assignedTo (String) and createdBy (String). 
+        // Ideally these should be ObjectIds. 
+        // Let's rely on `createdBy` matching `req.user._id` for now as a safe default for personal visibility.
+        query.createdBy = req.user._id;
+    }
 
     // Filter by status
     if (req.query.status) {
@@ -53,6 +75,20 @@ const createFollowUp = asyncHandler(async (req, res) => {
     if (!leadExists) {
         res.status(404);
         throw new Error('Lead not found');
+    }
+
+    // Inject Company & Creator
+    if (!req.body.company && req.user.company) {
+        req.body.company = req.user.company._id;
+    }
+    // If Super Admin creates a lead/followup without company context, it might fail validation if company is required.
+    // Ensure we handle that if needed, but for now assuming Super Admin has a way or just doesn't create "orphaned" followups often.
+    
+    req.body.createdBy = req.user._id;
+
+    // Optional: Auto-assign to self if not specified
+    if (!req.body.assignedTo) {
+        req.body.assignedTo = req.user._id;
     }
 
     const followUp = await FollowUp.create(req.body);

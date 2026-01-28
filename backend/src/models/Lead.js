@@ -152,7 +152,8 @@ const LeadSchema = new mongoose.Schema({
         type: Date
     },
     createdBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
 
     // 9. Notes & Attachments

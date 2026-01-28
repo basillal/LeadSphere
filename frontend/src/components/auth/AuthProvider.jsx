@@ -9,7 +9,28 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedCompany, setSelectedCompany] = useState(
+    localStorage.getItem("selectedCompany") || "",
+  );
   const navigate = useNavigate();
+
+  const selectCompany = (companyId) => {
+    setSelectedCompany(companyId);
+    if (companyId) {
+      localStorage.setItem("selectedCompany", companyId);
+    } else {
+      localStorage.removeItem("selectedCompany");
+    }
+    // Force reload/refresh context?
+    // Usually React state update triggers re-render, and subsequent API calls will use new ID via interceptor (if configured).
+    // We might need to refresh CURRENT page data.
+    // Best way: navigate(0) or let the user navigate?
+    // Let's just update state. The interceptor will pick it up on next request.
+    // Ideally, we trigger a global refresh or the Header switcher triggers a data refetch.
+    // For now, state update is enough.
+    // If we want immediate effect on current view, simple page reload `window.location.reload()` is often easiest for global context switch.
+    window.location.reload();
+  };
 
   useEffect(() => {
     // Setup interceptors with navigation capability
@@ -63,7 +84,15 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, loading, isAuthenticated: !!user }}
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+        isAuthenticated: !!user,
+        selectedCompany,
+        selectCompany,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>

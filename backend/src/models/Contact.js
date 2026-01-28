@@ -6,6 +6,11 @@ const ContactSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lead'
     },
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
+    },
     convertedFrom: {
         type: String,
         enum: ['Lead', 'Manual', 'Import'],
@@ -21,7 +26,6 @@ const ContactSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: [true, 'Please add a phone number'],
-        unique: true,
         trim: true
     },
     alternatePhone: {
@@ -162,7 +166,8 @@ const ContactSchema = new mongoose.Schema({
         default: 'Active'
     },
     createdBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     lastModifiedBy: {
         type: String
@@ -181,6 +186,7 @@ const ContactSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Index for faster queries
+ContactSchema.index({ company: 1, phone: 1 }, { unique: true });
 ContactSchema.index({ name: 1, phone: 1 });
 ContactSchema.index({ tags: 1 });
 ContactSchema.index({ companyName: 1 });

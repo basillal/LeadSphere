@@ -10,6 +10,11 @@ const {
     getReferrerStatsById,
     getReferrerLeads
 } = require('../controllers/referrerController');
+const { protect } = require('../middleware/authMiddleware');
+const { tenantFilter } = require('../middleware/tenantMiddleware');
+
+router.use(protect);
+router.use(tenantFilter);
 
 // Stats routes (must come before :id routes)
 router.get('/stats', getReferrerStats);

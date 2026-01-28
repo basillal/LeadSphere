@@ -23,11 +23,28 @@ const tenantFilter = asyncHandler(async (req, res, next) => {
 
     // Attach company isolation logic/filter to request object for controllers to use
     if (isSuperAdmin) {
-        // Super Admin can see all, or filter by specific company if passed in query
-        if (req.query.company) {
-            req.companyFilter = { company: req.query.company };
+        // Super Admin can see all, or filter by specific company
+        const contextCompany = req.headers['x-company-context'];
+
+        if (contextCompany) {
+            req.companyFilter = { company: contextCompany };
+            // Inject into body for creation/updates if present
+            if (req.method === 'POST' || req.method === 'PUT') {
+                 if (!req.body.company) {
+                    req.body.company = contextCompany;
+                 }
+            }
+        } else if (req.query.company) {
+             req.companyFilter = { company: req.query.company };
         } else {
             req.companyFilter = {}; // No filter, see all
+        }
+
+        // IMPORTANT FOR REFERRER CREATION: If Super Admin is creating and no company in body or context,
+        // we should probably warn or require it. Referrer model REQUIRES it.
+        if (req.method === 'POST' && !req.body.company) {
+             // For now, let it fall through to Mongoose validation which gives 400.
+             // OR default to a system company if desired.
         }
     } else {
         // Regular users/admins MUST be isolated to their company

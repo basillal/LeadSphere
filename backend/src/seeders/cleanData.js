@@ -7,6 +7,8 @@ const Activity = require('../models/Activity');
 const FollowUp = require('../models/FollowUp');
 const Referrer = require('../models/Referrer');
 const Company = require('../models/Company');
+const User = require('../models/User');
+const Role = require('../models/Role');
 
 dotenv.config();
 
@@ -34,9 +36,19 @@ const cleanData = async () => {
         await Company.deleteMany({});
         console.log('Companies deleted.');
 
+        // Delete Users except Admin
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@leadsphere.com';
+        await User.deleteMany({ email: { $ne: adminEmail } });
+        console.log('Non-admin users deleted.');
+
+        // Delete Roles except System Roles
+        await Role.deleteMany({ isSystemRole: false });
+        console.log('Custom roles deleted.');
+
         console.log('-----------------------------------');
         console.log('Data cleaning completed successfully.');
-        console.log('Essentials (Users, Roles, Permissions) were PRESERVED.');
+        console.log(`Preserved Admin: ${adminEmail}`);
+        console.log('System Roles Preserved.');
         console.log('-----------------------------------');
         process.exit();
     } catch (error) {

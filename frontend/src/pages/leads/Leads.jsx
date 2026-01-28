@@ -246,6 +246,7 @@ const Leads = () => {
 
   // Debounce API calls, but update UI immediately
   useEffect(() => {
+    // Avoid double fetch on initial mount if possible, or just accept the debounce.
     const timer = setTimeout(() => {
       fetchLeads();
     }, 500);
@@ -254,7 +255,8 @@ const Leads = () => {
   }, [filters, pagination.page, pagination.limit]);
 
   const fetchLeads = async () => {
-    // setLoading(true); // Don't show full page spinner on filter
+    // Only set loading if it's the initial load (already true)
+    // or if we explicitly want a loader (which we don't for filters per user request)
     try {
       // Build params with pagination
       const params = {
@@ -368,19 +370,16 @@ const Leads = () => {
     setPreviewLead(lead);
   };
 
-  const handleConvertToContact = (lead) => {
+  const handleShowConvert = (lead) => {
     setConvertingLead(lead);
   };
 
-  const handleConfirmConversion = async (contactData) => {
+  const handleConfirmConversion = async (additionalData) => {
     try {
-      await contactService.createContact(contactData);
-      // Mark lead as converted
-      await leadService.updateLead(convertingLead._id, {
-        ...convertingLead,
-        status: "Converted",
-        isConverted: true,
-      });
+      await contactService.convertLeadToContact(
+        convertingLead._id,
+        additionalData,
+      );
       showSnackbar("Lead converted to contact successfully", "success");
       fetchLeads();
       fetchStats();
@@ -454,7 +453,7 @@ const Leads = () => {
                 onEdit={handleShowEdit}
                 onDelete={handleDeleteLead}
                 onPreview={handlePreview}
-                onConvert={handleConvertToContact}
+                onConvert={handleShowConvert}
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 pagination={pagination}
@@ -490,11 +489,13 @@ const Leads = () => {
       <PreviewModal lead={previewLead} onClose={() => setPreviewLead(null)} />
 
       {/* Conversion Dialog */}
-      <ConversionDialog
-        lead={convertingLead}
-        onConfirm={handleConfirmConversion}
-        onCancel={handleCancelConversion}
-      />
+      {convertingLead && (
+        <ConversionDialog
+          lead={convertingLead}
+          onConfirm={handleConfirmConversion}
+          onCancel={handleCancelConversion}
+        />
+      )}
     </div>
   );
 };

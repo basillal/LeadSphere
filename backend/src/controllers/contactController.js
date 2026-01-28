@@ -12,17 +12,40 @@ const getContacts = asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const startIndex = (page - 1) * limit;
 
-    // Filtering (Soft Delete Check)
-    const query = { isDeleted: false };
+    // Base filter from Tenant Middleware
+    // Ensure req.companyFilter exists (middleware should handle this, but if missing, default empty safe?)
+    // If middleware is missing, this is empty.
+    const query = { ...(req.companyFilter || {}), isDeleted: false };
+
+    // User-Level Isolation: If not Super Admin AND not Company Owner
+    // Safe check for req.user
+    if (!req.user) {
+        // Should be caught by auth middleware, but just in case
+        res.status(401);
+        throw new Error('User not authenticated (Controller Assert)');
+    }
+
+    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+        // Regular user can only see contacts assigned to them or created by them
+        query.createdBy = req.user._id;
+    }
 
     // Search by name/phone/email/company
     if (req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
-        query.$or = [
-            { name: searchRegex },
-            { phone: searchRegex },
-            { email: searchRegex },
-            { companyName: searchRegex }
+        query.$and = [
+            {
+                $or: [
+                    { name: searchRegex },
+                    { phone: searchRegex },
+                    { email: searchRegex },
+                    { companyName: searchRegex }
+                ]
+            }
         ];
     }
 
@@ -43,6 +66,9 @@ const getContacts = asyncHandler(async (req, res) => {
 
     const total = await Contact.countDocuments(query);
     const contacts = await Contact.find(query)
+        .populate('leadId', 'name')
+        .populate('createdBy', 'name')
+        .populate('company', 'name')
         .sort({ lastInteractionDate: -1, createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -69,6 +95,14 @@ const getContact = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Contact not found');
     }
+    
+    // Check Permissions (Tenant Isolation)
+    if (req.user.role?.roleName !== 'Super Admin') {
+         if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+             res.status(404);
+             throw new Error('Contact not found');
+         }
+    }
 
     res.status(200).json({
         success: true,
@@ -88,6 +122,13 @@ const createContact = asyncHandler(async (req, res) => {
             throw new Error('Contact with this phone number already exists');
         }
     }
+
+    // Inject Company & Creator
+    // Safe-guard: Check if company exists on user
+    if (!req.body.company && req.user.company) {
+        req.body.company = req.user.company._id || req.user.company; 
+    }
+    req.body.createdBy = req.user._id;
 
     const contact = await Contact.create(req.body);
 
@@ -110,6 +151,14 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
         throw new Error('Lead not found');
     }
 
+    // Check Tenant Permission
+    if (req.user.role?.roleName !== 'Super Admin') {
+         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+             res.status(404);
+             throw new Error('Lead not found');
+         }
+    }
+
     // Check if already converted
     const existingContact = await Contact.findOne({ leadId: req.params.leadId, isDeleted: false });
     if (existingContact) {
@@ -118,7 +167,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
     }
 
     // Check if phone already exists in contacts
-    const phoneExists = await Contact.findOne({ phone: lead.phone, isDeleted: false });
+    const phoneExists = await Contact.findOne({ phone: lead.phone, company: lead.company, isDeleted: false });
     if (phoneExists) {
         res.status(400);
         throw new Error('A contact with this phone number already exists');
@@ -143,17 +192,18 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
         attachments: lead.attachments,
         lastInteractionDate: lead.lastContactedAt || new Date(),
         nextFollowUpDate: lead.nextFollowUpDate,
-        tags: req.body.tags || ['Client'], // Default tag or from request
+        tags: req.body.tags || ['Client'], 
         relationshipType: req.body.relationshipType || 'Business',
-        createdBy: lead.createdBy
+        createdBy: lead.createdBy || req.user._id,
+        company: lead.company 
     };
-
+    
     const contact = await Contact.create(contactData);
 
     // Update lead status to Converted
     lead.status = 'Converted';
     lead.convertedAt = new Date();
-    lead.isConverted = true; // Flag to indicate this lead has been converted to contact
+    lead.isConverted = true; 
     await lead.save();
 
     logger.info(`Lead converted to contact: ${lead.name} -> ${contact.name}`);
@@ -176,10 +226,32 @@ const updateContact = asyncHandler(async (req, res) => {
         throw new Error('Contact not found');
     }
 
+    // Check Permissions
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    if (!isSuperAdmin) {
+        // Must belong to user's company
+        if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+            res.status(404);
+            throw new Error('Contact not found');
+        }
+    }
+
+    // Check User-level isolation if applied
+    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+         if (contact.createdBy?.toString() !== req.user._id.toString()) {
+              res.status(403);
+              throw new Error('Not authorized to update this contact');
+         }
+    }
+
     // If phone is being updated, check for duplicates
     if (req.body.phone && req.body.phone !== contact.phone) {
         const phoneExists = await Contact.findOne({ 
             phone: req.body.phone, 
+            company: contact.company,
             isDeleted: false,
             _id: { $ne: req.params.id }
         });
@@ -211,6 +283,25 @@ const deleteContact = asyncHandler(async (req, res) => {
         throw new Error('Contact not found');
     }
 
+    // Check Permissions
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    if (!isSuperAdmin) {
+        if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+            res.status(404);
+            throw new Error('Contact not found');
+        }
+    }
+
+    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+         if (contact.createdBy?.toString() !== req.user._id.toString()) {
+              res.status(403);
+              throw new Error('Not authorized to delete this contact');
+         }
+    }
+
     // Soft delete
     contact.isDeleted = true;
     await contact.save();
@@ -225,7 +316,18 @@ const deleteContact = asyncHandler(async (req, res) => {
 // @route   GET /api/contacts/stats
 // @access  Private
 const getContactStats = asyncHandler(async (req, res) => {
-    const query = { isDeleted: false };
+    // IMPORTANT: Use Company Filter!
+    // Safe check if companyFilter exists
+    const query = { ...(req.companyFilter || {}), isDeleted: false }; 
+
+    // Additional User Isolation if not Super Admin/Owner
+    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+        query.createdBy = req.user._id;
+    }
 
     const total = await Contact.countDocuments(query);
     const clients = await Contact.countDocuments({ ...query, tags: 'Client' });

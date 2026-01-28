@@ -11,6 +11,8 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +24,47 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
 }));
 
 const Header = ({ handleDrawerToggle }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, selectedCompany, selectCompany } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [companies, setCompanies] = React.useState([]);
+
+  // Fetch companies if Super Admin
+  React.useEffect(() => {
+    if (user?.role?.roleName === "Super Admin") {
+      // Need companyService. Import it later. For now assuming dynamic import or I'll add import statement.
+      // Actually better to import at top. I will add import in next step or use global/context if available?
+      // No, I should import. PROVISIONALLY assuming I will add import.
+      const fetchCompanies = async () => {
+        try {
+          // Need to import companyService.
+          // Since I cannot modify top of file in same block easily without potentially breaking if I miss imports,
+          // I will add the import in a separate tool call.
+          // Here I assume `companyService` is available in scope or I use `api`.
+          // Let's use `companyService` and add import in next step.
+          // Wait, useAuth gives me user.
+        } catch (err) {
+          console.error("Failed to load companies for switcher", err);
+        }
+      };
+      // fetchCompanies(); // Commented out until import added
+    }
+  }, [user]);
+
+  // Logic to load companies
+  React.useEffect(() => {
+    if (user?.role?.roleName === "Super Admin") {
+      import("../../services/companyService").then((module) => {
+        const companyService = module.default;
+        companyService
+          .getCompanies({ limit: 100 })
+          .then((res) => {
+            setCompanies(res.data || []);
+          })
+          .catch((err) => console.error(err));
+      });
+    }
+  }, [user]);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -65,10 +105,6 @@ const Header = ({ handleDrawerToggle }) => {
       <MenuItem disabled sx={{ opacity: "0.7 !important", fontSize: "0.8rem" }}>
         {user?.email}
       </MenuItem>
-      {/* 
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem> 
-      */}
       <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
         <PowerSettingsNewIcon sx={{ mr: 1, fontSize: 20 }} />
         Logout
@@ -94,10 +130,58 @@ const Header = ({ handleDrawerToggle }) => {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: "block" }}
+            sx={{ display: "block", mr: 4 }}
           >
             LeadSphere
           </Typography>
+
+          {/* Company Switcher for Super Admin */}
+          {user?.role?.roleName === "Super Admin" && (
+            <Box sx={{ minWidth: 200, mr: 2 }}>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={selectedCompany || ""}
+                  onChange={(e) => selectCompany(e.target.value)}
+                  displayEmpty
+                  sx={{
+                    color: "white",
+                    ".MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(255, 255, 255, 0.7)",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                    },
+                    ".MuiSvgIcon-root": {
+                      color: "white",
+                    },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        bgcolor: "background.paper",
+                        "& .MuiMenuItem-root": {
+                          color: "text.primary",
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>All Companies</em>
+                  </MenuItem>
+                  {companies.map((c) => (
+                    <MenuItem key={c._id} value={c._id}>
+                      {c.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: "flex", alignItems: "center" }}>

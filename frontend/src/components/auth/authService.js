@@ -56,6 +56,20 @@ export const setupAxiosInterceptors = (navigate) => {
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
+            
+            // Company Context Injection
+            const selectedCompany = localStorage.getItem('selectedCompany');
+            if (selectedCompany) {
+                // Header injection for middleware
+                config.headers['x-company-context'] = selectedCompany;
+                
+                // Keep query param for backward compatibility or direct GET filters
+                if (!config.params) {
+                    config.params = {};
+                }
+                config.params.company = selectedCompany;
+            }
+
             return config;
         },
         (error) => Promise.reject(error)

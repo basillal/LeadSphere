@@ -244,13 +244,16 @@ const Referrers = () => {
       }));
 
       // Fetch stats for each referrer
-      const statsPromises = response.data.map((referrer) =>
-        referrerService.getReferrerStatsById(referrer._id),
-      );
+      const statsPromises = response.data
+        .map((referrer) =>
+          referrer ? referrerService.getReferrerStatsById(referrer._id) : null,
+        )
+        .filter((p) => p !== null);
+
       const statsResponses = await Promise.all(statsPromises);
       const statsMap = {};
       statsResponses.forEach((res) => {
-        if (res.data && res.data.referrer) {
+        if (res && res.data && res.data.referrer && res.data.referrer._id) {
           statsMap[res.data.referrer._id] = res.data.stats;
         }
       });
