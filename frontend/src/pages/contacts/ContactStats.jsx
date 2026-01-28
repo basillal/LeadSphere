@@ -14,10 +14,10 @@ const ContactStats = ({ stats }) => {
   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard
         title="Total Contacts"
-        value={stats.totalContacts || 0}
+        value={stats.total || 0}
         iconBg="bg-purple-100"
         iconColor="text-purple-600"
         icon={
@@ -101,7 +101,7 @@ const ContactStats = ({ stats }) => {
       />
       <StatCard
         title="Recent (7d)"
-        value={stats.recentContacts || 0}
+        value={stats.recentInteractions || 0}
         iconBg="bg-orange-100"
         iconColor="text-orange-600"
         icon={

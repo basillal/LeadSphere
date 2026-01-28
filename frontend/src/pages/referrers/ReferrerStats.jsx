@@ -16,7 +16,7 @@ const ReferrerStats = ({ stats }) => {
   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
       <StatCard
         title="Total Referrers"
         value={stats.totalReferrers || 0}

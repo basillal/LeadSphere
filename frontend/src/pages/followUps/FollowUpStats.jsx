@@ -27,7 +27,7 @@ const FollowUpStats = ({ stats }) => {
     totalTasks > 0 ? Math.round((stats.completed / totalTasks) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard
         title="Total Follow-ups"
         value={stats.total || 0}

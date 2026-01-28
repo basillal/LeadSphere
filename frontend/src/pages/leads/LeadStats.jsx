@@ -16,7 +16,7 @@ const LeadStats = ({ stats }) => {
   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
       <StatCard
         title="Total Leads"
         value={stats.total || 0}
