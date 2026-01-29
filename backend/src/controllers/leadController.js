@@ -63,6 +63,13 @@ const getLeads = asyncHandler(async (req, res) => {
         }
     }
 
+    // Optimization: Exclude converted leads
+    if (req.query.excludeConverted === 'true') {
+        query.isConverted = false;
+        // Optionally also exclude 'Converted' status if data is mixed
+        // query.status = { $ne: 'Converted' };
+    }
+
     // Auto-update 'New' leads to 'Pending' if created before today
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);

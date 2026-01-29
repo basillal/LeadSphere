@@ -258,20 +258,14 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
     try {
       // Fetch only unconverted leads
       const response = await leadService.getLeads({
-        limit: 100, // Fetch reasonable amount, or implement pagination if needed
+        limit: 100,
         search,
-        // We ideally filter by status not being "Converted" or "Lost" if API supports exclusionary filters
-        // For now, simpler to fetch and filter client side if API doesn't support complex exclusionary queries easily
-        // But leadController supports `status` filter. `!Converted` isn't standard in basic query.
-        // Let's fetch all and filter client side or assume API returns active leads by default if we don't pass status?
-        // No, fetchLeads returns all.
-        // Let's try to filter by "New,Contacted,Follow-up" explicitly?
-        // Or just filter in UI.
+        excludeConverted: true,
       });
 
-      const unconverted = response.data.filter(
-        (l) => !l.isConverted && l.status !== "Lost",
-      );
+      // Filter out 'Lost' leads client-side if needed, or we could add that to backend too
+      // User Request: Only show "Completed" leads for conversion
+      const unconverted = response.data.filter((l) => l.status === "Completed");
       setLeads(unconverted);
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -322,13 +316,21 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
         </div>
 
         <div className="p-4 border-b border-gray-100">
-          <input
-            type="text"
-            placeholder="Search leads..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Search leads..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            <button
+              onClick={fetchLeads}
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm"
+            >
+              Search
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-2 space-y-2">

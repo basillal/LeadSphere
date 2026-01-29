@@ -17,7 +17,12 @@ const FollowUpSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Pending', 'Completed', 'Missed', 'Rescheduled'],
+        enum: [
+            // Follow-up specific
+            'Pending', 'Completed', 'Missed', 'Rescheduled',
+            // Lead statuses (for sync)
+            'New', 'In Progress', 'On Hold', 'Lost', 'Converted'
+        ],
         default: 'Pending'
     },
     notes: {

@@ -44,10 +44,10 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
         scheduledAt: initialData.scheduledAt
           ? new Date(initialData.scheduledAt).toISOString().slice(0, 16)
           : "",
-        lead: initialData.lead?._id || initialData.lead || "",
+        lead: initialData.lead || "",
       });
     } else if (lead) {
-      setFormData((prev) => ({ ...prev, lead: lead._id }));
+      setFormData((prev) => ({ ...prev, lead: lead }));
     }
   }, [initialData, lead]);
 
@@ -56,13 +56,17 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLeadChange = (leadId) => {
-    setFormData((prev) => ({ ...prev, lead: leadId }));
+  const handleLeadChange = (val) => {
+    setFormData((prev) => ({ ...prev, lead: val }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const payload = {
+      ...formData,
+      lead: formData.lead?._id || formData.lead,
+    };
+    onSubmit(payload);
   };
 
   return (
@@ -106,7 +110,17 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
           name="status"
           value={formData.status}
           onChange={handleChange}
-          options={["Pending", "Completed", "Missed", "Rescheduled"]}
+          options={[
+            "Pending",
+            "Completed",
+            "Missed",
+            "Rescheduled",
+            "New",
+            "In Progress",
+            "On Hold",
+            "Lost",
+            "Converted",
+          ]}
           required
         />
 

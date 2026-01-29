@@ -86,12 +86,27 @@ const createFollowUp = asyncHandler(async (req, res) => {
 
     const followUp = await FollowUp.create(req.body);
     
-    // Optionally update the Lead's nextFollowUpDate and count
+    // Update Lead Status if applicable
+    const leadStatuses = ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'];
+    const taskStatuses = ['Missed', 'Rescheduled']; // These don't change lead status usually, unless specifically decided.
+
+    if (leadStatuses.includes(req.body.status)) {
+        leadExists.status = req.body.status;
+        if (req.body.status === 'Converted') {
+             leadExists.isConverted = true;
+             leadExists.convertedAt = new Date();
+        } else if (req.body.status === 'Lost') {
+             leadExists.lostAt = new Date();
+             leadExists.lostReason = req.body.outcome || 'Marked Lost via Follow-up';
+        }
+    }
+
+    // Update the Lead's nextFollowUpDate and count
     leadExists.nextFollowUpDate = scheduledAt;
     leadExists.followUpCount = (leadExists.followUpCount || 0) + 1;
     await leadExists.save();
 
-    logger.info(`Follow-up created for lead ${leadExists.name}`);
+    logger.info(`Follow-up created for lead ${leadExists.name}, status synced: ${req.body.status}`);
 
     res.status(201).json({
         success: true,
@@ -114,6 +129,30 @@ const updateFollowUp = asyncHandler(async (req, res) => {
         new: true,
         runValidators: true
     });
+
+    // Sync Status with Lead
+    if (req.body.status) {
+         const leadStatuses = ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'];
+         if (leadStatuses.includes(req.body.status)) {
+             try {
+                 const lead = await Lead.findById(followUp.lead);
+                 if (lead) {
+                     lead.status = req.body.status;
+                      if (req.body.status === 'Converted') {
+                            lead.isConverted = true;
+                            lead.convertedAt = new Date();
+                        } else if (req.body.status === 'Lost') {
+                            lead.lostAt = new Date();
+                            lead.lostReason = followUp.outcome || req.body.outcome || 'Marked Lost via Follow-up Update';
+                        }
+                     await lead.save();
+                     logger.info(`Lead status synced from follow-up update: ${lead.name} -> ${req.body.status}`);
+                 }
+             } catch (err) {
+                 logger.error(`Failed to sync lead status from follow-up ${followUp._id}: ${err.message}`);
+             }
+         }
+    }
 
     res.status(200).json({
         success: true,

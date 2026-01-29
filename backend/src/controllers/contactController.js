@@ -306,6 +306,24 @@ const deleteContact = asyncHandler(async (req, res) => {
     contact.isDeleted = true;
     await contact.save();
 
+    // Revert Lead Conversion Status if applicable
+    if (contact.leadId) {
+        try {
+            const lead = await Lead.findById(contact.leadId);
+            if (lead) {
+                lead.isConverted = false;
+                lead.status = 'Completed'; // Revert to Completed so it can be converted again
+                // lead.convertedAt = null; // Optional: Keep history or clear it? Keeping it might be confusing if converted again. let's clear it.
+                // Actually, let's keep convertedAt as "last converted at" or just leave it. 
+                // Simplest is just set isConverted to false so it shows up in the list again.
+                await lead.save();
+                logger.info(`Reverted conversion status for lead: ${lead.name} after contact deletion`);
+            }
+        } catch (err) {
+            logger.error(`Failed to revert lead conversion status for contact ${contact._id}: ${err.message}`);
+        }
+    }
+
     res.status(200).json({
         success: true,
         data: {}

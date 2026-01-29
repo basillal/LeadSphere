@@ -264,7 +264,7 @@ const FollowUps = () => {
         </select>
       </div>
 
-      <div className="pb-20">
+      <div className="pb-6">
         <FollowUpList
           followUps={filteredFollowUps}
           onEdit={handleEdit}
