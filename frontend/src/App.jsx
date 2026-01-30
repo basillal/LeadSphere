@@ -8,8 +8,11 @@ import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/leads/Leads";
 import FollowUps from "./pages/followUps/FollowUps";
 import Contacts from "./pages/contacts/Contacts";
+import ContactDetails from "./pages/contacts/ContactDetails";
 import Referrers from "./pages/referrers/Referrers";
 import Activities from "./pages/activities/Activities";
+import Services from "./pages/services/Services";
+import Billings from "./pages/billing/Billings";
 import SourceManagement from "./pages/SourceManagement";
 import StatusTags from "./pages/StatusTags";
 import Search from "./pages/Search";
@@ -35,8 +38,11 @@ function App() {
                 <Route path="leads" element={<Leads />} />
                 <Route path="follow-ups" element={<FollowUps />} />
                 <Route path="contacts" element={<Contacts />} />
+                <Route path="contacts/:id" element={<ContactDetails />} />
                 <Route path="referrers" element={<Referrers />} />
                 <Route path="activities" element={<Activities />} />
+                <Route path="services" element={<Services />} />
+                <Route path="billings" element={<Billings />} />
 
                 <Route
                   path="admin/companies"

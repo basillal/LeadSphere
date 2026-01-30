@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); // Restart trigger
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
@@ -34,6 +34,9 @@ const referrerRoutes = require('./routes/referrerRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+const billingRoutes = require('./routes/billingRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -45,6 +48,9 @@ app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/referrers', referrerRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/billings', billingRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

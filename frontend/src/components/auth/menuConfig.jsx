@@ -9,6 +9,8 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import SearchIcon from "@mui/icons-material/Search";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import CategoryIcon from "@mui/icons-material/Category";
 
 export const menuConfig = [
   {
@@ -46,6 +48,24 @@ export const menuConfig = [
     path: "/activities",
     icon: <AssignmentIcon />,
     permission: "ACTIVITY_READ",
+  },
+  {
+    label: "Services",
+    path: "/services",
+    icon: <CategoryIcon />,
+    // permission: "SERVICE_READ", // Assuming permission exists or defaulting to open for now for authenticated users
+  },
+  {
+    label: "Billing",
+    path: "/billings",
+    icon: <ReceiptIcon />,
+    // permission: "BILLING_READ",
+  },
+  {
+    label: "Reports",
+    path: "/reports",
+    icon: <AssessmentIcon />,
+    // permission: "REPORT_READ",
   },
   {
     label: "Team",
@@ -87,10 +107,11 @@ export const menuConfig = [
         icon: <SearchIcon />,
       },
       {
-        label: "Reports",
-        path: "/reports",
-        icon: <AssessmentIcon />,
+        label: "Search",
+        path: "/search",
+        icon: <SearchIcon />,
       },
+      // Reports moved to main menu
       {
         label: "Settings",
         path: "/settings",

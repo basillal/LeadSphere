@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
 import leadService from "../../services/leadService"; // Added import
 import ContactStats from "./ContactStats";
@@ -368,6 +369,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
 };
 
 const Contacts = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [contacts, setContacts] = useState([]);
   const [pagination, setPagination] = useState({
@@ -518,7 +520,7 @@ const Contacts = () => {
   };
 
   const handleView = (contact) => {
-    setPreviewContact(contact);
+    navigate(`/contacts/${contact._id}`);
   };
 
   const handleFormSubmit = async (data) => {
