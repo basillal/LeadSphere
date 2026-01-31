@@ -47,6 +47,7 @@ const Companies = () => {
       plan: company.plan,
       ownerName: company.owner?.name || "",
       ownerEmail: company.owner?.email || "",
+      logo: company.settings?.logo || "",
     });
     setIsModalOpen(true);
   };
@@ -54,10 +55,19 @@ const Companies = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Prepare payload to match backend schema (logo is in settings)
+      const payload = {
+        ...formData,
+        settings: {
+          ...(currentCompany?.settings || {}),
+          logo: formData.logo,
+        },
+      };
+
       if (currentCompany) {
-        await companyService.updateCompany(currentCompany._id, formData);
+        await companyService.updateCompany(currentCompany._id, payload);
       } else {
-        await companyService.createCompany(formData);
+        await companyService.createCompany(payload);
       }
       setIsModalOpen(false);
       fetchCompanies();
@@ -68,14 +78,18 @@ const Companies = () => {
   };
 
   const columns = [
-    { id: "name", label: "Company Name" },
+    {
+      id: "name",
+      label: "Company Name",
+      render: (row) => <span className="capitalize">{row.name}</span>,
+    },
     { id: "plan", label: "Plan" },
     {
       id: "owner",
       label: "Owner",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900">
+          <div className="font-medium text-gray-900 capitalize">
             {row.owner?.name || "-"}
           </div>
           <div className="text-xs text-gray-500">{row.owner?.email || "-"}</div>

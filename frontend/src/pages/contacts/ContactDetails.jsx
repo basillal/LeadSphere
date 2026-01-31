@@ -194,12 +194,12 @@ const ContactDetails = () => {
               </svg>
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 capitalize">
                 {contact.name}
               </h1>
               <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
                 {contact.companyName && (
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 capitalize">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"

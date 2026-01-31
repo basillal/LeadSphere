@@ -73,9 +73,9 @@ const PrintInvoice = () => {
           <div className="w-1/2">
             {/* Logo or Placeholder */}
             <div className="mb-4">
-              {company.settings?.logo ? (
+              {company.settings?.logo || company.logo ? (
                 <img
-                  src={company.settings.logo}
+                  src={company.settings?.logo || company.logo}
                   alt={company.name}
                   className="h-16 w-auto object-contain mb-2"
                   onError={(e) => {
@@ -88,7 +88,10 @@ const PrintInvoice = () => {
               {/* Fallback Initial if no logo or error */}
               <div
                 className="w-12 h-12 bg-black text-white flex items-center justify-center font-bold text-xl rounded mb-2"
-                style={{ display: company.settings?.logo ? "none" : "flex" }}
+                style={{
+                  display:
+                    company.settings?.logo || company.logo ? "none" : "flex",
+                }}
               >
                 {company.name ? company.name.charAt(0) : "L"}
               </div>
@@ -262,45 +265,21 @@ const PrintInvoice = () => {
           </div>
         </div>
 
-        {/* Footer / Notes */}
-        <div className="grid grid-cols-2 gap-12 text-sm text-gray-600 border-t-2 border-gray-100 pt-8">
-          <div>
-            <h4 className="font-bold text-gray-900 mb-2 uppercase text-xs tracking-wider">
-              Notes & Terms
-            </h4>
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-xs text-gray-500 leading-relaxed">
-              {invoice.notes ||
-                "Thank you for your business. Payment is due within the specified time. Please include invoice number on your check."}
-            </div>
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-900 mb-2 uppercase text-xs tracking-wider">
-              Payment Details
-            </h4>
-            <div className="space-y-1">
-              <p>
-                <span className="font-medium">Bank:</span> Standard Chartered
-              </p>
-              <p>
-                <span className="font-medium">Account Name:</span> LeadSphere
-                Inc.
-              </p>
-              <p>
-                <span className="font-medium">Account No:</span> 1234 5678 9000
-              </p>
-              <p>
-                <span className="font-medium">IFSC:</span> SCBL0001234
-              </p>
-              <p className="mt-2 text-xs text-gray-400 italic">
-                Please send proof of payment to finance@leadsphere.com
-              </p>
-            </div>
-          </div>
+        {/* Footer / Notes & Terms */}
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <h3 className="text-lg font-bold text-gray-900 mb-2">
+            Notes & Terms
+          </h3>
+          <p className="text-sm text-gray-600">
+            {invoice.notes ||
+              "Thank you for your business. Payment is due within the specified time. Please include invoice number on your check."}
+          </p>
         </div>
 
         <div className="mt-16 text-center text-xs text-gray-400">
           <p>
-            © {new Date().getFullYear()} LeadSphere Inc. All rights reserved.
+            © {new Date().getFullYear()} {company.name || "LeadSphere Inc."}.
+            All rights reserved.
           </p>
         </div>
       </div>

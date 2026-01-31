@@ -7,8 +7,8 @@ const User = require('../models/User');
 
 dotenv.config();
 
-// Added SERVICE, BILLING, REPORT
-const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT', 'DASHBOARD'];
+// Added SERVICE, BILLING, REPORT, EXPENSE
+const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT', 'DASHBOARD', 'EXPENSE'];
 const actions = ['READ', 'CREATE', 'UPDATE', 'DELETE'];
 
 const permissionsList = [];
@@ -107,7 +107,10 @@ const seedAuth = async () => {
             permissionIds['BILLING_READ'],
             permissionIds['BILLING_CREATE'], // Allow billing creation? Assuming yes.
             permissionIds['REPORT_READ'],
+            permissionIds['REPORT_READ'],
             permissionIds['DASHBOARD_READ'],
+            permissionIds['EXPENSE_READ'],
+            permissionIds['EXPENSE_CREATE'],
         ];
 
         const finalUserPerms = userPerms.filter(id => id); // Filter undefined

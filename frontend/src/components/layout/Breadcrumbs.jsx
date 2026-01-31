@@ -34,13 +34,22 @@ const Breadcrumbs = () => {
         Home
       </Link>
       {pathnames.map((value, index) => {
-        const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+        let to = `/${pathnames.slice(0, index + 1).join("/")}`;
         const isLast = index === pathnames.length - 1;
+
+        // Custom Overrides
+        if (to === "/print/invoice") {
+          to = "/billings";
+        }
+
+        // Check if path is clickable
+        // If it's just "/print", we probably don't want to link anywhere
+        const isClickable = to !== "/print" && !isLast;
 
         return (
           <div key={to} className="flex items-center">
             <span className="mx-2 text-gray-400">/</span>
-            {isLast ? (
+            {!isClickable ? (
               <span className="text-black font-medium">
                 {getBreadcrumbName(value)}
               </span>

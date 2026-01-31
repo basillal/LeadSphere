@@ -1,4 +1,5 @@
 const Billing = require('../models/Billing');
+const Expense = require('../models/Expense');
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 
@@ -7,17 +8,36 @@ const getCompanyFilter = (req) => {
     return req.companyFilter ? { ...req.companyFilter, isDeleted: false } : { isDeleted: false };
 };
 
+// Helper to get date filter from query params
+const getDateFilter = (query) => {
+    const { startDate, endDate, year } = query;
+    let start, end;
+
+    if (startDate && endDate) {
+        start = new Date(startDate);
+        end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+    } else {
+        const targetYear = parseInt(year) || new Date().getFullYear();
+        start = new Date(`${targetYear}-01-01`);
+        end = new Date(`${targetYear}-12-31`);
+        end.setHours(23, 59, 59, 999);
+    }
+    return { start, end };
+};
+
 // @desc    Get Revenue by Service
 // @route   GET /api/reports/service-revenue
 // @access  Private
 const getServiceRevenue = asyncHandler(async (req, res) => {
     const baseQuery = getCompanyFilter(req);
-    // REMOVED: const companyId = req.user.company?._id || req.user.company;
-    // We already have the correct company filter in baseQuery (either from user or header context)
-    // baseQuery looks like: { company: '...', isDeleted: false }
+    const { start, end } = getDateFilter(req.query);
 
     // Ensure company ID is ObjectId in match
-    const matchQuery = { ...baseQuery };
+    const matchQuery = { 
+        ...baseQuery,
+        billingDate: { $gte: start, $lte: end }
+    };
     if (matchQuery.company) {
         matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
     }
@@ -52,19 +72,7 @@ const getServiceRevenue = asyncHandler(async (req, res) => {
 // @access  Private
 const getMonthlyTransactions = asyncHandler(async (req, res) => {
     const baseQuery = getCompanyFilter(req);
-    const { startDate, endDate, year } = req.query;
-
-    let start, end;
-    if (startDate && endDate) {
-        start = new Date(startDate);
-        end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-    } else {
-        const targetYear = parseInt(year) || new Date().getFullYear();
-        start = new Date(`${targetYear}-01-01`);
-        end = new Date(`${targetYear}-12-31`);
-        end.setHours(23, 59, 59, 999);
-    }
+    const { start, end } = getDateFilter(req.query);
 
     // Determine grouping: Daily if range <= 60 days, else Monthly
     const diffTime = Math.abs(end - start);
@@ -76,6 +84,7 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
         matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
     }
 
+    // Aggregate Revenue (Billing)
     const stats = await Billing.aggregate([
         {
             $match: {
@@ -95,32 +104,66 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
         { $sort: { '_id': 1 } }
     ]);
 
-    console.log('--- REPORT DEBUG ---');
-    console.log('Range:', start, 'to', end);
-    console.log('Query:', JSON.stringify(matchQuery));
-    console.log('Stats Found:', stats.length);
-    console.log('Sample Stat:', stats[0]);
-    console.log('--------------------');
+    // Aggregate Expenses
+    const expenseStats = await Expense.aggregate([
+        {
+            $match: {
+                ...matchQuery,
+                expenseDate: { $gte: start, $lte: end }
+            }
+        },
+        {
+            $group: {
+                _id: groupBy === 'day' 
+                    ? { $dateToString: { format: "%Y-%m-%d", date: "$expenseDate" } }
+                    : { $month: "$expenseDate" },
+                amount: { $sum: '$amount' },
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { '_id': 1 } }
+    ]);
 
     let result = [];
     if (groupBy === 'day') {
         // Evaluate daily data
-        result = stats.map(item => ({
-            label: item._id, // YYYY-MM-DD
-            date: item._id,
-            revenue: item.revenue,
-            count: item.count
+        // Create a map of all dates
+        const dateMap = new Map();
+        
+        stats.forEach(item => {
+            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0 });
+            dateMap.get(item._id).revenue = item.revenue;
+            dateMap.get(item._id).count = item.count;
+        });
+
+        expenseStats.forEach(item => {
+            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0 });
+            dateMap.get(item._id).expenses = item.amount;
+        });
+
+        // Convert map to array and sort
+        const dates = Array.from(dateMap.keys()).sort();
+        result = dates.map(date => ({
+            label: date,
+            date: date,
+            revenue: dateMap.get(date).revenue || 0,
+            expenses: dateMap.get(date).expenses || 0,
+            count: dateMap.get(date).count || 0
         }));
+
     } else {
         // Evaluate monthly data
         result = Array.from({ length: 12 }, (_, i) => {
             const monthNum = i + 1;
-            const monthData = stats.find(item => item._id === monthNum);
+            const revenueData = stats.find(item => item._id === monthNum);
+            const expenseData = expenseStats.find(item => item._id === monthNum);
+            
             return {
                 label: new Date(0, i).toLocaleString('default', { month: 'short' }),
                 month: monthNum,
-                revenue: monthData ? monthData.revenue : 0,
-                count: monthData ? monthData.count : 0
+                revenue: revenueData ? revenueData.revenue : 0,
+                expenses: expenseData ? expenseData.amount : 0,
+                count: revenueData ? revenueData.count : 0
             };
         });
     }
@@ -131,11 +174,7 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
         meta: { 
             groupBy, 
             start, 
-            end,
-            query: matchQuery,
-            statsCount: stats.length,
-            companyFilter: req.companyFilter,
-            userCompany: req.user.company?._id
+            end
         }
     });
 });
@@ -145,8 +184,12 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
 // @access  Private
 const getPaymentStatusStats = asyncHandler(async (req, res) => {
     const baseQuery = getCompanyFilter(req);
+    const { start, end } = getDateFilter(req.query);
 
-    const matchQuery = { ...baseQuery };
+    const matchQuery = { 
+        ...baseQuery,
+        billingDate: { $gte: start, $lte: end }
+    };
     if (matchQuery.company) {
         matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
     }
@@ -173,8 +216,12 @@ const getPaymentStatusStats = asyncHandler(async (req, res) => {
 // @access  Private
 const getContactBilling = asyncHandler(async (req, res) => {
     const baseQuery = getCompanyFilter(req);
+    const { start, end } = getDateFilter(req.query);
 
-    const matchQuery = { ...baseQuery };
+    const matchQuery = { 
+        ...baseQuery,
+        billingDate: { $gte: start, $lte: end }
+    };
     if (matchQuery.company) {
         matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
     }

@@ -3,6 +3,7 @@ const Contact = require('../models/Contact');
 const Activity = require('../models/Activity');
 const Service = require('../models/Service');
 const Billing = require('../models/Billing');
+const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
 
 // @desc    Get dashboard statistics
@@ -57,6 +58,7 @@ exports.getDashboardStats = async (req, res) => {
             leadTrend,
             conversionData,
             recentLeads,
+            expenseTrend,
             leadsBySource
         ] = await Promise.all([
             // 1. Quick Counts
@@ -182,6 +184,47 @@ exports.getDashboardStats = async (req, res) => {
                 .limit(5)
                 .select('name status source createdAt email phone'),
 
+            // 13. Expense Trend (Matches Revenue Trend Logic)
+            (() => {
+                const interval = req.query.revenueInterval || 'daily'; // Reuse same interval? Or separate? Let's reuse for now.
+                let format = "%Y-%m-%d";
+                let startDateFilter = new Date();
+                
+                if (interval === 'daily') {
+                    format = "%Y-%m-%d";
+                    startDateFilter.setDate(startDateFilter.getDate() - 30);
+                } else if (interval === 'monthly') {
+                    format = "%Y-%m";
+                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 1);
+                } else if (interval === 'yearly') {
+                    format = "%Y";
+                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 5);
+                }
+
+                // If explicit date range provided in query, override
+                 let dateQuery = baseQuery.createdAt ? baseQuery.createdAt : { $gte: startDateFilter };
+                 // Expense date field is 'expenseDate'
+                 if (startDate && endDate) {
+                     dateQuery = { $gte: new Date(startDate), $lte: new Date(endDate) };
+                 }
+
+                return Expense.aggregate([
+                    { 
+                      $match: { 
+                        ...baseQuery,
+                        expenseDate: dateQuery
+                      } 
+                    },
+                    {
+                      $group: {
+                        _id: { $dateToString: { format: format, date: "$expenseDate" } },
+                        totalExpenses: { $sum: "$amount" }
+                      }
+                    },
+                    { $sort: { _id: 1 } }
+                ]);
+            })(),
+
             // 12. Leads by Source
             Lead.aggregate([
                 { $match: baseQuery },
@@ -223,6 +266,7 @@ exports.getDashboardStats = async (req, res) => {
                 activitiesByType,
                 topServices,
                 revenueTrend,
+                expenseTrend,
                 leadTrend,
                 leadsBySource
             },

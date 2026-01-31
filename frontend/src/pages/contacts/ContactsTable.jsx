@@ -43,7 +43,9 @@ const ContactsTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900">{row.name}</span>
+          <span className="font-semibold text-gray-900 capitalize">
+            {row.name}
+          </span>
           {row.designation && (
             <span className="text-xs text-gray-500">{row.designation}</span>
           )}
@@ -53,7 +55,9 @@ const ContactsTable = ({
     {
       id: "companyName",
       label: "Prospect Co.",
-      render: (row) => row.companyName || "-",
+      render: (row) => (
+        <span className="capitalize">{row.companyName || "-"}</span>
+      ),
     },
     {
       id: "createdBy",
@@ -209,8 +213,12 @@ const ContactsTable = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>
-          <p className="text-xs text-gray-500">{row.companyName || "-"}</p>
+          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+            {row.name}
+          </h3>
+          <p className="text-xs text-gray-500 capitalize">
+            {row.companyName || "-"}
+          </p>
           {row.designation && (
             <p className="text-xs text-gray-400">{row.designation}</p>
           )}

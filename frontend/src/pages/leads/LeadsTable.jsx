@@ -45,7 +45,7 @@ const LeadsTable = ({
       width: "w-1/5",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900">{row.name}</div>
+          <div className="font-medium text-gray-900 capitalize">{row.name}</div>
           <span className="block text-xs text-gray-500">{row.email}</span>
         </div>
       ),
@@ -54,7 +54,9 @@ const LeadsTable = ({
       id: "companyName",
       label: "Prospect Co.", // Renamed to avoid confusion with Tenant
       width: "w-[15%]",
-      render: (row) => row.companyName || "-",
+      render: (row) => (
+        <span className="capitalize">{row.companyName || "-"}</span>
+      ),
     },
     {
       id: "createdBy",
@@ -217,8 +219,12 @@ const LeadsTable = ({
     >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>
-          <p className="text-xs text-gray-500">{row.companyName || "-"}</p>
+          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+            {row.name}
+          </h3>
+          <p className="text-xs text-gray-500 capitalize">
+            {row.companyName || "-"}
+          </p>
         </div>
         <span
           className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}

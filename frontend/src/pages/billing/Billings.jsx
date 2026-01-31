@@ -160,9 +160,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-w-5xl mx-auto"
+        className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-8 max-w-5xl mx-auto"
       >
-        <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-6">
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-6 gap-4">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {initialData ? "Edit Invoice" : "Create New Invoice"}
@@ -201,9 +201,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Client & Date Section */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-8">
           {/* Left: Client Selection */}
-          <div className="md:col-span-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+          <div className="md:col-span-8 bg-gray-50 p-3 md:p-6 rounded-xl border border-gray-100">
             <div className="flex justify-between items-center mb-4">
               <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
                 Bill To (Customer)
@@ -223,9 +223,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               <div className="relative">
                 <div className="flex gap-2">
                   <div className="relative flex-grow">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <svg
-                        className="w-5 h-5 text-gray-400"
+                        className="w-4 h-4 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -241,10 +241,10 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                     </span>
                     <input
                       type="text"
-                      placeholder="Search client by name..."
+                      placeholder="Search Client..."
                       value={contactSearch}
                       onChange={(e) => setContactSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-shadow"
+                      className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black transition-all text-sm"
                     />
                   </div>
                 </div>
@@ -345,8 +345,8 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Line Items */}
-        <div className="mb-8 border border-gray-200 rounded-xl overflow-hidden">
-          <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 flex justify-between items-center">
+        <div className="mb-6 md:mb-8 border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-gray-50 px-4 md:px-6 py-3 border-b border-gray-200 flex justify-between items-center">
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
               Line Items
             </h3>
@@ -359,14 +359,20 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </button>
           </div>
 
-          <div className="p-0">
+          <div className="p-0 overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white border-b border-gray-100 text-xs text-gray-500 uppercase">
-                  <th className="px-6 py-3 font-medium">Service</th>
-                  <th className="px-4 py-3 font-medium w-24">Qty</th>
-                  <th className="px-4 py-3 font-medium w-32">Price</th>
-                  <th className="px-4 py-3 font-medium w-32 text-right">
+                  <th className="px-6 py-3 font-medium min-w-[200px]">
+                    Service
+                  </th>
+                  <th className="px-4 py-3 font-medium w-24 min-w-[100px]">
+                    Qty
+                  </th>
+                  <th className="px-4 py-3 font-medium w-32 min-w-[120px]">
+                    Price
+                  </th>
+                  <th className="px-4 py-3 font-medium w-32 text-right min-w-[120px]">
                     Total
                   </th>
                   <th className="px-4 py-3 w-16"></th>
@@ -465,7 +471,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-200 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-gray-200 pt-6">
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -520,7 +526,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-6 space-y-4 border border-gray-100 shadow-sm">
+          <div className="bg-gray-50 rounded-xl p-4 md:p-6 space-y-4 border border-gray-100 shadow-sm">
             <h3 className="font-bold text-gray-900 border-b border-gray-200 pb-2">
               Payment Summary
             </h3>
@@ -565,7 +571,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           </div>
         </div>
 
-        <div className="flex justify-between gap-3 mt-10 border-t border-gray-100 pt-8">
+        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-8 md:mt-10 border-t border-gray-100 pt-6 md:pt-8">
           <button
             type="button"
             onClick={onCancel}
@@ -587,15 +593,15 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
       {/* Add Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl my-8 relative flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm overflow-hidden md:overflow-y-auto">
+          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-2xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl sticky top-0 z-10">
               <h2 className="text-xl font-bold text-gray-900">
                 Add New Contact
               </h2>
               <button
                 onClick={() => setShowContactModal(false)}
-                className="text-gray-500 hover:text-black"
+                className="text-gray-500 hover:text-black p-2 rounded-full hover:bg-gray-200 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -695,12 +701,17 @@ const Billings = () => {
           severity: "success",
         });
       } else {
-        await billingService.createBilling(data);
+        const res = await billingService.createBilling(data);
         setSnackbar({
           open: true,
           message: "Invoice generated successfully",
           severity: "success",
         });
+
+        // Auto-print newly created invoice
+        if (res.data && res.data._id) {
+          window.open(`/print/invoice/${res.data._id}`, "_blank");
+        }
       }
       setView("list");
       fetchBillings();

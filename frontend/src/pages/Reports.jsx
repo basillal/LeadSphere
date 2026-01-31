@@ -48,10 +48,10 @@ const Reports = () => {
         }
 
         const results = await Promise.allSettled([
-          reportService.getServiceRevenue(),
+          reportService.getServiceRevenue(params),
           reportService.getMonthlyTransactions(params),
-          reportService.getPaymentStatusStats(),
-          reportService.getContactBilling(),
+          reportService.getPaymentStatusStats(params),
+          reportService.getContactBilling(params),
         ]);
 
         const [revRes, monthRes, payRes, contactRes] = results;
@@ -99,9 +99,14 @@ const Reports = () => {
 
   // Calculate Totals
   const totalRevenue = monthlyStats.reduce(
-    (acc, curr) => acc + curr.revenue,
+    (acc, curr) => acc + (curr.revenue || 0),
     0,
   );
+  const totalExpenses = monthlyStats.reduce(
+    (acc, curr) => acc + (curr.expenses || 0),
+    0,
+  );
+  const netRevenue = totalRevenue - totalExpenses;
   const pendingAmount =
     paymentStats.find((s) => s._id === "PENDING")?.totalAmount || 0;
   const paidAmount =
@@ -142,24 +147,24 @@ const Reports = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card
-          title="Total Revenue"
+          title="Revenue"
           value={formatCurrency(totalRevenue)}
           subtext={`For ${year === "30d" ? "Last 30 Days" : year}`}
         />
         <Card
-          title="Paid Invoices"
-          value={formatCurrency(paidAmount)}
-          color="bg-green-50"
+          title="Expenses"
+          value={formatCurrency(totalExpenses)}
+          color="bg-red-50"
+        />
+        <Card
+          title="Net Profit"
+          value={formatCurrency(netRevenue)}
+          color={netRevenue >= 0 ? "bg-green-50" : "bg-red-50"}
         />
         <Card
           title="Pending Amount"
           value={formatCurrency(pendingAmount)}
           color="bg-yellow-50"
-        />
-        <Card
-          title="Transactions"
-          value={monthlyStats.reduce((acc, c) => acc + c.count, 0)}
-          subtext="Total Invoices"
         />
       </div>
 
@@ -197,29 +202,26 @@ const Reports = () => {
                     border: "none",
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
-                  formatter={(value) => [formatCurrency(value), "Revenue"]}
+                  formatter={(value, name) => [
+                    formatCurrency(value),
+                    name === "revenue" ? "Revenue" : "Expenses",
+                  ]}
                   cursor={{ fill: "transparent" }}
                 />
                 <Bar
                   dataKey="revenue"
+                  name="Revenue"
                   fill="#10B981"
                   radius={[4, 4, 0, 0]}
-                  barSize={40}
-                >
-                  <LabelList
-                    dataKey="revenue"
-                    position="top"
-                    formatter={(value) =>
-                      value > 0 ? formatCurrency(value).replace(".00", "") : ""
-                    }
-                    style={{
-                      fontSize: "11px",
-                      fill: "#374151",
-                      fontWeight: 500,
-                    }}
-                    offset={10}
-                  />
-                </Bar>
+                  barSize={20}
+                />
+                <Bar
+                  dataKey="expenses"
+                  name="Expenses"
+                  fill="#EF4444"
+                  radius={[4, 4, 0, 0]}
+                  barSize={20}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>

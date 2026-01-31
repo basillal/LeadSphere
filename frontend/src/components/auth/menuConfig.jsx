@@ -13,6 +13,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import CategoryIcon from "@mui/icons-material/Category";
 import BusinessIcon from "@mui/icons-material/Business";
 import SecurityIcon from "@mui/icons-material/Security";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 export const menuConfig = [
   {
@@ -50,6 +51,12 @@ export const menuConfig = [
     path: "/billings",
     icon: <ReceiptIcon />,
     // permission: "BILLING_READ",
+  },
+  {
+    label: "Expenses",
+    path: "/expenses",
+    icon: <MonetizationOnIcon />,
+    // permission: "EXPENSE_READ",
   },
   {
     label: "Reports",

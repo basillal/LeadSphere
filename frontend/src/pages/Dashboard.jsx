@@ -280,6 +280,70 @@ const Dashboard = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Expense Trend - Area Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-800">Expense Trend</h3>
+            {/* Reusing revenueInterval for now or we can add a separate state if needed */}
+          </div>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data.charts.expenseTrend || []}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="_id"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 10 }}
+                tickFormatter={(value) => {
+                  if (revenueInterval === "yearly") return value;
+                  const date = new Date(value);
+                  if (revenueInterval === "daily") {
+                    return date.toLocaleDateString("default", {
+                      day: "numeric",
+                      month: "short",
+                    });
+                  }
+                  return date.toLocaleDateString("default", {
+                    month: "short",
+                    year: "2-digit",
+                  });
+                }}
+                interval={revenueInterval === "daily" ? 2 : 0}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip
+                formatter={(value) => formatCurrency(value)}
+                labelFormatter={(value) => {
+                  const date = new Date(value);
+                  if (revenueInterval === "yearly") return value;
+                  return date.toLocaleDateString("default", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  });
+                }}
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="totalExpenses"
+                stroke="#EF4444" // Red color
+                strokeWidth={3}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Secondary Charts Grid */}

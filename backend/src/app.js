@@ -38,6 +38,7 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const billingRoutes = require('./routes/billingRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -53,6 +54,7 @@ app.use('/api/referrers', referrerRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/billings', billingRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

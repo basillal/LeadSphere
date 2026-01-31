@@ -13,6 +13,7 @@ import Referrers from "./pages/referrers/Referrers";
 import Activities from "./pages/activities/Activities";
 import Services from "./pages/services/Services";
 import Billings from "./pages/billing/Billings";
+import Expenses from "./pages/expenses/Expenses";
 import SourceManagement from "./pages/SourceManagement";
 import StatusTags from "./pages/StatusTags";
 import Search from "./pages/Search";
@@ -43,6 +44,8 @@ function App() {
                 <Route path="referrers" element={<Referrers />} />
                 <Route path="activities" element={<Activities />} />
                 <Route path="services" element={<Services />} />
+                <Route path="billings" element={<Billings />} />
+                <Route path="expenses" element={<Expenses />} />
                 <Route path="print/invoice/:id" element={<PrintInvoice />} />
 
                 <Route
