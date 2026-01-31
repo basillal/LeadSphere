@@ -10,12 +10,26 @@ const mongoose = require('mongoose');
 // @access  Private
 exports.getDashboardStats = async (req, res) => {
     try {
-        const companyId = req.user.company?._id || req.user.company;
         const { startDate, endDate } = req.query;
 
-        // Base Query
-        const baseQuery = { company: companyId, isDeleted: false };
-        const billingQuery = { company: companyId, paymentStatus: 'PAID' };
+        // Base Query using tenant filter
+        // req.companyFilter is set by tenantMiddleware
+        // Example: { company: 'ObjectId', isDeleted: false } or just { isDeleted: false } for SuperAdmin global view
+        const baseQuery = req.companyFilter ? { ...req.companyFilter, isDeleted: false } : { isDeleted: false };
+        
+        // Ensure company is ObjectId for Aggregation (important!)
+        if (baseQuery.company) {
+            baseQuery.company = new mongoose.Types.ObjectId(baseQuery.company);
+        }
+
+        const billingQuery = { ...baseQuery, paymentStatus: 'PAID' };
+        
+        // Ensure company is ObjectId for billingQuery aggregation too
+        if (billingQuery.company) {
+             billingQuery.company = new mongoose.Types.ObjectId(billingQuery.company);
+        }
+
+        const companyId = baseQuery.company; // For reference in code logic if needed
 
         // Apply Date Filter if provided
         if (startDate && endDate) {
@@ -40,14 +54,17 @@ exports.getDashboardStats = async (req, res) => {
             topServices,
             pendingRevenueData,
             revenueTrend,
-            leadTrend
+            leadTrend,
+            conversionData,
+            recentLeads,
+            leadsBySource
         ] = await Promise.all([
             // 1. Quick Counts
             Lead.countDocuments(baseQuery),
             Contact.countDocuments(baseQuery),
-            Service.countDocuments({ company: companyId, isDeleted: false, isActive: true }),
+            Service.countDocuments({ ...baseQuery, isActive: true }),
             Activity.countDocuments(baseQuery),
-            Activity.countDocuments({ ...baseQuery, status: { $in: ['Scheduled', 'Pending'] } }),
+            Activity.countDocuments({ ...baseQuery, status: { $in: ['Scheduled', 'Pending', 'In Progress'] } }),
 
             // 2. Leads by Status
             Lead.aggregate([
@@ -64,7 +81,7 @@ exports.getDashboardStats = async (req, res) => {
             // 4. Revenue Stats (Paid)
             Billing.aggregate([
                 { $match: billingQuery },
-                { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' } } }
+                { $group: { _id: null, totalRevenue: { $sum: '$grandTotal' } } }
             ]),
 
             // 5. Recent Activities
@@ -76,10 +93,10 @@ exports.getDashboardStats = async (req, res) => {
             // 6. Top Services
             Billing.aggregate([
                 { $match: billingQuery },
-                { $unwind: '$items' },
+                { $unwind: '$services' },
                 { $group: { 
-                    _id: '$items.serviceName', 
-                    totalRevenue: { $sum: { $multiply: ['$items.quantity', '$items.unitPrice'] } },
+                    _id: '$services.serviceName', 
+                    totalRevenue: { $sum: '$services.totalAmount' },
                     count: { $sum: 1 }
                 }},
                 { $sort: { totalRevenue: -1 } },
@@ -89,15 +106,15 @@ exports.getDashboardStats = async (req, res) => {
             // 7. Pending Revenue (Total Unpaid)
             // Use paymentStatus !== 'PAID'
             Billing.aggregate([
-                { $match: { company: companyId, paymentStatus: { $ne: 'PAID' } } },
-                { $group: { _id: null, totalPending: { $sum: '$totalAmount' } } }
+                { $match: { ...baseQuery, paymentStatus: { $ne: 'PAID' } } },
+                { $group: { _id: null, totalPending: { $sum: '$grandTotal' } } }
             ]),
 
             // 8. Revenue Trend (Last 12 Months)
             Billing.aggregate([
                 { 
                   $match: { 
-                    company: companyId, 
+                    ...baseQuery,
                     paymentStatus: 'PAID',
                     createdAt: { $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) }
                   } 
@@ -105,7 +122,7 @@ exports.getDashboardStats = async (req, res) => {
                 {
                   $group: {
                     _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                    totalRevenue: { $sum: "$totalAmount" }
+                    totalRevenue: { $sum: "$grandTotal" }
                   }
                 },
                 { $sort: { _id: 1 } }
@@ -115,8 +132,7 @@ exports.getDashboardStats = async (req, res) => {
             Lead.aggregate([
                 { 
                   $match: { 
-                    company: companyId, 
-                    isDeleted: false,
+                    ...baseQuery,
                     createdAt: { $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) }
                   } 
                 },
@@ -127,12 +143,41 @@ exports.getDashboardStats = async (req, res) => {
                   }
                 },
                 { $sort: { _id: 1 } }
+            ]),
+
+            // 10. Win Rate / Conversion Rate
+            Lead.aggregate([
+                { $match: baseQuery },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: 1 },
+                        won: { $sum: { $cond: [{ $eq: ["$status", "Converted"] }, 1, 0] } } 
+                    }
+                }
+            ]),
+
+            // 11. Recent Leads
+            Lead.find(baseQuery)
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .select('name status source createdAt email phone'),
+
+            // 12. Leads by Source
+            Lead.aggregate([
+                { $match: baseQuery },
+                { $group: { _id: '$source', count: { $sum: 1 } } }
             ])
         ]);
 
         // Process Revenue Data
         const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
         const totalPendingRevenue = pendingRevenueData.length > 0 ? pendingRevenueData[0].totalPending : 0;
+        
+        // Process Conversion Rate
+        const totalLeads = conversionData.length > 0 ? conversionData[0].total : 0;
+        const wonLeads = conversionData.length > 0 ? conversionData[0].won : 0;
+        const conversionRate = totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
 
         console.log("Dashboard Stats Debug:", {
             revenueData,
@@ -151,16 +196,19 @@ exports.getDashboardStats = async (req, res) => {
                 activities: activityCount,
                 pendingActivities: pendingActivitiesCount,
                 revenue: totalRevenue,
-                pendingRevenue: totalPendingRevenue
+                pendingRevenue: totalPendingRevenue,
+                conversionRate
             },
             charts: {
                 leadsByStatus,
                 activitiesByType,
                 topServices,
                 revenueTrend,
-                leadTrend
+                leadTrend,
+                leadsBySource
             },
-            recentActivities
+            recentActivities,
+            recentLeads
         });
 
     } catch (error) {
@@ -168,3 +216,4 @@ exports.getDashboardStats = async (req, res) => {
         res.status(500).json({ message: 'Error fetching dashboard statistics' });
     }
 };
+

@@ -16,6 +16,7 @@ exports.getActivities = async (req, res) => {
         const result = await activityService.getActivities(filters, req.query);
         res.status(200).json(result);
     } catch (error) {
+        console.error("Error in getActivities:", error);
         res.status(500).json({ message: error.message });
     }
 };

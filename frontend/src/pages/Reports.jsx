@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
 import reportService from "../services/reportService";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LabelList,
+} from "recharts";
 
 const Card = ({ title, value, subtext, color = "bg-white" }) => (
   <div className={`${color} p-5 rounded-lg shadow-sm border border-gray-100`}>
@@ -98,7 +108,7 @@ const Reports = () => {
     paymentStats.find((s) => s._id === "PAID")?.totalAmount || 0;
 
   return (
-    <div className="w-full p-6 space-y-6 bg-gray-50">
+    <div className="w-full p-6 space-y-6 bg-gray-50 pb-20">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold text-gray-800">Financial Reports</h1>
         <div className="flex gap-2">
@@ -162,54 +172,68 @@ const Reports = () => {
               {year === "30d" ? "Daily Revenue" : "Monthly Revenue"}
             </h2>
           </div>
-          <div className="flex items-end space-x-1 h-56 pb-2">
-            {monthlyStats.map((item, index) => {
-              const max =
-                Math.max(...monthlyStats.map((m) => m.revenue)) || 1000;
-              const hasRevenue = item.revenue > 0;
-              const height = hasRevenue ? (item.revenue / max) * 100 : 0;
-
-              return (
-                <div
-                  key={index}
-                  className="flex-1 flex flex-col justify-end group relative h-full"
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={monthlyStats}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#000000" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#000000" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f0f0f0"
+                />
+                <XAxis
+                  dataKey="label"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  dy={10}
+                />
+                <YAxis hide={true} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "none",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
+                  formatter={(value) => [formatCurrency(value), "Revenue"]}
+                  cursor={{
+                    stroke: "#000000",
+                    strokeWidth: 1,
+                    strokeDasharray: "5 5",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#000000"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
                 >
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-900 text-white text-[10px] p-1.5 rounded z-50 whitespace-nowrap shadow-lg border border-gray-700 pointer-events-none">
-                    <p className="font-bold text-center border-b border-gray-700 pb-0.5 mb-0.5">
-                      {item.label || item.monthName}
-                    </p>
-                    <div className="flex flex-col">
-                      <p>Rev: {formatCurrency(item.revenue)}</p>
-                      <p className="text-gray-400">{item.count} invoices</p>
-                    </div>
-                  </div>
-
-                  {hasRevenue && (
-                    <span className="mb-0.5 text-[10px] font-medium text-gray-600 w-full text-center hidden md:block truncate">
-                      {formatCurrency(item.revenue)
-                        .split("₹")[1]
-                        .split(",")[0] + "k"}
-                    </span>
-                  )}
-
-                  <div
-                    className={`w-full rounded-t transition-all ${hasRevenue ? "bg-black hover:bg-gray-800 opacity-90" : "bg-gray-100"}`}
-                    style={{ height: `${Math.max(height, 2)}%` }}
-                  ></div>
-
-                  <span className="text-[9px] text-center text-gray-400 mt-1 truncate w-full block">
-                    {monthlyStats.length > 15 && index % 2 !== 0
-                      ? ""
-                      : item.label || item.monthName}
-                  </span>
-                </div>
-              );
-            })}
-            {monthlyStats.length === 0 && (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                No data
-              </div>
-            )}
+                  <LabelList
+                    dataKey="revenue"
+                    position="top"
+                    formatter={(value) =>
+                      value > 0 ? formatCurrency(value).replace(".00", "") : ""
+                    }
+                    style={{
+                      fontSize: "11px",
+                      fill: "#374151",
+                      fontWeight: 500,
+                    }}
+                    offset={10}
+                  />
+                </Area>
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 

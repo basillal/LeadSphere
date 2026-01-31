@@ -88,6 +88,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 translate-x-0
                 ${widthClass}
                 flex flex-col
+                no-print
             `}
     >
       <div className="flex items-center justify-end h-16 border-b border-gray-200 px-4">

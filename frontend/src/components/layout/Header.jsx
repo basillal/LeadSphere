@@ -113,7 +113,7 @@ const Header = ({ handleDrawerToggle }) => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }} className="no-print">
       <AppBar position="fixed">
         <Toolbar>
           <IconButton

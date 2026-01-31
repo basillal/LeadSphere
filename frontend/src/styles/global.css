@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import './App.css';
+@import "./App.css";
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -20,12 +20,12 @@ body {
 
 /* Hide scrollbar but allow scrolling */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Custom scrollbar for modal and containers */
@@ -51,4 +51,61 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 1cm;
+    size: auto;
+  }
+
+  /* Hide UI elements */
+  .no-print,
+  aside,
+  header,
+  .MuiAppBar-root,
+  .MuiDrawer-root,
+  button,
+  .MuiFab-root {
+    display: none !important;
+  }
+
+  /* Reset main layout */
+  body,
+  #root {
+    background-color: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    display: block !important;
+  }
+
+  /* Ensure text colors are dark enough */
+  * {
+    color: black !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ensure graphs/charts behave */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 300px !important;
+  }
 }

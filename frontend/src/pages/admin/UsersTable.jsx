@@ -1,5 +1,6 @@
 import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
+import { useAuth } from "../../components/auth/AuthProvider";
 
 const UsersTable = ({
   rows = [],
@@ -10,6 +11,8 @@ const UsersTable = ({
   filters = { search: "" },
   onFilterChange,
 }) => {
+  const { user } = useAuth();
+
   // Helper for status colors
   const getStatusColor = (isActive) => {
     return isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
@@ -127,6 +130,7 @@ const UsersTable = ({
       label: "Delete",
       onClick: (row) => onDelete(row._id),
       color: "text-red-600 hover:bg-red-100",
+      condition: (row) => user?.role?.roleName === "Super Admin",
     },
   ];
 

@@ -30,13 +30,16 @@ const Dashboard = () => {
       activities: 0,
       pendingActivities: 0,
       revenue: 0,
+      conversionRate: 0,
     },
     charts: {
       leadsByStatus: [],
       activitiesByType: [],
       topServices: [],
+      leadsBySource: [],
     },
     recentActivities: [],
+    recentLeads: [],
   });
 
   const [timeRange, setTimeRange] = useState("all_time");
@@ -154,12 +157,24 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Revenue"
           value={formatCurrency(data.counts.revenue)}
           icon="💰"
           color="bg-green-100 text-green-600"
+        />
+        <StatCard
+          title="Pending Revenue"
+          value={formatCurrency(data.counts.pendingRevenue)}
+          icon="⏳"
+          color="bg-yellow-100 text-yellow-600"
+        />
+        <StatCard
+          title="Conversion Rate"
+          value={`${data.counts.conversionRate}%`}
+          icon="📈"
+          color="bg-indigo-100 text-indigo-600"
         />
         <StatCard
           title="Total Leads"
@@ -176,7 +191,7 @@ const Dashboard = () => {
         <StatCard
           title="Pending Tasks"
           value={data.counts.pendingActivities}
-          icon="bell" // changed to text for now as icon was just emoji
+          icon="📅"
           color="bg-orange-100 text-orange-600"
         />
       </div>
@@ -202,6 +217,13 @@ const Dashboard = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12 }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString("default", {
+                    month: "short",
+                    year: "2-digit",
+                  });
+                }}
               />
               <YAxis
                 axisLine={false}
@@ -267,37 +289,140 @@ const Dashboard = () => {
             Top Performing Services
           </h3>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data.charts.topServices}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                horizontal={true}
-                vertical={false}
-              />
-              <XAxis type="number" hide />
-              <YAxis
-                dataKey="_id"
-                type="category"
-                axisLine={false}
-                tickLine={false}
-                width={100}
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip
-                formatter={(value) => formatCurrency(value)}
-                contentStyle={{ borderRadius: "8px" }}
-              />
-              <Bar
-                dataKey="totalRevenue"
-                fill="#10B981"
-                radius={[0, 4, 4, 0]}
-                barSize={20}
-              />
-            </BarChart>
+            {data.charts.topServices && data.charts.topServices.length > 0 ? (
+              <BarChart
+                data={data.charts.topServices}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  horizontal={true}
+                  vertical={false}
+                />
+                <XAxis type="number" hide />
+                <YAxis
+                  dataKey="_id"
+                  type="category"
+                  axisLine={false}
+                  tickLine={false}
+                  width={100}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value)}
+                  contentStyle={{ borderRadius: "8px" }}
+                />
+                <Bar
+                  dataKey="totalRevenue"
+                  fill="#10B981"
+                  radius={[0, 4, 4, 0]}
+                  barSize={20}
+                />
+              </BarChart>
+            ) : (
+              <div className="flex justify-center items-center h-full text-gray-400">
+                No data available
+              </div>
+            )}
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Lead Sources & Recent Leads Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Leads by Source - Pie Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Lead Sources</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data.charts.leadsBySource}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="count"
+                nameKey="_id"
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
+              >
+                {data.charts.leadsBySource &&
+                  data.charts.leadsBySource.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Recent Leads List */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Leads</h3>
+          <div className="overflow-y-auto flex-grow pr-2">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Source
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data.recentLeads && data.recentLeads.length > 0 ? (
+                  data.recentLeads.map((lead) => (
+                    <tr key={lead._id}>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {lead.name}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            lead.status === "Won"
+                              ? "bg-green-100 text-green-800"
+                              : lead.status === "New"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {lead.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        {lead.source}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(lead.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-3 py-4 text-center text-sm text-gray-500"
+                    >
+                      No recent leads
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

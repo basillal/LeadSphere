@@ -405,7 +405,9 @@ const Activities = () => {
       }));
     } catch (error) {
       console.error("Error fetching activities:", error);
-      showSnackbar("Failed to fetch activities", "error");
+      const errMsg =
+        error.response?.data?.message || "Failed to fetch activities";
+      showSnackbar(errMsg, "error");
     } finally {
       setLoading(false);
     }

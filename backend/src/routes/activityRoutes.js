@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const activityController = require('../controllers/activityController');
 
+const { protect } = require('../middleware/authMiddleware');
+
+router.use(protect);
+
 // Stats route (must be before :id route)
 router.get('/stats', activityController.getActivityStats);
 
