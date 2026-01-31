@@ -1,206 +1,356 @@
-import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import leadService from "../services/leadService";
-import contactService from "../services/contactService";
-import referrerService from "../services/referrerService";
-import followUpService from "../services/followUpService";
-
-const StatWidget = ({ title, value, icon, color, bgColor }) => (
-  <Card
-    sx={{
-      height: "100%",
-      borderRadius: 4,
-      boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-      border: "1px solid rgba(0,0,0,0.05)",
-      transition: "transform 0.2s",
-      "&:hover": { transform: "translateY(-4px)" },
-    }}
-  >
-    <CardContent sx={{ p: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <Box
-          sx={{
-            display: "flex",
-            p: 1.5,
-            borderRadius: 3,
-            bgcolor: bgColor,
-            color: color,
-            mr: 2,
-          }}
-        >
-          {icon}
-        </Box>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          sx={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}
-        >
-          {title}
-        </Typography>
-      </Box>
-      <Typography variant="h3" sx={{ fontWeight: 800, color: "text.primary" }}>
-        {value}
-      </Typography>
-    </CardContent>
-  </Card>
-);
+import React, { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from "recharts";
+import dashboardService from "../services/dashboardService";
+import { useAuth } from "../components/auth/AuthProvider";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    leads: 0,
-    contacts: 0,
-    referrers: 0,
-    followUps: 0,
-  });
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({
+    counts: {
+      leads: 0,
+      contacts: 0,
+      services: 0,
+      activities: 0,
+      pendingActivities: 0,
+      revenue: 0,
+    },
+    charts: {
+      leadsByStatus: [],
+      activitiesByType: [],
+      topServices: [],
+    },
+    recentActivities: [],
+  });
+
+  const [timeRange, setTimeRange] = useState("all_time");
+
+  const getDateRange = (range) => {
+    const today = new Date();
+    const endDate = today.toISOString();
+    let startDate = null;
+
+    if (range === "this_month") {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      startDate = start.toISOString();
+    } else if (range === "this_year") {
+      const start = new Date(today.getFullYear(), 0, 1);
+      startDate = start.toISOString();
+    } else if (range === "last_30_days") {
+      const start = new Date();
+      start.setDate(today.getDate() - 30);
+      startDate = start.toISOString();
+    }
+    // "all_time" returns null startDate
+    return { startDate, endDate };
+  };
 
   useEffect(() => {
-    const fetchAllStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const [lRes, cRes, rRes, fRes] = await Promise.all([
-          leadService.getLeadStats(),
-          contactService.getContactStats(),
-          referrerService.getReferrerStats(),
-          followUpService.getFollowUpStats(),
-        ]);
+        setLoading(true);
+        const { startDate, endDate } = getDateRange(timeRange);
+        const params = startDate ? { startDate, endDate } : {};
 
-        setStats({
-          leads: lRes.data.total || 0,
-          contacts: cRes.data.total || 0,
-          referrers: rRes.data.totalReferrers || 0,
-          followUps: fRes.data.pending || 0,
-        });
-      } catch (err) {
-        console.error("Dashboard fetch error", err);
+        const stats = await dashboardService.getStats(params);
+        setData(stats);
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchAllStats();
-  }, []);
+
+    fetchDashboardData();
+  }, [timeRange]);
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const StatCard = ({ title, value, icon, color }) => (
+    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+      <div>
+        <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">
+          {title}
+        </p>
+        <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+      </div>
+      <div className={`p-3 rounded-full ${color} bg-opacity-10`}>
+        <span className="text-2xl">{icon}</span>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+  // Safety check if data is malformed
+  if (!data || !data.counts) {
+    return (
+      <div className="flex justify-center items-center h-screen flex-col">
+        <h2 className="text-xl font-bold text-gray-800">
+          Something went wrong
+        </h2>
+        <p className="text-gray-500 mt-2">
+          Failed to load dashboard statistics.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <Box sx={{ p: 1 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Welcome back to your LeadSphere overview.
-        </Typography>
-      </Box>
+    <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome back, {user?.name?.split(" ")[0]}! 👋
+        </h1>
+        <p className="text-gray-500 text-sm mt-1">
+          Here's what's happening in your business today.
+        </p>
+      </div>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatWidget
-            title="Active Leads"
-            value={stats.leads}
-            color="#3b82f6"
-            bgColor="rgba(59, 130, 246, 0.1)"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-            }
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatWidget
-            title="Total Contacts"
-            value={stats.contacts}
-            color="#8b5cf6"
-            bgColor="rgba(139, 92, 246, 0.1)"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                <line x1="7" y1="8" x2="17" y2="8"></line>
-                <line x1="7" y1="12" x2="17" y2="12"></line>
-                <line x1="7" y1="16" x2="17" y2="16"></line>
-              </svg>
-            }
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatWidget
-            title="Referrers"
-            value={stats.referrers}
-            color="#10b981"
-            bgColor="rgba(16, 185, 129, 0.1)"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <polyline points="16 11 18 13 22 9"></polyline>
-              </svg>
-            }
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatWidget
-            title="Tasks Today"
-            value={stats.followUps}
-            color="#f59e0b"
-            bgColor="rgba(245, 158, 11, 0.1)"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-            }
-          />
-        </Grid>
-      </Grid>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-lg font-semibold text-gray-700">
+          Business Overview
+        </h2>
+        <select
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
+          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5"
+        >
+          <option value="all_time">All Time</option>
+          <option value="this_month">This Month</option>
+          <option value="this_year">This Year</option>
+          <option value="last_30_days">Last 30 Days</option>
+        </select>
+      </div>
 
-      {/* Visual Placeholder for Charts or Recent items */}
-      <Box
-        sx={{
-          mt: 4,
-          p: 8,
-          textAlign: "center",
-          border: "2px dashed rgba(0,0,0,0.1)",
-          borderRadius: 4,
-        }}
-      >
-        <Typography variant="h6" color="text.secondary">
-          Insight graphs and activity feed coming soon.
-        </Typography>
-      </Box>
-    </Box>
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Revenue"
+          value={formatCurrency(data.counts.revenue)}
+          icon="💰"
+          color="bg-green-100 text-green-600"
+        />
+        <StatCard
+          title="Total Leads"
+          value={data.counts.leads}
+          icon="👥"
+          color="bg-blue-100 text-blue-600"
+        />
+        <StatCard
+          title="Active Services"
+          value={data.counts.services}
+          icon="⚡"
+          color="bg-purple-100 text-purple-600"
+        />
+        <StatCard
+          title="Pending Tasks"
+          value={data.counts.pendingActivities}
+          icon="bell" // changed to text for now as icon was just emoji
+          color="bg-orange-100 text-orange-600"
+        />
+      </div>
+
+      {/* Advanced Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Revenue Trend - Area Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Revenue Trend (Last 12 Months)
+          </h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data.charts.revenueTrend || []}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="_id"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip
+                formatter={(value) => formatCurrency(value)}
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="totalRevenue"
+                stroke="#10B981"
+                fillOpacity={1}
+                fill="url(#colorRevenue)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Secondary Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Leads by Status - Pie Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Leads Distribution
+          </h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data.charts.leadsByStatus}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                fill="#8884d8"
+                paddingAngle={5}
+                dataKey="count"
+                nameKey="_id"
+              >
+                {data.charts.leadsByStatus.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend verticalAlign="bottom" height={36} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Top Services */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Top Performing Services
+          </h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={data.charts.topServices}
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                horizontal={true}
+                vertical={false}
+              />
+              <XAxis type="number" hide />
+              <YAxis
+                dataKey="_id"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                width={100}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip
+                formatter={(value) => formatCurrency(value)}
+                contentStyle={{ borderRadius: "8px" }}
+              />
+              <Bar
+                dataKey="totalRevenue"
+                fill="#10B981"
+                radius={[0, 4, 4, 0]}
+                barSize={20}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Recent Activities List (Moved to bottom grid) */}
+      <div className="grid grid-cols-1 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Recent Activity
+          </h3>
+          <div className="overflow-y-auto flex-grow pr-2 space-y-4">
+            {data.recentActivities.length === 0 ? (
+              <p className="text-center text-gray-400 text-sm mt-10">
+                No recent activities
+              </p>
+            ) : (
+              data.recentActivities.map((activity) => (
+                <div
+                  key={activity._id}
+                  className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0"
+                >
+                  <div
+                    className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
+                      activity.status === "Completed"
+                        ? "bg-green-500"
+                        : activity.status === "Scheduled"
+                          ? "bg-blue-500"
+                          : "bg-gray-300"
+                    }`}
+                  ></div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                      {activity.title}{" "}
+                      <span className="text-gray-400 font-normal">
+                        ({activity.activityType})
+                      </span>
+                    </p>
+                    <p className="text-xs text-gray-500 line-clamp-2">
+                      {activity.description
+                        ? activity.description
+                        : "No details provided"}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {activity.relatedId?.name || "Unknown"} •{" "}
+                      {new Date(activity.activityDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

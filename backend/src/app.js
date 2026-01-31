@@ -37,6 +37,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const billingRoutes = require('./routes/billingRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -47,6 +48,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/activities', activityRoutes);
+app.use('/api/dashboard', dashboardRoutes); // Added dashboard route
 app.use('/api/referrers', referrerRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/billings', billingRoutes);

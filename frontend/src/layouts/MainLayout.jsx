@@ -9,6 +9,10 @@ import Sidebar from "../components/layout/Sidebar";
 import Breadcrumbs from "../components/layout/Breadcrumbs";
 
 const MainLayout = () => {
+  const menuItems = [
+    { icon: "dashboard", label: "Dashboard", path: "/" },
+    { icon: "people", label: "Leads", path: "/leads" },
+  ];
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerClose = () => {
@@ -31,7 +35,7 @@ const MainLayout = () => {
       <CssBaseline />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow p-3 md:p-4 ml-16 md:ml-0 w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20">
+      <main className="flex-grow p-3 md:p-4 ml-16 md:ml-0 w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 mt-10 md:mt-15">
         <Breadcrumbs />
         <Outlet />
       </main>

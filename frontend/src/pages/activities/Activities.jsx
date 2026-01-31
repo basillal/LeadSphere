@@ -416,7 +416,8 @@ const Activities = () => {
       const response = await activityService.getActivityStats();
       setStats(response.data);
     } catch (error) {
-      console.error("Error fetching stats:", error);
+      // Fail silently for background stats
+      console.warn("Failed to fetch activity stats:", error);
     }
   };
 

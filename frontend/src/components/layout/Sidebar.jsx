@@ -4,7 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import { menuConfig } from "../auth/menuConfig.jsx";
 import { useAuth } from "../auth/AuthProvider";
 import { hasPermission, hasRole } from "../auth/permissionUtils";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"; // Import MUI icon for toggle
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PeopleIcon from "@mui/icons-material/People";
 
 const Sidebar = ({ open, handleDrawerClose }) => {
   const location = useLocation();
@@ -64,7 +66,17 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     return visible;
   };
 
-  const menuItems = getVisibleItems();
+  /*
+   * Combine static Dashboard item with dynamic config items.
+   * Dashboard is always first and visible to everyone (or add stricter check if needed).
+   */
+  const dashboardItem = {
+    icon: <DashboardIcon />,
+    label: "Dashboard",
+    path: "/",
+  };
+
+  const menuItems = [dashboardItem, ...getVisibleItems()];
 
   // Determine width based on state
   const widthClass = open ? "w-64" : "w-16";

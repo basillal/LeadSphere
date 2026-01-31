@@ -68,7 +68,7 @@ const ActivityStats = ({ stats, onStatClick }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 md:gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 md:gap-4 mb-6">
       {statCards.map((stat, index) => (
         <div
           key={index}
