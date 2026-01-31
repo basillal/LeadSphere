@@ -90,6 +90,10 @@ const createFollowUp = asyncHandler(async (req, res) => {
     const leadStatuses = ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'];
     const taskStatuses = ['Missed', 'Rescheduled']; // These don't change lead status usually, unless specifically decided.
 
+    if (req.body.status) {
+        req.body.status = req.body.status.trim();
+    }
+
     if (leadStatuses.includes(req.body.status)) {
         leadExists.status = req.body.status;
         if (req.body.status === 'Converted') {
@@ -132,6 +136,7 @@ const updateFollowUp = asyncHandler(async (req, res) => {
 
     // Sync Status with Lead
     if (req.body.status) {
+         req.body.status = req.body.status.trim();
          const leadStatuses = ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'];
          if (leadStatuses.includes(req.body.status)) {
              try {

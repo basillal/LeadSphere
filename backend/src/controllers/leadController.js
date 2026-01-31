@@ -165,6 +165,11 @@ const createLead = asyncHandler(async (req, res) => {
         req.body.assignedTo = req.user._id;
     }
 
+    // Sanitize Status
+    if (req.body.status) {
+        req.body.status = req.body.status.trim();
+    }
+
     // Check if lead exists (Scoped to Company)
     if (req.body.phone) {
         const leadExists = await Lead.findOne({ 
@@ -238,6 +243,11 @@ const updateLead = asyncHandler(async (req, res) => {
              res.status(403);
              throw new Error('Not authorized to update this lead');
         }
+    }
+
+    // Sanitize Status
+    if (req.body.status) {
+        req.body.status = req.body.status.trim();
     }
 
     const oldFollowUpDate = lead.nextFollowUpDate ? new Date(lead.nextFollowUpDate).toISOString() : null;

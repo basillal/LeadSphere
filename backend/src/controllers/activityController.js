@@ -59,6 +59,11 @@ exports.createActivity = async (req, res) => {
             company: companyId
         };
 
+        // Sanitize service field
+        if (activityData.service === "") {
+            delete activityData.service;
+        }
+
         const activity = await activityService.createActivity(activityData);
         res.status(201).json({ data: activity });
     } catch (error) {
@@ -84,7 +89,14 @@ exports.updateActivity = async (req, res) => {
             }
         }
 
-        const updatedActivity = await activityService.updateActivity(req.params.id, req.body);
+        const updateData = { ...req.body };
+        // Sanitize service field
+        if (updateData.service === "") {
+            updateData.service = null; // or undefined, or $unset in mongoose update if needed? 
+            // Mongoose set to null usually works for optional ObjectId ref
+        }
+
+        const updatedActivity = await activityService.updateActivity(req.params.id, updateData);
         res.status(200).json({ data: updatedActivity });
     } catch (error) {
         res.status(400).json({ message: error.message });

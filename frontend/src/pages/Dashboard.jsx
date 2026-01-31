@@ -42,7 +42,7 @@ const Dashboard = () => {
     recentLeads: [],
   });
 
-  const [timeRange, setTimeRange] = useState("all_time");
+  const [timeRange, setTimeRange] = useState("last_30_days"); // Default to Last 30 Days
   const [revenueInterval, setRevenueInterval] = useState("daily"); // Default daily for Revenue Trend
 
   const getDateRange = (range) => {
@@ -103,16 +103,45 @@ const Dashboard = () => {
     }).format(amount);
   };
 
-  const StatCard = ({ title, value, icon, color }) => (
-    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+  const HeroCard = ({ title, value, icon, iconColor, bgColor, isDark }) => (
+    <div
+      className={`p-6 rounded-2xl ${isDark ? "bg-gradient-to-br from-gray-900 to-black text-white shadow-xl" : "bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100"} transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
+    >
+      {isDark && (
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
+      )}
+      <div className="flex items-center gap-5 relative z-10">
+        <div
+          className={`p-4 rounded-2xl ${bgColor} ${iconColor} flex items-center justify-center`}
+        >
+          <span className="text-3xl">{icon}</span>
+        </div>
+        <div>
+          <p
+            className={`text-xs font-bold tracking-widest uppercase mb-1 ${isDark ? "text-gray-400" : "text-gray-400"}`}
+          >
+            {title}
+          </p>
+          <h3
+            className={`text-3xl font-bold tracking-tight ${isDark ? "text-white" : "text-gray-900"}`}
+          >
+            {value}
+          </h3>
+        </div>
+      </div>
+    </div>
+  );
+
+  const CompactStat = ({ title, value, icon, color }) => (
+    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+      <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-xl`}>
+        {icon}
+      </div>
       <div>
-        <p className="text-sm text-gray-500 font-medium uppercase tracking-wider mb-1">
+        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
           {title}
         </p>
-        <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-      </div>
-      <div className={`p-3 rounded-full ${color} bg-opacity-10`}>
-        <span className="text-2xl">{icon}</span>
+        <h3 className="text-lg font-bold text-gray-700">{value}</h3>
       </div>
     </div>
   );
@@ -139,70 +168,145 @@ const Dashboard = () => {
     );
   }
 
+  // Calculate Net Profit
+  const netProfit =
+    (data.counts.revenue || 0) - (data.counts.totalExpenses || 0);
+
   return (
     <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.name?.split(" ")[0]}! 👋
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Here's what's happening in your business today.
-        </p>
-      </div>
-
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-gray-700">
-          Business Overview
-        </h2>
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Welcome back, {user?.name?.split(" ")[0]}! 👋
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Here's what's happening in your business today.
+          </p>
+        </div>
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5"
+          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5 min-w-[150px]"
         >
-          <option value="all_time">All Time</option>
+          <option value="last_30_days">Last 30 Days</option>
           <option value="this_month">This Month</option>
           <option value="this_year">This Year</option>
-          <option value="last_30_days">Last 30 Days</option>
+          <option value="all_time">All Time</option>
         </select>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <StatCard
+      {/* Hero Stats Grid - Primary Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <HeroCard
           title="Total Revenue"
           value={formatCurrency(data.counts.revenue)}
           icon="💰"
-          color="bg-green-100 text-green-600"
+          iconColor="text-emerald-600"
+          bgColor="bg-emerald-50"
         />
-        <StatCard
-          title="Pending Revenue"
+        <HeroCard
+          title="Total Pending"
           value={formatCurrency(data.counts.pendingRevenue)}
           icon="⏳"
-          color="bg-yellow-100 text-yellow-600"
+          iconColor="text-orange-600"
+          bgColor="bg-orange-50"
         />
-        <StatCard
-          title="Conversion Rate"
-          value={`${data.counts.conversionRate}%`}
-          icon="📈"
-          color="bg-indigo-100 text-indigo-600"
+        <HeroCard
+          title="Total Expenses"
+          value={formatCurrency(data.counts.totalExpenses || 0)}
+          icon="💸"
+          iconColor="text-rose-600"
+          bgColor="bg-rose-50"
         />
-        <StatCard
+      </div>
+
+      {/* Net Profit Section - Full Width Compact Design */}
+      <div className="mb-8 w-full bg-white border border-gray-200 shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div
+              className={`p-3 rounded-xl ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
+            >
+              <span className="text-2xl">🏦</span>
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-0.5">
+                <h2 className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                  Net Profit
+                </h2>
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${netProfit >= 0 ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}
+                >
+                  {netProfit >= 0 ? "PROFIT" : "LOSS"}
+                </span>
+              </div>
+              <h3
+                className={`text-2xl font-bold tracking-tight ${netProfit >= 0 ? "text-gray-900" : "text-red-600"}`}
+              >
+                {formatCurrency(netProfit)}
+              </h3>
+            </div>
+          </div>
+
+          <div className="flex gap-6 text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+            <div>
+              <p className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
+                Revenue
+              </p>
+              <p className="font-semibold text-gray-900">
+                {formatCurrency(data.counts.revenue)}
+              </p>
+            </div>
+            <div className="w-px bg-gray-200"></div>
+            <div>
+              <p className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
+                Expenses
+              </p>
+              <p className="font-semibold text-gray-900">
+                {formatCurrency(data.counts.totalExpenses || 0)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary Stats Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <CompactStat
           title="Total Leads"
           value={data.counts.leads}
           icon="👥"
-          color="bg-blue-100 text-blue-600"
+          color="text-blue-600 bg-blue-100"
         />
-        <StatCard
+        <CompactStat
           title="Active Services"
           value={data.counts.services}
           icon="⚡"
-          color="bg-purple-100 text-purple-600"
+          color="text-purple-600 bg-purple-100"
         />
-        <StatCard
+        <CompactStat
+          title="Invoices"
+          value={data.counts.invoices || 0}
+          icon="🧾"
+          color="text-teal-600 bg-teal-100"
+        />
+        <CompactStat
+          title="Users"
+          value={data.counts.users || 0}
+          icon="👤"
+          color="text-pink-600 bg-pink-100"
+        />
+        <CompactStat
+          title="Conversion"
+          value={`${data.counts.conversionRate}%`}
+          icon="📈"
+          color="text-indigo-600 bg-indigo-100"
+        />
+        <CompactStat
           title="Pending Tasks"
           value={data.counts.pendingActivities}
           icon="📅"
-          color="bg-orange-100 text-orange-600"
+          color="text-orange-600 bg-orange-100"
         />
       </div>
 

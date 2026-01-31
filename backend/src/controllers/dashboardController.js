@@ -4,6 +4,7 @@ const Activity = require('../models/Activity');
 const Service = require('../models/Service');
 const Billing = require('../models/Billing');
 const Expense = require('../models/Expense');
+const User = require('../models/User');
 const mongoose = require('mongoose');
 
 // @desc    Get dashboard statistics
@@ -59,7 +60,10 @@ exports.getDashboardStats = async (req, res) => {
             conversionData,
             recentLeads,
             expenseTrend,
-            leadsBySource
+            leadsBySource,
+            totalExpenses,
+            totalInvoices,
+            totalUsers
         ] = await Promise.all([
             // 1. Quick Counts
             Lead.countDocuments(baseQuery),
@@ -229,8 +233,23 @@ exports.getDashboardStats = async (req, res) => {
             Lead.aggregate([
                 { $match: baseQuery },
                 { $group: { _id: '$source', count: { $sum: 1 } } }
-            ])
+            ]),
+
+            // 15. Total Expenses (Scalar)
+            Expense.aggregate([
+                { $match: baseQuery },
+                { $group: { _id: null, total: { $sum: '$amount' } } }
+            ]),
+
+            // 16. Total Invoices (Count)
+            Billing.countDocuments(baseQuery),
+
+            // 17. Total Users (Count)
+            User.countDocuments(baseQuery)
         ]);
+
+        // Process Total Expenses
+        const processedTotalExpenses = totalExpenses.length > 0 ? totalExpenses[0].total : 0;
 
         // Process Revenue Data
         const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
@@ -259,7 +278,11 @@ exports.getDashboardStats = async (req, res) => {
                 pendingActivities: pendingActivitiesCount,
                 revenue: totalRevenue,
                 pendingRevenue: totalPendingRevenue,
-                conversionRate
+                pendingRevenue: totalPendingRevenue,
+                conversionRate,
+                totalExpenses: processedTotalExpenses,
+                invoices: totalInvoices,
+                users: totalUsers
             },
             charts: {
                 leadsByStatus,

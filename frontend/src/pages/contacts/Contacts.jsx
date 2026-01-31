@@ -266,7 +266,9 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
 
       // Filter out 'Lost' leads client-side if needed, or we could add that to backend too
       // User Request: Only show "Completed" leads for conversion
-      const unconverted = response.data.filter((l) => l.status === "Completed");
+      const unconverted = response.data.filter(
+        (l) => l.status && l.status.trim() === "Completed",
+      );
       setLeads(unconverted);
     } catch (error) {
       console.error("Error fetching leads:", error);
