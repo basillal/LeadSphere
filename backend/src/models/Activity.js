@@ -140,6 +140,13 @@ const ActivitySchema = new mongoose.Schema({
     isDeleted: {
         type: Boolean,
         default: false
+    },
+    
+    // Multi-tenancy
+    company: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
     }
 }, { 
     timestamps: true 

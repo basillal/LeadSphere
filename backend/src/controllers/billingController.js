@@ -61,7 +61,10 @@ const getBilling = asyncHandler(async (req, res) => {
 
     // Permission Check
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || (billing.company && billing.company.toString() !== req.user.company._id.toString())) {
+         const userCompanyId = req.user.company?._id || req.user.company;
+         const billingCompanyId = billing.company?._id || billing.company;
+         
+         if (!userCompanyId || (billingCompanyId && billingCompanyId.toString() !== userCompanyId.toString())) {
              res.status(404);
              throw new Error('Billing record not found');
          }

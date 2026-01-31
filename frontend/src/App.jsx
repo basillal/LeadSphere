@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import Companies from "./pages/admin/Companies";
 import Roles from "./pages/admin/Roles";
 import Users from "./pages/admin/Users";
+import PrintInvoice from "./pages/billing/PrintInvoice";
 import RoleGuard from "./components/auth/RoleGuard";
 import "./styles/App.css";
 
@@ -43,6 +44,7 @@ function App() {
                 <Route path="activities" element={<Activities />} />
                 <Route path="services" element={<Services />} />
                 <Route path="billings" element={<Billings />} />
+                <Route path="print/invoice/:id" element={<PrintInvoice />} />
 
                 <Route
                   path="admin/companies"

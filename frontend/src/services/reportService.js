@@ -7,8 +7,8 @@ const getServiceRevenue = async () => {
     return response.data;
 };
 
-const getMonthlyTransactions = async (year) => {
-    const response = await api.get(`${API_URL}/monthly`, { params: { year } });
+const getMonthlyTransactions = async (params) => {
+    const response = await api.get(`${API_URL}/monthly`, { params });
     return response.data;
 };
 

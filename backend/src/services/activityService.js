@@ -3,9 +3,14 @@ const Activity = require('../models/Activity');
 class ActivityService {
     // Get all activities with filters and pagination
     async getActivities(filters = {}, pagination = {}) {
-        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', dateFilter = '', startDate = '', endDate = '', sortBy = 'activityDate', sortOrder = 'desc' } = { ...filters, ...pagination };
+        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', relatedId = '', dateFilter = '', startDate = '', endDate = '', sortBy = 'activityDate', sortOrder = 'desc', company = '' } = { ...filters, ...pagination };
 
         const query = { isDeleted: false };
+
+        // Company Scope
+        if (company) {
+            query.company = company;
+        }
 
         // Search filter
         if (search) {
@@ -30,6 +35,10 @@ class ActivityService {
         // Related to filter (Contact or Lead)
         if (relatedTo) {
             query.relatedTo = relatedTo;
+        }
+        
+        if (relatedId) {
+            query.relatedId = relatedId;
         }
 
         // Date filter
@@ -176,6 +185,7 @@ class ActivityService {
     }
 
     // Get activities for a specific contact or lead
+    // Deprecated: logic moved to getActivities with filters
     async getActivitiesByRelated(relatedTo, relatedId) {
         const activities = await Activity.find({
             relatedTo,
@@ -187,26 +197,29 @@ class ActivityService {
     }
 
     // Get activity statistics
-    async getActivityStats() {
-        const total = await Activity.countDocuments({ isDeleted: false });
+    async getActivityStats(filters = {}) {
+        const baseQuery = { isDeleted: false };
+        if (filters.company) baseQuery.company = filters.company;
+
+        const total = await Activity.countDocuments(baseQuery);
         
         const callLogs = await Activity.countDocuments({ 
-            isDeleted: false, 
+            ...baseQuery,
             activityType: 'Call' 
         });
         
         const meetings = await Activity.countDocuments({ 
-            isDeleted: false, 
+            ...baseQuery,
             activityType: 'Meeting' 
         });
         
         const notes = await Activity.countDocuments({ 
-            isDeleted: false, 
+            ...baseQuery,
             activityType: 'Note' 
         });
 
         const emails = await Activity.countDocuments({ 
-            isDeleted: false, 
+            ...baseQuery,
             activityType: 'Email' 
         });
 
@@ -215,13 +228,13 @@ class ActivityService {
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         
         const recentActivities = await Activity.countDocuments({
-            isDeleted: false,
+            ...baseQuery,
             activityDate: { $gte: sevenDaysAgo }
         });
 
         // Get pending follow-ups
         const pendingFollowUps = await Activity.countDocuments({
-            isDeleted: false,
+            ...baseQuery,
             followUpRequired: true,
             followUpDate: { $gte: new Date() }
         });
@@ -233,7 +246,7 @@ class ActivityService {
         endOfToday.setDate(endOfToday.getDate() + 1);
         
         const todaysActivities = await Activity.countDocuments({
-            isDeleted: false,
+            ...baseQuery,
             activityDate: {
                 $gte: today,
                 $lt: endOfToday
@@ -242,7 +255,7 @@ class ActivityService {
 
         // Get overdue activities (scheduled activities with past dates)
         const overdueActivities = await Activity.countDocuments({
-            isDeleted: false,
+            ...baseQuery,
             status: 'Scheduled',
             activityDate: { $lt: today }
         });

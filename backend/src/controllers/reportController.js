@@ -47,28 +47,47 @@ const getServiceRevenue = asyncHandler(async (req, res) => {
 // @desc    Get Monthly Transactions
 // @route   GET /api/reports/monthly
 // @access  Private
+// @desc    Get Revenue Analytics (Monthly/Daily)
+// @route   GET /api/reports/monthly
+// @access  Private
 const getMonthlyTransactions = asyncHandler(async (req, res) => {
     const baseQuery = getCompanyFilter(req);
-    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const { startDate, endDate, year } = req.query;
+
+    let start, end;
+    if (startDate && endDate) {
+        start = new Date(startDate);
+        end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+    } else {
+        const targetYear = parseInt(year) || new Date().getFullYear();
+        start = new Date(`${targetYear}-01-01`);
+        end = new Date(`${targetYear}-12-31`);
+        end.setHours(23, 59, 59, 999);
+    }
+
+    // Determine grouping: Daily if range <= 60 days, else Monthly
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const groupBy = diffDays <= 65 ? 'day' : 'month'; // slightly > 2 months
 
     const matchQuery = { ...baseQuery };
     if (matchQuery.company) {
         matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
     }
 
-    const monthlyStats = await Billing.aggregate([
-        { 
-            $match: { 
+    const stats = await Billing.aggregate([
+        {
+            $match: {
                 ...matchQuery,
-                billingDate: {
-                    $gte: new Date(`${year}-01-01`),
-                    $lte: new Date(`${year}-12-31`)
-                }
-            } 
+                billingDate: { $gte: start, $lte: end }
+            }
         },
         {
             $group: {
-                _id: { $month: '$billingDate' },
+                _id: groupBy === 'day' 
+                    ? { $dateToString: { format: "%Y-%m-%d", date: "$billingDate" } }
+                    : { $month: "$billingDate" },
                 revenue: { $sum: '$grandTotal' },
                 count: { $sum: 1 }
             }
@@ -76,20 +95,48 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
         { $sort: { '_id': 1 } }
     ]);
 
-    // Fill in missing months
-    const result = Array.from({ length: 12 }, (_, i) => {
-        const monthData = monthlyStats.find(item => item._id === i + 1);
-        return {
-            month: i + 1,
-            monthName: new Date(0, i).toLocaleString('default', { month: 'short' }),
-            revenue: monthData ? monthData.revenue : 0,
-            count: monthData ? monthData.count : 0
-        };
-    });
+    console.log('--- REPORT DEBUG ---');
+    console.log('Range:', start, 'to', end);
+    console.log('Query:', JSON.stringify(matchQuery));
+    console.log('Stats Found:', stats.length);
+    console.log('Sample Stat:', stats[0]);
+    console.log('--------------------');
+
+    let result = [];
+    if (groupBy === 'day') {
+        // Evaluate daily data
+        result = stats.map(item => ({
+            label: item._id, // YYYY-MM-DD
+            date: item._id,
+            revenue: item.revenue,
+            count: item.count
+        }));
+    } else {
+        // Evaluate monthly data
+        result = Array.from({ length: 12 }, (_, i) => {
+            const monthNum = i + 1;
+            const monthData = stats.find(item => item._id === monthNum);
+            return {
+                label: new Date(0, i).toLocaleString('default', { month: 'short' }),
+                month: monthNum,
+                revenue: monthData ? monthData.revenue : 0,
+                count: monthData ? monthData.count : 0
+            };
+        });
+    }
 
     res.status(200).json({
         success: true,
-        data: result
+        data: result,
+        meta: { 
+            groupBy, 
+            start, 
+            end,
+            query: matchQuery,
+            statsCount: stats.length,
+            companyFilter: req.companyFilter,
+            userCompany: req.user.company?._id
+        }
     });
 });
 

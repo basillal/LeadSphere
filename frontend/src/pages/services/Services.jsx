@@ -394,7 +394,7 @@ const Services = () => {
                         </span>
                       </td>
                       <td className="px-6 py-3 font-medium">
-                        ${service.baseAmount}
+                        ₹{service.baseAmount}
                       </td>
                       <td className="px-6 py-3">
                         {service.isActive ? (

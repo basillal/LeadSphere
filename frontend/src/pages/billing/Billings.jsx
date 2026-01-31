@@ -167,9 +167,43 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
       onSubmit={handleSubmit}
       className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
     >
-      <h2 className="text-xl font-bold mb-6 text-gray-900">
-        {initialData ? "Edit Invoice" : "Create New Invoice"}
-      </h2>
+      <div className="flex justify-between items-center mb-6 no-print">
+        <h2 className="text-xl font-bold text-gray-900">
+          {initialData ? "Edit Invoice" : "Create New Invoice"}
+        </h2>
+        {initialData && (
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+              />
+            </svg>
+            Print Invoice
+          </button>
+        )}
+      </div>
+
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: white; }
+          .sidebar, header, nav { display: none !important; } /* Adjust selectors based on Layout */
+          form { box-shadow: none !important; border: none !important; }
+        }
+      `}</style>
 
       {/* Top Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -284,7 +318,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   <option value="">Select Service</option>
                   {services.map((s) => (
                     <option key={s._id} value={s._id}>
-                      {s.serviceName} (${s.baseAmount})
+                      {s.serviceName} (₹{s.baseAmount})
                     </option>
                   ))}
                 </select>
@@ -402,11 +436,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         <div className="bg-gray-50 rounded-xl p-6 space-y-3">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium">${totals.subtotal.toFixed(2)}</span>
+            <span className="font-medium">₹{totals.subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Tax</span>
-            <span className="font-medium">${totals.tax.toFixed(2)}</span>
+            <span className="font-medium">₹{totals.tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm items-center">
             <span className="text-gray-600">Discount</span>
@@ -426,7 +460,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
             <span className="text-lg font-bold text-gray-900">Grand Total</span>
             <span className="text-xl font-bold text-black">
-              ${grandTotal.toFixed(2)}
+              ₹{grandTotal.toFixed(2)}
             </span>
           </div>
         </div>
@@ -558,7 +592,7 @@ const Billings = () => {
     {
       id: "grandTotal",
       label: "Amount",
-      render: (row) => `$${row.grandTotal.toFixed(2)}`,
+      render: (row) => `₹${row.grandTotal.toFixed(2)}`,
     },
     {
       id: "paymentStatus",
@@ -609,6 +643,25 @@ const Billings = () => {
                   fill="currentColor"
                 >
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              ),
+            },
+            {
+              label: "Print",
+              onClick: (row) =>
+                window.open(`/print/invoice/${row._id}`, "_blank"),
+              icon: (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 3V5H7v2h6zm-8 7v-3h10v3H5z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               ),
             },

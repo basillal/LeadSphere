@@ -20,12 +20,18 @@ const MainLayout = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", width: "100%", overflow: "hidden" }}>
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
       <CssBaseline />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow p-3 md:p-4 ml-16 md:ml-0 w-full max-w-full overflow-x-hidden transition-all duration-300">
-        <Toolbar /> {/* Spacer below AppBar */}
+      <main className="flex-grow p-3 md:p-4 ml-16 md:ml-0 w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20">
         <Breadcrumbs />
         <Outlet />
       </main>

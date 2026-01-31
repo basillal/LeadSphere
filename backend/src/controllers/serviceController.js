@@ -73,7 +73,7 @@ const createService = asyncHandler(async (req, res) => {
     // Check if code exists in company
     if (req.body.serviceCode) {
         const codeExists = await Service.findOne({ 
-            serviceCode: req.body.serviceCode, 
+            serviceCode: req.body.serviceCode.toUpperCase(), 
             company: companyId,
             isDeleted: false 
         });

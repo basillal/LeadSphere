@@ -169,9 +169,40 @@ const updateCompany = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Delete company
+// @route   DELETE /api/companies/:id
+// @access  Super Admin
+const deleteCompany = asyncHandler(async (req, res) => {
+    // Access Check: Super Admin only
+    if (req.user.role?.roleName !== 'Super Admin') {
+        res.status(403);
+        throw new Error('Not authorized to delete companies');
+    }
+
+    const company = await Company.findById(req.params.id);
+
+    if (!company) {
+        res.status(404);
+        throw new Error('Company not found');
+    }
+
+    // Optional: Delete all associated users, leads, etc.
+    // implementing basic delete for now. MongoDB cascade delete or pre-remove hooks usually handle this better.
+    // For now, we likely just soft delete or hard delete.
+    // Let's doing hard delete as requested implicitly "delete company".
+    
+    await company.deleteOne();
+
+    res.status(200).json({
+        success: true,
+        data: {}
+    });
+});
+
 module.exports = {
     getCompanies,
     getCompany,
     createCompany,
-    updateCompany
+    updateCompany,
+    deleteCompany
 };
