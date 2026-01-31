@@ -67,7 +67,10 @@ const getCompany = asyncHandler(async (req, res) => {
 // @route   POST /api/companies
 // @access  Super Admin
 const createCompany = asyncHandler(async (req, res) => {
-    const { name, ownerEmail, ownerName, plan, settings } = req.body;
+    const { 
+        name, ownerEmail, ownerName, plan, settings,
+        description, phone, email, website, address, logo 
+    } = req.body;
 
     if (!name || !ownerEmail) {
         res.status(400);
@@ -77,11 +80,20 @@ const createCompany = asyncHandler(async (req, res) => {
     // 1. Check if owner user exists
     let owner = await User.findOne({ email: ownerEmail });
     
+    // Prepare settings object (merge provided settings with logo if present)
+    const companySettings = { ...settings };
+    if (logo) companySettings.logo = logo;
+
     // 2. Create Company
     const company = await Company.create({
         name,
         plan: plan || 'Free',
-        settings,
+        settings: companySettings,
+        description,
+        phone,
+        email, 
+        website,
+        address,
         // We temporarily create without owner if user needs to be created, 
         // but schema requires owner. So we must have user first.
         owner: owner ? owner._id : new mongoose.Types.ObjectId() // Placeholder if creating new user

@@ -110,23 +110,42 @@ exports.getDashboardStats = async (req, res) => {
                 { $group: { _id: null, totalPending: { $sum: '$grandTotal' } } }
             ]),
 
-            // 8. Revenue Trend (Last 12 Months)
-            Billing.aggregate([
-                { 
-                  $match: { 
-                    ...baseQuery,
-                    paymentStatus: 'PAID',
-                    createdAt: { $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) }
-                  } 
-                },
-                {
-                  $group: {
-                    _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
-                    totalRevenue: { $sum: "$grandTotal" }
-                  }
-                },
-                { $sort: { _id: 1 } }
-            ]),
+            // 8. Revenue Trend
+            (() => {
+                const interval = req.query.revenueInterval || 'daily'; // daily, monthly, yearly
+                let format = "%Y-%m-%d";
+                let startDateFilter = new Date();
+                
+                if (interval === 'daily') {
+                    format = "%Y-%m-%d";
+                    startDateFilter.setDate(startDateFilter.getDate() - 30); // Last 30 days
+                } else if (interval === 'monthly') {
+                    format = "%Y-%m";
+                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 1); // Last 12 months
+                } else if (interval === 'yearly') {
+                    format = "%Y";
+                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 5); // Last 5 years
+                }
+
+                return Billing.aggregate([
+                    { 
+                      $match: { 
+                        ...baseQuery,
+                        paymentStatus: 'PAID',
+                        // Use billingDate for filtering
+                        billingDate: baseQuery.billingDate ? baseQuery.billingDate : { $gte: startDateFilter }
+                      } 
+                    },
+                    {
+                      $group: {
+                        // Group by billingDate
+                        _id: { $dateToString: { format: format, date: "$billingDate" } },
+                        totalRevenue: { $sum: "$grandTotal" }
+                      }
+                    },
+                    { $sort: { _id: 1 } }
+                ]);
+            })(),
 
             // 9. Lead Trend (Last 12 Months)
             Lead.aggregate([

@@ -6,6 +6,10 @@ const CompanySchema = new mongoose.Schema({
         required: [true, 'Please add a company name'],
         trim: true
     },
+    description: {
+        type: String,
+        trim: true
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -24,6 +28,17 @@ const CompanySchema = new mongoose.Schema({
         currency: { type: String, default: 'USD' },
         timezone: { type: String, default: 'UTC' },
         logo: { type: String }
+    },
+    // Contact Info for Invoices/Display
+    phone: { type: String },
+    email: { type: String },
+    website: { type: String },
+    address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zipCode: { type: String },
+        country: { type: String }
     }
 }, { timestamps: true });
 

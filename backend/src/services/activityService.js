@@ -120,7 +120,8 @@ class ActivityService {
             .sort(sort)
             .skip(skip)
             .limit(parseInt(limit))
-            .populate('relatedId', 'name phone email');
+            .populate('relatedId', 'name phone email')
+            .populate('service', 'serviceName service code');
 
         const total = await Activity.countDocuments(query);
 
@@ -138,7 +139,8 @@ class ActivityService {
     // Get activity by ID
     async getActivityById(id) {
         const activity = await Activity.findOne({ _id: id, isDeleted: false })
-            .populate('relatedId', 'name phone email companyName');
+            .populate('relatedId', 'name phone email companyName')
+            .populate('service', 'serviceName serviceCode');
         
         if (!activity) {
             throw new Error('Activity not found');

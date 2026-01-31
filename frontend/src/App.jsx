@@ -43,7 +43,6 @@ function App() {
                 <Route path="referrers" element={<Referrers />} />
                 <Route path="activities" element={<Activities />} />
                 <Route path="services" element={<Services />} />
-                <Route path="billings" element={<Billings />} />
                 <Route path="print/invoice/:id" element={<PrintInvoice />} />
 
                 <Route

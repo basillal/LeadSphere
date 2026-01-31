@@ -13,7 +13,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
+  AreaChart, // Keeping imports even if not used, though we use LineChart for revenue
   Area,
 } from "recharts";
 import dashboardService from "../services/dashboardService";
@@ -43,6 +43,7 @@ const Dashboard = () => {
   });
 
   const [timeRange, setTimeRange] = useState("all_time");
+  const [revenueInterval, setRevenueInterval] = useState("daily"); // Default daily for Revenue Trend
 
   const getDateRange = (range) => {
     const today = new Date();
@@ -69,7 +70,16 @@ const Dashboard = () => {
       try {
         setLoading(true);
         const { startDate, endDate } = getDateRange(timeRange);
-        const params = startDate ? { startDate, endDate } : {};
+
+        // Build params
+        const params = {
+          revenueInterval,
+        };
+
+        if (startDate) {
+          params.startDate = startDate;
+          params.endDate = endDate;
+        }
 
         const stats = await dashboardService.getStats(params);
         setData(stats);
@@ -81,7 +91,7 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, [timeRange]);
+  }, [timeRange, revenueInterval]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
@@ -200,30 +210,42 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Revenue Trend - Area Chart */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">
-            Revenue Trend (Last 12 Months)
-          </h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-800">Revenue Trend</h3>
+            <select
+              value={revenueInterval}
+              onChange={(e) => setRevenueInterval(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-black focus:border-black block p-1.5"
+            >
+              <option value="daily">Daily</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data.charts.revenueTrend || []}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+            <LineChart data={data.charts.revenueTrend || []}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="_id"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }} // Smaller font for daily dates
                 tickFormatter={(value) => {
+                  // Adapt formatter based on interval
+                  if (revenueInterval === "yearly") return value;
                   const date = new Date(value);
+                  if (revenueInterval === "daily") {
+                    return date.toLocaleDateString("default", {
+                      day: "numeric",
+                      month: "short",
+                    });
+                  }
                   return date.toLocaleDateString("default", {
                     month: "short",
                     year: "2-digit",
                   });
                 }}
+                interval={revenueInterval === "daily" ? 2 : 0} // Skip ticks for daily if crowded
               />
               <YAxis
                 axisLine={false}
@@ -232,20 +254,30 @@ const Dashboard = () => {
               />
               <Tooltip
                 formatter={(value) => formatCurrency(value)}
+                labelFormatter={(value) => {
+                  const date = new Date(value);
+                  if (revenueInterval === "yearly") return value;
+                  return date.toLocaleDateString("default", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  });
+                }}
                 contentStyle={{
                   borderRadius: "8px",
                   border: "none",
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
               />
-              <Area
+              <Line
                 type="monotone"
                 dataKey="totalRevenue"
                 stroke="#10B981"
-                fillOpacity={1}
-                fill="url(#colorRevenue)"
+                strokeWidth={3}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6 }}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>

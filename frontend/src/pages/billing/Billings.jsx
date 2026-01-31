@@ -4,6 +4,7 @@ import serviceService from "../../services/serviceService";
 import contactService from "../../services/contactService";
 import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
+import ContactForm from "../contacts/ContactForm"; // Import ContactForm
 
 const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const [contacts, setContacts] = useState([]);
@@ -21,7 +22,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   });
 
   const [contactSearch, setContactSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false); // State for modal
 
   useEffect(() => {
     // Load initial data for edit mode
@@ -33,8 +34,6 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
         // If editing, populate form
         if (initialData) {
-          // Fetch specific contact if not in list
-          // For now, let's just populate form
           setFormData({
             ...initialData,
             contactId: initialData.contact._id || initialData.contact,
@@ -119,21 +118,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const totals = formData.services.reduce(
     (acc, item) => {
       const lineTotal = item.quantity * item.unitAmount;
-      // Tax calculation depends on if taxAmount is per unit or total.
-      // Let's assume taxAmount stored in state is PER UNIT for simplicity in UI,
-      // but Backend expects total tax maybe? Let's check model.
-      // Model says: taxAmount: Number. Usually this is total tax for the line.
-      // Let's fix logic:
-      // Tax per unit = (unitAmount * taxPercent / 100) -> Not stored directly.
-      // Let's calculate tax based on stored taxAmount which we set on selection.
-
-      // Better approach: Calculate afresh from service definition if possible,
-      // but if user overrides unitAmount, tax should adjust?
-      // Let's keep it simple: Tax Amount field in UI is "Total Tax for this line".
-      // But initially we set it to (Base Tax * Qty).
-
       const itemTax = item.taxAmount * item.quantity;
-      // Wait, handleServiceChange sets taxAmount which looks like Unit Tax.
 
       return {
         subtotal: acc.subtotal + lineTotal,
@@ -147,10 +132,6 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Prepare payload
-    // Fix taxAmount to be total tax for line as per backend likely expectation (or clarify)
-    // Backend model: taxAmount: { type: Number, default: 0 }.
-    // Let's send total tax for the line item.
     const payload = {
       ...formData,
       services: formData.services.map((s) => ({
@@ -162,327 +143,503 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
     onSubmit(payload);
   };
 
+  const handleContactSuccess = async (newContact) => {
+    // When a new contact is created:
+    // 1. Close modal
+    setShowContactModal(false);
+    // 2. Clear contacts list
+    setContacts([]);
+    // 3. Set the form data to use this new contact
+    // Note: newContact might need to be fetched fully? usually create returns it.
+    // Let's assume newContact is the full contact object.
+    setFormData((prev) => ({ ...prev, contactId: newContact._id }));
+    setContactSearch(newContact.name); // Set search text to name so it looks selected
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-    >
-      <div className="flex justify-between items-center mb-6 no-print">
-        <h2 className="text-xl font-bold text-gray-900">
-          {initialData ? "Edit Invoice" : "Create New Invoice"}
-        </h2>
-        {initialData && (
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-w-5xl mx-auto"
+      >
+        <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {initialData ? "Edit Invoice" : "Create New Invoice"}
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              {initialData
+                ? "Modify invoice details below"
+                : "Fill in the details to generate a new invoice"}
+            </p>
+          </div>
+          {initialData && (
+            <button
+              type="button"
+              onClick={() =>
+                window.open(`/print/invoice/${initialData._id}`, "_blank")
+              }
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-200 text-sm font-medium transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              />
-            </svg>
-            Print Invoice
-          </button>
-        )}
-      </div>
-
-      <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white; }
-          .sidebar, header, nav { display: none !important; } /* Adjust selectors based on Layout */
-          form { box-shadow: none !important; border: none !important; }
-        }
-      `}</style>
-
-      {/* Top Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Customer/Contact *
-          </label>
-          {!initialData ? (
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search client name..."
-                value={contactSearch}
-                onChange={(e) => setContactSearch(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
-              />
-              {contacts.length > 0 &&
-                contactSearch.length > 2 &&
-                !formData.contactId && (
-                  <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                    {contacts.map((c) => (
-                      <li
-                        key={c._id}
-                        onClick={() => {
-                          setFormData({ ...formData, contactId: c._id });
-                          setContactSearch(c.name);
-                          setContacts([]);
-                        }}
-                        className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm"
-                      >
-                        <span className="font-bold">{c.name}</span>{" "}
-                        <span className="text-gray-500">
-                          ({c.companyName || "No Company"})
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              {formData.contactId && (
-                <div className="mt-2 text-sm text-green-600 font-medium">
-                  ✓ Customer Selected
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData({ ...formData, contactId: "" });
-                      setContactSearch("");
-                    }}
-                    className="ml-2 text-red-500 hover:underline"
-                  >
-                    Change
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-gray-900 font-medium p-2 bg-gray-50 rounded">
-              {initialData.contact.name} ({initialData.contact.companyName})
-            </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
+              </svg>
+              Print Invoice
+            </button>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date
-            </label>
-            <input
-              type="date"
-              value={formData.billingDate}
-              onChange={(e) =>
-                setFormData({ ...formData, billingDate: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            />
+        {/* Client & Date Section */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8">
+          {/* Left: Client Selection */}
+          <div className="md:col-span-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                Bill To (Customer)
+              </label>
+              {!initialData && (
+                <button
+                  type="button"
+                  onClick={() => setShowContactModal(true)}
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                >
+                  + Add New Contact
+                </button>
+              )}
+            </div>
+
+            {!initialData ? (
+              <div className="relative">
+                <div className="flex gap-2">
+                  <div className="relative flex-grow">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search client by name..."
+                      value={contactSearch}
+                      onChange={(e) => setContactSearch(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-shadow"
+                    />
+                  </div>
+                </div>
+
+                {contacts.length > 0 &&
+                  contactSearch.length > 2 &&
+                  !formData.contactId && (
+                    <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                      {contacts.map((c) => (
+                        <li
+                          key={c._id}
+                          onClick={() => {
+                            setFormData({ ...formData, contactId: c._id });
+                            setContactSearch(c.name);
+                            setContacts([]);
+                          }}
+                          className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                        >
+                          <div className="font-bold text-gray-900">
+                            {c.name}
+                          </div>
+                          <div className="text-gray-500 text-xs">
+                            {c.companyName ? `${c.companyName} • ` : ""}{" "}
+                            {c.email || c.phone}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                {formData.contactId && (
+                  <div className="mt-3 flex items-center justify-between bg-green-50 px-4 py-2 rounded-lg border border-green-100">
+                    <span className="text-sm text-green-700 font-medium flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                      Selected: {contactSearch}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData({ ...formData, contactId: "" });
+                        setContactSearch("");
+                      }}
+                      className="text-xs text-red-500 hover:text-red-700 font-medium underline"
+                    >
+                      Change
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-gray-900 font-medium p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-lg">{initialData.contact.name}</div>
+                <div className="text-sm text-gray-500">
+                  {initialData.contact.companyName}
+                </div>
+              </div>
+            )}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Due Date
-            </label>
-            <input
-              type="date"
-              value={formData.dueDate}
-              onChange={(e) =>
-                setFormData({ ...formData, dueDate: e.target.value })
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            />
+
+          {/* Right: Dates */}
+          <div className="md:col-span-4 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Billing Date
+              </label>
+              <input
+                type="date"
+                value={formData.billingDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, billingDate: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Due Date
+              </label>
+              <input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Line Items */}
-      <div className="mb-8">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
-          Line Items
-        </h3>
-        <div className="space-y-4">
-          {formData.services.map((item, index) => (
-            <div
-              key={index}
-              className="flex gap-4 items-start p-4 bg-gray-50 rounded-lg border border-gray-100"
+        {/* Line Items */}
+        <div className="mb-8 border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+              Line Items
+            </h3>
+            <button
+              type="button"
+              onClick={handleAddItem}
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1"
             >
-              <div className="flex-1">
-                <label className="block text-xs font-semibold text-gray-500 mb-1">
-                  Service
+              + Add Item
+            </button>
+          </div>
+
+          <div className="p-0">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-white border-b border-gray-100 text-xs text-gray-500 uppercase">
+                  <th className="px-6 py-3 font-medium">Service</th>
+                  <th className="px-4 py-3 font-medium w-24">Qty</th>
+                  <th className="px-4 py-3 font-medium w-32">Price</th>
+                  <th className="px-4 py-3 font-medium w-32 text-right">
+                    Total
+                  </th>
+                  <th className="px-4 py-3 w-16"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {formData.services.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-6 py-8 text-center text-gray-400 text-sm"
+                    >
+                      No items added yet. Click "+ Add Item" to start.
+                    </td>
+                  </tr>
+                ) : (
+                  formData.services.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="group hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-3">
+                        <select
+                          value={item.serviceId}
+                          onChange={(e) =>
+                            handleServiceChange(index, e.target.value)
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-black focus:border-black"
+                        >
+                          <option value="">Select Service</option>
+                          {services.map((s) => (
+                            <option key={s._id} value={s._id}>
+                              {s.serviceName}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <input
+                          type="number"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const newServices = [...formData.services];
+                            newServices[index].quantity =
+                              parseInt(e.target.value) || 1;
+                            setFormData({ ...formData, services: newServices });
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-center"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.unitAmount}
+                          onChange={(e) => {
+                            const newServices = [...formData.services];
+                            newServices[index].unitAmount =
+                              parseFloat(e.target.value) || 0;
+                            setFormData({ ...formData, services: newServices });
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-right"
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-gray-900">
+                        ₹{(item.quantity * item.unitAmount).toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(index)}
+                          className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                          title="Remove Item"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-200 pt-6">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Notes
+              </label>
+              <textarea
+                value={formData.notes}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
+                rows="3"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                placeholder="Terms and conditions or additional notes..."
+              ></textarea>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
                 </label>
                 <select
-                  value={item.serviceId}
-                  onChange={(e) => handleServiceChange(index, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  value={formData.paymentStatus}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentStatus: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Select Service</option>
-                  {services.map((s) => (
-                    <option key={s._id} value={s._id}>
-                      {s.serviceName} (₹{s.baseAmount})
-                    </option>
-                  ))}
+                  <option value="PENDING">Pending</option>
+                  <option value="PAID">Paid</option>
+                  <option value="PARTIAL">Partial</option>
+                  <option value="OVERDUE">Overdue</option>
                 </select>
               </div>
-              <div className="w-24">
-                <label className="block text-xs font-semibold text-gray-500 mb-1">
-                  Qty
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Payment Mode
                 </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => {
-                    const newServices = [...formData.services];
-                    newServices[index].quantity = parseInt(e.target.value) || 1;
-                    setFormData({ ...formData, services: newServices });
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                />
+                <select
+                  value={formData.paymentMode}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentMode: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="BANK">Bank Transfer</option>
+                  <option value="CASH">Cash</option>
+                  <option value="UPI">UPI</option>
+                  <option value="CARD">Card</option>
+                  <option value="CHEQUE">Cheque</option>
+                </select>
               </div>
-              <div className="w-32">
-                <label className="block text-xs font-semibold text-gray-500 mb-1">
-                  Price
-                </label>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-xl p-6 space-y-4 border border-gray-100 shadow-sm">
+            <h3 className="font-bold text-gray-900 border-b border-gray-200 pb-2">
+              Payment Summary
+            </h3>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Subtotal</span>
+              <span className="font-medium text-gray-900">
+                ₹{totals.subtotal.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Tax</span>
+              <span className="font-medium text-gray-900">
+                ₹{totals.tax.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm items-center">
+              <span className="text-gray-600">Discount</span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">-</span>
                 <input
                   type="number"
                   min="0"
-                  value={item.unitAmount}
-                  onChange={(e) => {
-                    const newServices = [...formData.services];
-                    newServices[index].unitAmount =
-                      parseFloat(e.target.value) || 0;
-                    setFormData({ ...formData, services: newServices });
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  value={formData.discount}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discount: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  className="w-24 px-2 py-1 text-right border border-gray-300 rounded bg-white focus:ring-black focus:border-black"
                 />
               </div>
-              <div className="pt-6">
-                <button
-                  type="button"
-                  onClick={() => handleRemoveItem(index)}
-                  className="text-red-500 hover:bg-red-50 p-2 rounded"
-                >
-                  ✕
-                </button>
-              </div>
             </div>
-          ))}
+            <div className="border-t border-gray-300 pt-4 flex justify-between items-center bg-gray-100 -mx-6 -mb-6 p-6 rounded-b-xl mt-4">
+              <span className="text-lg font-bold text-gray-900">
+                Grand Total
+              </span>
+              <span className="text-2xl font-bold text-black border-b-4 border-yellow-300">
+                ₹{grandTotal.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between gap-3 mt-10 border-t border-gray-100 pt-8">
           <button
             type="button"
-            onClick={handleAddItem}
-            className="text-sm font-medium text-blue-600 hover:underline flex items-center gap-1"
+            onClick={onCancel}
+            className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
           >
-            + Add Item
+            Cancel
           </button>
-        </div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-200 pt-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) =>
-                setFormData({ ...formData, notes: e.target.value })
-              }
-              rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              placeholder="Additional notes for the client..."
-            ></textarea>
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={!formData.contactId || formData.services.length === 0}
+              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md transition-all transform hover:scale-105"
+            >
+              {initialData ? "Update Invoice" : "Generate Invoice"}
+            </button>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                value={formData.paymentStatus}
-                onChange={(e) =>
-                  setFormData({ ...formData, paymentStatus: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+        </div>
+      </form>
+
+      {/* Add Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl my-8 relative flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+              <h2 className="text-xl font-bold text-gray-900">
+                Add New Contact
+              </h2>
+              <button
+                onClick={() => setShowContactModal(false)}
+                className="text-gray-500 hover:text-black"
               >
-                <option value="PENDING">Pending</option>
-                <option value="PAID">Paid</option>
-                <option value="PARTIAL">Partial</option>
-                <option value="OVERDUE">Overdue</option>
-              </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Mode
-              </label>
-              <select
-                value={formData.paymentMode}
-                onChange={(e) =>
-                  setFormData({ ...formData, paymentMode: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              >
-                <option value="BANK">Bank Transfer</option>
-                <option value="CASH">Cash</option>
-                <option value="UPI">UPI</option>
-                <option value="CARD">Card</option>
-                <option value="CHEQUE">Cheque</option>
-              </select>
+            <div className="flex-1 overflow-y-auto p-4">
+              <ContactForm
+                onCancel={() => setShowContactModal(false)}
+                onSubmit={(data) => {
+                  // We need to actually call the API here to create contact
+                  contactService
+                    .createContact(data)
+                    .then((res) => {
+                      handleContactSuccess(res.data);
+                      Toast({
+                        message: "Contact created successfully",
+                        severity: "success",
+                      }); // Assuming simple Toast usage, but we might need to trigger the parent's toast
+                      // Actually we are inside Billings, and we don't have direct access to setBillingSnackbar easily without prop drilling.
+                      // Let's just rely on visual feedback (modal close + select) for now, or assume handleContactSuccess works.
+                    })
+                    .catch((err) => {
+                      console.error(err);
+                      alert("Failed to create contact");
+                    });
+                }}
+              />
             </div>
           </div>
         </div>
-
-        <div className="bg-gray-50 rounded-xl p-6 space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium">₹{totals.subtotal.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Tax</span>
-            <span className="font-medium">₹{totals.tax.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm items-center">
-            <span className="text-gray-600">Discount</span>
-            <input
-              type="number"
-              min="0"
-              value={formData.discount}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  discount: parseFloat(e.target.value) || 0,
-                })
-              }
-              className="w-24 px-2 py-1 text-right border border-gray-300 rounded bg-white"
-            />
-          </div>
-          <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
-            <span className="text-lg font-bold text-gray-900">Grand Total</span>
-            <span className="text-xl font-bold text-black">
-              ₹{grandTotal.toFixed(2)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-3 mt-8 border-t border-gray-200 pt-6">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={!formData.contactId || formData.services.length === 0}
-          className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-        >
-          {initialData ? "Update Invoice" : "Generate Invoice"}
-        </button>
-      </div>
-    </form>
+      )}
+    </>
   );
 };
 

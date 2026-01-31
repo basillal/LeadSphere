@@ -11,13 +11,15 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import CategoryIcon from "@mui/icons-material/Category";
+import BusinessIcon from "@mui/icons-material/Business";
+import SecurityIcon from "@mui/icons-material/Security";
 
 export const menuConfig = [
   {
     label: "Dashboard",
     path: "/",
     icon: <DashboardIcon />,
-    permission: "DASHBOARD_VIEW", // Assuming basic permission or null for public? No, strictly guarded.
+    permission: "DASHBOARD_READ",
   },
   {
     label: "Leads",
@@ -38,22 +40,10 @@ export const menuConfig = [
     permission: "CONTACT_READ",
   },
   {
-    label: "Referrers",
-    path: "/referrers",
-    icon: <ConnectWithoutContactIcon />,
-    permission: "REFERRER_READ",
-  },
-  {
     label: "Activities",
     path: "/activities",
     icon: <AssignmentIcon />,
     permission: "ACTIVITY_READ",
-  },
-  {
-    label: "Services",
-    path: "/services",
-    icon: <CategoryIcon />,
-    // permission: "SERVICE_READ", // Assuming permission exists or defaulting to open for now for authenticated users
   },
   {
     label: "Billing",
@@ -68,55 +58,58 @@ export const menuConfig = [
     // permission: "REPORT_READ",
   },
   {
+    label: "Services",
+    path: "/services",
+    icon: <CategoryIcon />,
+    // permission: "SERVICE_READ",
+  },
+  {
+    label: "Referrers",
+    path: "/referrers",
+    icon: <ConnectWithoutContactIcon />,
+    permission: "REFERRER_READ",
+  },
+  {
+    label: "Companies",
+    path: "/admin/companies",
+    icon: <BusinessIcon />, // Changed to BusinessIcon or Dashboard if imports allow. Using BusinessIcon if I assume it exists or reuse Dashboard
+    role: "Super Admin",
+  },
+  {
+    label: "Roles",
+    path: "/admin/roles",
+    icon: <SecurityIcon />, // Changed to Security or Settings
+    permission: "ROLE_MANAGE",
+    role: "Super Admin",
+  },
+  {
     label: "Team",
     path: "/admin/users",
     icon: <PeopleIcon />,
     permission: "USER_MANAGE",
   },
   {
-    label: "Admin",
-    role: "Super Admin", // Only Super Admin
+    label: "Sources",
+    path: "/sources",
+    icon: <StorageIcon />,
+    role: "Super Admin",
+  },
+  {
+    label: "Status Tags",
+    path: "/status-tags",
+    icon: <LocalOfferIcon />,
+    role: "Super Admin",
+  },
+  {
+    label: "Search",
+    path: "/search",
+    icon: <SearchIcon />,
+    role: "Super Admin",
+  },
+  {
+    label: "Settings",
+    path: "/settings",
     icon: <SettingsIcon />,
-    children: [
-      {
-        label: "Companies",
-        path: "/admin/companies",
-        icon: <DashboardIcon />, // Reusing Dashboard icon or similar
-        // permission: "COMPANY_MANAGE", // Or implicit super admin check
-      },
-      {
-        label: "Roles",
-        path: "/admin/roles",
-        icon: <SettingsIcon />,
-        permission: "ROLE_MANAGE",
-      },
-      /* Users moved to top level Team menu */
-      {
-        label: "Sources",
-        path: "/sources",
-        icon: <StorageIcon />, // Just to have an icon
-      },
-      {
-        label: "Status Tags",
-        path: "/status-tags",
-        icon: <LocalOfferIcon />,
-      },
-      {
-        label: "Search",
-        path: "/search",
-        icon: <SearchIcon />,
-      },
-      {
-        label: "Search",
-        path: "/search",
-        icon: <SearchIcon />,
-      },
-      // Reports moved to main menu
-      {
-        label: "Settings",
-        path: "/settings",
-        icon: <SettingsIcon />,
-      },
-    ],
+    role: "Super Admin",
   },
 ];

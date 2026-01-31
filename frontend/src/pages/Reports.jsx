@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import reportService from "../services/reportService";
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -28,7 +28,7 @@ const Reports = () => {
   const [contactBilling, setContactBilling] = useState([]);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(new Date().getFullYear());
-  const [showDetailedReport, setShowDetailedReport] = useState(true);
+  const [showDetailedReport, setShowDetailedReport] = useState(false);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -174,16 +174,10 @@ const Reports = () => {
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
+              <BarChart
                 data={monthlyStats}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
               >
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#000000" stopOpacity={0.1} />
-                    <stop offset="95%" stopColor="#000000" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
@@ -204,19 +198,13 @@ const Reports = () => {
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
                   formatter={(value) => [formatCurrency(value), "Revenue"]}
-                  cursor={{
-                    stroke: "#000000",
-                    strokeWidth: 1,
-                    strokeDasharray: "5 5",
-                  }}
+                  cursor={{ fill: "transparent" }}
                 />
-                <Area
-                  type="monotone"
+                <Bar
                   dataKey="revenue"
-                  stroke="#000000"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorRevenue)"
+                  fill="#10B981"
+                  radius={[4, 4, 0, 0]}
+                  barSize={40}
                 >
                   <LabelList
                     dataKey="revenue"
@@ -231,8 +219,8 @@ const Reports = () => {
                     }}
                     offset={10}
                   />
-                </Area>
-              </AreaChart>
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>

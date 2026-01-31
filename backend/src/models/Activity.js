@@ -16,6 +16,11 @@ const ActivitySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // Optional link to a Service
+    service: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service'
+    },
 
     // Activity Type
     activityType: {
@@ -80,7 +85,7 @@ const ActivitySchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['Scheduled', 'Completed', 'Cancelled', 'Pending'],
-        default: 'Completed'
+        default: 'Scheduled'
     },
     priority: {
         type: String,

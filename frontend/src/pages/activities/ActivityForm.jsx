@@ -7,13 +7,17 @@ import ContactAutocomplete from "../../components/common/fields/ContactAutocompl
 import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
+import serviceService from "../../services/serviceService";
+
 const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
+  const [services, setServices] = useState([]);
   const [formData, setFormData] = useState(() => {
     const initialState = {
       // Basic Info
       relatedTo: "Contact",
       relatedId: "",
       relatedName: "",
+      service: "", // New Field
       activityType: "Call",
       title: "",
       description: "",
@@ -40,7 +44,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
       endTime: "",
 
       // Status and Priority
-      status: "Completed",
+      status: "Scheduled",
       priority: "Medium",
 
       // Outcome
@@ -61,6 +65,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
       return {
         ...initialState,
         ...initialData,
+        service: initialData.service?._id || initialData.service || "",
         activityDate: initialData.activityDate
           ? initialData.activityDate.split("T")[0]
           : initialState.activityDate,
@@ -75,6 +80,19 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
 
     return initialState;
   });
+
+  // Fetch Services
+  React.useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await serviceService.getServices({ isActive: true });
+        setServices(res.data);
+      } catch (err) {
+        console.error("Failed to load services", err);
+      }
+    };
+    fetchServices();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -225,13 +243,32 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
             required
           />
 
+          <div className="md:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Related Service (Optional)
+            </label>
+            <select
+              name="service"
+              value={formData.service}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
+            >
+              <option value="">-- Select Service --</option>
+              {services.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.serviceName}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <Input
             label="Title"
             name="title"
             value={formData.title}
             onChange={handleChange}
             placeholder="Brief title for this activity"
-            className="md:col-span-4"
+            className="md:col-span-6" // Changed to span full width to look better
             required
           />
 

@@ -8,7 +8,7 @@ const User = require('../models/User');
 dotenv.config();
 
 // Added SERVICE, BILLING, REPORT
-const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT'];
+const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT', 'DASHBOARD'];
 const actions = ['READ', 'CREATE', 'UPDATE', 'DELETE'];
 
 const permissionsList = [];
@@ -107,6 +107,7 @@ const seedAuth = async () => {
             permissionIds['BILLING_READ'],
             permissionIds['BILLING_CREATE'], // Allow billing creation? Assuming yes.
             permissionIds['REPORT_READ'],
+            permissionIds['DASHBOARD_READ'],
         ];
 
         const finalUserPerms = userPerms.filter(id => id); // Filter undefined
@@ -150,7 +151,22 @@ const seedAuth = async () => {
                  name: 'LeadSphere Inc.',
                  owner: adminUser._id,
                  plan: 'Enterprise',
-                 isActive: true
+                 isActive: true,
+                 phone: '+91 98765 43210',
+                 email: 'support@leadsphere.com',
+                 website: 'https://leadsphere.com',
+                 address: {
+                     street: '123 Business Park, Tech Hub',
+                     city: 'Bengaluru',
+                     state: 'Karnataka',
+                     zipCode: '560100',
+                     country: 'India'
+                 },
+                 settings: {
+                     currency: 'INR',
+                     timezone: 'Asia/Kolkata',
+                     logo: 'https://via.placeholder.com/150x50?text=LeadSphere' // Placeholder logo
+                 }
              });
              console.log('Default Company created.');
         }

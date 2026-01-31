@@ -66,17 +66,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     return visible;
   };
 
-  /*
-   * Combine static Dashboard item with dynamic config items.
-   * Dashboard is always first and visible to everyone (or add stricter check if needed).
-   */
-  const dashboardItem = {
-    icon: <DashboardIcon />,
-    label: "Dashboard",
-    path: "/",
-  };
-
-  const menuItems = [dashboardItem, ...getVisibleItems()];
+  const menuItems = getVisibleItems();
 
   // Determine width based on state
   const widthClass = open ? "w-64" : "w-16";

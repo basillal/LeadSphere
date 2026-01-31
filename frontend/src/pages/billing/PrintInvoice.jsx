@@ -10,12 +10,6 @@ const PrintInvoice = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        // We might need a specific getBillingById if getBillings is list-only,
-        // but typically lists return arrays. Let's assume we can fetch by ID or filter.
-        // Checking serviceService... usually standard is get(id).
-        // Let's assume we need to filtering or if there's a direct endpoint.
-        // Actually, for now, let's try to fetch all and find, or if there is a specific endpoint.
-        // Recommendation: Check billingService first. Assuming standard getBilling(id).
         const response = await billingService.getBilling(id);
         setInvoice(response.data);
       } catch (error) {
@@ -31,7 +25,7 @@ const PrintInvoice = () => {
     if (invoice && !loading) {
       setTimeout(() => {
         window.print();
-      }, 500);
+      }, 800);
     }
   }, [invoice, loading]);
 
@@ -42,121 +36,274 @@ const PrintInvoice = () => {
     }).format(amount);
   };
 
-  if (loading) return <div className="p-8 text-center">Loading Invoice...</div>;
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (loading)
+    return (
+      <div className="p-12 text-center text-gray-500">Loading Invoice...</div>
+    );
   if (!invoice)
     return (
-      <div className="p-8 text-center">
-        <div className="text-red-500 font-bold mb-2">Error Loading Invoice</div>
-        <div className="text-gray-600 text-sm">
-          Please check the console for details or try again.
-        </div>
-      </div>
+      <div className="p-12 text-center text-red-500">Invoice not found.</div>
     );
 
+  const company = invoice.company || {};
+  const contact = invoice.contact || {};
+
   return (
-    <div
-      className="bg-white min-h-screen p-8 max-w-4xl mx-auto text-gray-900 font-sans"
-      id="invoice"
-    >
-      {/* Header */}
-      <div className="flex justify-between items-start mb-8 border-b pb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">INVOICE</h1>
-          <p className="text-gray-500 text-sm">#{invoice.invoiceNumber}</p>
+    <div className="bg-white min-h-screen text-gray-800 font-sans print:p-0 p-8 max-w-5xl mx-auto">
+      {/* Print Specific Styles */}
+      <style>{`
+        @media print {
+          @page { margin: 0; size: auto; }
+          body { -webkit-print-color-adjust: exact; margin: 0; padding: 0; }
+          .print-container { padding: 40px; margin: 0; width: 100%; height: 100%; }
+        }
+      `}</style>
+
+      <div className="print-container border border-gray-200 shadow-xl print:shadow-none print:border-none p-12 bg-white min-h-[297mm]">
+        {/* Header Section */}
+        <div className="flex justify-between items-start mb-12">
+          <div className="w-1/2">
+            {/* Logo or Placeholder */}
+            <div className="mb-4">
+              {company.settings?.logo ? (
+                <img
+                  src={company.settings.logo}
+                  alt={company.name}
+                  className="h-16 w-auto object-contain mb-2"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+              ) : null}
+
+              {/* Fallback Initial if no logo or error */}
+              <div
+                className="w-12 h-12 bg-black text-white flex items-center justify-center font-bold text-xl rounded mb-2"
+                style={{ display: company.settings?.logo ? "none" : "flex" }}
+              >
+                {company.name ? company.name.charAt(0) : "L"}
+              </div>
+
+              <h1 className="text-2xl font-bold text-gray-900">
+                {company.name || "Your Company Name"}
+              </h1>
+            </div>
+
+            <div className="text-sm text-gray-600 space-y-1">
+              {/* Address rendering */}
+              {company.address ? (
+                <>
+                  <p>{company.address.street}</p>
+                  <p>
+                    {[
+                      company.address.city,
+                      company.address.state,
+                      company.address.zipCode,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </p>
+                  <p>{company.address.country}</p>
+                </>
+              ) : (
+                // Fallback if no specific address in DB
+                <>
+                  <p>123 Business Street</p>
+                  <p>Tech City, TC 54321</p>
+                </>
+              )}
+              <p className="pt-2">
+                <strong>Phone:</strong> {company.phone || "+91 98765 43210"}
+              </p>
+              <p>
+                <strong>Email:</strong>{" "}
+                {company.email || "support@leadsphere.com"}
+              </p>
+              {company.website && (
+                <p>
+                  <strong>Web:</strong> {company.website}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="text-right w-1/2">
+            <h2 className="text-5xl font-extrabold text-gray-100 uppercase tracking-widest mb-4">
+              Invoice
+            </h2>
+            <div className="inline-block text-left">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                <div className="text-gray-500 font-medium">Invoice No:</div>
+                <div className="font-bold text-gray-900">
+                  #{invoice.invoiceNumber}
+                </div>
+
+                <div className="text-gray-500 font-medium">Date:</div>
+                <div className="font-bold text-gray-900">
+                  {formatDate(invoice.billingDate)}
+                </div>
+
+                <div className="text-gray-500 font-medium">Due Date:</div>
+                <div className="font-bold text-gray-900">
+                  {invoice.dueDate ? formatDate(invoice.dueDate) : "Immediate"}
+                </div>
+
+                <div className="text-gray-500 font-medium">Status:</div>
+                <div
+                  className={`font-bold uppercase text-xs px-2 py-0.5 rounded w-fit ${
+                    invoice.paymentStatus === "PAID"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {invoice.paymentStatus}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-right">
-          {/* We can put Company Logo or Name here if available in invoice.company */}
-          <h2 className="text-xl font-bold text-gray-800">
-            {typeof invoice.company === "object"
-              ? invoice.company.companyName
-              : "Company Name"}
-          </h2>
-          <p className="text-gray-500 text-sm">
-            {new Date(invoice.billingDate).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+
+        {/* Bill To Section */}
+        <div className="mb-10 p-6 bg-gray-50 rounded-lg border border-gray-100">
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+            Bill To
+          </h3>
+          <div className="text-lg font-bold text-gray-900 mb-1">
+            {contact.name || "Unknown Client"}
+          </div>
+          <div className="text-sm text-gray-600 space-y-0.5">
+            {contact.companyName && (
+              <p className="font-medium text-gray-800">{contact.companyName}</p>
+            )}
+            {contact.email && <p>{contact.email}</p>}
+            {contact.phone && <p>{contact.phone}</p>}
+            {contact.address && (
+              <p>
+                {[
+                  contact.address.street,
+                  contact.address.city,
+                  contact.address.state,
+                ]
+                  .filter(Boolean)
+                  .join(", ")}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Invoice Items Table */}
+        <div className="mb-8">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-900 text-white text-sm uppercase tracking-wider">
+                <th className="py-3 px-4 text-left rounded-l-lg">
+                  Description
+                </th>
+                <th className="py-3 px-4 text-center w-24">Qty</th>
+                <th className="py-3 px-4 text-right w-32">Price</th>
+                <th className="py-3 px-4 text-right w-32 rounded-r-lg">
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody className="text-sm text-gray-700">
+              {invoice.services.map((item, index) => (
+                <tr key={index} className="border-b border-gray-100">
+                  <td className="py-4 px-4 font-medium">{item.serviceName}</td>
+                  <td className="py-4 px-4 text-center">{item.quantity}</td>
+                  <td className="py-4 px-4 text-right">
+                    {formatCurrency(item.unitAmount)}
+                  </td>
+                  <td className="py-4 px-4 text-right font-bold">
+                    {formatCurrency(item.totalAmount)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Totals Section */}
+        <div className="flex justify-end mb-12">
+          <div className="w-1/2 lg:w-1/3 space-y-3">
+            <div className="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-2">
+              <span>Subtotal</span>
+              <span className="font-medium">
+                {formatCurrency(invoice.subtotal)}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-2">
+              <span>Tax</span>
+              <span className="font-medium">
+                {formatCurrency(invoice.taxTotal)}
+              </span>
+            </div>
+            {invoice.discount > 0 && (
+              <div className="flex justify-between text-sm text-green-600 border-b border-gray-100 pb-2">
+                <span>Discount</span>
+                <span className="font-medium">
+                  -{formatCurrency(invoice.discount)}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between text-xl font-bold text-gray-900 pt-2">
+              <span>Grand Total</span>
+              <span>{formatCurrency(invoice.grandTotal)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer / Notes */}
+        <div className="grid grid-cols-2 gap-12 text-sm text-gray-600 border-t-2 border-gray-100 pt-8">
+          <div>
+            <h4 className="font-bold text-gray-900 mb-2 uppercase text-xs tracking-wider">
+              Notes & Terms
+            </h4>
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-xs text-gray-500 leading-relaxed">
+              {invoice.notes ||
+                "Thank you for your business. Payment is due within the specified time. Please include invoice number on your check."}
+            </div>
+          </div>
+          <div>
+            <h4 className="font-bold text-gray-900 mb-2 uppercase text-xs tracking-wider">
+              Payment Details
+            </h4>
+            <div className="space-y-1">
+              <p>
+                <span className="font-medium">Bank:</span> Standard Chartered
+              </p>
+              <p>
+                <span className="font-medium">Account Name:</span> LeadSphere
+                Inc.
+              </p>
+              <p>
+                <span className="font-medium">Account No:</span> 1234 5678 9000
+              </p>
+              <p>
+                <span className="font-medium">IFSC:</span> SCBL0001234
+              </p>
+              <p className="mt-2 text-xs text-gray-400 italic">
+                Please send proof of payment to finance@leadsphere.com
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-16 text-center text-xs text-gray-400">
+          <p>
+            © {new Date().getFullYear()} LeadSphere Inc. All rights reserved.
           </p>
         </div>
       </div>
-
-      {/* Bill To */}
-      <div className="mb-8">
-        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-          Bill To:
-        </h3>
-        <div className="text-gray-800 font-medium text-lg">
-          {typeof invoice.contact === "object"
-            ? invoice.contact.name
-            : "Unknown Contact"}
-        </div>
-        {typeof invoice.contact === "object" && invoice.contact.email && (
-          <div className="text-gray-600">{invoice.contact.email}</div>
-        )}
-      </div>
-
-      {/* Table */}
-      <table className="w-full mb-8">
-        <thead>
-          <tr className="border-b-2 border-gray-800">
-            <th className="text-left py-2 font-bold text-gray-900">
-              Description
-            </th>
-            <th className="text-right py-2 font-bold text-gray-900">Qty</th>
-            <th className="text-right py-2 font-bold text-gray-900">Price</th>
-            <th className="text-right py-2 font-bold text-gray-900">Total</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {invoice.services.map((service, idx) => (
-            <tr key={idx}>
-              <td className="py-3 text-gray-800">{service.serviceName}</td>
-              <td className="py-3 text-right text-gray-600">
-                {service.quantity}
-              </td>
-              <td className="py-3 text-right text-gray-600">
-                {formatCurrency(service.unitAmount)}
-              </td>
-              <td className="py-3 text-right text-gray-900 font-medium">
-                {formatCurrency(service.totalAmount)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Totals */}
-      <div className="flex justify-end mb-8">
-        <div className="w-64 space-y-2">
-          <div className="flex justify-between text-gray-600">
-            <span>Subtotal:</span>
-            <span>{formatCurrency(invoice.subtotal)}</span>
-          </div>
-          <div className="flex justify-between text-gray-600">
-            <span>Tax:</span>
-            <span>{formatCurrency(invoice.taxTotal)}</span>
-          </div>
-          {invoice.discount > 0 && (
-            <div className="flex justify-between text-gray-600">
-              <span>Discount:</span>
-              <span>-{formatCurrency(invoice.discount)}</span>
-            </div>
-          )}
-          <div className="flex justify-between text-xl font-bold text-gray-900 border-t pt-2 mt-2">
-            <span>Total:</span>
-            <span>{formatCurrency(invoice.grandTotal)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Notes */}
-      {invoice.notes && (
-        <div className="border-t pt-6 text-sm text-gray-500">
-          <p className="font-bold mb-1">Notes:</p>
-          <p>{invoice.notes}</p>
-        </div>
-      )}
     </div>
   );
 };
