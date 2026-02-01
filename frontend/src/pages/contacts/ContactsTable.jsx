@@ -61,12 +61,12 @@ const ContactsTable = ({
     },
     {
       id: "createdBy",
-      label: "Created By",
+      label: "Created by",
       render: (row) => row.createdBy?.name || "System",
     },
     {
       id: "tenant",
-      label: "Company (Tenant)",
+      label: "Company (tenant)",
       render: (row) => row.company?.name || "-",
     },
     { id: "phone", label: "Phone" },
@@ -98,7 +98,7 @@ const ContactsTable = ({
     },
     {
       id: "lastInteractionDate",
-      label: "Last Interaction",
+      label: "Last interaction",
       render: (row) => formatDate(row.lastInteractionDate),
     },
   ];
@@ -195,12 +195,12 @@ const ContactsTable = ({
       },
     ],
     onCreate: {
-      label: "Add Contact",
+      label: "Add contact",
       onClick: onCreate,
     },
     extraButtons: [
       {
-        label: "Convert Lead",
+        label: "Convert lead",
         onClick: handleStartConversion,
         className:
           "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50",
@@ -235,7 +235,7 @@ const ContactsTable = ({
           </p>
         )}
         <p>
-          <span className="font-medium">Last Contact:</span>{" "}
+          <span className="font-medium">Last contact:</span>{" "}
           {formatDate(row.lastInteractionDate)}
         </p>
       </div>

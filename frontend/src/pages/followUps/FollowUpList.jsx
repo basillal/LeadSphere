@@ -54,7 +54,7 @@ const FollowUpList = ({
               }}
               className="text-xs text-green-600 hover:underline"
             >
-              Mark Done
+              Mark done
             </button>
           )}
         </div>
@@ -62,7 +62,7 @@ const FollowUpList = ({
     },
     {
       id: "scheduledAt",
-      label: "Due Date",
+      label: "Due date",
       render: (row) => (
         <span className="text-sm">{formatDate(row.scheduledAt)}</span>
       ),
@@ -97,7 +97,7 @@ const FollowUpList = ({
     },
     {
       id: "createdBy",
-      label: "Created By",
+      label: "Created by",
       render: (row) => (
         <span className="text-sm text-gray-600">
           {row.createdBy?.name || "System"}
@@ -106,7 +106,7 @@ const FollowUpList = ({
     },
     {
       id: "assignedTo",
-      label: "Assigned To",
+      label: "Assigned to",
       render: (row) => (
         <span className="text-sm text-blue-600 font-medium">
           {row.assignedTo?.name || "System"}

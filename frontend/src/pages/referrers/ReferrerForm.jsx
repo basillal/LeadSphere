@@ -50,7 +50,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Full Name"
+            label="Full name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -58,7 +58,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Primary Phone"
+            label="Primary phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
@@ -67,7 +67,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Email Address"
+            label="Email address"
             name="email"
             type="email"
             value={formData.email}
@@ -75,7 +75,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Alternate Phone"
+            label="Alternate phone"
             name="alternatePhone"
             value={formData.alternatePhone}
             onChange={handleChange}
@@ -83,7 +83,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company Name"
+            label="Company name"
             name="companyName"
             value={formData.companyName}
             onChange={handleChange}
@@ -127,7 +127,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
               htmlFor="isActive"
               className="text-sm font-medium text-gray-700"
             >
-              Is Active
+              Is active
             </label>
           </div>
         </div>

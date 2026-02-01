@@ -583,8 +583,8 @@ const Contacts = () => {
           {view === "list"
             ? "Contacts"
             : view === "create"
-              ? "Create New Contact"
-              : "Edit Contact"}
+              ? "Create new contact"
+              : "Edit contact"}
         </h1>
         {view !== "list" && (
           <button

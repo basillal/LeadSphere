@@ -95,24 +95,7 @@ export const menuConfig = [
     icon: <PeopleIcon />,
     permission: "USER_MANAGE",
   },
-  {
-    label: "Sources",
-    path: "/sources",
-    icon: <StorageIcon />,
-    role: "Super Admin",
-  },
-  {
-    label: "Status Tags",
-    path: "/status-tags",
-    icon: <LocalOfferIcon />,
-    role: "Super Admin",
-  },
-  {
-    label: "Search",
-    path: "/search",
-    icon: <SearchIcon />,
-    role: "Super Admin",
-  },
+
   {
     label: "Settings",
     path: "/settings",

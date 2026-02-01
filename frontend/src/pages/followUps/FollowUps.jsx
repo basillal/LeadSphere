@@ -7,7 +7,7 @@ import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const FollowUps = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("today");
   const [followUps, setFollowUps] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -149,8 +149,8 @@ const FollowUps = () => {
   };
 
   const tabs = [
-    { id: "all", label: `All Records (${stats.total})` },
     { id: "today", label: "Today's Actions" },
+    { id: "all", label: `All Records (${stats.total})` },
     { id: "upcoming", label: "Upcoming" },
     { id: "missed", label: `Missed/Overdue (${stats.missed})` },
     { id: "completed", label: `Completed (${stats.completed})` },
@@ -192,7 +192,7 @@ const FollowUps = () => {
       <div className="flex justify-between items-center mb-4 md:mb-6 gap-2 md:gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">
-            Follow-up Management
+            Follow-up management
           </h1>
           <p className="text-gray-500 text-sm hidden md:block">
             Track and manage your customer interactions
@@ -202,7 +202,7 @@ const FollowUps = () => {
           onClick={handleCreate}
           className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
         >
-          <span className="hidden sm:inline">+ Schedule New</span>
+          <span className="hidden sm:inline">+ Schedule new</span>
           <span className="sm:hidden">+ New</span>
         </button>
       </div>
@@ -281,7 +281,7 @@ const FollowUps = () => {
       <BasicModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={currentFollowUp ? "Edit Follow-up" : "Schedule Follow-up"}
+        title={currentFollowUp ? "Edit follow-up" : "Schedule follow-up"}
       >
         <FollowUpForm
           initialData={currentFollowUp}
@@ -294,7 +294,7 @@ const FollowUps = () => {
       <BasicModal
         isOpen={isOutcomeModalOpen}
         onClose={() => setIsOutcomeModalOpen(false)}
-        title="Follow-up Outcome"
+        title="Follow-up outcome"
       >
         <form onSubmit={handleOutcomeSubmit} className="space-y-4">
           <p className="text-sm text-gray-600">

@@ -14,9 +14,7 @@ import Activities from "./pages/activities/Activities";
 import Services from "./pages/services/Services";
 import Billings from "./pages/billing/Billings";
 import Expenses from "./pages/expenses/Expenses";
-import SourceManagement from "./pages/SourceManagement";
-import StatusTags from "./pages/StatusTags";
-import Search from "./pages/Search";
+
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Companies from "./pages/admin/Companies";
@@ -66,9 +64,6 @@ function App() {
                 />
                 <Route path="admin/users" element={<Users />} />
 
-                <Route path="sources" element={<SourceManagement />} />
-                <Route path="status-tags" element={<StatusTags />} />
-                <Route path="search" element={<Search />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="settings" element={<Settings />} />
               </Route>

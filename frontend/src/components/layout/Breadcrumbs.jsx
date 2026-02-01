@@ -7,13 +7,18 @@ const Breadcrumbs = () => {
 
   // Map for readable names (optional: extend this as needed)
   const breadcrumbNameMap = {
-    leads: "Leads Management",
+    leads: "Leads",
     dashboard: "Dashboard",
     settings: "Settings",
     reports: "Reports",
     activities: "Activities",
     contacts: "Contacts",
     about: "About",
+    referrers: "Referrers",
+    services: "Services",
+    followups: "Follow-ups",
+    user: "User",
+    companies: "Companies",
     // Add more mappings as your app grows
   };
 
@@ -26,7 +31,7 @@ const Breadcrumbs = () => {
   };
 
   return (
-    <div className="mb-4 flex items-center text-sm text-gray-500">
+    <div className="mb-4 flex items-center text-sm text-gray-500 print:hidden">
       <Link
         to="/"
         className="hover:text-black hover:underline transition-colors"
@@ -34,6 +39,9 @@ const Breadcrumbs = () => {
         Home
       </Link>
       {pathnames.map((value, index) => {
+        // Skip 'admin' from being displayed
+        if (value === "admin") return null;
+
         let to = `/${pathnames.slice(0, index + 1).join("/")}`;
         const isLast = index === pathnames.length - 1;
 

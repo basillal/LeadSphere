@@ -22,11 +22,17 @@ const updateCompany = async (id, companyData) => {
     return response.data;
 };
 
+const deleteCompany = async (id) => {
+    const response = await api.delete(`${API_URL}/${id}`);
+    return response.data;
+};
+
 const companyService = {
     getCompanies,
     getCompany,
     createCompany,
-    updateCompany
+    updateCompany,
+    deleteCompany
 };
 
 export default companyService;

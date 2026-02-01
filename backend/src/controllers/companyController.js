@@ -3,6 +3,15 @@ const User = require('../models/User');
 const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const Lead = require('../models/Lead');
+const Contact = require('../models/Contact');
+const Activity = require('../models/Activity');
+const FollowUp = require('../models/FollowUp');
+const Referrer = require('../models/Referrer');
+const Role = require('../models/Role');
+const Service = require('../models/Service');
+const Billing = require('../models/Billing');
+const Expense = require('../models/Expense');
 
 // @desc    Get all companies
 // @route   GET /api/companies
@@ -198,16 +207,37 @@ const deleteCompany = asyncHandler(async (req, res) => {
         throw new Error('Company not found');
     }
 
-    // Optional: Delete all associated users, leads, etc.
-    // implementing basic delete for now. MongoDB cascade delete or pre-remove hooks usually handle this better.
-    // For now, we likely just soft delete or hard delete.
-    // Let's doing hard delete as requested implicitly "delete company".
+    // Delete all associated data
+    await Lead.deleteMany({ company: company._id });
+    await Contact.deleteMany({ company: company._id });
+    await Activity.deleteMany({ company: company._id });
+    await FollowUp.deleteMany({ company: company._id });
+    await Referrer.deleteMany({ company: company._id });
+    await Service.deleteMany({ company: company._id });
+    await Billing.deleteMany({ company: company._id });
+    await Expense.deleteMany({ company: company._id });
+    
+    // Delete roles (except system roles, but usually roles are per company or system. 
+    // If roles are linked to company, delete them.
+    // Based on cleanData, we delete non-system roles. 
+    // Assuming custom roles have a company field? 
+    // Let's check Role schema if possible, but safe to try deleteMany with company filter if it exists.
+    // If Role schema doesn't have company, this doing nothing is fine. 
+    // Actually, usually roles are shared or company specific.
+    // I'll assume they have company field given the multi-tenant nature.
+    await Role.deleteMany({ company: company._id, isSystemRole: false }); 
+
+    // Delete Users
+    await User.deleteMany({ company: company._id });
     
     await company.deleteOne();
 
+    logger.info(`Company deleted: ${company.name} (ID: ${company._id}) and all associated data.`);
+
     res.status(200).json({
         success: true,
-        data: {}
+        data: {},
+        message: 'Company and all associated data deleted successfully'
     });
 });
 

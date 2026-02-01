@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import reportService from "../services/reportService";
 import {
-  BarChart,
+  ComposedChart,
+  Line,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
   LabelList,
 } from "recharts";
@@ -179,7 +181,7 @@ const Reports = () => {
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
+              <ComposedChart
                 data={monthlyStats}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
               >
@@ -195,19 +197,27 @@ const Reports = () => {
                   tick={{ fontSize: 12, fill: "#6b7280" }}
                   dy={10}
                 />
-                <YAxis hide={true} />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tickFormatter={(value) =>
+                    new Intl.NumberFormat("en-IN", {
+                      notation: "compact",
+                      compactDisplay: "short",
+                    }).format(value)
+                  }
+                />
                 <Tooltip
                   contentStyle={{
                     borderRadius: "8px",
                     border: "none",
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
-                  formatter={(value, name) => [
-                    formatCurrency(value),
-                    name === "revenue" ? "Revenue" : "Expenses",
-                  ]}
+                  formatter={(value) => formatCurrency(value)}
                   cursor={{ fill: "transparent" }}
                 />
+                <Legend iconType="circle" />
                 <Bar
                   dataKey="revenue"
                   name="Revenue"
@@ -222,7 +232,15 @@ const Reports = () => {
                   radius={[4, 4, 0, 0]}
                   barSize={20}
                 />
-              </BarChart>
+                <Line
+                  type="monotone"
+                  dataKey="pending"
+                  name="Pending"
+                  stroke="#EAB308"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: "#EAB308" }}
+                />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  ComposedChart,
   LineChart,
   Line,
   BarChart,
@@ -13,7 +14,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart, // Keeping imports even if not used, though we use LineChart for revenue
+  AreaChart,
   Area,
 } from "recharts";
 import dashboardService from "../services/dashboardService";
@@ -312,10 +313,12 @@ const Dashboard = () => {
 
       {/* Advanced Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Revenue Trend - Area Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
+        {/* Financial Overview - Combined Chart */}
+        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800">Revenue Trend</h3>
+            <h3 className="text-lg font-bold text-gray-800">
+              Financial Overview
+            </h3>
             <select
               value={revenueInterval}
               onChange={(e) => setRevenueInterval(e.target.value)}
@@ -327,72 +330,7 @@ const Dashboard = () => {
             </select>
           </div>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.charts.revenueTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="_id"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 10 }} // Smaller font for daily dates
-                tickFormatter={(value) => {
-                  // Adapt formatter based on interval
-                  if (revenueInterval === "yearly") return value;
-                  const date = new Date(value);
-                  if (revenueInterval === "daily") {
-                    return date.toLocaleDateString("default", {
-                      day: "numeric",
-                      month: "short",
-                    });
-                  }
-                  return date.toLocaleDateString("default", {
-                    month: "short",
-                    year: "2-digit",
-                  });
-                }}
-                interval={revenueInterval === "daily" ? 2 : 0} // Skip ticks for daily if crowded
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip
-                formatter={(value) => formatCurrency(value)}
-                labelFormatter={(value) => {
-                  const date = new Date(value);
-                  if (revenueInterval === "yearly") return value;
-                  return date.toLocaleDateString("default", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  });
-                }}
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "none",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="totalRevenue"
-                stroke="#10B981"
-                strokeWidth={3}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Expense Trend - Area Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800">Expense Trend</h3>
-            {/* Reusing revenueInterval for now or we can add a separate state if needed */}
-          </div>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.charts.expenseTrend || []}>
+            <ComposedChart data={data.charts.financialTrend || []}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="_id"
@@ -419,6 +357,12 @@ const Dashboard = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12 }}
+                tickFormatter={(value) =>
+                  new Intl.NumberFormat("en-IN", {
+                    notation: "compact",
+                    compactDisplay: "short",
+                  }).format(value)
+                }
               />
               <Tooltip
                 formatter={(value) => formatCurrency(value)}
@@ -437,15 +381,30 @@ const Dashboard = () => {
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
               />
+              <Legend iconType="circle" />
+              <Bar
+                dataKey="totalRevenue"
+                name="Revenue"
+                fill="#10B981"
+                radius={[4, 4, 0, 0]}
+                barSize={20}
+              />
+              <Bar
+                dataKey="totalExpenses"
+                name="Expenses"
+                fill="#EF4444"
+                radius={[4, 4, 0, 0]}
+                barSize={20}
+              />
               <Line
                 type="monotone"
-                dataKey="totalExpenses"
-                stroke="#EF4444" // Red color
+                dataKey="totalPending"
+                name="Pending"
+                stroke="#EAB308"
                 strokeWidth={3}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
+                dot={{ r: 4, fill: "#EAB308" }}
               />
-            </LineChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </div>

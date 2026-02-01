@@ -1,4 +1,7 @@
 const Activity = require('../models/Activity');
+const FollowUp = require('../models/FollowUp');
+const Contact = require('../models/Contact');
+const Lead = require('../models/Lead');
 
 class ActivityService {
     // Get all activities with filters and pagination
@@ -153,6 +156,38 @@ class ActivityService {
     async createActivity(activityData) {
         const activity = new Activity(activityData);
         await activity.save();
+
+        // Create FollowUp if required
+        if (activityData.followUpRequired && activityData.followUpDate) {
+            try {
+                let leadId = null;
+
+                if (activityData.relatedTo === 'Lead') {
+                    leadId = activityData.relatedId;
+                } else if (activityData.relatedTo === 'Contact') {
+                    const contact = await Contact.findById(activityData.relatedId);
+                    if (contact && contact.leadId) {
+                        leadId = contact.leadId;
+                    }
+                }
+
+                if (leadId) {
+                    await FollowUp.create({
+                        lead: leadId,
+                        scheduledAt: activityData.followUpDate,
+                        type: 'Call', // Default, or could be inferred
+                        notes: activityData.followUpNotes || `Follow up from activity: ${activity.title}`,
+                        company: activityData.company,
+                        createdBy: activityData.createdBy,
+                        status: 'Pending'
+                    });
+                }
+            } catch (error) {
+                console.error("Error creating auto-followup:", error);
+                // Don't fail the activity creation if follow-up fails, just log it
+            }
+        }
+
         return activity;
     }
 

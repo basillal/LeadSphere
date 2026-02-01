@@ -363,8 +363,8 @@ const Leads = () => {
           {view === "list"
             ? "Leads"
             : view === "create"
-              ? "Create New Lead"
-              : "Edit Lead"}
+              ? "Create new lead"
+              : "Edit lead"}
         </h1>
         {view !== "list" && (
           <button

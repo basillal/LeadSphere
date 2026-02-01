@@ -105,13 +105,13 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
       className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
     >
       <h2 className="text-xl font-bold mb-6">
-        {initialData ? "Edit Service" : "Create New Service"}
+        {initialData ? "Edit service" : "Create new service"}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Service Name *
+            Service name *
           </label>
           <input
             type="text"
@@ -125,7 +125,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Service Code *
+            Service code *
           </label>
           <input
             type="text"
@@ -140,7 +140,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Industry Type *
+            Industry type *
           </label>
           <select
             name="industryType"
@@ -166,7 +166,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Base Amount *
+              Base amount *
             </label>
             <input
               type="number"
@@ -209,7 +209,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
         {/* Dynamic Industry Fields */}
         <div className="md:col-span-2 border-t border-gray-100 pt-4 mt-2">
           <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
-            {formData.industryType} Specific Details
+            {formData.industryType} Specific details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {getIndustryFields().map((field) => (
@@ -244,7 +244,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             htmlFor="isActive"
             className="text-sm font-medium text-gray-700"
           >
-            Active Service
+            Active service
           </label>
         </div>
       </div>
@@ -262,7 +262,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
           disabled={loading}
           className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
         >
-          {loading ? "Saving..." : "Save Service"}
+          {loading ? "Saving..." : "Save service"}
         </button>
       </div>
     </form>
@@ -344,7 +344,7 @@ const Services = () => {
   const columns = [
     {
       id: "serviceName",
-      label: "Service Name",
+      label: "Service name",
       render: (row) => (
         <div>
           <div className="font-bold text-gray-900">{row.serviceName}</div>
@@ -365,7 +365,7 @@ const Services = () => {
     },
     {
       id: "baseAmount",
-      label: "Base Amount",
+      label: "Base amount",
       render: (row) => (
         <span className="font-medium">
           ₹{parseInt(row.baseAmount).toLocaleString()}
@@ -510,14 +510,14 @@ const Services = () => {
     <div className="w-full p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
-          Services Management
+          Services management
         </h1>
         {view === "list" && (
           <button
             onClick={handleCreate}
             className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
           >
-            + Add Service
+            + Add service
           </button>
         )}
       </div>

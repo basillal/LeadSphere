@@ -124,30 +124,55 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
         { $sort: { '_id': 1 } }
     ]);
 
+    // Aggregate Pending Amounts (Billing where status is PENDING or OVERDUE)
+    const pendingStats = await Billing.aggregate([
+        {
+            $match: {
+                ...matchQuery,
+                paymentStatus: { $in: ['PENDING', 'OVERDUE'] },
+                billingDate: { $gte: start, $lte: end }
+            }
+        },
+        {
+            $group: {
+                _id: groupBy === 'day' 
+                    ? { $dateToString: { format: "%Y-%m-%d", date: "$billingDate" } }
+                    : { $month: "$billingDate" },
+                pending: { $sum: '$grandTotal' },
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { '_id': 1 } }
+    ]);
+
     let result = [];
     if (groupBy === 'day') {
         // Evaluate daily data
-        // Create a map of all dates
         const dateMap = new Map();
         
         stats.forEach(item => {
-            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0 });
+            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0, pending: 0 });
             dateMap.get(item._id).revenue = item.revenue;
             dateMap.get(item._id).count = item.count;
         });
 
         expenseStats.forEach(item => {
-            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0 });
+            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0, pending: 0 });
             dateMap.get(item._id).expenses = item.amount;
         });
 
-        // Convert map to array and sort
+        pendingStats.forEach(item => {
+            if (!dateMap.has(item._id)) dateMap.set(item._id, { revenue: 0, expenses: 0, pending: 0 });
+            dateMap.get(item._id).pending = item.pending;
+        });
+
         const dates = Array.from(dateMap.keys()).sort();
         result = dates.map(date => ({
             label: date,
             date: date,
             revenue: dateMap.get(date).revenue || 0,
             expenses: dateMap.get(date).expenses || 0,
+            pending: dateMap.get(date).pending || 0,
             count: dateMap.get(date).count || 0
         }));
 
@@ -157,12 +182,14 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
             const monthNum = i + 1;
             const revenueData = stats.find(item => item._id === monthNum);
             const expenseData = expenseStats.find(item => item._id === monthNum);
+            const pendingData = pendingStats.find(item => item._id === monthNum);
             
             return {
                 label: new Date(0, i).toLocaleString('default', { month: 'short' }),
                 month: monthNum,
                 revenue: revenueData ? revenueData.revenue : 0,
                 expenses: expenseData ? expenseData.amount : 0,
+                pending: pendingData ? pendingData.pending : 0,
                 count: revenueData ? revenueData.count : 0
             };
         });

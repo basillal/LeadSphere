@@ -350,7 +350,7 @@ const Activities = () => {
     search: "",
     activityType: "",
     status: "",
-    dateFilter: "",
+    dateFilter: "today",
   });
   const [dateRange, setDateRange] = useState({
     startDate: "",

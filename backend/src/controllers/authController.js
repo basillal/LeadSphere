@@ -24,6 +24,11 @@ const login = asyncHandler(async (req, res) => {
             throw new Error('User is inactive');
         }
 
+        if (user.company && !user.company.isActive) {
+            res.status(401);
+            throw new Error('Company is inactive. Please contact support.');
+        }
+
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 

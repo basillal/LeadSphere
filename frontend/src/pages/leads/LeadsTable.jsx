@@ -60,13 +60,13 @@ const LeadsTable = ({
     },
     {
       id: "createdBy",
-      label: "Created By",
+      label: "Created by",
       width: "w-[12%]",
       render: (row) => row.createdBy?.name || "System",
     },
     {
       id: "tenant",
-      label: "Company (Tenant)",
+      label: "Company (tenant)",
       width: "w-[12%]",
       render: (row) => row.company?.name || "-",
       // Ideally hide this if not Super Admin, but I don't have user context here easily.
@@ -198,7 +198,7 @@ const LeadsTable = ({
       },
     ],
     onCreate: {
-      label: "Add Lead",
+      label: "Add lead",
       onClick: onCreate,
     },
   };

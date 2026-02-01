@@ -2,6 +2,7 @@ const Billing = require('../models/Billing');
 const Contact = require('../models/Contact');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const Counter = require('../models/Counter');
 
 // @desc    Get all billings
 // @route   GET /api/billings
@@ -98,8 +99,35 @@ const createBilling = asyncHandler(async (req, res) => {
 
     // Generate Invoice Number (Simple sequential or random for now)
     // PROD: Use a counter collection to ensure sequential numbers (INV-001, INV-002)
-    const count = await Billing.countDocuments({ company: companyId });
-    const invoiceNumber = `INV-${new Date().getFullYear()}-${(count + 1).toString().padStart(4, '0')}`;
+    // Format: INV-<GlobalSeq>_<Year>_<CompanyInitials>-<CompanySeq>
+    
+    // 1. Global Sequence
+    const globalCounter = await Counter.findByIdAndUpdate(
+        'invoice_global',
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+    );
+    const globalSeq = globalCounter.seq;
+
+    // 2. Year
+    const year = new Date().getFullYear();
+
+    // 3. Company Initials
+    const companyName = req.user.company?.name || 'Company';
+    const initials = companyName
+        .match(/\b\w/g) // Get first letter of each word
+        .join('')
+        .toUpperCase();
+
+    // 4. Company Sequence
+    const companyCounter = await Counter.findByIdAndUpdate(
+        `invoice_company_${companyId}`,
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+    );
+    const companySeq = companyCounter.seq.toString().padStart(3, '0');
+
+    const invoiceNumber = `INV-${globalSeq}-${year}-${initials}-${companySeq}`;
 
     // Calculate totals (Backend validation)
     let subtotal = 0;

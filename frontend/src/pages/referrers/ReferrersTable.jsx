@@ -42,12 +42,12 @@ const ReferrersTable = ({
     },
     {
       id: "createdBy",
-      label: "Created By",
+      label: "Created by",
       render: (row) => row.createdBy?.name || "System",
     },
     {
       id: "totalLeads",
-      label: "Total Leads",
+      label: "Total leads",
       sortable: false,
       render: (row) => {
         const stats = referrerStats?.[row._id] || {};
@@ -164,7 +164,7 @@ const ReferrersTable = ({
     },
     searchPlaceholder: "Search referrers...",
     onCreate: {
-      label: "Add Referrer",
+      label: "Add referrer",
       onClick: onCreate,
     },
   };

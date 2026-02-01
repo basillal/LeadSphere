@@ -15,8 +15,16 @@ const Companies = () => {
     name: "",
     plan: "Free",
     ownerName: "",
+    ownerName: "",
     ownerEmail: "",
+    isActive: true,
   });
+
+  // Delete/Captcha State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [companyToDelete, setCompanyToDelete] = useState(null);
+  const [captchaCode, setCaptchaCode] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
 
   const fetchCompanies = async () => {
     setLoading(true);
@@ -36,7 +44,13 @@ const Companies = () => {
 
   const handleCreate = () => {
     setCurrentCompany(null);
-    setFormData({ name: "", plan: "Free", ownerName: "", ownerEmail: "" });
+    setFormData({
+      name: "",
+      plan: "Free",
+      ownerName: "",
+      ownerEmail: "",
+      isActive: true,
+    });
     setIsModalOpen(true);
   };
 
@@ -47,6 +61,7 @@ const Companies = () => {
       plan: company.plan,
       ownerName: company.owner?.name || "",
       ownerEmail: company.owner?.email || "",
+      isActive: company.isActive,
       logo: company.settings?.logo || "",
     });
     setIsModalOpen(true);
@@ -77,10 +92,43 @@ const Companies = () => {
     }
   };
 
+  const handleStatusToggle = async (company) => {
+    try {
+      const newStatus = !company.isActive;
+      await companyService.updateCompany(company._id, { isActive: newStatus });
+      fetchCompanies();
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update status.");
+    }
+  };
+
+  const handleDeleteClick = (company) => {
+    setCompanyToDelete(company);
+    setCaptchaCode(Math.random().toString(36).substring(2, 8).toUpperCase());
+    setCaptchaInput("");
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!companyToDelete) return;
+    if (captchaInput !== captchaCode) return;
+
+    try {
+      await companyService.deleteCompany(companyToDelete._id);
+      setDeleteModalOpen(false);
+      setCompanyToDelete(null);
+      fetchCompanies();
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      alert("Failed to delete company.");
+    }
+  };
+
   const columns = [
     {
       id: "name",
-      label: "Company Name",
+      label: "Company name",
       render: (row) => <span className="capitalize">{row.name}</span>,
     },
     { id: "plan", label: "Plan" },
@@ -100,11 +148,16 @@ const Companies = () => {
       id: "status",
       label: "Status",
       render: (row) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${row.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleStatusToggle(row);
+          }}
+          className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
+          title="Click to toggle status"
         >
           {row.isActive ? "Active" : "Inactive"}
-        </span>
+        </button>
       ),
     },
   ];
@@ -130,6 +183,27 @@ const Companies = () => {
         </svg>
       ),
     },
+    {
+      label: "Delete",
+      onClick: handleDeleteClick,
+      color: "text-red-600 hover:bg-red-100",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -150,6 +224,7 @@ const Companies = () => {
         pagination={{ enabled: false }} // Simple list for now
       />
 
+      {/* Create/Edit Modal */}
       <BasicModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -162,7 +237,7 @@ const Companies = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Company Name *
+                  Company name *
                 </label>
                 <input
                   type="text"
@@ -190,6 +265,25 @@ const Companies = () => {
                   <option value="Basic">Basic</option>
                   <option value="Pro">Pro</option>
                   <option value="Enterprise">Enterprise</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Status
+                </label>
+                <select
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
+                  value={formData.isActive}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      isActive: e.target.value === "true",
+                    })
+                  }
+                >
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
                 </select>
               </div>
 
@@ -232,7 +326,7 @@ const Companies = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700">
-                    Company Email
+                    Company email
                   </label>
                   <input
                     type="email"
@@ -274,7 +368,7 @@ const Companies = () => {
 
               <div>
                 <label className="block text-xs font-medium text-gray-700">
-                  Street Address
+                  Street address
                 </label>
                 <input
                   type="text"
@@ -327,7 +421,7 @@ const Companies = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700">
-                    Zip Code
+                    Zip code
                   </label>
                   <input
                     type="text"
@@ -375,7 +469,7 @@ const Companies = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Owner Name *
+                    Owner name *
                   </label>
                   <input
                     type="text"
@@ -389,7 +483,7 @@ const Companies = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Owner Email *
+                    Owner email *
                   </label>
                   <input
                     type="email"
@@ -421,6 +515,75 @@ const Companies = () => {
             </button>
           </div>
         </form>
+      </BasicModal>
+
+      {/* Delete Confirmation Modal */}
+      <BasicModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title="Confirm Company Deletion"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-red-50 text-red-800 rounded-md">
+            <p className="text-sm font-medium">
+              Warning: This action is irreversible!
+            </p>
+            <p className="text-xs mt-1">
+              Deleting <strong>{companyToDelete?.name}</strong> will remove all
+              associated Users, Leads, Contacts, Activities, Services, Billing,
+              Expenses, and settings.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              To confirm, type the code below:
+            </label>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-block px-3 py-1 bg-gray-200 text-gray-800 font-mono font-bold tracking-widest rounded border select-none">
+                {captchaCode}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setCaptchaCode(
+                    Math.random().toString(36).substring(2, 8).toUpperCase(),
+                  )
+                }
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Refresh Code
+              </button>
+            </div>
+            <input
+              type="text"
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value)}
+              placeholder="Enter code"
+              className="block w-full border border-gray-300 rounded-md shadow-sm p-2 uppercase"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button
+              type="button"
+              onClick={() => setDeleteModalOpen(false)}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteConfirm}
+              disabled={captchaInput !== captchaCode}
+              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+                      ${captchaInput === captchaCode ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
+            >
+              Delete Company
+            </button>
+          </div>
+        </div>
       </BasicModal>
     </div>
   );

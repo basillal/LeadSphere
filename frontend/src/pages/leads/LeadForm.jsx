@@ -144,7 +144,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Full Name"
+            label="Full name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -152,7 +152,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Primary Phone"
+            label="Primary phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
@@ -161,7 +161,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Email Address"
+            label="Email address"
             name="email"
             type="email"
             value={formData.email}
@@ -169,7 +169,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Alternate Phone"
+            label="Alternate phone"
             name="alternatePhone"
             value={formData.alternatePhone}
             onChange={handleChange}
@@ -177,7 +177,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company Name"
+            label="Company name"
             name="companyName"
             value={formData.companyName}
             onChange={handleChange}
@@ -222,7 +222,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Input
-            label="Source Details"
+            label="Source details"
             name="sourceDetails"
             value={formData.sourceDetails}
             onChange={handleChange}
@@ -230,7 +230,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Campaign Name"
+            label="Campaign name"
             name="campaignName"
             value={formData.campaignName}
             onChange={handleChange}
@@ -302,14 +302,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
               htmlFor="isActive"
               className="text-sm font-medium text-gray-700"
             >
-              Is Active
+              Is active
             </label>
           </div>
 
           {formData.status === "Lost" && (
             <div className="md:col-span-6">
               <Input
-                label="Lost Reason"
+                label="Lost reason"
                 name="lostReason"
                 value={formData.lostReason}
                 onChange={handleChange}
@@ -325,7 +325,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Next Follow-Up Date"
+            label="Next follow-Up date"
             name="nextFollowUpDate"
             type="datetime-local"
             value={formData.nextFollowUpDate}
@@ -333,7 +333,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Select
-            label="Follow-Up Mode"
+            label="Follow-Up mode"
             name="followUpMode"
             value={formData.followUpMode}
             onChange={handleChange}
@@ -343,7 +343,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Input
-            label="Follow-Up Count"
+            label="Follow-Up count"
             name="followUpCount"
             type="number"
             value={formData.followUpCount}
@@ -352,7 +352,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           />
           <div className="md:col-span-6">
             <TextArea
-              label="Follow-Up Remarks"
+              label="Follow-Up remarks"
               name="followUpRemarks"
               value={formData.followUpRemarks}
               onChange={handleChange}
@@ -377,26 +377,26 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             />
           </div>
           <Input
-            label="Interested Product"
+            label="Interested product"
             name="interestedProduct"
             value={formData.interestedProduct}
             onChange={handleChange}
           />
           <Input
-            label="Budget Estimate"
+            label="Budget estimate"
             name="budgetRange"
             value={formData.budgetRange}
             onChange={handleChange}
           />
           <Input
-            label="Deal Value"
+            label="Deal value"
             name="dealValue"
             type="number"
             value={formData.dealValue}
             onChange={handleChange}
           />
           <Input
-            label="Expected Closure Date"
+            label="Expected closure date"
             name="expectedClosureDate"
             type="date"
             value={formData.expectedClosureDate}
@@ -411,7 +411,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Select
-            label="Preferred Contact Mode"
+            label="Preferred contact mode"
             name="preferredContactMode"
             value={formData.preferredContactMode}
             onChange={handleChange}
@@ -422,7 +422,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Preferred Time"
+            label="Preferred time"
             name="preferredContactTime"
             placeholder="e.g. Morning, After 6PM"
             value={formData.preferredContactTime}
@@ -442,7 +442,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
               htmlFor="doNotDisturb"
               className="text-sm font-medium text-gray-700"
             >
-              Do Not Disturb (DND)
+              Do not disturb (DND)
             </label>
           </div>
         </div>
@@ -451,7 +451,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         <SectionHeader title="7. Tags" subtitle="Flexible classification" />
         <div className="space-y-2">
           <Input
-            label="Add Tags (Press Enter)"
+            label="Add tags (press enter)"
             name="tagsInput"
             value={formData.tagsInput}
             onChange={handleChange}
@@ -497,14 +497,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         <SectionHeader title="9. Notes & Internal Comments" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TextArea
-            label="Public Notes"
+            label="Public notes"
             name="notes"
             value={formData.notes}
             onChange={handleChange}
             rows={3}
           />
           <TextArea
-            label="Internal Private Comments"
+            label="Internal private comments"
             name="internalComments"
             value={formData.internalComments}
             onChange={handleChange}

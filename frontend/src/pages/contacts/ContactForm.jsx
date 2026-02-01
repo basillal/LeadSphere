@@ -145,7 +145,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Full Name"
+            label="Full name"
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -153,7 +153,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Primary Phone"
+            label="Primary phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
@@ -162,7 +162,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Email Address"
+            label="Email address"
             name="email"
             type="email"
             value={formData.email}
@@ -170,7 +170,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-3"
           />
           <Input
-            label="Alternate Phone"
+            label="Alternate phone"
             name="alternatePhone"
             value={formData.alternatePhone}
             onChange={handleChange}
@@ -178,7 +178,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company Name"
+            label="Company name"
             name="companyName"
             value={formData.companyName}
             onChange={handleChange}
@@ -207,7 +207,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Select
-            label="Relationship Type"
+            label="Relationship type"
             name="relationshipType"
             value={formData.relationshipType}
             onChange={handleChange}
@@ -227,7 +227,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             />
           </div>
           <div className="md:col-span-6">
-            <Label>Contact Tags</Label>
+            <Label>Contact tags</Label>
             <div className="flex flex-wrap gap-2 mt-2">
               {availableTags.map((tag) => (
                 <button
@@ -259,21 +259,21 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
-            label="LinkedIn Profile"
+            label="LinkedIn profile"
             name="linkedInProfile"
             value={formData.linkedInProfile}
             onChange={handleChange}
             placeholder="https://linkedin.com/in/..."
           />
           <Input
-            label="Twitter Handle"
+            label="Twitter handle"
             name="twitterHandle"
             value={formData.twitterHandle}
             onChange={handleChange}
             placeholder="@username"
           />
           <Input
-            label="Facebook Profile"
+            label="Facebook profile"
             name="facebookProfile"
             value={formData.facebookProfile}
             onChange={handleChange}
@@ -310,7 +310,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Street Address"
+            label="Street address"
             name="address.street"
             value={formData.address.street}
             onChange={handleChange}
@@ -324,14 +324,14 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Input
-            label="State/Province"
+            label="State/province"
             name="address.state"
             value={formData.address.state}
             onChange={handleChange}
             className="md:col-span-2"
           />
           <Input
-            label="ZIP/Postal Code"
+            label="ZIP/postal code"
             name="address.zipCode"
             value={formData.address.zipCode}
             onChange={handleChange}
@@ -359,14 +359,14 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             onChange={handleChange}
           />
           <Select
-            label="Company Size"
+            label="Company size"
             name="companySize"
             value={formData.companySize}
             onChange={handleChange}
             options={["1-10", "11-50", "51-200", "201-500", "500+", "Unknown"]}
           />
           <Input
-            label="Annual Revenue"
+            label="Annual revenue"
             name="annualRevenue"
             value={formData.annualRevenue}
             onChange={handleChange}
@@ -381,7 +381,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Input
-            label="Last Interaction Date"
+            label="Last interaction date"
             name="lastInteractionDate"
             type="date"
             value={formData.lastInteractionDate}
@@ -389,7 +389,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Select
-            label="Last Interaction Type"
+            label="Last interaction type"
             name="lastInteractionType"
             value={formData.lastInteractionType}
             onChange={handleChange}
@@ -404,7 +404,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Input
-            label="Next Follow-Up Date"
+            label="Next follow-up date"
             name="nextFollowUpDate"
             type="date"
             value={formData.nextFollowUpDate}
@@ -420,7 +420,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Select
-            label="Preferred Contact Mode"
+            label="Preferred contact mode"
             name="preferredContactMode"
             value={formData.preferredContactMode}
             onChange={handleChange}
@@ -428,7 +428,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             className="md:col-span-2"
           />
           <Input
-            label="Preferred Time"
+            label="Preferred time"
             name="preferredContactTime"
             placeholder="e.g. Morning, After 6PM"
             value={formData.preferredContactTime}
@@ -456,7 +456,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
               htmlFor="doNotDisturb"
               className="text-sm font-medium text-gray-700"
             >
-              Do Not Disturb (DND)
+              Do not disturb (DND)
             </label>
           </div>
         </div>
@@ -465,14 +465,14 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         <SectionHeader title="9. Notes & Comments" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TextArea
-            label="Public Notes"
+            label="Public notes"
             name="notes"
             value={formData.notes}
             onChange={handleChange}
             rows={3}
           />
           <TextArea
-            label="Internal Private Comments"
+            label="Internal private comments"
             name="internalComments"
             value={formData.internalComments}
             onChange={handleChange}
@@ -504,7 +504,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
               htmlFor="isActive"
               className="text-sm font-medium text-gray-700"
             >
-              Is Active
+              Is active
             </label>
           </div>
         </div>

@@ -13,7 +13,7 @@ const MainLayout = () => {
     { icon: "dashboard", label: "Dashboard", path: "/" },
     { icon: "people", label: "Leads", path: "/leads" },
   ];
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(window.innerWidth >= 768);
 
   const handleDrawerClose = () => {
     setOpen(false);

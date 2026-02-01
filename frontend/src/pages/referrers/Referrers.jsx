@@ -371,8 +371,8 @@ const Referrers = () => {
           {view === "list"
             ? "Referrers"
             : view === "create"
-              ? "Create New Referrer"
-              : "Edit Referrer"}
+              ? "Create new referrer"
+              : "Edit referrer"}
         </h1>
         {view !== "list" && (
           <button
