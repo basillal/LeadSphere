@@ -8,7 +8,7 @@ const User = require('../models/User');
 dotenv.config();
 
 // Added SERVICE, BILLING, REPORT, EXPENSE
-const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT', 'DASHBOARD', 'EXPENSE'];
+const resources = ['LEAD', 'CONTACT', 'FOLLOWUP', 'ACTIVITY', 'REFERRER', 'SERVICE', 'BILLING', 'REPORT', 'DASHBOARD', 'EXPENSE', 'AUDITLOG'];
 const actions = ['READ', 'CREATE', 'UPDATE', 'DELETE'];
 
 const permissionsList = [];

@@ -20,6 +20,7 @@ import Settings from "./pages/Settings";
 import Companies from "./pages/admin/Companies";
 import Roles from "./pages/admin/Roles";
 import Users from "./pages/admin/Users";
+import AuditLogs from "./pages/admin/AuditLogs";
 import PrintInvoice from "./pages/billing/PrintInvoice";
 import RoleGuard from "./components/auth/RoleGuard";
 import "./styles/App.css";
@@ -45,7 +46,6 @@ function App() {
                 <Route path="billings" element={<Billings />} />
                 <Route path="expenses" element={<Expenses />} />
                 <Route path="print/invoice/:id" element={<PrintInvoice />} />
-
                 <Route
                   path="admin/companies"
                   element={
@@ -62,8 +62,15 @@ function App() {
                     </RoleGuard>
                   }
                 />
+                <Route
+                  path="admin/audit-logs"
+                  element={
+                    <RoleGuard role="Super Admin">
+                      <AuditLogs />
+                    </RoleGuard>
+                  }
+                />
                 <Route path="admin/users" element={<Users />} />
-
                 <Route path="reports" element={<Reports />} />
                 <Route path="settings" element={<Settings />} />
               </Route>

@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const Role = require('../models/Role');
+const { logAudit } = require('../utils/auditLogger');
 const { successResponse } = require('../utils/responseHandler'); // Assuming this exists, based on previous file content
 
 // @desc    Get all users
@@ -51,6 +52,7 @@ const getUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Private (Admin)
 const createUser = asyncHandler(async (req, res) => {
+    // ... params extraction code ...
     const { name, email, password, roleId, isActive, company: companyInput } = req.body;
 
     const userExists = await User.findOne({ email });
@@ -69,7 +71,6 @@ const createUser = asyncHandler(async (req, res) => {
     }
 
     // Role Security Check
-    // Prevent non-Super Admin from creating Super Admins
     if (roleId) {
         const targetRole = await Role.findById(roleId);
         if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
@@ -78,7 +79,6 @@ const createUser = asyncHandler(async (req, res) => {
         }
     }
 
-    // Hash password is handled in Model pre-save
     const user = await User.create({
         name,
         email,
@@ -89,6 +89,8 @@ const createUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
+        await logAudit(req, 'CREATE', 'User', user._id, `Created user: ${user.email} (${user.name})`);
+        
         res.status(201).json({
             _id: user.id,
             name: user.name,
@@ -107,6 +109,7 @@ const createUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private (Admin)
 const updateUser = asyncHandler(async (req, res) => {
+    // ... (fetch and access check logic remains same) ...
     const user = await User.findById(req.params.id);
 
     if (!user) {
@@ -114,29 +117,22 @@ const updateUser = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 
-    // Access Check
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isOwner = req.user.company && req.user.company.owner.toString() === req.user._id.toString();
-    // Allow if Super Admin OR (Same Company AND (Is Owner OR Is Self?))
-    // Usually only Admins update other users.
     
     if (!isSuperAdmin) {
-        // Must be in same company
         if (user.company?.toString() !== req.user.company?._id.toString()) {
-             res.status(404); // Hide
+             res.status(404);
              throw new Error('User not found');
         }
-        // Must be Owner (Company Admin) or possibly manage permission?
-        // Utilizing 'Company Admin' role check or Owner check.
-        // For simplicity, let's assume Owner/Company Admin.
-        // TODO: Granular permissions check "USER_MANAGE"
     }
+
+    // Store old values for audit details?
+    const previousEmail = user.email;
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     
     if (req.body.roleId) {
-        // Prevent escalating to Super Admin
         const targetRole = await Role.findById(req.body.roleId);
         if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
              res.status(403);
@@ -154,7 +150,8 @@ const updateUser = asyncHandler(async (req, res) => {
 
     const updatedUser = await user.save();
     
-    // Return without password
+    await logAudit(req, 'UPDATE', 'User', updatedUser._id, `Updated user: ${updatedUser.email}`);
+    
     const userResponse = await User.findById(updatedUser._id).populate('role').populate('company').select('-password');
     res.json(userResponse);
 });
@@ -170,7 +167,6 @@ const deleteUser = asyncHandler(async (req, res) => {
         throw new Error('User not found');
     }
 
-    // Access Check
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     if (!isSuperAdmin) {
         if (user.company?.toString() !== req.user.company?._id.toString()) {
@@ -179,8 +175,6 @@ const deleteUser = asyncHandler(async (req, res) => {
         }
     }
 
-    // Prevent deleting Super Admin
-    // Check if role is Super Admin
     const role = await Role.findById(user.role);
     if (role && role.isSystemRole && role.roleName === 'Super Admin') {
         res.status(400);
@@ -188,6 +182,9 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 
     await user.deleteOne();
+    
+    await logAudit(req, 'DELETE', 'User', user._id, `Deleted user: ${user.email} (${user.name})`);
+    
     res.json({ message: 'User removed' });
 });
 
@@ -198,10 +195,11 @@ const resetPassword = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (user) {
-        // Prevent resetting Super Admin if not self? (Optional, but safe)
-        // Set password to email
-        user.password = user.email; // Will be hashed by pre-save hook
+        user.password = user.email;
         await user.save();
+        
+        await logAudit(req, 'UPDATE', 'User', user._id, `Reset password for user: ${user.email}`);
+        
         res.json({ message: `Password reset to ${user.email}` });
     } else {
         res.status(404);

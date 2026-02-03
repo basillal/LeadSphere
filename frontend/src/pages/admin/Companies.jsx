@@ -15,7 +15,6 @@ const Companies = () => {
     name: "",
     plan: "Free",
     ownerName: "",
-    ownerName: "",
     ownerEmail: "",
     isActive: true,
   });

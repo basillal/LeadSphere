@@ -2,6 +2,7 @@ const Lead = require('../models/Lead');
 const FollowUp = require('../models/FollowUp');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 
 // @desc    Get all leads
 // @route   GET /api/leads
@@ -152,7 +153,7 @@ const getLead = asyncHandler(async (req, res) => {
 // @route   POST /api/leads
 // @access  Private
 const createLead = asyncHandler(async (req, res) => {
-
+    // ... (auto-assign company/creator/status logic) ...
     // Auto-assign Company from Tenant Middleware (or User context)
     // (Middleware already sets req.body.company if not Super Admin, but let's be safe)
     if (!req.body.company && req.user.company) {
@@ -207,6 +208,7 @@ const createLead = asyncHandler(async (req, res) => {
     }
 
     logger.info(`New lead created: ${lead.name}`);
+    await logAudit(req, 'CREATE', 'Lead', lead._id, `Created lead: ${lead.name}`);
 
     res.status(201).json({
         success: true,
@@ -226,7 +228,6 @@ const updateLead = asyncHandler(async (req, res) => {
     }
 
     // Check Permissions
-    // Safe-guard: Check Super Admin FIRST
     if (req.user.role?.roleName !== 'Super Admin') {
          if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
              res.status(404);
@@ -251,6 +252,7 @@ const updateLead = asyncHandler(async (req, res) => {
     }
 
     const oldFollowUpDate = lead.nextFollowUpDate ? new Date(lead.nextFollowUpDate).toISOString() : null;
+    const oldStatus = lead.status; // Capture old status for log
 
     lead = await Lead.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -259,10 +261,6 @@ const updateLead = asyncHandler(async (req, res) => {
 
     // Check if follow-up date changed or was added
     const newFollowUpDate = req.body.nextFollowUpDate;
-    const oldFollowUpDateObj = lead.nextFollowUpDate; // Use updated lead or original? Comparison logic needs original.
-    // Wait, refactor logic above slightly shifted. I'll stick to established pattern but fix the variable name.
-
-    // ... (FollowUp logic remains, just ensure we use 'company' when creating followups)
     
      // Helper to check if dates are effectively different
     const isDateDifferent = (d1, d2) => {
@@ -271,11 +269,11 @@ const updateLead = asyncHandler(async (req, res) => {
         return new Date(d1).getTime() !== new Date(d2).getTime();
     };
 
-    if (newFollowUpDate && isDateDifferent(newFollowUpDate, oldFollowUpDate)) { // oldFollowUpDate is captured string
+    if (newFollowUpDate && isDateDifferent(newFollowUpDate, oldFollowUpDate)) { 
          try {
             await FollowUp.create({
                 lead: lead._id,
-                company: lead.company, // Ensure company is carried over
+                company: lead.company,
                 scheduledAt: req.body.nextFollowUpDate,
                 type: req.body.followUpMode || 'Call', 
                 notes: req.body.followUpRemarks || 'Scheduled during lead update',
@@ -289,6 +287,13 @@ const updateLead = asyncHandler(async (req, res) => {
             console.error(error);
         }
     }
+    
+    // Determine detailed message based on change (status change is important)
+    const detailMsg = oldStatus !== lead.status 
+        ? `Updated lead status: ${oldStatus} -> ${lead.status}`
+        : `Updated lead: ${lead.name}`;
+
+    await logAudit(req, 'UPDATE', 'Lead', lead._id, detailMsg);
 
     res.status(200).json({
         success: true,
@@ -308,7 +313,6 @@ const deleteLead = asyncHandler(async (req, res) => {
     }
 
     // Check Permissions
-    // Safe-guard: Check Super Admin FIRST
     if (req.user.role?.roleName !== 'Super Admin') {
          if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
              res.status(404);
@@ -321,10 +325,6 @@ const deleteLead = asyncHandler(async (req, res) => {
     const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
 
     if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
-         // Regular users should probably NOT delete leads? Or strictly own?
-         // Let's assume strict owner/admin only for delete for safety, OR if it's assigned to them.
-         // Given the user request: "users can access only their own data", implies CRUD permission on own data?
-         // Safer to restrict DELETE to admins usually, but let's allow if assigned to them for consistency.
          if (lead.assignedTo?.toString() !== req.user._id.toString()) {
               res.status(403);
               throw new Error('Not authorized to delete this lead');
@@ -334,6 +334,8 @@ const deleteLead = asyncHandler(async (req, res) => {
     // Soft delete
     lead.isDeleted = true;
     await lead.save();
+
+    await logAudit(req, 'DELETE', 'Lead', lead._id, `Soft deleted lead: ${lead.name}`);
 
     res.status(200).json({
         success: true,

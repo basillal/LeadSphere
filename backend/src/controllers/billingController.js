@@ -2,6 +2,7 @@ const Billing = require('../models/Billing');
 const Contact = require('../models/Contact');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 const Counter = require('../models/Counter');
 
 // @desc    Get all billings
@@ -166,6 +167,7 @@ const createBilling = asyncHandler(async (req, res) => {
     });
 
     logger.info(`Invoice created: ${invoiceNumber} for Contact ${contact.name}`);
+    await logAudit(req, 'CREATE', 'Billing', billing._id, `Created invoice: ${invoiceNumber} (${req.user.company?.currency || '$'}${grandTotal})`);
 
     res.status(201).json({
         success: true,
@@ -192,12 +194,22 @@ const updateBilling = asyncHandler(async (req, res) => {
         }
     }
 
+    // Capture old status
+    const oldStatus = billing.paymentStatus;
+
     billing = await Billing.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     })
     .populate('contact', 'name')
     .populate('services.serviceId', 'serviceName');
+    
+    // Log meaningful changes
+    const detailMsg = oldStatus !== billing.paymentStatus 
+        ? `Updated invoice ${billing.invoiceNumber} status: ${oldStatus} -> ${billing.paymentStatus}`
+        : `Updated invoice: ${billing.invoiceNumber}`;
+
+    await logAudit(req, 'UPDATE', 'Billing', billing._id, detailMsg);
 
     res.status(200).json({
         success: true,
@@ -226,6 +238,8 @@ const deleteBilling = asyncHandler(async (req, res) => {
 
     billing.isDeleted = true;
     await billing.save();
+    
+    await logAudit(req, 'DELETE', 'Billing', billing._id, `Soft deleted invoice: ${billing.invoiceNumber}`);
 
     res.status(200).json({
         success: true,

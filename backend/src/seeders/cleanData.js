@@ -12,6 +12,7 @@ const Role = require('../models/Role');
 const Service = require('../models/Service');
 const Billing = require('../models/Billing');
 const Expense = require('../models/Expense');
+const AuditLog = require('../models/AuditLog');
 
 dotenv.config();
 
@@ -34,8 +35,13 @@ const cleanData = async () => {
             billing: shouldCleanAll || args.includes('--billing'),
             expenses: shouldCleanAll || args.includes('--expenses'),
             users: shouldCleanAll || args.includes('--users'),
-            roles: shouldCleanAll || args.includes('--roles')
+            users: shouldCleanAll || args.includes('--users'),
+            users: shouldCleanAll || args.includes('--users'),
+            roles: shouldCleanAll || args.includes('--roles'),
+            auditLogs: shouldCleanAll || args.includes('--audit-logs')
         };
+        // The line below was duplicated and misplaced in the instruction, it's removed here to maintain syntactical correctness.
+        // auditLogs: shouldCleanAll || args.includes('--audit-logs')
 
         // Delete Transactional Data
         if (collectionsToClean.leads) {
@@ -81,6 +87,16 @@ const cleanData = async () => {
         if (collectionsToClean.expenses) {
             await Expense.deleteMany({});
             console.log('Expenses deleted.');
+        }
+
+        if (collectionsToClean.auditLogs) {
+            await AuditLog.deleteMany({});
+            console.log('Audit Logs deleted.');
+        }
+
+        if (collectionsToClean.auditLogs) {
+            await AuditLog.deleteMany({});
+            console.log('Audit Logs deleted.');
         }
 
         // Delete Users except Admin

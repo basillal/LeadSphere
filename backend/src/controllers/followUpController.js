@@ -2,6 +2,7 @@ const FollowUp = require('../models/FollowUp');
 const Lead = require('../models/Lead');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 
 // @desc    Get all follow-ups
 // @route   GET /api/follow-ups
@@ -74,8 +75,6 @@ const createFollowUp = asyncHandler(async (req, res) => {
     if (!req.body.company && req.user.company) {
         req.body.company = req.user.company._id;
     }
-    // If Super Admin creates a lead/followup without company context, it might fail validation if company is required.
-    // Ensure we handle that if needed, but for now assuming Super Admin has a way or just doesn't create "orphaned" followups often.
     
     req.body.createdBy = req.user._id;
 
@@ -88,7 +87,6 @@ const createFollowUp = asyncHandler(async (req, res) => {
     
     // Update Lead Status if applicable
     const leadStatuses = ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'];
-    const taskStatuses = ['Missed', 'Rescheduled']; // These don't change lead status usually, unless specifically decided.
 
     if (req.body.status) {
         req.body.status = req.body.status.trim();
@@ -111,6 +109,7 @@ const createFollowUp = asyncHandler(async (req, res) => {
     await leadExists.save();
 
     logger.info(`Follow-up created for lead ${leadExists.name}, status synced: ${req.body.status}`);
+    await logAudit(req, 'CREATE', 'FollowUp', followUp._id, `Created follow-up for lead: ${leadExists.name} (${req.body.type})`);
 
     res.status(201).json({
         success: true,
@@ -159,6 +158,8 @@ const updateFollowUp = asyncHandler(async (req, res) => {
          }
     }
 
+    await logAudit(req, 'UPDATE', 'FollowUp', followUp._id, `Updated follow-up status: ${req.body.status || 'Updated details'}`);
+
     res.status(200).json({
         success: true,
         data: followUp
@@ -175,6 +176,8 @@ const deleteFollowUp = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Follow-up not found');
     }
+
+    await logAudit(req, 'DELETE', 'FollowUp', followUp._id, 'Deleted follow-up');
 
     await followUp.deleteOne();
 

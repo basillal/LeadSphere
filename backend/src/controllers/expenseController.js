@@ -1,6 +1,7 @@
 const Expense = require('../models/Expense');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 
 // @desc    Get all expenses
 // @route   GET /api/expenses
@@ -88,6 +89,7 @@ const createExpense = asyncHandler(async (req, res) => {
     });
 
     logger.info(`Expense created: ${title} of ${amount} by ${req.user.name}`);
+    await logAudit(req, 'CREATE', 'Expense', expense._id, `Created expense: ${title} (${amount})`);
 
     res.status(201).json({
         success: true,
@@ -121,6 +123,8 @@ const updateExpense = asyncHandler(async (req, res) => {
         new: true,
         runValidators: true
     });
+    
+    await logAudit(req, 'UPDATE', 'Expense', expense._id, `Updated expense: ${expense.title}`);
 
     res.status(200).json({
         success: true,
@@ -152,6 +156,8 @@ const deleteExpense = asyncHandler(async (req, res) => {
 
     expense.isDeleted = true;
     await expense.save();
+
+    await logAudit(req, 'DELETE', 'Expense', expense._id, `Soft deleted expense: ${expense.title}`);
 
     res.status(200).json({
         success: true,

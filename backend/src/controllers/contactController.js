@@ -2,6 +2,7 @@ const Contact = require('../models/Contact');
 const Lead = require('../models/Lead');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 
 // @desc    Get all contacts
 // @route   GET /api/contacts
@@ -133,6 +134,7 @@ const createContact = asyncHandler(async (req, res) => {
     const contact = await Contact.create(req.body);
 
     logger.info(`New contact created: ${contact.name}`);
+    await logAudit(req, 'CREATE', 'Contact', contact._id, `Created contact: ${contact.name}`);
 
     res.status(201).json({
         success: true,
@@ -207,6 +209,8 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
     await lead.save();
 
     logger.info(`Lead converted to contact: ${lead.name} -> ${contact.name}`);
+    await logAudit(req, 'CREATE', 'Contact', contact._id, `Converted Lead to Contact: ${lead.name}`);
+    await logAudit(req, 'UPDATE', 'Lead', lead._id, `Marked lead as Converted`);
 
     res.status(201).json({
         success: true,
@@ -266,6 +270,8 @@ const updateContact = asyncHandler(async (req, res) => {
         runValidators: true
     });
 
+    await logAudit(req, 'UPDATE', 'Contact', contact._id, `Updated contact: ${contact.name}`);
+
     res.status(200).json({
         success: true,
         data: contact
@@ -318,11 +324,15 @@ const deleteContact = asyncHandler(async (req, res) => {
                 // Simplest is just set isConverted to false so it shows up in the list again.
                 await lead.save();
                 logger.info(`Reverted conversion status for lead: ${lead.name} after contact deletion`);
+                // Audit the revert too?
+                await logAudit(req, 'UPDATE', 'Lead', lead._id, `Reverted conversion status (Contact deleted)`);
             }
         } catch (err) {
             logger.error(`Failed to revert lead conversion status for contact ${contact._id}: ${err.message}`);
         }
     }
+
+    await logAudit(req, 'DELETE', 'Contact', contact._id, `Soft deleted contact: ${contact.name}`);
 
     res.status(200).json({
         success: true,

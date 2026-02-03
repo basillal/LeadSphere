@@ -79,7 +79,13 @@ export const menuConfig = [
   {
     label: "Companies",
     path: "/admin/companies",
-    icon: <BusinessIcon />, // Changed to BusinessIcon or Dashboard if imports allow. Using BusinessIcon if I assume it exists or reuse Dashboard
+    icon: <BusinessIcon />,
+    role: "Super Admin",
+  },
+  {
+    label: "Audit Logs",
+    path: "/admin/audit-logs",
+    icon: <StorageIcon />, // Reusing StorageIcon or maybe HistoryIcon if imported
     role: "Super Admin",
   },
   {

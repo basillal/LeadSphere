@@ -3,6 +3,7 @@ const User = require('../models/User');
 const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const logger = require('../utils/logger');
+const { logAudit } = require('../utils/auditLogger');
 const Lead = require('../models/Lead');
 const Contact = require('../models/Contact');
 const Activity = require('../models/Activity');
@@ -103,8 +104,6 @@ const createCompany = asyncHandler(async (req, res) => {
         email, 
         website,
         address,
-        // We temporarily create without owner if user needs to be created, 
-        // but schema requires owner. So we must have user first.
         owner: owner ? owner._id : new mongoose.Types.ObjectId() // Placeholder if creating new user
     });
 
@@ -126,19 +125,13 @@ const createCompany = asyncHandler(async (req, res) => {
         company.owner = owner._id;
         await company.save();
     } else {
-        // Update existing user to belong to this company?
-        // CAREFUL: If user belongs to another company, this might be invalid logic.
-        // For now, assume fresh email.
         if (owner.company) {
-             // User already in a company. Creating a new company for them? 
-             // Multi-company support for single user is complex (requires array of companies). 
-             // Current schema is single company. Error out.
-             await company.deleteOne(); // Rollback
+             // Rollback
+             await company.deleteOne();
              res.status(400);
              throw new Error('User already belongs to a company');
         }
         owner.company = company._id;
-        // Upgrade role to Company Admin if not already
         if (companyAdminRole) {
             owner.role = companyAdminRole._id; 
         }
@@ -146,6 +139,7 @@ const createCompany = asyncHandler(async (req, res) => {
     }
 
     logger.info(`New company created: ${company.name} by ${req.user.name}`);
+    await logAudit(req, 'CREATE', 'Company', company._id, `Created company: ${company.name}`);
 
     res.status(201).json({
         success: true,
@@ -170,7 +164,6 @@ const updateCompany = asyncHandler(async (req, res) => {
         throw new Error('Company not found');
     }
 
-    // Access Check
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const isOwner = req.user.company?._id.toString() === company._id.toString();
 
@@ -183,6 +176,8 @@ const updateCompany = asyncHandler(async (req, res) => {
         new: true,
         runValidators: true
     });
+    
+    await logAudit(req, 'UPDATE', 'Company', company._id, `Updated company settings: ${company.name}`);
 
     res.status(200).json({
         success: true,
@@ -194,7 +189,6 @@ const updateCompany = asyncHandler(async (req, res) => {
 // @route   DELETE /api/companies/:id
 // @access  Super Admin
 const deleteCompany = asyncHandler(async (req, res) => {
-    // Access Check: Super Admin only
     if (req.user.role?.roleName !== 'Super Admin') {
         res.status(403);
         throw new Error('Not authorized to delete companies');
@@ -216,23 +210,13 @@ const deleteCompany = asyncHandler(async (req, res) => {
     await Service.deleteMany({ company: company._id });
     await Billing.deleteMany({ company: company._id });
     await Expense.deleteMany({ company: company._id });
-    
-    // Delete roles (except system roles, but usually roles are per company or system. 
-    // If roles are linked to company, delete them.
-    // Based on cleanData, we delete non-system roles. 
-    // Assuming custom roles have a company field? 
-    // Let's check Role schema if possible, but safe to try deleteMany with company filter if it exists.
-    // If Role schema doesn't have company, this doing nothing is fine. 
-    // Actually, usually roles are shared or company specific.
-    // I'll assume they have company field given the multi-tenant nature.
     await Role.deleteMany({ company: company._id, isSystemRole: false }); 
-
-    // Delete Users
     await User.deleteMany({ company: company._id });
     
     await company.deleteOne();
 
     logger.info(`Company deleted: ${company.name} (ID: ${company._id}) and all associated data.`);
+    await logAudit(req, 'DELETE', 'Company', company._id, `Deleted company: ${company.name} and ALL associated data`);
 
     res.status(200).json({
         success: true,
