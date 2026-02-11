@@ -8,6 +8,7 @@ const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
     roleName: "",
     description: "",
     permissions: [],
+    accessibleByCompanyAdmin: false,
   });
 
   useEffect(() => {
@@ -16,6 +17,7 @@ const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
         roleName: initialData.roleName,
         description: initialData.description || "",
         permissions: initialData.permissions.map((p) => p._id),
+        accessibleByCompanyAdmin: initialData.accessibleByCompanyAdmin || false,
       });
     }
   }, [initialData]);
@@ -88,6 +90,28 @@ const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
             rows={1}
             className="md:col-span-1"
           />
+        </div>
+
+        <div className="flex items-center space-x-2 mb-6">
+          <input
+            type="checkbox"
+            id="accessibleByCompanyAdmin"
+            name="accessibleByCompanyAdmin"
+            checked={formData.accessibleByCompanyAdmin || false}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                accessibleByCompanyAdmin: e.target.checked,
+              }))
+            }
+            className="h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
+          />
+          <label
+            htmlFor="accessibleByCompanyAdmin"
+            className="text-sm text-gray-700"
+          >
+            Allow Company Admins to access this role (System/Global Roles)
+          </label>
         </div>
 
         <SectionHeader

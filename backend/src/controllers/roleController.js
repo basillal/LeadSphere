@@ -34,7 +34,8 @@ const getRoles = asyncHandler(async (req, res) => {
         // Show Global System Roles AND Company Roles
         query.$or = [
             { scope: 'global' }, 
-            { company: companyId }
+            { company: companyId },
+            { accessibleByCompanyAdmin: true }
         ];
     }
     
@@ -86,7 +87,7 @@ const getRole = asyncHandler(async (req, res) => {
 // @route   POST /api/roles
 // @access  Private (Admin)
 const createRole = asyncHandler(async (req, res) => {
-    const { roleName, description, permissions } = req.body;
+    const { roleName, description, permissions, accessibleByCompanyAdmin } = req.body;
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     const companyId = req.user.company?._id || req.user.company;
 
@@ -130,7 +131,8 @@ const createRole = asyncHandler(async (req, res) => {
         permissions,
         company: roleCompany,
         scope: roleScope,
-        isSystemRole: false
+        isSystemRole: false,
+        accessibleByCompanyAdmin: accessibleByCompanyAdmin || false
     });
 
     if (role) {
@@ -185,6 +187,9 @@ const updateRole = asyncHandler(async (req, res) => {
     role.roleName = req.body.roleName || role.roleName;
     role.description = req.body.description || role.description;
     role.permissions = req.body.permissions || role.permissions;
+    if (req.body.accessibleByCompanyAdmin !== undefined) {
+        role.accessibleByCompanyAdmin = req.body.accessibleByCompanyAdmin;
+    }
 
     const updatedRole = await role.save();
     

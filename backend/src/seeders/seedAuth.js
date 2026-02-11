@@ -120,12 +120,14 @@ const seedAuth = async () => {
                 roleName: 'User',
                 permissions: finalUserPerms, 
                 isSystemRole: false,
+                accessibleByCompanyAdmin: true,
                 description: 'Standard user'
             });
             console.log('User Role created.');
         } else {
             // Update standard user role permissions to include new features
             userRole.permissions = finalUserPerms;
+            userRole.accessibleByCompanyAdmin = true;
             await userRole.save();
             console.log('User Role updated.');
         }

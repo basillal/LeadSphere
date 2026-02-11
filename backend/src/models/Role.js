@@ -27,6 +27,10 @@ const RoleSchema = new mongoose.Schema({
   isSystemRole: {
     type: Boolean,
     default: false // Identifying system roles like Super Admin that cannot be deleted
+  },
+  accessibleByCompanyAdmin: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 
