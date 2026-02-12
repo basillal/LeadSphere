@@ -545,7 +545,7 @@ const Dashboard = () => {
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
                     <tr key={lead._id}>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 uppercase">
                         {lead.name}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
@@ -612,9 +612,9 @@ const Dashboard = () => {
                     }`}
                   ></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                    <p className="text-sm font-medium text-gray-900 line-clamp-1 uppercase">
                       {activity.title}{" "}
-                      <span className="text-gray-400 font-normal">
+                      <span className="text-gray-400 font-normal normal-case">
                         ({activity.activityType})
                       </span>
                     </p>

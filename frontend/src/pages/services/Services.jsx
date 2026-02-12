@@ -347,7 +347,9 @@ const Services = () => {
       label: "Service name",
       render: (row) => (
         <div>
-          <div className="font-bold text-gray-900">{row.serviceName}</div>
+          <div className="font-bold text-gray-900 uppercase">
+            {row.serviceName}
+          </div>
           <div className="text-xs font-mono text-gray-500">
             {row.serviceCode}
           </div>
@@ -440,7 +442,7 @@ const Services = () => {
       <div className="p-5 border-b border-gray-100 flex justify-between items-start">
         <div>
           <h3
-            className="text-lg font-bold text-gray-900 truncate pr-2"
+            className="text-lg font-bold text-gray-900 uppercase truncate pr-2"
             title={service.serviceName}
           >
             {service.serviceName}

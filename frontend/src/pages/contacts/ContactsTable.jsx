@@ -43,7 +43,7 @@ const ContactsTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900 capitalize">
+          <span className="font-semibold text-gray-900 uppercase">
             {row.name}
           </span>
           {row.designation && (

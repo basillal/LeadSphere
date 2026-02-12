@@ -22,6 +22,18 @@ const PrintInvoice = () => {
   }, [id]);
 
   useEffect(() => {
+    if (invoice) {
+      document.title = invoice.invoiceNumber;
+    }
+    // Cleanup to reset title if needed, or leave it.
+    // Given the user might navigate away, restoring it is nice but maybe not strictly required if the whole app is "LeadSphere".
+    // Let's restore it to "LeadSphere" on cleanup to be safe.
+    return () => {
+      document.title = "LeadSphere";
+    };
+  }, [invoice]);
+
+  useEffect(() => {
     if (invoice && !loading) {
       setTimeout(() => {
         window.print();
@@ -96,7 +108,7 @@ const PrintInvoice = () => {
                 {company.name ? company.name.charAt(0) : "L"}
               </div>
 
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 uppercase">
                 {company.name || "Your Company Name"}
               </h1>
             </div>
@@ -180,7 +192,7 @@ const PrintInvoice = () => {
           <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
             Bill To
           </h3>
-          <div className="text-lg font-bold text-gray-900 mb-1">
+          <div className="text-lg font-bold text-gray-900 mb-1 uppercase">
             {contact.name || "Unknown Client"}
           </div>
           <div className="text-sm text-gray-600 space-y-0.5">
@@ -221,7 +233,9 @@ const PrintInvoice = () => {
             <tbody className="text-sm text-gray-700">
               {invoice.services.map((item, index) => (
                 <tr key={index} className="border-b border-gray-100">
-                  <td className="py-4 px-4 font-medium">{item.serviceName}</td>
+                  <td className="py-4 px-4 font-medium uppercase">
+                    {item.serviceName}
+                  </td>
                   <td className="py-4 px-4 text-center">{item.quantity}</td>
                   <td className="py-4 px-4 text-right">
                     {formatCurrency(item.unitAmount)}

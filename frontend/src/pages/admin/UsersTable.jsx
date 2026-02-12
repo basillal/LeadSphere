@@ -26,7 +26,7 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900">{row.name}</div>
+          <div className="font-medium text-gray-900 uppercase">{row.name}</div>
         </div>
       ),
     },

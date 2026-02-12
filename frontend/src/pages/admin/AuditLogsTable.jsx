@@ -77,7 +77,7 @@ const AuditLogsTable = ({ rows }) => {
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="font-medium">
-                      {row.user?.name || "Unknown"}
+                      {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
                     </span>
                     <span className="text-xs text-gray-500">
                       {row.user?.email || row.ipAddress}

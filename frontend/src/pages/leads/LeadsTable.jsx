@@ -45,7 +45,7 @@ const LeadsTable = ({
       width: "w-1/5",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 capitalize">{row.name}</div>
+          <div className="font-medium text-gray-900 uppercase">{row.name}</div>
           <span className="block text-xs text-gray-500">{row.email}</span>
         </div>
       ),

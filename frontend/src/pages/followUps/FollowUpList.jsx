@@ -72,7 +72,7 @@ const FollowUpList = ({
       label: "Lead",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 text-sm">
+          <div className="font-medium text-gray-900 text-sm uppercase">
             {row.lead?.name || "Unknown"}
           </div>
           <div className="text-xs text-gray-500">{row.lead?.phone || ""}</div>
@@ -164,7 +164,7 @@ const FollowUpList = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div className="overflow-hidden flex-1">
-          <p className="font-semibold text-gray-900 truncate text-sm">
+          <p className="font-semibold text-gray-900 truncate text-sm uppercase">
             {row.lead?.name || "Unknown"}
           </p>
           <p className="text-xs text-gray-500 truncate">{row.lead?.phone}</p>

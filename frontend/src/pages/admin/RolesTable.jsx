@@ -17,7 +17,9 @@ const RolesTable = ({
       width: "w-1/4",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900">{row.roleName}</div>
+          <div className="font-medium text-gray-900 uppercase">
+            {row.roleName}
+          </div>
           {row.isSystemRole && (
             <span className="text-[10px] uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold">
               System

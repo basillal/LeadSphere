@@ -128,7 +128,7 @@ const Companies = () => {
     {
       id: "name",
       label: "Company name",
-      render: (row) => <span className="capitalize">{row.name}</span>,
+      render: (row) => <span className="uppercase">{row.name}</span>,
     },
     { id: "plan", label: "Plan" },
     {
@@ -136,7 +136,7 @@ const Companies = () => {
       label: "Owner",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 capitalize">
+          <div className="font-medium text-gray-900 uppercase">
             {row.owner?.name || "-"}
           </div>
           <div className="text-xs text-gray-500">{row.owner?.email || "-"}</div>

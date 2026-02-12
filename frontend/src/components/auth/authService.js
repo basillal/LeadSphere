@@ -49,31 +49,8 @@ const refreshToken = async () => {
 
 // Setup Axios Interceptors
 export const setupAxiosInterceptors = (navigate) => {
-    // Request Interceptor: Attach Token
-    const requestInterceptor = api.interceptors.request.use(
-        (config) => {
-            const token = getToken();
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            
-            // Company Context Injection
-            const selectedCompany = localStorage.getItem('selectedCompany');
-            if (selectedCompany) {
-                // Header injection for middleware
-                config.headers['x-company-context'] = selectedCompany;
-                
-                // Keep query param for backward compatibility or direct GET filters
-                if (!config.params) {
-                    config.params = {};
-                }
-                config.params.company = selectedCompany;
-            }
-
-            return config;
-        },
-        (error) => Promise.reject(error)
-    );
+    // Request Interceptor is now handled directly in api.js to avoid race conditions
+    // We only need to handle Response Interceptor here for redirects (which need 'navigate')
 
     // Response Interceptor: Handle 401
     const responseInterceptor = api.interceptors.response.use(
@@ -101,7 +78,7 @@ export const setupAxiosInterceptors = (navigate) => {
         }
     );
 
-    return { requestInterceptor, responseInterceptor };
+    return { responseInterceptor };
 };
 
 const authService = {

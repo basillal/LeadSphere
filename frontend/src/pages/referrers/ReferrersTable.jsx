@@ -22,7 +22,9 @@ const ReferrersTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900">{row.name}</span>
+          <span className="font-semibold text-gray-900 uppercase">
+            {row.name}
+          </span>
           {row.designation && (
             <span className="text-xs text-gray-500">{row.designation}</span>
           )}
@@ -176,7 +178,9 @@ const ReferrersTable = ({
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>
+            <h3 className="font-semibold text-gray-900 text-sm uppercase">
+              {row.name}
+            </h3>
             {row.companyName && (
               <p className="text-xs text-gray-500">{row.companyName}</p>
             )}

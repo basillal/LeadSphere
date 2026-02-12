@@ -750,7 +750,8 @@ const Billings = () => {
     {
       id: "contact",
       label: "Client",
-      render: (row) => row.contact?.name || "Unknown",
+      render: (row) =>
+        row.contact?.name ? row.contact.name.toUpperCase() : "UNKNOWN",
     },
     {
       id: "billingDate",
