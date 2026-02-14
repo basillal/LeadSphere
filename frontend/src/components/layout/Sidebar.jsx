@@ -1,114 +1,134 @@
-import React from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { styled, useTheme } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
-import Box from '@mui/material/Box';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
-const drawerWidth = 240;
-
-const openedMixin = (theme) => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
-    },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        // Root always keeps the collapsed width to prevent pushing content
-        ...closedMixin(theme),
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        '& .MuiDrawer-paper': {
-            ...(open && openedMixin(theme)),
-            ...(!open && closedMixin(theme)),
-        },
-    }),
-);
+import { menuConfig } from "../auth/menuConfig.jsx";
+import { useAuth } from "../auth/AuthProvider";
+import { hasPermission, hasRole } from "../auth/permissionUtils";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PeopleIcon from "@mui/icons-material/People";
 
 const Sidebar = ({ open, handleDrawerClose }) => {
-    const theme = useTheme();
-    const location = useLocation();
+  const location = useLocation();
+  const { user } = useAuth();
 
-    const menuItems = [
-        { text: 'Home', icon: <HomeIcon />, path: '/' },
-        { text: 'About', icon: <InfoIcon />, path: '/about' },
-        { text: 'Contact', icon: <InfoIcon />, path: '/contact' },
-    ];
+  const filterMenu = (items) => {
+    return items.filter((item) => {
+      // Check Permission
+      if (item.permission && !hasPermission(user, item.permission)) {
+        return false;
+      }
+      // Check Role
+      if (item.role && !hasRole(user, item.role)) {
+        return false;
+      }
+      // Check Children (if parent is visible, filter children)
+      if (item.children) {
+        item.children = filterMenu(item.children); // Recursive filter
+        // If no children remain and parent had children, maybe hide parent?
+        // For now, let's keep parent if it has explicit permission/role or if it's just a container.
+        // If it's a container without permission/role, and no children, hide it.
+        if (!item.permission && !item.role && item.children.length === 0) {
+          return false;
+        }
+      }
+      return true;
+    });
+  };
 
-    return (
-        <Drawer variant="permanent" open={open}>
-            <DrawerHeader>
-                <IconButton onClick={handleDrawerClose}>
-                    {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                </IconButton>
-            </DrawerHeader>
-            <Divider />
-            <List>
-                {menuItems.map((item) => (
-                    <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            component={RouterLink}
-                            to={item.path}
-                            selected={location.pathname === item.path}
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </Drawer>
-    );
+  // Deep copy to avoid mutating original config during filter (if we needed to, but filter returns new array, but children mutation is tricky)
+  // Simple approach: standard filter.
+  // We need to flatten or handle children. For now, let's flatten 'Admin' children into the main list if the user has access,
+  // OR just render top level and let them navigate.
+  // Given the current Sidebar design is a simple list, let's FLATTEN the visible items for simplicity
+  // until a proper Drilldown/Accordion sidebar is built.
+
+  const getVisibleItems = () => {
+    const visible = [];
+
+    const traverse = (items) => {
+      items.forEach((item) => {
+        if (item.permission && !hasPermission(user, item.permission)) return;
+        if (item.role && !hasRole(user, item.role)) return;
+
+        if (item.children) {
+          // Option A: Add parent, then children?
+          // Option B: Just add children?
+          // Let's add children directly for now to fit the flat sidebar style
+          traverse(item.children);
+        } else {
+          visible.push(item);
+        }
+      });
+    };
+
+    traverse(menuConfig);
+    return visible;
+  };
+
+  const menuItems = getVisibleItems();
+
+  // Determine width based on state
+  const widthClass = open ? "w-64" : "w-16";
+
+  return (
+    <aside
+      className={`
+                fixed md:relative z-20 min-h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+                translate-x-0
+                ${widthClass}
+                flex flex-col
+                no-print
+            `}
+    >
+      <div className="flex items-center justify-end h-16 border-b border-gray-200 px-4">
+        <button
+          onClick={handleDrawerClose}
+          className="p-1 rounded-md hover:bg-gray-100 md:hidden"
+        >
+          <ChevronLeftIcon />
+        </button>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-4">
+        <ul className="space-y-1">
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={item.label}>
+                <Link
+                  to={item.path}
+                  onClick={() => {
+                    // Auto-close on mobile when link is clicked
+                    if (window.innerWidth < 768) {
+                      handleDrawerClose();
+                    }
+                  }}
+                  className={`
+                                        flex items-center px-4 py-3 mx-2 rounded-lg transition-colors
+                                        ${
+                                          isActive
+                                            ? "bg-black text-white"
+                                            : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                                        }
+                                        ${open ? "justify-start" : "justify-center"}
+                                    `}
+                  title={!open ? item.label : ""}
+                >
+                  <span className={`${open ? "mr-3" : ""}`}>{item.icon}</span>
+                  {open && (
+                    <span className="font-medium text-sm whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </aside>
+  );
 };
 
 export default Sidebar;

@@ -1,0 +1,301 @@
+import React from "react";
+import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
+
+const LeadsTable = ({
+  rows = [],
+  onEdit,
+  onDelete,
+  onCreate,
+  onPreview,
+  filters = { search: "", status: "", source: "" },
+  onFilterChange,
+  pagination,
+  onPageChange,
+  onLimitChange,
+  loading = false,
+}) => {
+  // Helper function for status colors
+  const getStatusColor = (status, isConverted) => {
+    if (isConverted) {
+      return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+    }
+    switch (status) {
+      case "New":
+        return "bg-gray-200 text-black";
+      case "Pending":
+        return "bg-yellow-50 text-yellow-700 border border-yellow-200";
+      case "In Progress":
+        return "bg-blue-50 text-blue-700 border border-blue-200";
+      case "On Hold":
+        return "bg-orange-50 text-orange-700 border border-orange-200";
+      case "Completed":
+        return "bg-green-50 text-green-700 border border-green-200";
+      case "Lost":
+        return "bg-red-50 text-red-700 border border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  // Column definitions
+  const columns = [
+    {
+      id: "name",
+      label: "Name",
+      width: "w-1/5",
+      render: (row) => (
+        <div>
+          <div className="font-medium text-gray-900 uppercase">{row.name}</div>
+          <span className="block text-xs text-gray-500">{row.email}</span>
+        </div>
+      ),
+    },
+    {
+      id: "companyName",
+      label: "Prospect Co.", // Renamed to avoid confusion with Tenant
+      width: "w-[15%]",
+      render: (row) => (
+        <span className="capitalize">{row.companyName || "-"}</span>
+      ),
+    },
+    {
+      id: "createdBy",
+      label: "Created by",
+      width: "w-[12%]",
+      render: (row) => row.createdBy?.name || "System",
+    },
+    {
+      id: "tenant",
+      label: "Company (tenant)",
+      width: "w-[12%]",
+      render: (row) => row.company?.name || "-",
+      // Ideally hide this if not Super Admin, but I don't have user context here easily.
+      // I can just show it, or check if row.company exists and differs?
+    },
+    { id: "phone", label: "Phone", width: "w-[15%]" },
+    { id: "source", label: "Source", width: "w-[15%]" },
+    {
+      id: "status",
+      label: "Status",
+      width: "w-[10%]",
+      render: (row) => (
+        <span
+          className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusColor(row.status, row.isConverted)}`}
+        >
+          {row.isConverted ? "Converted" : row.status}
+        </span>
+      ),
+    },
+    { id: "priority", label: "Priority", width: "w-[10%]" },
+  ];
+
+  // Action buttons
+  const actions = [
+    {
+      icon: (
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+      ),
+      label: "Preview",
+      onClick: onPreview,
+      color: "text-gray-600 hover:bg-gray-200",
+    },
+
+    {
+      icon: (
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+          />
+        </svg>
+      ),
+      label: "Edit",
+      onClick: onEdit,
+      color: "text-gray-600 hover:bg-gray-200",
+    },
+
+    {
+      icon: (
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      ),
+      label: "Delete",
+      onClick: (row) => onDelete(row._id),
+      color: "text-red-600 hover:bg-red-100",
+    },
+  ];
+
+  // Toolbar configuration
+  const toolbar = {
+    title: "Leads",
+    searchPlaceholder: "Search leads...",
+    search: {
+      value: filters.search,
+      onChange: (value) => onFilterChange("search", value),
+    },
+    filters: [
+      {
+        value: filters.status,
+        onChange: (value) => onFilterChange("status", value),
+        options: [
+          { value: "", label: "All Status" },
+          { value: "New", label: "New" },
+          { value: "Pending", label: "Pending" },
+          { value: "In Progress", label: "In Progress" },
+          { value: "On Hold", label: "On Hold" },
+          { value: "Completed", label: "Completed" },
+          { value: "Lost", label: "Lost" },
+        ],
+      },
+      {
+        value: filters.source,
+        onChange: (value) => onFilterChange("source", value),
+        options: [
+          { value: "", label: "All Sources" },
+          { value: "Website", label: "Website" },
+          { value: "Referral", label: "Referral" },
+          { value: "WhatsApp", label: "WhatsApp" },
+          { value: "Cold Call", label: "Cold Call" },
+          { value: "Event", label: "Event" },
+          { value: "Other", label: "Other" },
+        ],
+      },
+    ],
+    onCreate: {
+      label: "Add lead",
+      onClick: onCreate,
+    },
+  };
+
+  // Selection configuration
+  const selection = {
+    enabled: true,
+    onBulkDelete: (selectedIds) => {
+      selectedIds.forEach((id) => onDelete(id));
+    },
+  };
+
+  // Custom mobile card render
+  const renderCard = (row, actions) => (
+    <div
+      className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+      onClick={() => onPreview && onPreview(row)}
+    >
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+            {row.name}
+          </h3>
+          <p className="text-xs text-gray-500 capitalize">
+            {row.companyName || "-"}
+          </p>
+        </div>
+        <span
+          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
+        >
+          {row.isConverted ? "Converted" : row.status}
+        </span>
+      </div>
+
+      <div className="space-y-1 text-xs text-gray-600 mb-2">
+        <p>
+          <span className="font-medium">Phone:</span> {row.phone}
+        </p>
+        <p>
+          <span className="font-medium">Email:</span> {row.email}
+        </p>
+        <p>
+          <span className="font-medium">Source:</span> {row.source}
+        </p>
+        <p>
+          <span className="font-medium">Priority:</span> {row.priority}
+        </p>
+      </div>
+
+      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+        {actions.map((action, idx) => {
+          if (action.condition && !action.condition(row)) return null;
+          return (
+            <button
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                action.onClick(row);
+              }}
+              className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
+              title={action.label}
+            >
+              {action.icon}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <AdvancedTable
+      data={rows}
+      columns={columns}
+      actions={actions}
+      toolbar={toolbar}
+      renderCard={renderCard}
+      loading={loading}
+      emptyMessage="No leads found"
+      getRowId={(row) => row._id}
+      pagination={{
+        enabled: true,
+        external: true,
+        page: pagination?.page || 1,
+        rowsPerPage: pagination?.limit || 10,
+        total: pagination?.total || 0,
+        onPageChange: onPageChange,
+        onRowsPerPageChange: onLimitChange,
+      }}
+      selection={{
+        enabled: true,
+        onBulkDelete: (selectedIds) => {
+          selectedIds.forEach((id) => onDelete(id));
+        },
+      }}
+    />
+  );
+};
+
+export default LeadsTable;

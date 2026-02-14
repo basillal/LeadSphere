@@ -1,35 +1,46 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Toolbar from '@mui/material/Toolbar';
-import Header from '../components/layout/Header';
-import Sidebar from '../components/layout/Sidebar';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Toolbar from "@mui/material/Toolbar";
+import Header from "../components/layout/Header";
+import Sidebar from "../components/layout/Sidebar";
+
+import Breadcrumbs from "../components/layout/Breadcrumbs";
 
 const MainLayout = () => {
-    const [open, setOpen] = React.useState(false);
+  const menuItems = [
+    { icon: "dashboard", label: "Dashboard", path: "/" },
+    { icon: "people", label: "Leads", path: "/leads" },
+  ];
+  const [open, setOpen] = React.useState(window.innerWidth >= 768);
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
-    const handleDrawerToggle = () => {
-        setOpen(!open);
-    };
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+  };
 
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Header open={open} handleDrawerToggle={handleDrawerToggle} />
-            <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Toolbar /> {/* Spacer below AppBar */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 64px - 48px)' }}> {/* Adjust calc as needed */}
-                    <Outlet />
-                </Box>
-            </Box>
-        </Box>
-    );
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      <CssBaseline />
+      <Header open={open} handleDrawerToggle={handleDrawerToggle} />
+      <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
+      <main className="flex-grow p-3 md:p-6 ml-16 md:ml-0 w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20 md:pt-24">
+        <Breadcrumbs />
+        <Outlet />
+      </main>
+    </Box>
+  );
 };
 
 export default MainLayout;
