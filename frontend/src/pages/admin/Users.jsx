@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLoading } from "../../context/LoadingProvider";
 import userService from "../../services/userService";
 import roleService from "../../services/roleService";
 import UsersTable from "./UsersTable";
@@ -11,7 +12,7 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentUser, setCurrentUser] = useState(null);
   const [filters, setFilters] = useState({ search: "" });
@@ -27,7 +28,7 @@ const Users = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const [usersData, rolesData] = await Promise.all([
         userService.getUsers(),
         roleService.getRoles(),
@@ -45,7 +46,7 @@ const Users = () => {
       showSnackbar("Failed to fetch data", "error");
       console.error(err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -164,9 +165,7 @@ const Users = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
+        <div className="min-h-screen bg-gray-50" />
       ) : (
         <>
           {view === "list" && (

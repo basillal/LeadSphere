@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/activities';
+const API_URL = '/activities';
 
 // Create new activity
 const createActivity = async (activityData) => {

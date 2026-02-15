@@ -651,7 +651,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
 const Billings = () => {
   const [billings, setBillings] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list");
   const [currentBilling, setCurrentBilling] = useState(null);
   const [snackbar, setSnackbar] = useState({
@@ -661,7 +661,7 @@ const Billings = () => {
   });
 
   const fetchBillings = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const res = await billingService.getBillings();
       setBillings(res.data);
@@ -673,7 +673,7 @@ const Billings = () => {
         severity: "error",
       });
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -854,7 +854,7 @@ const Billings = () => {
               ),
             },
           ]}
-          loading={loading}
+          // loading={loading}
           emptyMessage="No invoices found."
         />
       ) : (

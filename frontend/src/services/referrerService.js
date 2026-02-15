@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/referrers';
+const API_URL = '/referrers';
 
 // Create referrer
 const createReferrer = async (referrerData) => {

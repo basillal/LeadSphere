@@ -29,10 +29,10 @@ const FollowUps = () => {
   const [followUpToUpdate, setFollowUpToUpdate] = useState(null);
   const [outcomeRemark, setOutcomeRemark] = useState("");
   const [currentFollowUp, setCurrentFollowUp] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const fetchFollowUps = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       // Build params with pagination
       const params = {
@@ -57,20 +57,10 @@ const FollowUps = () => {
           pages: response.pagination.pages || 1,
         }));
       }
-
-      // Calculate stats from all follow-ups
-      const allResponse = await followUpService.getFollowUps({});
-      const allFollowUps = allResponse.data;
-      setStats({
-        total: allFollowUps.length,
-        pending: allFollowUps.filter((f) => f.status === "Pending").length,
-        completed: allFollowUps.filter((f) => f.status === "Completed").length,
-        missed: allFollowUps.filter((f) => f.status === "Missed").length,
-      });
     } catch (error) {
       console.error("Error fetching follow-ups:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [activeTab, pagination.page, pagination.limit]);
 
@@ -273,7 +263,8 @@ const FollowUps = () => {
           pagination={pagination}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
-          loading={loading}
+
+          // loading={loading}
         />
       </div>
 

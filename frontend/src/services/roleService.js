@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/roles';
+const API_URL = '/roles';
 const PERMISSION_API_URL = '/api/permissions';
 
 // Roles

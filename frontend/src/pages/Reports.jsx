@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLoading } from "../context/LoadingProvider";
 import reportService from "../services/reportService";
 import {
   ComposedChart,
@@ -28,13 +29,13 @@ const Reports = () => {
   const [monthlyStats, setMonthlyStats] = useState([]);
   const [paymentStats, setPaymentStats] = useState([]);
   const [contactBilling, setContactBilling] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
   const [year, setYear] = useState(new Date().getFullYear());
   const [showDetailedReport, setShowDetailedReport] = useState(false);
 
   useEffect(() => {
     const fetchReports = async () => {
-      setLoading(true);
+      // setLoading(true);
       try {
         let params = {};
         if (year === "30d") {
@@ -76,7 +77,7 @@ const Reports = () => {
       } catch (error) {
         console.error("Error fetching reports:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -92,11 +93,7 @@ const Reports = () => {
   };
 
   if (loading) {
-    return (
-      <div className="p-8 text-center text-gray-500 text-sm">
-        Loading reports...
-      </div>
-    );
+    return <div className="min-h-screen bg-gray-50" />;
   }
 
   // Calculate Totals

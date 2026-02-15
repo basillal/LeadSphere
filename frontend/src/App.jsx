@@ -3,6 +3,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import { LoadingProvider } from "./context/LoadingProvider";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Login from "./pages/auth/Login";
+import RegisterCompany from "./pages/auth/RegisterCompany";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/leads/Leads";
@@ -32,6 +33,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<RegisterCompany />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<MainLayout />}>

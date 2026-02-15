@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/contacts'; // Relative path to use Vite proxy
+const API_URL = '/contacts'; // Relative path to use Vite proxy
 
 // Create new contact
 const createContact = async (contactData) => {

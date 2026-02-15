@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/leads'; // Relative path to use Vite proxy
+const API_URL = '/leads'; // Relative path to use Vite proxy
 
 // Create new lead
 const createLead = async (leadData) => {

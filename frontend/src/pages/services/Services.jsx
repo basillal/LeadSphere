@@ -271,7 +271,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 
 const Services = () => {
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list, create, edit
   const [currentService, setCurrentService] = useState(null);
   const [snackbar, setSnackbar] = useState({
@@ -281,7 +281,7 @@ const Services = () => {
   });
 
   const fetchServices = async () => {
-    setLoading(true);
+    // setLoading(true); // Global loader used
     try {
       const response = await serviceService.getServices();
       setServices(response.data);
@@ -289,7 +289,7 @@ const Services = () => {
       console.error("Error fetching services:", error);
       showSnackbar("Failed to fetch services", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -530,7 +530,7 @@ const Services = () => {
           columns={columns}
           actions={actions}
           renderCard={renderCard}
-          loading={loading}
+          // loading={loading}
           emptyMessage="No services found. Create your first service to get started."
           pagination={{ enabled: true, rowsPerPage: 12 }} // 12 fits grid nicely
         />

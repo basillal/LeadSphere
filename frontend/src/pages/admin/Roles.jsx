@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLoading } from "../../context/LoadingProvider";
 import roleService from "../../services/roleService";
 import RolesTable from "./RolesTable";
 import RoleForm from "./RoleForm";
@@ -10,7 +11,7 @@ const Roles = () => {
   const [roles, setRoles] = useState([]);
   const [stats, setStats] = useState({ total: 0, system: 0, custom: 0 });
   const [groupedPermissions, setGroupedPermissions] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentRole, setCurrentRole] = useState(null);
   const [filters, setFilters] = useState({ search: "" });
@@ -26,7 +27,7 @@ const Roles = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const [rolesData, permissionsData] = await Promise.all([
         roleService.getRoles(),
         roleService.getGroupedPermissions(),
@@ -44,7 +45,7 @@ const Roles = () => {
       showSnackbar("Failed to fetch data", "error");
       console.error(err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -143,9 +144,7 @@ const Roles = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
+        <div className="min-h-screen bg-gray-50" />
       ) : (
         <>
           {view === "list" && (

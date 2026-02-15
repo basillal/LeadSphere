@@ -191,7 +191,7 @@ const Leads = () => {
     total: 0,
     pages: 1,
   });
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [editingLead, setEditingLead] = useState(null);
@@ -242,7 +242,7 @@ const Leads = () => {
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
-    setLoading(true);
+    // setLoading(true);
     try {
       // Build params with pagination
       const params = {
@@ -272,7 +272,7 @@ const Leads = () => {
       console.error("Error fetching leads:", err);
       // setError("Failed to fetch leads."); // Optional: Don't show error to prevent layout shift
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -410,7 +410,7 @@ const Leads = () => {
             pagination={pagination}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
-            loading={loading}
+            // loading={loading}
           />
         </>
       ) : (

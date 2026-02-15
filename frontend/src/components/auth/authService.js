@@ -1,7 +1,7 @@
 import api from '../../services/api';
 import { getToken, setToken, removeToken } from './tokenUtils';
 
-const API_URL = '/api/auth';
+const API_URL = '/auth';
 
 // Login User
 const login = async (email, password) => {

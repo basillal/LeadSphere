@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/billings';
+const API_URL = '/billings';
 
 const createBilling = async (billingData) => {
     const response = await api.post(API_URL, billingData);

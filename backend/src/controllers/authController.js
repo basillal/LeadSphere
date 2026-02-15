@@ -135,8 +135,116 @@ const getMe = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Register a new Company and Admin User
+// @route   POST /api/auth/register-company
+// @access  Public
+const registerCompany = asyncHandler(async (req, res) => {
+    const { companyName, adminName, email, password } = req.body;
+
+    if (!companyName || !adminName || !email || !password) {
+        res.status(400);
+        throw new Error('Please provide all required fields');
+    }
+
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        res.status(400);
+        throw new Error('User with this email already exists');
+    }
+
+    // Check if company exists (optional, maybe allow duplicates? usually not)
+    // For now, let's enforce unique company names for simplicity or check if needed.
+    // Schema doesn't enforce unique name, but let's check.
+    const Company = require('../models/Company');
+    const companyExists = await Company.findOne({ name: companyName });
+    if (companyExists) {
+        res.status(400);
+        throw new Error('Company with this name already exists');
+    }
+
+    // Find "Company Admin" Role
+    // Assuming "Company Admin" is a global role with name "Company Admin"
+    // In seedAuth.js it is created.
+    let companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
+    
+    if (!companyAdminRole) {
+        res.status(500);
+        throw new Error('System Error: Company Admin role not found');
+    }
+
+    // 1. Create Company (Owner is required, so we might need to create User first, but User needs Company?)
+    // User needs Company (ref) -> Company needs Owner (ref, required).
+    // Solution: Create User with dummy company or no company first (if User schema allows null company, which it does as it's just a ref, not required in Schema definition I saw earlier).
+    // Wait, User Schema: company: { type: ObjectId, ref: 'Company' } - not marked required.
+    // Company Schema: owner: { type: ObjectId, ref: 'User', required: true }
+
+    // So:
+    // A. Create User (no company initially).
+    // B. Create Company (owner = user._id).
+    // C. Update User (company = company._id).
+
+    // Create User
+    const user = await User.create({
+        name: adminName,
+        email,
+        password,
+        role: companyAdminRole._id,
+        // company: null // initially
+    });
+
+    if (!user) {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+
+    // Create Company
+    const company = await Company.create({
+        name: companyName,
+        owner: user._id,
+        plan: 'Free', // Default plan
+        isActive: true
+    });
+
+    if (!company) {
+        // Cleanup if company creation fails
+        await User.findByIdAndDelete(user._id);
+        res.status(400);
+        throw new Error('Invalid company data');
+    }
+
+    // Update User with Company
+    user.company = company._id;
+    await user.save();
+
+    // Log Audit
+    // req.user is not set by middleware here, so manual context needed or skip
+    // await logAudit(req, 'CREATE', 'Company', company._id, `Company registered: ${companyName}`);
+
+    // Generate Token
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 
+    });
+
+    res.status(201).json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        company: user.company,
+        accessToken
+    });
+});
+
 module.exports = {
     login,
+    registerCompany, // Export new function
     logout,
     refresh,
     getMe

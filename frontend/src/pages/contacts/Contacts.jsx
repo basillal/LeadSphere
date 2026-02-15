@@ -388,7 +388,7 @@ const Contacts = () => {
     friends: 0,
     recentInteractions: 0,
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentContact, setCurrentContact] = useState(null);
   const [previewContact, setPreviewContact] = useState(null);
@@ -447,7 +447,7 @@ const Contacts = () => {
   };
 
   const fetchContacts = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const params = {
         page: pagination.page,
@@ -464,16 +464,18 @@ const Contacts = () => {
 
       const response = await contactService.getContacts(params);
       setContacts(response.data);
-      setPagination((prev) => ({
-        ...prev,
-        total: response.pagination?.total || 0,
-        pages: response.pagination?.pages || 1,
-      }));
+      if (response.pagination) {
+        setPagination((prev) => ({
+          ...prev,
+          total: response.pagination.total || 0,
+          pages: response.pagination.pages || 1,
+        }));
+      }
     } catch (error) {
       console.error("Error fetching contacts:", error);
       showSnackbar("Failed to fetch contacts", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [filters, activeTab, pagination.page, pagination.limit]);
 
@@ -644,7 +646,7 @@ const Contacts = () => {
               onPageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               handleStartConversion={handleStartConversion}
-              loading={loading}
+              // loading={loading}
             />
           </div>
         </>

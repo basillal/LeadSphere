@@ -204,7 +204,7 @@ const Referrers = () => {
     recentReferrals: 0,
   });
   const [referrerStats, setReferrerStats] = useState({});
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentReferrer, setCurrentReferrer] = useState(null);
   const [previewReferrer, setPreviewReferrer] = useState(null);
@@ -227,7 +227,7 @@ const Referrers = () => {
   };
 
   const fetchReferrers = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const params = {
         page: pagination.page,
@@ -262,7 +262,7 @@ const Referrers = () => {
       console.error("Error fetching referrers:", error);
       showSnackbar("Failed to fetch referrers", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [filters, pagination.page, pagination.limit]);
 
@@ -416,7 +416,7 @@ const Referrers = () => {
               onPageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               referrerStats={referrerStats}
-              loading={loading}
+              // loading={loading}
             />
           </div>
         </>

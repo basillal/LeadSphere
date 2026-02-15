@@ -337,7 +337,7 @@ const Activities = () => {
     todaysActivities: 0,
     overdueActivities: 0,
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); // 'list', 'create', 'edit'
   const [currentActivity, setCurrentActivity] = useState(null);
   const [previewActivity, setPreviewActivity] = useState(null);
@@ -366,50 +366,42 @@ const Activities = () => {
   };
 
   const fetchActivities = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const params = {
         page: pagination.page,
         limit: pagination.limit,
       };
-      if (filters.search) params.search = filters.search;
 
-      // Set activity type filter based on active tab
+      if (filters.search) params.search = filters.search;
+      if (filters.status) params.status = filters.status;
+      if (filters.dateFilter) params.dateFilter = filters.dateFilter;
+
       if (activeTab !== "all") {
         params.activityType = activeTab;
       } else if (filters.activityType) {
         params.activityType = filters.activityType;
       }
 
-      if (filters.status) params.status = filters.status;
-
-      // Date filter
-      if (filters.dateFilter) {
-        params.dateFilter = filters.dateFilter;
-        if (
-          filters.dateFilter === "custom" &&
-          dateRange.startDate &&
-          dateRange.endDate
-        ) {
-          params.startDate = dateRange.startDate;
-          params.endDate = dateRange.endDate;
-        }
+      if (dateRange.startDate && dateRange.endDate) {
+        params.startDate = dateRange.startDate;
+        params.endDate = dateRange.endDate;
       }
 
       const response = await activityService.getActivities(params);
       setActivities(response.data);
-      setPagination((prev) => ({
-        ...prev,
-        total: response.pagination?.total || 0,
-        pages: response.pagination?.pages || 1,
-      }));
+      if (response.pagination) {
+        setPagination((prev) => ({
+          ...prev,
+          total: response.pagination.total || 0,
+          pages: response.pagination.pages || 1,
+        }));
+      }
     } catch (error) {
       console.error("Error fetching activities:", error);
-      const errMsg =
-        error.response?.data?.message || "Failed to fetch activities";
-      showSnackbar(errMsg, "error");
+      showSnackbar("Failed to fetch activities", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [filters, activeTab, pagination.page, pagination.limit, dateRange]);
 
@@ -563,71 +555,68 @@ const Activities = () => {
         )}
       </div>
 
-      {loading && view === "list" ? (
+      {/* {loading && view === "list" ? (
         <div className="flex justify-center py-10">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
-      ) : (
-        <>
-          {view === "list" && (
-            <>
-              {/* Stats */}
-              <ActivityStats stats={stats} onStatClick={handleStatClick} />
+      ) : ( */}
+      <>
+        {view === "list" && (
+          <>
+            {/* Stats */}
+            <ActivityStats stats={stats} onStatClick={handleStatClick} />
 
-              {/* Tabs */}
-              <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-                <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                        activeTab === tab.id
-                          ? "bg-white text-black shadow-sm"
-                          : "text-gray-500 hover:text-gray-700"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
+            {/* Tabs */}
+            <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
+              <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                      activeTab === tab.id
+                        ? "bg-white text-black shadow-sm"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              {/* Activities Table */}
-              <div className="pb-20">
-                <ActivitiesTable
-                  activities={activities}
-                  onCreate={handleCreate}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onView={handleView}
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                  onDateFilterChange={handleDateFilterChange}
-                  dateRange={dateRange}
-                  onDateRangeChange={handleDateRangeChange}
-                  pagination={pagination}
-                  onPageChange={handlePageChange}
-                  onLimitChange={handleLimitChange}
-                />
-              </div>
-            </>
-          )}
-
-          {(view === "create" || view === "edit") && (
-            <div className="max-w-7xl mx-auto">
-              <ActivityForm
-                key={currentActivity ? currentActivity._id : "new"}
-                initialData={currentActivity}
-                onSubmit={
-                  view === "create" ? handleFormSubmit : handleFormSubmit
-                }
-                onCancel={handleCancelForm}
+            {/* Activities Table */}
+            <div className="pb-20">
+              <ActivitiesTable
+                activities={activities}
+                onCreate={handleCreate}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onView={handleView}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onDateFilterChange={handleDateFilterChange}
+                dateRange={dateRange}
+                onDateRangeChange={handleDateRangeChange}
+                pagination={pagination}
+                onPageChange={handlePageChange}
+                onLimitChange={handleLimitChange}
               />
             </div>
-          )}
-        </>
-      )}
+          </>
+        )}
+
+        {(view === "create" || view === "edit") && (
+          <div className="max-w-7xl mx-auto">
+            <ActivityForm
+              key={currentActivity ? currentActivity._id : "new"}
+              initialData={currentActivity}
+              onSubmit={view === "create" ? handleFormSubmit : handleFormSubmit}
+              onCancel={handleCancelForm}
+            />
+          </div>
+        )}
+      </>
 
       {/* Preview Modal */}
       <PreviewModal

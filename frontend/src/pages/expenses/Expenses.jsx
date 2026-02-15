@@ -6,7 +6,7 @@ import Toast from "../../components/common/utils/Toast";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExpense, setCurrentExpense] = useState(null);
 
@@ -19,7 +19,7 @@ const Expenses = () => {
   });
 
   const fetchExpenses = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await expenseService.getExpenses();
       setExpenses(response.data.data || []);
@@ -27,7 +27,7 @@ const Expenses = () => {
       console.error("Error fetching expenses:", error);
       Toast("Failed to fetch expenses", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -180,7 +180,7 @@ const Expenses = () => {
         data={expenses}
         columns={columns}
         actions={actions}
-        isLoading={loading}
+        // isLoading={loading}
         emptyMessage="No expenses found."
         pagination={{ enabled: true, pageSize: 10 }}
       />
