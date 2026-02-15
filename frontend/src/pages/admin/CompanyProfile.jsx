@@ -151,12 +151,13 @@ const CompanyProfile = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-4rem)] p-4 bg-gray-50 flex flex-col overflow-hidden">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full overflow-hidden">
+    <div className="md:h-[calc(100vh-4rem)] h-auto p-4 bg-gray-50 flex flex-col md:overflow-hidden overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0 bg-gray-50/50">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg border border-gray-200 bg-white flex items-center justify-center p-1.5 shadow-sm">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 bg-gray-50/50">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="h-12 w-12 md:h-10 md:w-10 rounded-lg border border-gray-200 bg-white flex items-center justify-center p-1.5 shadow-sm shrink-0">
               {formData.settings.logo ? (
                 <img
                   src={formData.settings.logo}
@@ -167,38 +168,38 @@ const CompanyProfile = () => {
                 <BusinessIcon className="text-gray-300" fontSize="small" />
               )}
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900 leading-tight">
+            <div className="min-w-0">
+              <h1 className="text-lg font-bold text-gray-900 leading-tight truncate">
                 {formData.name}
               </h1>
-              <div className="flex gap-2 mt-0.5">
+              <div className="flex flex-wrap gap-2 mt-1">
                 <span
-                  className={`text-[10px] font-bold px-1.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
                 >
                   {formData.isActive ? "Active" : "Inactive"}
                 </span>
-                <span className="text-[10px] font-bold px-1.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
                   {formData.plan} Plan
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full md:w-auto">
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs shadow-sm"
+                className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs shadow-sm"
               >
                 <EditIcon fontSize="small" className="text-sm" />
-                Edit
+                Edit Profile
               </button>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full md:w-auto">
                 <button
                   onClick={handleCancel}
                   disabled={saving}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs"
                 >
                   <CloseIcon fontSize="small" className="text-sm" />
                   Cancel
@@ -206,7 +207,7 @@ const CompanyProfile = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={saving}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-medium text-xs"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-medium text-xs"
                 >
                   <SaveIcon fontSize="small" className="text-sm" />
                   Save
@@ -217,13 +218,13 @@ const CompanyProfile = () => {
         </div>
 
         {/* Content - 3 Column Grid that fills remaining height */}
-        <div className="p-6 overflow-hidden grow">
-          <form onSubmit={handleSubmit} className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-full">
+        <div className="p-6 md:overflow-hidden overflow-visible grow">
+          <form onSubmit={handleSubmit} className="md:h-full h-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:h-full h-auto">
               {/* Column 1: Essentials */}
-              <div className="flex flex-col h-full overflow-hidden">
+              <div className="flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
                 <SectionTitle>Essentials</SectionTitle>
-                <div className="space-y-3 overflow-y-auto pr-2 pb-2">
+                <div className="space-y-3 md:overflow-y-auto overflow-visible pr-2 pb-2">
                   {isEditing ? (
                     <>
                       <Input
@@ -272,9 +273,9 @@ const CompanyProfile = () => {
               </div>
 
               {/* Column 2: Location */}
-              <div className="flex flex-col h-full overflow-hidden">
+              <div className="flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
                 <SectionTitle>Location</SectionTitle>
-                <div className="space-y-3 overflow-y-auto pr-2 pb-2">
+                <div className="space-y-3 md:overflow-y-auto overflow-visible pr-2 pb-2">
                   {isEditing ? (
                     <>
                       <Input
@@ -283,7 +284,7 @@ const CompanyProfile = () => {
                         value={formData.address.street}
                         onChange={handleChange}
                       />
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Input
                           label="City"
                           name="address.city"
@@ -297,7 +298,7 @@ const CompanyProfile = () => {
                           onChange={handleChange}
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Input
                           label="Zip Code"
                           name="address.zipCode"
@@ -318,7 +319,7 @@ const CompanyProfile = () => {
                         label="Street Address"
                         value={formData.address.street}
                       />
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <ViewFieldSmall
                           label="City"
                           value={formData.address.city}
@@ -328,7 +329,7 @@ const CompanyProfile = () => {
                           value={formData.address.state}
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <ViewFieldSmall
                           label="Zip Code"
                           value={formData.address.zipCode}
@@ -344,9 +345,9 @@ const CompanyProfile = () => {
               </div>
 
               {/* Column 3: Identity & Details */}
-              <div className="flex flex-col h-full overflow-hidden">
+              <div className="flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
                 <SectionTitle>Identity</SectionTitle>
-                <div className="space-y-3 overflow-y-auto pr-2 pb-2">
+                <div className="space-y-3 md:overflow-y-auto overflow-visible pr-2 pb-2">
                   {isEditing ? (
                     <>
                       <Input
