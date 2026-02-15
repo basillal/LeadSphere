@@ -23,6 +23,7 @@ import Roles from "./pages/admin/Roles";
 import Users from "./pages/admin/Users";
 import AuditLogs from "./pages/admin/AuditLogs";
 import PrintInvoice from "./pages/billing/PrintInvoice";
+import CompanyProfile from "./pages/admin/CompanyProfile";
 import RoleGuard from "./components/auth/RoleGuard";
 import "./styles/App.css";
 
@@ -75,6 +76,14 @@ function App() {
                 <Route path="admin/users" element={<Users />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="settings" element={<Settings />} />
+                <Route
+                  path="company-profile"
+                  element={
+                    <RoleGuard role="Company Admin">
+                      <CompanyProfile />
+                    </RoleGuard>
+                  }
+                />
               </Route>
             </Route>
           </Routes>

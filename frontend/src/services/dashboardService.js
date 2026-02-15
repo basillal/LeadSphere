@@ -5,7 +5,7 @@ const dashboardService = {
     try {
         // Convert to query string
         const queryString = new URLSearchParams(params).toString();
-        const response = await api.get(`/api/dashboard?${queryString}`);
+        const response = await api.get(`/dashboard?${queryString}`);
         return response.data;
     } catch (error) {
       throw error;

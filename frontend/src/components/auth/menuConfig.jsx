@@ -103,6 +103,12 @@ export const menuConfig = [
   },
 
   {
+    label: "Company Profile",
+    path: "/company-profile",
+    icon: <BusinessIcon />,
+    role: "Company Admin",
+  },
+  {
     label: "Settings",
     path: "/settings",
     icon: <SettingsIcon />,
