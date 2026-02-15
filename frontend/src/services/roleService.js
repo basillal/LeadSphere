@@ -1,7 +1,7 @@
 import api from './api';
 
 const API_URL = '/roles';
-const PERMISSION_API_URL = '/api/permissions';
+const PERMISSION_API_URL = '/permissions';
 
 // Roles
 const getRoles = async () => {

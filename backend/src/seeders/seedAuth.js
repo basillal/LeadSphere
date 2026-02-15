@@ -160,6 +160,7 @@ const seedAuth = async () => {
                  phone: '+91 98765 43210',
                  email: 'support@leadsphere.com',
                  website: 'https://leadsphere.com',
+                 description: 'LeadSphere is a premier lead management solution designed to help businesses track, manage, and convert leads efficiently.',
                  address: {
                      street: '123 Business Park, Tech Hub',
                      city: 'Bengaluru',
@@ -170,7 +171,7 @@ const seedAuth = async () => {
                  settings: {
                      currency: 'INR',
                      timezone: 'Asia/Kolkata',
-                     logo: 'https://via.placeholder.com/150x50?text=LeadSphere' // Placeholder logo
+                     logo: 'https://cdn-icons-png.flaticon.com/512/2702/2702602.png' // Professional placeholder logo
                  }
              });
              console.log('Default Company created.');
