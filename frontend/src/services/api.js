@@ -3,6 +3,7 @@ import { getToken } from '../components/auth/tokenUtils';
 
 // Create axios instance
 const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || '/api', // Use env var or fallback to proxy
     timeout: 30000, // 30 seconds
     headers: {
         'Content-Type': 'application/json'

@@ -17,7 +17,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite default port, adjust if needed for cookies to work
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Use env var or default to Vite local
     credentials: true // Important for cookies
 }));
 app.use(express.json()); // Parse JSON bodies
