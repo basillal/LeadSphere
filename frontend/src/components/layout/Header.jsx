@@ -30,26 +30,6 @@ const Header = ({ handleDrawerToggle }) => {
   const [companies, setCompanies] = React.useState([]);
 
   // Fetch companies if Super Admin
-  React.useEffect(() => {
-    if (user?.role?.roleName === "Super Admin") {
-      // Need companyService. Import it later. For now assuming dynamic import or I'll add import statement.
-      // Actually better to import at top. I will add import in next step or use global/context if available?
-      // No, I should import. PROVISIONALLY assuming I will add import.
-      const fetchCompanies = async () => {
-        try {
-          // Need to import companyService.
-          // Since I cannot modify top of file in same block easily without potentially breaking if I miss imports,
-          // I will add the import in a separate tool call.
-          // Here I assume `companyService` is available in scope or I use `api`.
-          // Let's use `companyService` and add import in next step.
-          // Wait, useAuth gives me user.
-        } catch (err) {
-          console.error("Failed to load companies for switcher", err);
-        }
-      };
-      // fetchCompanies(); // Commented out until import added
-    }
-  }, [user]);
 
   // Logic to load companies
   React.useEffect(() => {

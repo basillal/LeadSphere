@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
 import leadService from "../../services/leadService"; // Added import
@@ -371,6 +372,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
 };
 
 const Contacts = () => {
+  const { selectedCompany } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [contacts, setContacts] = useState([]);
@@ -490,14 +492,14 @@ const Contacts = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [selectedCompany]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchContacts();
     }, 300);
     return () => clearTimeout(timer);
-  }, [fetchContacts]);
+  }, [filters, activeTab, pagination.page, pagination.limit, selectedCompany]);
 
   const handleCreate = () => {
     setCurrentContact(null);
@@ -533,7 +535,11 @@ const Contacts = () => {
         await contactService.updateContact(currentContact._id, data);
         showSnackbar("Contact updated successfully", "success");
       } else {
-        await contactService.createContact(data);
+        const payload = { ...data };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        await contactService.createContact(payload);
         showSnackbar("Contact created successfully", "success");
       }
       setView("list");

@@ -39,13 +39,18 @@ const ReferrersTable = ({
     },
     {
       id: "companyName",
-      label: "Company",
+      label: "Referrer Co.",
       render: (row) => row.companyName || "-",
     },
     {
       id: "createdBy",
       label: "Created by",
       render: (row) => row.createdBy?.name || "System",
+    },
+    {
+      id: "tenant",
+      label: "Company",
+      render: (row) => row.company?.name || "-",
     },
     {
       id: "totalLeads",

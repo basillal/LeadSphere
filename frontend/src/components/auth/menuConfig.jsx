@@ -93,10 +93,9 @@ export const menuConfig = [
     path: "/admin/roles",
     icon: <SecurityIcon />, // Changed to Security or Settings
     permission: "ROLE_MANAGE",
-    role: "Super Admin",
   },
   {
-    label: "Team",
+    label: "Users",
     path: "/admin/users",
     icon: <PeopleIcon />,
     permission: "USER_MANAGE",

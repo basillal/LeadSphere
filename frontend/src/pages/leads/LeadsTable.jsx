@@ -66,11 +66,9 @@ const LeadsTable = ({
     },
     {
       id: "tenant",
-      label: "Company (tenant)",
+      label: "Company",
       width: "w-[12%]",
       render: (row) => row.company?.name || "-",
-      // Ideally hide this if not Super Admin, but I don't have user context here easily.
-      // I can just show it, or check if row.company exists and differs?
     },
     { id: "phone", label: "Phone", width: "w-[15%]" },
     { id: "source", label: "Source", width: "w-[15%]" },

@@ -66,7 +66,7 @@ const ContactsTable = ({
     },
     {
       id: "tenant",
-      label: "Company (tenant)",
+      label: "Company",
       render: (row) => row.company?.name || "-",
     },
     { id: "phone", label: "Phone" },

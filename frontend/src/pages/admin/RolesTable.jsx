@@ -29,6 +29,16 @@ const RolesTable = ({
       ),
     },
     {
+      id: "company",
+      label: "Company",
+      width: "w-1/4",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.company?.name || "System/All"}
+        </span>
+      ),
+    },
+    {
       id: "description",
       label: "Description",
       width: "w-1/2",

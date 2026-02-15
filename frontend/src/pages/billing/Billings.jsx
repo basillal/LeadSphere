@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import billingService from "../../services/billingService";
 import serviceService from "../../services/serviceService";
 import contactService from "../../services/contactService";
@@ -650,6 +651,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 };
 
 const Billings = () => {
+  const { selectedCompany } = useAuth();
   const [billings, setBillings] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list");
@@ -679,7 +681,7 @@ const Billings = () => {
 
   useEffect(() => {
     fetchBillings();
-  }, []);
+  }, [selectedCompany]);
 
   const handleCreate = () => {
     setCurrentBilling(null);
@@ -701,7 +703,11 @@ const Billings = () => {
           severity: "success",
         });
       } else {
-        const res = await billingService.createBilling(data);
+        const payload = { ...data };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        const res = await billingService.createBilling(payload);
         setSnackbar({
           open: true,
           message: "Invoice generated successfully",
@@ -752,6 +758,15 @@ const Billings = () => {
       label: "Client",
       render: (row) =>
         row.contact?.name ? row.contact.name.toUpperCase() : "UNKNOWN",
+    },
+    {
+      id: "company",
+      label: "Company",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.company?.name || "-"}
+        </span>
+      ),
     },
     {
       id: "billingDate",

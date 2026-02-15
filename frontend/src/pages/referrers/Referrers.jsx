@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import referrerService from "../../services/referrerService";
 import ReferrerStats from "./ReferrerStats";
 import ReferrersTable from "./ReferrersTable";
@@ -188,6 +189,7 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
 };
 
 const Referrers = () => {
+  const { selectedCompany } = useAuth();
   const [referrers, setReferrers] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -264,7 +266,7 @@ const Referrers = () => {
     } finally {
       // setLoading(false);
     }
-  }, [filters, pagination.page, pagination.limit]);
+  }, [filters, pagination.page, pagination.limit, selectedCompany]);
 
   const fetchStats = async () => {
     try {
@@ -277,7 +279,7 @@ const Referrers = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [selectedCompany]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -327,7 +329,11 @@ const Referrers = () => {
         await referrerService.updateReferrer(currentReferrer._id, data);
         showSnackbar("Referrer updated successfully", "success");
       } else {
-        await referrerService.createReferrer(data);
+        const payload = { ...data };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        await referrerService.createReferrer(payload);
         showSnackbar("Referrer created successfully", "success");
       }
       setView("list");

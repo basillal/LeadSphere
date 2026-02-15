@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import { useLoading } from "../../context/LoadingProvider";
 import userService from "../../services/userService";
 import roleService from "../../services/roleService";
@@ -9,6 +10,7 @@ import Toast from "../../components/common/utils/Toast";
 import UserStats from "./UserStats";
 
 const Users = () => {
+  const { selectedCompany } = useAuth();
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
@@ -24,7 +26,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedCompany]);
 
   const fetchData = async () => {
     try {
@@ -77,6 +79,11 @@ const Users = () => {
     try {
       const dataToSend = { ...formData };
       if (!dataToSend.password) delete dataToSend.password;
+
+      // Inject selected company if available (for Super Admin context)
+      if (selectedCompany) {
+        dataToSend.company = selectedCompany;
+      }
 
       if (currentUser) {
         await userService.updateUser(currentUser._id, dataToSend);

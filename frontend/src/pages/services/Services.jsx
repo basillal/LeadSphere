@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import serviceService from "../../services/serviceService";
 import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
@@ -270,6 +271,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 };
 
 const Services = () => {
+  const { selectedCompany } = useAuth();
   const [services, setServices] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list, create, edit
@@ -295,7 +297,7 @@ const Services = () => {
 
   useEffect(() => {
     fetchServices();
-  }, []);
+  }, [selectedCompany]);
 
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
@@ -330,7 +332,11 @@ const Services = () => {
         await serviceService.updateService(currentService._id, data);
         showSnackbar("Service updated successfully");
       } else {
-        await serviceService.createService(data);
+        const payload = { ...data };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        await serviceService.createService(payload);
         showSnackbar("Service created successfully");
       }
       setView("list");
@@ -362,6 +368,15 @@ const Services = () => {
       render: (row) => (
         <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-semibold whitespace-nowrap">
           {row.industryType}
+        </span>
+      ),
+    },
+    {
+      id: "company",
+      label: "Company",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.company?.name || "-"}
         </span>
       ),
     },

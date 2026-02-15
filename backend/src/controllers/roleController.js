@@ -21,13 +21,19 @@ const getRoles = asyncHandler(async (req, res) => {
     if (isSuperAdmin) {
         // If query param company is provided, filter by that.
         // Else, show Global System Roles + Roles of specific company context if any
-        if (req.query.company) {
-            query.company = req.query.company;
+        // If query param company is provided (via middleware or direct query), filter by that.
+        // req.companyFilter is populated by tenantMiddleware if header/query exists
+        const filterCompany = req.query.company || (req.companyFilter ? req.companyFilter.company : null);
+
+        if (filterCompany) {
+            // Show Global System Roles OR Roles for this specific company
+            query.$or = [
+                { scope: 'global' },
+                { company: filterCompany }
+            ];
         } else {
-            // Show all roles? Might be too many. 
-            // Default: Show System Roles + Own Company Roles ?? 
-            // Or just return everything for Super Admin management?
-            // Let's return everything for now if no filter.
+            // If no company selected, show ALL roles (System + All Companies)
+            // This matches current behavior, which is likely what "All Companies" mode expects
         }
     } else {
         // Regular Company Admin/User
@@ -46,7 +52,9 @@ const getRoles = asyncHandler(async (req, res) => {
         // But note: "Super Admin" role is likely scope='global'
     }
 
-    const roles = await Role.find(query).populate('permissions');
+    const roles = await Role.find(query)
+        .populate('permissions')
+        .populate('company', 'name');
     
     // Filter out "Super Admin" from result if not super admin
     const safeRoles = roles.filter(r => {
@@ -61,7 +69,9 @@ const getRoles = asyncHandler(async (req, res) => {
 // @route   GET /api/roles/:id
 // @access  Private (Admin)
 const getRole = asyncHandler(async (req, res) => {
-    const role = await Role.findById(req.params.id).populate('permissions');
+    const role = await Role.findById(req.params.id)
+        .populate('permissions')
+        .populate('company', 'name');
     
     if (!role) {
         res.status(404);

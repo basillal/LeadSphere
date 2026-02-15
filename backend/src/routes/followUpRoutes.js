@@ -5,13 +5,17 @@ const {
     createFollowUp,
     updateFollowUp,
     deleteFollowUp,
-    getLeadFollowUps
+    getLeadFollowUps,
+    getFollowUpStats
 } = require('../controllers/followUpController');
 const { protect } = require('../middleware/authMiddleware');
 const { tenantFilter } = require('../middleware/tenantMiddleware');
 
 router.use(protect);
 router.use(tenantFilter);
+
+// Statistics route
+router.get('/stats', getFollowUpStats);
 
 router.route('/')
     .get(getFollowUps)

@@ -4,8 +4,10 @@ const API_URL = '/roles';
 const PERMISSION_API_URL = '/permissions';
 
 // Roles
-const getRoles = async () => {
-    const response = await api.get(API_URL);
+const getRoles = async (companyId) => {
+    const params = {};
+    if (companyId) params.company = companyId;
+    const response = await api.get(API_URL, { params });
     return response.data;
 };
 

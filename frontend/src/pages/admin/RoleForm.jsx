@@ -3,7 +3,13 @@ import Input from "../../components/common/fields/Input";
 import TextArea from "../../components/common/fields/TextArea";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
-const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
+const RoleForm = ({
+  initialData,
+  groupedPermissions,
+  onSubmit,
+  onCancel,
+  isSuperAdmin,
+}) => {
   const [formData, setFormData] = useState({
     roleName: "",
     description: "",
@@ -92,27 +98,29 @@ const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
           />
         </div>
 
-        <div className="flex items-center space-x-2 mb-6">
-          <input
-            type="checkbox"
-            id="accessibleByCompanyAdmin"
-            name="accessibleByCompanyAdmin"
-            checked={formData.accessibleByCompanyAdmin || false}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                accessibleByCompanyAdmin: e.target.checked,
-              }))
-            }
-            className="h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
-          />
-          <label
-            htmlFor="accessibleByCompanyAdmin"
-            className="text-sm text-gray-700"
-          >
-            Allow Company Admins to access this role (System/Global Roles)
-          </label>
-        </div>
+        {isSuperAdmin && (
+          <div className="flex items-center space-x-2 mb-6">
+            <input
+              type="checkbox"
+              id="accessibleByCompanyAdmin"
+              name="accessibleByCompanyAdmin"
+              checked={formData.accessibleByCompanyAdmin || false}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  accessibleByCompanyAdmin: e.target.checked,
+                }))
+              }
+              className="h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
+            />
+            <label
+              htmlFor="accessibleByCompanyAdmin"
+              className="text-sm text-gray-700"
+            >
+              Allow Company Admins to access this role (System/Global Roles)
+            </label>
+          </div>
+        )}
 
         <SectionHeader
           title="Permissions"
@@ -120,59 +128,64 @@ const RoleForm = ({ initialData, groupedPermissions, onSubmit, onCancel }) => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.keys(groupedPermissions).map((resource) => {
-            const resourcePermissions = groupedPermissions[resource];
-            const permissionIds = resourcePermissions.map((p) => p._id);
-            const allSelected = permissionIds.every((id) =>
-              formData.permissions.includes(id),
-            );
+          {Object.keys(groupedPermissions)
+            .filter((key) => isSuperAdmin || key !== "AUDITLOG")
+            .map((resource) => {
+              const resourcePermissions = groupedPermissions[resource];
+              const permissionIds = resourcePermissions.map((p) => p._id);
+              const allSelected = permissionIds.every((id) =>
+                formData.permissions.includes(id),
+              );
 
-            return (
-              <div
-                key={resource}
-                className="border border-gray-200 rounded-lg p-4 bg-gray-50"
-              >
-                <div className="flex justify-between items-center mb-3 border-b border-gray-200 pb-2">
-                  <h3 className="font-semibold text-gray-900">{resource}</h3>
-                  <button
-                    type="button"
-                    onClick={() => handleResourceToggle(permissionIds)}
-                    className={`text-xs font-semibold px-2 py-1 rounded transition-colors ${
-                      allSelected
-                        ? "bg-black text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    {allSelected ? "Unselect All" : "Select All"}
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {resourcePermissions.map((perm) => (
-                    <div key={perm._id} className="flex items-start space-x-2">
-                      <input
-                        type="checkbox"
-                        id={perm._id}
-                        checked={formData.permissions.includes(perm._id)}
-                        onChange={() => handlePermissionChange(perm._id)}
-                        className="mt-1 h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
-                      />
-                      <label
-                        htmlFor={perm._id}
-                        className="text-sm text-gray-700 cursor-pointer select-none"
+              return (
+                <div
+                  key={resource}
+                  className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                >
+                  <div className="flex justify-between items-center mb-3 border-b border-gray-200 pb-2">
+                    <h3 className="font-semibold text-gray-900">{resource}</h3>
+                    <button
+                      type="button"
+                      onClick={() => handleResourceToggle(permissionIds)}
+                      className={`text-xs font-semibold px-2 py-1 rounded transition-colors ${
+                        allSelected
+                          ? "bg-black text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {allSelected ? "Unselect All" : "Select All"}
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {resourcePermissions.map((perm) => (
+                      <div
+                        key={perm._id}
+                        className="flex items-start space-x-2"
                       >
-                        <span className="font-medium text-gray-900 block">
-                          {perm.permissionName}
-                        </span>
-                        <span className="text-gray-500 text-xs">
-                          {perm.description}
-                        </span>
-                      </label>
-                    </div>
-                  ))}
+                        <input
+                          type="checkbox"
+                          id={perm._id}
+                          checked={formData.permissions.includes(perm._id)}
+                          onChange={() => handlePermissionChange(perm._id)}
+                          className="mt-1 h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
+                        />
+                        <label
+                          htmlFor={perm._id}
+                          className="text-sm text-gray-700 cursor-pointer select-none"
+                        >
+                          <span className="font-medium text-gray-900 block">
+                            {perm.permissionName}
+                          </span>
+                          <span className="text-gray-500 text-xs">
+                            {perm.description}
+                          </span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
 
         <div className="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-5">

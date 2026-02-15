@@ -7,6 +7,6 @@ const { checkPermission } = require('../middleware/rbacMiddleware');
 router.use(protect); // Protect all routes
 
 router.get('/', checkPermission('PERMISSION_MANAGE'), getPermissions);
-router.get('/grouped', checkPermission('PERMISSION_MANAGE'), getGroupedPermissions);
+router.get('/grouped', checkPermission(['PERMISSION_MANAGE', 'ROLE_MANAGE']), getGroupedPermissions);
 
 module.exports = router;

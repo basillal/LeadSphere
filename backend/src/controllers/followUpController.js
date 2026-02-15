@@ -204,10 +204,88 @@ const getLeadFollowUps = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    Get follow-up statistics
+// @route   GET /api/follow-ups/stats
+// @access  Private
+const getFollowUpStats = asyncHandler(async (req, res) => {
+    // Base filter from Tenant Middleware
+    const query = { ...req.companyFilter };
+
+    // User-Level Isolation (Same logic as getFollowUps)
+    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+
+    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+        query.$or = [
+            { assignedTo: req.user._id },
+            { createdBy: req.user._id }
+        ];
+    }
+
+    // Date Ranges
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    // Aggregation
+    const stats = await FollowUp.aggregate([
+        { $match: query },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: 1 },
+                pending: {
+                    $sum: {
+                        $cond: [
+                            { 
+                                $and: [
+                                    { $eq: ["$status", "Pending"] },
+                                    { $gte: ["$scheduledAt", todayStart] },
+                                    { $lte: ["$scheduledAt", todayEnd] }
+                                ] 
+                            }, 
+                            1, 
+                            0
+                        ]
+                    }
+                },
+                completed: {
+                    $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] }
+                },
+                missed: {
+                    $sum: {
+                        $cond: [
+                            { 
+                                $and: [
+                                    { $ne: ["$status", "Completed"] },
+                                    { $lt: ["$scheduledAt", todayStart] }
+                                ] 
+                            }, 
+                            1, 
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    ]);
+
+    const result = stats.length > 0 ? stats[0] : { total: 0, pending: 0, completed: 0, missed: 0 };
+    delete result._id;
+
+    res.status(200).json({
+        success: true,
+        data: result
+    });
+});
+
 module.exports = {
     getFollowUps,
     createFollowUp,
     updateFollowUp,
     deleteFollowUp,
-    getLeadFollowUps
+    getLeadFollowUps,
+    getFollowUpStats
 };

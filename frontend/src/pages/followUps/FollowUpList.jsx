@@ -96,6 +96,15 @@ const FollowUpList = ({
       ),
     },
     {
+      id: "company",
+      label: "Company",
+      render: (row) => (
+        <span className="text-sm text-gray-600">
+          {row.company?.name || "-"}
+        </span>
+      ),
+    },
+    {
       id: "createdBy",
       label: "Created by",
       render: (row) => (

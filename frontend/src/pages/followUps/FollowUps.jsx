@@ -1,5 +1,6 @@
 import BasicModal from "../../components/common/modals/BasicModal";
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import followUpService from "../../services/followUpService";
 import FollowUpList from "./FollowUpList";
 import FollowUpForm from "./FollowUpForm";
@@ -7,6 +8,7 @@ import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const FollowUps = () => {
+  const { selectedCompany } = useAuth();
   const [activeTab, setActiveTab] = useState("today");
   const [followUps, setFollowUps] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,13 +62,24 @@ const FollowUps = () => {
     } catch (error) {
       console.error("Error fetching follow-ups:", error);
     } finally {
-      // setLoading(false);
     }
-  }, [activeTab, pagination.page, pagination.limit]);
+  }, [activeTab, pagination.page, pagination.limit, selectedCompany]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await followUpService.getFollowUpStats();
+      if (response.success) {
+        setStats(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchFollowUps();
-  }, [fetchFollowUps]);
+    fetchStats();
+  }, [fetchFollowUps, fetchStats, selectedCompany]);
 
   const handleCreate = () => {
     setCurrentFollowUp(null);
@@ -83,6 +96,7 @@ const FollowUps = () => {
       try {
         await followUpService.deleteFollowUp(id);
         fetchFollowUps();
+        fetchStats();
       } catch (error) {
         console.error("Error deleting follow-up:", error);
       }
@@ -100,6 +114,7 @@ const FollowUps = () => {
     try {
       await followUpService.updateFollowUp(followUp._id, { status: newStatus });
       fetchFollowUps();
+      fetchStats();
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -118,6 +133,7 @@ const FollowUps = () => {
       setFollowUpToUpdate(null);
       setOutcomeRemark("");
       fetchFollowUps();
+      fetchStats();
     } catch (error) {
       console.error("Error updating status with outcome:", error);
     }
@@ -128,10 +144,15 @@ const FollowUps = () => {
       if (currentFollowUp) {
         await followUpService.updateFollowUp(currentFollowUp._id, data);
       } else {
-        await followUpService.createFollowUp(data);
+        const payload = { ...data };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        await followUpService.createFollowUp(payload);
       }
       setIsModalOpen(false);
       fetchFollowUps(); // This will refresh both list and stats
+      fetchStats();
     } catch (error) {
       console.error("Error saving follow-up:", error);
       alert("Failed to save follow-up. Please check if Lead field is valid.");

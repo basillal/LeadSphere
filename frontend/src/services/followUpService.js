@@ -50,12 +50,19 @@ const getLeadFollowUps = async (leadId) => {
     return response.data;
 };
 
+// Get stats
+const getFollowUpStats = async (params) => {
+    const response = await api.get(`${API_URL}/stats`, { params });
+    return response.data;
+};
+
 const followUpService = {
     createFollowUp,
     getFollowUps,
     updateFollowUp,
     deleteFollowUp,
-    getLeadFollowUps
+    getLeadFollowUps,
+    getFollowUpStats
 };
 
 export default followUpService;

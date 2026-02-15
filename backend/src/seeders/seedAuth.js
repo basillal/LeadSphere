@@ -69,9 +69,9 @@ const seedAuth = async () => {
 
         // --- Company Admin ---
         let companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
-        // All permissions EXCEPT system role/permission management
+        // All permissions EXCEPT permission management (Company Admin can manage roles now)
         const companyAdminPermKeys = Object.keys(permissionIds).filter(key => 
-            !['ROLE_MANAGE', 'PERMISSION_MANAGE'].includes(key)
+            !['PERMISSION_MANAGE'].includes(key)
         );
         const companyAdminPermIds = companyAdminPermKeys.map(key => permissionIds[key]);
 

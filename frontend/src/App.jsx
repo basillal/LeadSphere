@@ -57,14 +57,7 @@ function App() {
                     </RoleGuard>
                   }
                 />
-                <Route
-                  path="admin/roles"
-                  element={
-                    <RoleGuard role="Super Admin">
-                      <Roles />
-                    </RoleGuard>
-                  }
-                />
+                <Route path="admin/roles" element={<Roles />} />
                 <Route
                   path="admin/audit-logs"
                   element={

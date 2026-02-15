@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import BasicModal from "../../components/common/modals/BasicModal";
 import expenseService from "../../services/expenseService";
 import Toast from "../../components/common/utils/Toast";
 
 const Expenses = () => {
+  const { selectedCompany } = useAuth();
   const [expenses, setExpenses] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +35,7 @@ const Expenses = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [selectedCompany]);
 
   const handleCreate = () => {
     setCurrentExpense(null);
@@ -79,7 +81,11 @@ const Expenses = () => {
         await expenseService.updateExpense(currentExpense._id, formData);
         Toast("Expense updated successfully", "success");
       } else {
-        await expenseService.createExpense(formData);
+        const payload = { ...formData };
+        if (selectedCompany) {
+          payload.company = selectedCompany;
+        }
+        await expenseService.createExpense(payload);
         Toast("Expense created successfully", "success");
       }
       setIsModalOpen(false);
@@ -107,6 +113,15 @@ const Expenses = () => {
       render: (row) => (
         <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
           {row.category}
+        </span>
+      ),
+    },
+    {
+      id: "company",
+      label: "Company",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.company?.name || "-"}
         </span>
       ),
     },
