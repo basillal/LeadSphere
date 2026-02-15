@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/reports';
+const API_URL = '/reports';
 
 const getServiceRevenue = async (params) => {
     const response = await api.get(`${API_URL}/service-revenue`, { params });

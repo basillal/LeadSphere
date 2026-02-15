@@ -6,7 +6,7 @@ import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCompany, setCurrentCompany] = useState(null);
 
@@ -26,14 +26,14 @@ const Companies = () => {
   const [captchaInput, setCaptchaInput] = useState("");
 
   const fetchCompanies = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await companyService.getCompanies();
       setCompanies(response.data);
     } catch (error) {
       console.error("Error fetching companies:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -217,7 +217,7 @@ const Companies = () => {
         data={companies}
         columns={columns}
         actions={actions}
-        isLoading={loading}
+        // isLoading={loading}
         emptyMessage="No companies found."
         getRowId={(row) => row._id}
         pagination={{ enabled: false }} // Simple list for now

@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/services';
+const API_URL = '/services';
 
 const createService = async (serviceData) => {
     const response = await api.post(API_URL, serviceData);

@@ -1,6 +1,6 @@
 import api from "./api";
 
-const API_URL = '/api/expenses';
+const API_URL = '/expenses';
 
 const expenseService = {
   getExpenses: (params) => api.get(API_URL, { params }),

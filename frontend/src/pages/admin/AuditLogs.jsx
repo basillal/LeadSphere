@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLoading } from "../../context/LoadingProvider";
 import auditLogService from "../../services/auditLogService";
 import AuditLogsTable from "./AuditLogsTable";
 import Toast from "../../components/common/utils/Toast";
@@ -6,7 +7,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 const AuditLogs = () => {
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -36,7 +37,7 @@ const AuditLogs = () => {
 
   const fetchLogs = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const res = await auditLogService.getAuditLogs({
         page: pagination.page,
         limit: pagination.limit,
@@ -52,7 +53,7 @@ const AuditLogs = () => {
       showSnackbar("Failed to fetch audit logs", "error");
       console.error(err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -247,9 +248,7 @@ const AuditLogs = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
+        <div className="min-h-screen bg-gray-50" />
       ) : (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

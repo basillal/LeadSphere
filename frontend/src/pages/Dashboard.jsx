@@ -22,7 +22,7 @@ import { useAuth } from "../components/auth/AuthProvider";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true); // Handled globally
   const [data, setData] = useState({
     counts: {
       leads: 0,
@@ -69,25 +69,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        setLoading(true);
-        const { startDate, endDate } = getDateRange(timeRange);
-
-        // Build params
-        const params = {
-          revenueInterval,
-        };
-
-        if (startDate) {
-          params.startDate = startDate;
-          params.endDate = endDate;
-        }
-
-        const stats = await dashboardService.getStats(params);
-        setData(stats);
       } catch (error) {
         console.error("Failed to load dashboard data:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -147,13 +132,13 @@ const Dashboard = () => {
     </div>
   );
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+  //     </div>
+  //   );
+  // }
 
   // Safety check if data is malformed
   if (!data || !data.counts) {

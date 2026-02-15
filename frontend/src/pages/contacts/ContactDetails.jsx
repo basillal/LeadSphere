@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useLoading } from "../../context/LoadingProvider";
 import { useParams, useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
 import leadService from "../../services/leadService";
@@ -10,7 +11,7 @@ import Toast from "../../components/common/utils/Toast";
 const ContactDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
   const [contact, setContact] = useState(null);
   const [lead, setLead] = useState(null);
   const [followUps, setFollowUps] = useState([]);
@@ -33,7 +34,7 @@ const ContactDetails = () => {
   };
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       // 1. Fetch Contact
       const contactResponse = await contactService.getContact(id);
@@ -116,7 +117,7 @@ const ContactDetails = () => {
       console.error("Error fetching contact details:", error);
       showSnackbar("Failed to fetch contact details", "error");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }, [id]);
 
@@ -147,11 +148,7 @@ const ContactDetails = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-      </div>
-    );
+    return <div className="min-h-screen bg-gray-50" />;
   }
 
   if (!contact) {

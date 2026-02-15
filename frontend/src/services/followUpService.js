@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_URL = '/api/follow-ups';
+const API_URL = '/follow-ups';
 
 // Create new follow-up
 const createFollowUp = async (followUpData) => {
