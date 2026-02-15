@@ -10,7 +10,9 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 // Connect to Database
-connectDB();
+// Connect to Database
+// connectDB(); // Removed for serverless compatibility
+
 
 
 // Middleware
@@ -74,7 +76,8 @@ const logger = require('./utils/logger');
 const PORT = process.env.PORT || 3000;
 
 if (require.main === module) {
-    app.listen(PORT, () => {
+    app.listen(PORT, async () => {
+        await connectDB();
         logger.info(`Server running on port ${PORT}`);
     });
 }
