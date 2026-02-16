@@ -44,16 +44,45 @@ const getFollowUps = asyncHandler(async (req, res) => {
         query.status = 'Pending'; 
     }
 
+    // Pagination
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const total = await FollowUp.countDocuments(query);
+
     // Include Lead details
     const followUps = await FollowUp.find(query)
         .populate('lead', 'name phone email organizationName status')
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
-        .sort({ scheduledAt: 1 });
+        .populate('organization', 'name')
+        .sort({ scheduledAt: 1 })
+        .skip(startIndex)
+        .limit(limit);
+
+    // Pagination result
+    const pagination = {};
+    if (endIndex < total) {
+        pagination.next = {
+            page: page + 1,
+            limit
+        };
+    }
+    if (startIndex > 0) {
+        pagination.prev = {
+            page: page - 1,
+            limit
+        };
+    }
+    pagination.pages = Math.ceil(total / limit);
+    pagination.total = total;
+    pagination.page = page;
 
     res.status(200).json({
         success: true,
         count: followUps.length,
+        pagination,
         data: followUps
     });
 });
@@ -194,6 +223,7 @@ const getLeadFollowUps = asyncHandler(async (req, res) => {
     const followUps = await FollowUp.find({ lead: req.params.leadId })
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
+        .populate('organization', 'name')
         .sort({ scheduledAt: -1 });
 
     res.status(200).json({

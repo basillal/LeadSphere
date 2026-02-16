@@ -26,6 +26,7 @@ const getExpenses = asyncHandler(async (req, res) => {
 
     const expenses = await Expense.find(query)
         .populate('createdBy', 'name')
+        .populate('organization', 'name')
         .sort({ expenseDate: -1 });
 
     res.status(200).json({

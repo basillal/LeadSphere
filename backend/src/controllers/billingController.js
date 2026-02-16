@@ -37,6 +37,7 @@ const getBillings = asyncHandler(async (req, res) => {
         .populate('contact', 'name email phone organizationName')
         .populate('services.serviceId', 'serviceName serviceCode')
         .populate('createdBy', 'name')
+        .populate('organization', 'name')
         .sort({ billingDate: -1 });
 
     res.status(200).json({

@@ -22,7 +22,10 @@ const getServices = asyncHandler(async (req, res) => {
         query.isActive = req.query.isActive === 'true';
     }
 
-    const services = await Service.find(query).sort({ createdAt: -1 });
+    const services = await Service.find(query)
+        .populate('organization', 'name')
+        .populate('createdBy', 'name')
+        .sort({ createdAt: -1 });
 
     res.status(200).json({
         success: true,

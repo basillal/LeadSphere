@@ -24,22 +24,39 @@ exports.getDashboardStats = async (req, res) => {
             baseQuery.organization = new mongoose.Types.ObjectId(baseQuery.organization);
         }
 
-        const billingQuery = { ...baseQuery, paymentStatus: 'PAID' };
-        
-        // Ensure organization is ObjectId for billingQuery aggregation too
-        if (billingQuery.organization) {
-             billingQuery.organization = new mongoose.Types.ObjectId(billingQuery.organization);
-        }
-
-        const organizationId = baseQuery.organization; // For reference in code logic if needed
+        // Specific Queries for different models
+        const leadQuery = { ...baseQuery };
+        const contactQuery = { ...baseQuery };
+        const activityQuery = { ...baseQuery };
+        const revenueQuery = { ...baseQuery, paymentStatus: 'PAID' }; // For Revenue
+        const pendingQuery = { ...baseQuery, paymentStatus: { $ne: 'PAID' } }; // For Pending
+        const expenseQuery = { ...baseQuery };
+        const invoiceCountQuery = { ...baseQuery };
+        const serviceQuery = { ...baseQuery, isActive: true };
 
         // Apply Date Filter if provided
         if (startDate && endDate) {
             const dateFilter = { $gte: new Date(startDate), $lte: new Date(endDate) };
             
-            baseQuery.createdAt = dateFilter;
-            // For revenue, use billingDate or createdAt
-            billingQuery.createdAt = dateFilter; 
+            leadQuery.createdAt = dateFilter;
+            contactQuery.createdAt = dateFilter;
+            
+            // Activity uses activityDate
+            activityQuery.activityDate = dateFilter;
+            
+            // Billing uses billingDate
+            revenueQuery.billingDate = dateFilter;
+            pendingQuery.billingDate = dateFilter;
+            invoiceCountQuery.billingDate = dateFilter;
+            
+            // Expense uses expenseDate
+            expenseQuery.expenseDate = dateFilter;
+            
+            // Service usually doesn't need date filter for "Active Services", 
+            // but if we want "Services created in this period", use createdAt.
+            // Dashboard usually shows CURRENT active services count, regardless of creation.
+            // So we generally DON'T filter services by date unless requested. 
+            // Let's keep serviceQuery without date filter for "Active Services Snapshot"
         }
 
         // Parallel Execution
@@ -65,39 +82,43 @@ exports.getDashboardStats = async (req, res) => {
             totalUsers
         ] = await Promise.all([
             // 1. Quick Counts
-            Lead.countDocuments(baseQuery),
-            Contact.countDocuments(baseQuery),
-            Service.countDocuments({ ...baseQuery, isActive: true }),
-            Activity.countDocuments(baseQuery),
-            Activity.countDocuments({ ...baseQuery, status: { $in: ['Scheduled', 'Pending', 'In Progress'] } }),
+            Lead.countDocuments(leadQuery),
+            Contact.countDocuments(contactQuery),
+            Service.countDocuments(serviceQuery),
+            Activity.countDocuments(activityQuery),
+            Activity.countDocuments({ ...activityQuery, status: { $in: ['Scheduled', 'Pending', 'In Progress'] } }),
 
             // 2. Leads by Status
             Lead.aggregate([
-                { $match: baseQuery },
+                { $match: leadQuery },
                 { $group: { _id: '$status', count: { $sum: 1 } } }
             ]),
 
             // 3. Activities by Type
             Activity.aggregate([
-                { $match: baseQuery },
+                { $match: activityQuery },
                 { $group: { _id: '$activityType', count: { $sum: 1 } } }
             ]),
 
             // 4. Revenue Stats (Paid)
             Billing.aggregate([
-                { $match: billingQuery },
+                { $match: revenueQuery },
                 { $group: { _id: null, totalRevenue: { $sum: '$grandTotal' } } }
             ]),
 
             // 5. Recent Activities
-            Activity.find(baseQuery)
-                .sort({ createdAt: -1 })
+            Activity.find(baseQuery) // Recent activities logs usually show EVERYTHING recent, not just in filtered range? 
+                // Actually if I filter "Last 30 days", show recent from last 30 days.
+                // But typically "Recent" means "Most recently created globally".
+                // Let's use activityQuery to be consistent with the view.
+                .find(activityQuery)
+                .sort({ activityDate: -1 }) // Sort by activityDate
                 .limit(5)
                 .populate('relatedId', 'name'),
 
-            // 6. Top Services
+            // 6. Top Services (Revenue based)
             Billing.aggregate([
-                { $match: billingQuery },
+                { $match: revenueQuery },
                 { $unwind: '$services' },
                 { $group: { 
                     _id: '$services.serviceName', 
@@ -109,51 +130,53 @@ exports.getDashboardStats = async (req, res) => {
             ]),
 
             // 7. Pending Revenue (Total Unpaid)
-            // Use paymentStatus !== 'PAID'
             Billing.aggregate([
-                { $match: { ...baseQuery, paymentStatus: { $ne: 'PAID' } } },
+                { $match: pendingQuery },
                 { $group: { _id: null, totalPending: { $sum: '$grandTotal' } } }
             ]),
 
             // 8. Financial Trend (Revenue, Expenses, Pending)
-            (() => {
+             (() => {
                 const interval = req.query.revenueInterval || 'daily';
                 let format = "%Y-%m-%d";
-                let startDateFilter = new Date();
+                let defaultStart = new Date();
                 
                 if (interval === 'daily') {
                     format = "%Y-%m-%d";
-                    startDateFilter.setDate(startDateFilter.getDate() - 30);
+                    defaultStart.setDate(defaultStart.getDate() - 30);
                 } else if (interval === 'monthly') {
                     format = "%Y-%m";
-                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 1);
+                    defaultStart.setFullYear(defaultStart.getFullYear() - 1);
                 } else if (interval === 'yearly') {
                     format = "%Y";
-                    startDateFilter.setFullYear(startDateFilter.getFullYear() - 5);
+                    defaultStart.setFullYear(defaultStart.getFullYear() - 5);
                 }
 
-                // If explicit date range provided in query, override
-                let dateFilter = { $gte: startDateFilter };
-                if (startDate && endDate) {
-                    dateFilter = { $gte: new Date(startDate), $lte: new Date(endDate) };
-                }
-
-                // We need to aggregate Revenue (Billing PAID), Expenses, and Pending (Billing PENDING)
-                // Since they are in different collections (Billing vs Expense), we run 3 parallel aggregations
-                // and then merge them in memory.
+                // If explicit date range provided in query, override defaultStart
+                // BUT keep the "Trend" logic which groups by date.
+                // We must apply the SAME date filter as the main dashboard if provided.
                 
+                let dateMatch = { $gte: defaultStart };
+                if (startDate && endDate) {
+                    dateMatch = { $gte: new Date(startDate), $lte: new Date(endDate) };
+                }
+
+                const trendRevenueQuery = { ...baseQuery, paymentStatus: 'PAID', billingDate: dateMatch };
+                const trendPendingQuery = { ...baseQuery, paymentStatus: { $in: ['PENDING', 'OVERDUE'] }, billingDate: dateMatch };
+                const trendExpenseQuery = { ...baseQuery, expenseDate: dateMatch };
+
                 const revenuePromise = Billing.aggregate([
-                    { $match: { ...baseQuery, paymentStatus: 'PAID', billingDate: dateFilter } },
+                    { $match: trendRevenueQuery },
                     { $group: { _id: { $dateToString: { format: format, date: "$billingDate" } }, total: { $sum: "$grandTotal" } } }
                 ]);
 
                 const expensePromise = Expense.aggregate([
-                    { $match: { ...baseQuery, expenseDate: dateFilter } },
+                    { $match: trendExpenseQuery },
                     { $group: { _id: { $dateToString: { format: format, date: "$expenseDate" } }, total: { $sum: "$amount" } } }
                 ]);
 
                 const pendingPromise = Billing.aggregate([
-                     { $match: { ...baseQuery, paymentStatus: { $in: ['PENDING', 'OVERDUE'] }, billingDate: dateFilter } },
+                     { $match: trendPendingQuery },
                      { $group: { _id: { $dateToString: { format: format, date: "$billingDate" } }, total: { $sum: "$grandTotal" } } }
                 ]);
 
@@ -162,6 +185,7 @@ exports.getDashboardStats = async (req, res) => {
                     
                     const addToMap = (arr, key) => {
                         arr.forEach(item => {
+                            if (!item._id) return; // safety
                             if (!map.has(item._id)) map.set(item._id, { _id: item._id, totalRevenue: 0, totalExpenses: 0, totalPending: 0 });
                             map.get(item._id)[key] = item.total;
                         });
@@ -175,13 +199,10 @@ exports.getDashboardStats = async (req, res) => {
                 });
             })(),
 
-            // 9. Lead Trend (Last 12 Months)
+            // 9. Lead Trend (Last 12 Months OR filtered range)
             Lead.aggregate([
                 { 
-                  $match: { 
-                    ...baseQuery,
-                    createdAt: { $gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)) }
-                  } 
+                  $match: leadQuery // Use the leadQuery which already has createdAt filter if applied
                 },
                 {
                   $group: {
@@ -194,7 +215,7 @@ exports.getDashboardStats = async (req, res) => {
 
             // 10. Win Rate / Conversion Rate
             Lead.aggregate([
-                { $match: baseQuery },
+                { $match: leadQuery },
                 {
                     $group: {
                         _id: null,
@@ -205,28 +226,28 @@ exports.getDashboardStats = async (req, res) => {
             ]),
 
             // 11. Recent Leads
-            Lead.find(baseQuery)
+            Lead.find(leadQuery)
                 .sort({ createdAt: -1 })
                 .limit(5)
                 .select('name status source createdAt email phone'),
 
             // 12. Leads by Source
             Lead.aggregate([
-                { $match: baseQuery },
+                { $match: leadQuery },
                 { $group: { _id: '$source', count: { $sum: 1 } } }
             ]),
 
             // 13. Total Expenses (Scalar)
             Expense.aggregate([
-                { $match: baseQuery },
+                { $match: expenseQuery },
                 { $group: { _id: null, total: { $sum: '$amount' } } }
             ]),
 
             // 14. Total Invoices (Count)
-            Billing.countDocuments(baseQuery),
+            Billing.countDocuments(invoiceCountQuery),
 
             // 15. Total Users (Count)
-            User.countDocuments(baseQuery)
+            User.countDocuments(baseQuery) // Users usually not filtered by date on dashboard
         ]);
 
 
