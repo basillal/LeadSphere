@@ -83,7 +83,7 @@ const createUser = asyncHandler(async (req, res) => {
         name,
         email,
         password,
-        role: roleId,
+        role: roleId || undefined, // Handle empty string case
         organization: targetOrganization,
         isActive: isActive !== undefined ? isActive : true
     });
@@ -132,13 +132,23 @@ const updateUser = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     
-    if (req.body.roleId) {
-        const targetRole = await Role.findById(req.body.roleId);
-        if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
-             res.status(403);
-             throw new Error('Not authorized to assign Super Admin role');
+    if (req.body.roleId !== undefined) {
+        // If roleId is provided (even empty string), handle it
+        if (req.body.roleId === "") {
+             // Decide logic: Set to undefined/null or ignore? 
+             // If user implies "remove role", set to undefined (if schema allows).
+             // But usually we just ignore empty string if it means "no change" or "invalid".
+             // For safety in updates, assuming valid ID or ignore if empty key sent.
+             // If expressly sent as empty string, maybe just don't update?
+             // Or better, check validity.
+        } else {
+            const targetRole = await Role.findById(req.body.roleId);
+            if (targetRole && targetRole.roleName === 'Super Admin' && !isSuperAdmin) {
+                 res.status(403);
+                 throw new Error('Not authorized to assign Super Admin role');
+            }
+            user.role = req.body.roleId;
         }
-        user.role = req.body.roleId;
     }
     
     if (req.body.isActive !== undefined) {
