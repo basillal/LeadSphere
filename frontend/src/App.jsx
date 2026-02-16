@@ -3,7 +3,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import { LoadingProvider } from "./context/LoadingProvider";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Login from "./pages/auth/Login";
-import RegisterCompany from "./pages/auth/RegisterCompany";
+import RegisterOrganization from "./pages/auth/RegisterOrganization";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/leads/Leads";
@@ -18,12 +18,12 @@ import Expenses from "./pages/expenses/Expenses";
 
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Companies from "./pages/admin/Companies";
+import Organizations from "./pages/admin/Organizations";
 import Roles from "./pages/admin/Roles";
 import Users from "./pages/admin/Users";
 import AuditLogs from "./pages/admin/AuditLogs";
 import PrintInvoice from "./pages/billing/PrintInvoice";
-import CompanyProfile from "./pages/admin/CompanyProfile";
+import OrganizationProfile from "./pages/admin/OrganizationProfile";
 import RoleGuard from "./components/auth/RoleGuard";
 import "./styles/App.css";
 
@@ -34,7 +34,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterCompany />} />
+            <Route path="/register" element={<RegisterOrganization />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<MainLayout />}>
@@ -50,10 +50,10 @@ function App() {
                 <Route path="expenses" element={<Expenses />} />
                 <Route path="print/invoice/:id" element={<PrintInvoice />} />
                 <Route
-                  path="admin/companies"
+                  path="admin/organizations"
                   element={
                     <RoleGuard role="Super Admin">
-                      <Companies />
+                      <Organizations />
                     </RoleGuard>
                   }
                 />
@@ -70,10 +70,10 @@ function App() {
                 <Route path="reports" element={<Reports />} />
                 <Route path="settings" element={<Settings />} />
                 <Route
-                  path="company-profile"
+                  path="organization-profile"
                   element={
-                    <RoleGuard role="Company Admin">
-                      <CompanyProfile />
+                    <RoleGuard role="Organization Admin">
+                      <OrganizationProfile />
                     </RoleGuard>
                   }
                 />

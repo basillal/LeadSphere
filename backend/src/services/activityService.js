@@ -6,13 +6,13 @@ const Lead = require('../models/Lead');
 class ActivityService {
     // Get all activities with filters and pagination
     async getActivities(filters = {}, pagination = {}) {
-        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', relatedId = '', dateFilter = '', startDate = '', endDate = '', sortBy = 'activityDate', sortOrder = 'desc', company = '' } = { ...filters, ...pagination };
+        const { page = 1, limit = 10, search = '', activityType = '', status = '', relatedTo = '', relatedId = '', dateFilter = '', startDate = '', endDate = '', sortBy = 'activityDate', sortOrder = 'desc', organization = '' } = { ...filters, ...pagination };
 
         const query = { isDeleted: false };
 
-        // Company Scope
-        if (company) {
-            query.company = company;
+        // Organization Scope
+        if (organization) {
+            query.organization = organization;
         }
 
         // Search filter
@@ -142,7 +142,7 @@ class ActivityService {
     // Get activity by ID
     async getActivityById(id) {
         const activity = await Activity.findOne({ _id: id, isDeleted: false })
-            .populate('relatedId', 'name phone email companyName')
+            .populate('relatedId', 'name phone email organizationName')
             .populate('service', 'serviceName serviceCode');
         
         if (!activity) {
@@ -177,7 +177,7 @@ class ActivityService {
                         scheduledAt: activityData.followUpDate,
                         type: 'Call', // Default, or could be inferred
                         notes: activityData.followUpNotes || `Follow up from activity: ${activity.title}`,
-                        company: activityData.company,
+                        organization: activityData.organization,
                         createdBy: activityData.createdBy,
                         status: 'Pending'
                     });
@@ -236,7 +236,7 @@ class ActivityService {
     // Get activity statistics
     async getActivityStats(filters = {}) {
         const baseQuery = { isDeleted: false };
-        if (filters.company) baseQuery.company = filters.company;
+        if (filters.organization) baseQuery.organization = filters.organization;
 
         const total = await Activity.countDocuments(baseQuery);
         

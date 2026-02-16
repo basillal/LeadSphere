@@ -7,10 +7,10 @@ exports.getActivities = async (req, res) => {
     try {
         const filters = { ...req.query };
         
-        // Enforce Company Scope
+        // Enforce Organization Scope
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            filters.company = req.user.company?._id || req.user.company;
+            filters.organization = req.user.organization?._id || req.user.organization;
         }
 
         const result = await activityService.getActivities(filters, req.query);
@@ -31,11 +31,11 @@ exports.getActivity = async (req, res) => {
         // Check Access
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            const userCompanyId = req.user.company?._id?.toString() || req.user.company?.toString();
-            const activityCompanyId = activity.company?.toString(); 
-            // Note: activity.company might be ObjectId or string depending on populate
+            const userOrganizationId = req.user.organization?._id?.toString() || req.user.organization?.toString();
+            const activityOrganizationId = activity.organization?.toString(); 
+            // Note: activity.organization might be ObjectId or string depending on populate
             
-            if (activityCompanyId && activityCompanyId !== userCompanyId) {
+            if (activityOrganizationId && activityOrganizationId !== userOrganizationId) {
                 return res.status(404).json({ message: 'Activity not found' });
             }
         }
@@ -51,12 +51,12 @@ exports.getActivity = async (req, res) => {
 // @access  Private
 exports.createActivity = async (req, res) => {
     try {
-        const companyId = req.user.company?._id || req.user.company;
+        const organizationId = req.user.organization?._id || req.user.organization;
         
         const activityData = {
             ...req.body,
             createdBy: req.user._id, // Use actual user ID
-            company: companyId
+            organization: organizationId
         };
 
         // Sanitize service field
@@ -83,8 +83,8 @@ exports.updateActivity = async (req, res) => {
         // Check Access
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-             const userCompanyId = req.user.company?._id?.toString() || req.user.company?.toString();
-            if (activity.company?.toString() !== userCompanyId) {
+             const userOrganizationId = req.user.organization?._id?.toString() || req.user.organization?.toString();
+            if (activity.organization?.toString() !== userOrganizationId) {
                 return res.status(404).json({ message: 'Activity not found' });
             }
         }
@@ -113,8 +113,8 @@ exports.deleteActivity = async (req, res) => {
         // Check Access
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            const userCompanyId = req.user.company?._id?.toString() || req.user.company?.toString();
-            if (activity.company?.toString() !== userCompanyId) {
+            const userOrganizationId = req.user.organization?._id?.toString() || req.user.organization?.toString();
+            if (activity.organization?.toString() !== userOrganizationId) {
                 return res.status(404).json({ message: 'Activity not found' });
             }
         }
@@ -134,10 +134,10 @@ exports.getActivitiesByRelated = async (req, res) => {
         const { relatedTo, relatedId } = req.params;
         
         const filters = { relatedTo, relatedId };
-        // Enforce Company Scope
+        // Enforce Organization Scope
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            filters.company = req.user.company?._id || req.user.company;
+            filters.organization = req.user.organization?._id || req.user.organization;
         }
 
         const activities = await activityService.getActivities(filters); // Re-use main getActivities which supports filters
@@ -153,10 +153,10 @@ exports.getActivitiesByRelated = async (req, res) => {
 exports.getActivityStats = async (req, res) => {
     try {
         const filters = {};
-         // Enforce Company Scope
+         // Enforce Organization Scope
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            filters.company = req.user.company?._id || req.user.company;
+            filters.organization = req.user.organization?._id || req.user.organization;
         }
 
         const stats = await activityService.getActivityStats(filters);

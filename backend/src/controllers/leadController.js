@@ -14,19 +14,19 @@ const getLeads = asyncHandler(async (req, res) => {
     const startIndex = (page - 1) * limit;
 
     // Base filter from Tenant Middleware
-    const query = { ...req.companyFilter, isDeleted: false };
+    const query = { ...req.organizationFilter, isDeleted: false };
 
-    // User-Level Isolation: If not Super Admin AND not Company Owner
-    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    // User-Level Isolation: If not Super Admin AND not Organization Owner
+    const isOwner = req.user.organization && req.user.organization.owner && req.user.organization.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin'; // Check role name too just in case
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin'; // Check role name too just in case
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         // Regular user can only see leads assigned to them
         query.assignedTo = req.user._id;
     }
 
-    // Search by name/phone/email/company
+    // Search by name/phone/email/organization
     if (req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
         query.$and = [
@@ -35,7 +35,7 @@ const getLeads = asyncHandler(async (req, res) => {
                     { name: searchRegex },
                     { phone: searchRegex },
                     { email: searchRegex },
-                    { companyName: searchRegex }
+                    { organizationName: searchRegex }
                 ]
             }
         ];
@@ -77,7 +77,7 @@ const getLeads = asyncHandler(async (req, res) => {
     
     await Lead.updateMany(
         { 
-            ...req.companyFilter,
+            ...req.organizationFilter,
             status: 'New', 
             createdAt: { $lt: startOfToday },
             isDeleted: false 
@@ -89,7 +89,7 @@ const getLeads = asyncHandler(async (req, res) => {
     const leads = await Lead.find(query)
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
-        .populate('company', 'name')
+        .populate('organization', 'name')
         .sort({ createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -114,28 +114,28 @@ const getLead = asyncHandler(async (req, res) => {
     const lead = await Lead.findById(req.params.id)
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
-        .populate('company', 'name');
+        .populate('organization', 'name');
 
     if (!lead || lead.isDeleted) {
         res.status(404);
         throw new Error('Lead not found');
     }
 
-    // 2. Check Company Isolation
-    // Safe-guard: Check Super Admin FIRST to avoid accessing req.user.company._id if it doesn't exist
+    // 2. Check Organization Isolation
+    // Safe-guard: Check Super Admin FIRST to avoid accessing req.user.organization._id if it doesn't exist
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+         if (!req.user.organization || lead.organization.toString() !== req.user.organization._id.toString()) {
              res.status(404);
              throw new Error('Lead not found');
          }
     }
 
     // 3. User-Level Isolation
-    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.organization && req.user.organization.owner && req.user.organization.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         // Regular user must be assigned to the lead or have created it
         if (lead.assignedTo?._id.toString() !== req.user._id.toString()) {
              res.status(403);
@@ -153,11 +153,11 @@ const getLead = asyncHandler(async (req, res) => {
 // @route   POST /api/leads
 // @access  Private
 const createLead = asyncHandler(async (req, res) => {
-    // ... (auto-assign company/creator/status logic) ...
-    // Auto-assign Company from Tenant Middleware (or User context)
-    // (Middleware already sets req.body.company if not Super Admin, but let's be safe)
-    if (!req.body.company && req.user.company) {
-        req.body.company = req.user.company._id;
+    // ... (auto-assign organization/creator/status logic) ...
+    // Auto-assign Organization from Tenant Middleware (or User context)
+    // (Middleware already sets req.body.organization if not Super Admin, but let's be safe)
+    if (!req.body.organization && req.user.organization) {
+        req.body.organization = req.user.organization._id;
     }
     
     // Auto-assign to Creator
@@ -171,16 +171,16 @@ const createLead = asyncHandler(async (req, res) => {
         req.body.status = req.body.status.trim();
     }
 
-    // Check if lead exists (Scoped to Company)
+    // Check if lead exists (Scoped to Organization)
     if (req.body.phone) {
         const leadExists = await Lead.findOne({ 
             phone: req.body.phone, 
-            company: req.body.company,
+            organization: req.body.organization,
             isDeleted: false 
         });
         if (leadExists) {
             res.status(400);
-            throw new Error('Lead with this phone number already exists in this company');
+            throw new Error('Lead with this phone number already exists in this organization');
         }
     }
 
@@ -191,7 +191,7 @@ const createLead = asyncHandler(async (req, res) => {
         try {
             await FollowUp.create({
                 lead: lead._id,
-                company: lead.company,
+                organization: lead.organization,
                 scheduledAt: req.body.nextFollowUpDate,
                 type: req.body.followUpMode || 'Call',
                 notes: req.body.followUpRemarks || 'Scheduled during lead creation',
@@ -229,17 +229,17 @@ const updateLead = asyncHandler(async (req, res) => {
 
     // Check Permissions
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+         if (!req.user.organization || lead.organization.toString() !== req.user.organization._id.toString()) {
              res.status(404);
              throw new Error('Lead not found');
          }
     }
 
-    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.organization && req.user.organization.owner && req.user.organization.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         if (lead.assignedTo?.toString() !== req.user._id.toString()) {
              res.status(403);
              throw new Error('Not authorized to update this lead');
@@ -273,7 +273,7 @@ const updateLead = asyncHandler(async (req, res) => {
          try {
             await FollowUp.create({
                 lead: lead._id,
-                company: lead.company,
+                organization: lead.organization,
                 scheduledAt: req.body.nextFollowUpDate,
                 type: req.body.followUpMode || 'Call', 
                 notes: req.body.followUpRemarks || 'Scheduled during lead update',
@@ -314,17 +314,17 @@ const deleteLead = asyncHandler(async (req, res) => {
 
     // Check Permissions
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+         if (!req.user.organization || lead.organization.toString() !== req.user.organization._id.toString()) {
              res.status(404);
              throw new Error('Lead not found');
          }
     }
 
-    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.organization && req.user.organization.owner && req.user.organization.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
          if (lead.assignedTo?.toString() !== req.user._id.toString()) {
               res.status(403);
               throw new Error('Not authorized to delete this lead');
@@ -347,14 +347,14 @@ const deleteLead = asyncHandler(async (req, res) => {
 // @route   GET /api/leads/stats
 // @access  Private
 const getLeadStats = asyncHandler(async (req, res) => {
-    const query = { ...req.companyFilter, isDeleted: false };
+    const query = { ...req.organizationFilter, isDeleted: false };
     
     // User isolation
-    const isOwner = req.user.company && req.user.company.owner && req.user.company.owner.toString() === req.user._id.toString();
+    const isOwner = req.user.organization && req.user.organization.owner && req.user.organization.owner.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         query.assignedTo = req.user._id;
     }
 

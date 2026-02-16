@@ -265,7 +265,7 @@ const ActivitiesTable = ({
                 Date
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Company
+                Organization
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Status
@@ -359,7 +359,7 @@ const ActivitiesTable = ({
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-sm text-gray-900">
-                        {activity.company?.name || "-"}
+                        {activity.organization?.name || "-"}
                       </span>
                     </td>
                     <td className="px-4 py-3">

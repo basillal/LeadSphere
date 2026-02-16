@@ -9,17 +9,17 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedCompany, setSelectedCompany] = useState(
-    localStorage.getItem("selectedCompany") || "",
+  const [selectedOrganization, setSelectedOrganization] = useState(
+    localStorage.getItem("selectedOrganization") || "",
   );
   const navigate = useNavigate();
 
-  const selectCompany = (companyId) => {
-    setSelectedCompany(companyId);
-    if (companyId) {
-      localStorage.setItem("selectedCompany", companyId);
+  const selectOrganization = (organizationId) => {
+    setSelectedOrganization(organizationId);
+    if (organizationId) {
+      localStorage.setItem("selectedOrganization", organizationId);
     } else {
-      localStorage.removeItem("selectedCompany");
+      localStorage.removeItem("selectedOrganization");
     }
     // Force reload/refresh context?
     // Usually React state update triggers re-render, and subsequent API calls will use new ID via interceptor (if configured).
@@ -90,8 +90,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         loading,
         isAuthenticated: !!user,
-        selectedCompany,
-        selectCompany,
+        selectedOrganization,
+        selectOrganization,
       }}
     >
       {!loading && children}

@@ -3,9 +3,9 @@ const Expense = require('../models/Expense');
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 
-// Helper to get company filter
-const getCompanyFilter = (req) => {
-    return req.companyFilter ? { ...req.companyFilter, isDeleted: false } : { isDeleted: false };
+// Helper to get organization filter
+const getOrganizationFilter = (req) => {
+    return req.organizationFilter ? { ...req.organizationFilter, isDeleted: false } : { isDeleted: false };
 };
 
 // Helper to get date filter from query params
@@ -30,16 +30,16 @@ const getDateFilter = (query) => {
 // @route   GET /api/reports/service-revenue
 // @access  Private
 const getServiceRevenue = asyncHandler(async (req, res) => {
-    const baseQuery = getCompanyFilter(req);
+    const baseQuery = getOrganizationFilter(req);
     const { start, end } = getDateFilter(req.query);
 
-    // Ensure company ID is ObjectId in match
+    // Ensure organization ID is ObjectId in match
     const matchQuery = { 
         ...baseQuery,
         billingDate: { $gte: start, $lte: end }
     };
-    if (matchQuery.company) {
-        matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
+    if (matchQuery.organization) {
+        matchQuery.organization = new mongoose.Types.ObjectId(matchQuery.organization);
     }
 
     // Use Aggregation
@@ -71,7 +71,7 @@ const getServiceRevenue = asyncHandler(async (req, res) => {
 // @route   GET /api/reports/monthly
 // @access  Private
 const getMonthlyTransactions = asyncHandler(async (req, res) => {
-    const baseQuery = getCompanyFilter(req);
+    const baseQuery = getOrganizationFilter(req);
     const { start, end } = getDateFilter(req.query);
 
     // Determine grouping: Daily if range <= 60 days, else Monthly
@@ -80,8 +80,8 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
     const groupBy = diffDays <= 65 ? 'day' : 'month'; // slightly > 2 months
 
     const matchQuery = { ...baseQuery };
-    if (matchQuery.company) {
-        matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
+    if (matchQuery.organization) {
+        matchQuery.organization = new mongoose.Types.ObjectId(matchQuery.organization);
     }
 
     // Aggregate Revenue (Billing)
@@ -210,15 +210,15 @@ const getMonthlyTransactions = asyncHandler(async (req, res) => {
 // @route   GET /api/reports/payment-status
 // @access  Private
 const getPaymentStatusStats = asyncHandler(async (req, res) => {
-    const baseQuery = getCompanyFilter(req);
+    const baseQuery = getOrganizationFilter(req);
     const { start, end } = getDateFilter(req.query);
 
     const matchQuery = { 
         ...baseQuery,
         billingDate: { $gte: start, $lte: end }
     };
-    if (matchQuery.company) {
-        matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
+    if (matchQuery.organization) {
+        matchQuery.organization = new mongoose.Types.ObjectId(matchQuery.organization);
     }
 
     const stats = await Billing.aggregate([
@@ -242,15 +242,15 @@ const getPaymentStatusStats = asyncHandler(async (req, res) => {
 // @route   GET /api/reports/contact-billing
 // @access  Private
 const getContactBilling = asyncHandler(async (req, res) => {
-    const baseQuery = getCompanyFilter(req);
+    const baseQuery = getOrganizationFilter(req);
     const { start, end } = getDateFilter(req.query);
 
     const matchQuery = { 
         ...baseQuery,
         billingDate: { $gte: start, $lte: end }
     };
-    if (matchQuery.company) {
-        matchQuery.company = new mongoose.Types.ObjectId(matchQuery.company);
+    if (matchQuery.organization) {
+        matchQuery.organization = new mongoose.Types.ObjectId(matchQuery.organization);
     }
 
     const stats = await Billing.aggregate([
@@ -275,7 +275,7 @@ const getContactBilling = asyncHandler(async (req, res) => {
          {
              $project: {
                  contactName: '$contactDetails.name',
-                 companyName: '$contactDetails.companyName',
+                 organizationName: '$contactDetails.organizationName',
                  totalSpent: 1,
                  invoiceCount: 1,
                  lastBilled: 1

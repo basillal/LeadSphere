@@ -8,10 +8,10 @@ import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-const RegisterCompany = () => {
+const RegisterOrganization = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    companyName: "",
+    organizationName: "",
     adminName: "",
     email: "",
     password: "",
@@ -31,7 +31,7 @@ const RegisterCompany = () => {
     setError("");
 
     try {
-      await api.post("/auth/register-company", formData);
+      await api.post("/auth/register-organization", formData);
       // On success, redirect to login with a success message (could be passed via state)
       // For now, just redirect
       navigate("/login", {
@@ -61,10 +61,10 @@ const RegisterCompany = () => {
             <BusinessIcon className="text-black text-3xl" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Register Company
+            Register Organization
           </h2>
           <p className="mt-2 text-sm text-gray-500">
-            Create your company account
+            Create your organization account
           </p>
         </div>
 
@@ -94,19 +94,19 @@ const RegisterCompany = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Company Name */}
+            {/* Organization Name */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <BusinessIcon className="h-5 w-5 text-black transition-colors" />
               </div>
               <input
-                id="companyName"
-                name="companyName"
+                id="organizationName"
+                name="organizationName"
                 type="text"
                 required
                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="Company Name"
-                value={formData.companyName}
+                placeholder="Organization Name"
+                value={formData.organizationName}
                 onChange={handleChange}
                 autoFocus
               />
@@ -141,7 +141,7 @@ const RegisterCompany = () => {
                 autoComplete="email"
                 required
                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="admin@company.com"
+                placeholder="admin@organization.com"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -184,7 +184,7 @@ const RegisterCompany = () => {
               type="submit"
               className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              Register Company
+              Register Organization
             </button>
           </div>
 
@@ -205,4 +205,4 @@ const RegisterCompany = () => {
   );
 };
 
-export default RegisterCompany;
+export default RegisterOrganization;

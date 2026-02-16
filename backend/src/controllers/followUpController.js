@@ -9,14 +9,14 @@ const { logAudit } = require('../utils/auditLogger');
 // @access  Private
 const getFollowUps = asyncHandler(async (req, res) => {
     // Base filter from Tenant Middleware
-    const query = { ...req.companyFilter };
+    const query = { ...req.organizationFilter };
 
     // User-Level Isolation
-    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isOwner = req.user && req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         // Regular user can only see follow-ups assigned to them OR created by them
         query.$or = [
             { assignedTo: req.user._id },
@@ -46,7 +46,7 @@ const getFollowUps = asyncHandler(async (req, res) => {
 
     // Include Lead details
     const followUps = await FollowUp.find(query)
-        .populate('lead', 'name phone email companyName status')
+        .populate('lead', 'name phone email organizationName status')
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
         .sort({ scheduledAt: 1 });
@@ -71,9 +71,9 @@ const createFollowUp = asyncHandler(async (req, res) => {
         throw new Error('Lead not found');
     }
 
-    // Inject Company & Creator
-    if (!req.body.company && req.user.company) {
-        req.body.company = req.user.company._id;
+    // Inject Organization & Creator
+    if (!req.body.organization && req.user.organization) {
+        req.body.organization = req.user.organization._id;
     }
     
     req.body.createdBy = req.user._id;
@@ -209,14 +209,14 @@ const getLeadFollowUps = asyncHandler(async (req, res) => {
 // @access  Private
 const getFollowUpStats = asyncHandler(async (req, res) => {
     // Base filter from Tenant Middleware
-    const query = { ...req.companyFilter };
+    const query = { ...req.organizationFilter };
 
     // User-Level Isolation (Same logic as getFollowUps)
-    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isOwner = req.user && req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         query.$or = [
             { assignedTo: req.user._id },
             { createdBy: req.user._id }

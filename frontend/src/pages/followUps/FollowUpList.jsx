@@ -96,11 +96,11 @@ const FollowUpList = ({
       ),
     },
     {
-      id: "company",
-      label: "Company",
+      id: "organization",
+      label: "Organization",
       render: (row) => (
         <span className="text-sm text-gray-600">
-          {row.company?.name || "-"}
+          {row.organization?.name || "-"}
         </span>
       ),
     },

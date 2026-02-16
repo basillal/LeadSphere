@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
-import companyService from "../../services/companyService";
+import organizationService from "../../services/organizationService";
 import BasicModal from "../../components/common/modals/BasicModal";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
-const Companies = () => {
-  const [companies, setCompanies] = useState([]);
+const Organizations = () => {
+  const [organizations, setOrganizations] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentCompany, setCurrentCompany] = useState(null);
+  const [currentOrganization, setCurrentOrganization] = useState(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -21,28 +21,28 @@ const Companies = () => {
 
   // Delete/Captcha State
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [companyToDelete, setCompanyToDelete] = useState(null);
+  const [organizationToDelete, setOrganizationToDelete] = useState(null);
   const [captchaCode, setCaptchaCode] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
 
-  const fetchCompanies = async () => {
+  const fetchOrganizations = async () => {
     // setLoading(true);
     try {
-      const response = await companyService.getCompanies();
-      setCompanies(response.data);
+      const response = await organizationService.getOrganizations();
+      setOrganizations(response.data);
     } catch (error) {
-      console.error("Error fetching companies:", error);
+      console.error("Error fetching organizations:", error);
     } finally {
       // setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompanies();
+    fetchOrganizations();
   }, []);
 
   const handleCreate = () => {
-    setCurrentCompany(null);
+    setCurrentOrganization(null);
     setFormData({
       name: "",
       plan: "Free",
@@ -53,15 +53,15 @@ const Companies = () => {
     setIsModalOpen(true);
   };
 
-  const handleEdit = (company) => {
-    setCurrentCompany(company);
+  const handleEdit = (organization) => {
+    setCurrentOrganization(organization);
     setFormData({
-      name: company.name,
-      plan: company.plan,
-      ownerName: company.owner?.name || "",
-      ownerEmail: company.owner?.email || "",
-      isActive: company.isActive,
-      logo: company.settings?.logo || "",
+      name: organization.name,
+      plan: organization.plan,
+      ownerName: organization.owner?.name || "",
+      ownerEmail: organization.owner?.email || "",
+      isActive: organization.isActive,
+      logo: organization.settings?.logo || "",
     });
     setIsModalOpen(true);
   };
@@ -73,61 +73,61 @@ const Companies = () => {
       const payload = {
         ...formData,
         settings: {
-          ...(currentCompany?.settings || {}),
+          ...(currentOrganization?.settings || {}),
           logo: formData.logo,
         },
       };
 
-      if (currentCompany) {
-        await companyService.updateCompany(currentCompany._id, payload);
+      if (currentOrganization) {
+        await organizationService.updateOrganization(currentOrganization._id, payload);
       } else {
-        await companyService.createCompany(payload);
+        await organizationService.createOrganization(payload);
       }
       setIsModalOpen(false);
-      fetchCompanies();
+      fetchOrganizations();
     } catch (error) {
-      console.error("Error saving company:", error);
-      alert("Failed to save company. " + (error.response?.data?.message || ""));
+      console.error("Error saving organization:", error);
+      alert("Failed to save organization. " + (error.response?.data?.message || ""));
     }
   };
 
-  const handleStatusToggle = async (company) => {
+  const handleStatusToggle = async (organization) => {
     try {
-      const newStatus = !company.isActive;
-      await companyService.updateCompany(company._id, { isActive: newStatus });
-      fetchCompanies();
+      const newStatus = !organization.isActive;
+      await organizationService.updateOrganization(organization._id, { isActive: newStatus });
+      fetchOrganizations();
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Failed to update status.");
     }
   };
 
-  const handleDeleteClick = (company) => {
-    setCompanyToDelete(company);
+  const handleDeleteClick = (organization) => {
+    setOrganizationToDelete(organization);
     setCaptchaCode(Math.random().toString(36).substring(2, 8).toUpperCase());
     setCaptchaInput("");
     setDeleteModalOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (!companyToDelete) return;
+    if (!organizationToDelete) return;
     if (captchaInput !== captchaCode) return;
 
     try {
-      await companyService.deleteCompany(companyToDelete._id);
+      await organizationService.deleteOrganization(organizationToDelete._id);
       setDeleteModalOpen(false);
-      setCompanyToDelete(null);
-      fetchCompanies();
+      setOrganizationToDelete(null);
+      fetchOrganizations();
     } catch (error) {
-      console.error("Error deleting company:", error);
-      alert("Failed to delete company.");
+      console.error("Error deleting organization:", error);
+      alert("Failed to delete organization.");
     }
   };
 
   const columns = [
     {
       id: "name",
-      label: "Company name",
+      label: "Organization name",
       render: (row) => <span className="uppercase">{row.name}</span>,
     },
     { id: "plan", label: "Plan" },
@@ -208,17 +208,17 @@ const Companies = () => {
   return (
     <div className="w-full max-w-full overflow-x-hidden">
       <SectionHeader
-        title="Company Management"
+        title="Organization Management"
         subtitle="Manage organizations and their owners"
-        actionButton={{ label: "Create Company", onClick: handleCreate }}
+        actionButton={{ label: "Create Organization", onClick: handleCreate }}
       />
 
       <AdvancedTable
-        data={companies}
+        data={organizations}
         columns={columns}
         actions={actions}
         // isLoading={loading}
-        emptyMessage="No companies found."
+        emptyMessage="No organizations found."
         getRowId={(row) => row._id}
         pagination={{ enabled: false }} // Simple list for now
       />
@@ -227,7 +227,7 @@ const Companies = () => {
       <BasicModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={currentCompany ? "Edit Company" : "Create New Company"}
+        title={currentOrganization ? "Edit Organization" : "Create New Organization"}
         maxWidth="max-w-4xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -236,7 +236,7 @@ const Companies = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Company name *
+                  Organization name *
                 </label>
                 <input
                   type="text"
@@ -325,7 +325,7 @@ const Companies = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700">
-                    Company email
+                    Organization email
                   </label>
                   <input
                     type="email"
@@ -460,7 +460,7 @@ const Companies = () => {
             </div>
           </div>
 
-          {!currentCompany && (
+          {!currentOrganization && (
             <div className="border-t pt-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-3">
                 Owner Account
@@ -520,7 +520,7 @@ const Companies = () => {
       <BasicModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="Confirm Company Deletion"
+        title="Confirm Organization Deletion"
         maxWidth="max-w-md"
       >
         <div className="space-y-4">
@@ -529,7 +529,7 @@ const Companies = () => {
               Warning: This action is irreversible!
             </p>
             <p className="text-xs mt-1">
-              Deleting <strong>{companyToDelete?.name}</strong> will remove all
+              Deleting <strong>{organizationToDelete?.name}</strong> will remove all
               associated Users, Leads, Contacts, Activities, Services, Billing,
               Expenses, and settings.
             </p>
@@ -579,7 +579,7 @@ const Companies = () => {
               className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
                       ${captchaInput === captchaCode ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
             >
-              Delete Company
+              Delete Organization
             </button>
           </div>
         </div>
@@ -588,4 +588,4 @@ const Companies = () => {
   );
 };
 
-export default Companies;
+export default Organizations;

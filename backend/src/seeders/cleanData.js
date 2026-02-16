@@ -6,7 +6,7 @@ const Contact = require('../models/Contact');
 const Activity = require('../models/Activity');
 const FollowUp = require('../models/FollowUp');
 const Referrer = require('../models/Referrer');
-const Company = require('../models/Company');
+const Organization = require('../models/Organization');
 const User = require('../models/User');
 const Role = require('../models/Role');
 const Service = require('../models/Service');
@@ -30,7 +30,7 @@ const cleanData = async () => {
             activities: shouldCleanAll || args.includes('--activities'),
             followUps: shouldCleanAll || args.includes('--follow-ups'),
             referrers: shouldCleanAll || args.includes('--referrers'),
-            companies: shouldCleanAll || args.includes('--companies'),
+            organizations: shouldCleanAll || args.includes('--organizations'),
             services: shouldCleanAll || args.includes('--services'),
             billing: shouldCleanAll || args.includes('--billing'),
             expenses: shouldCleanAll || args.includes('--expenses'),
@@ -69,9 +69,9 @@ const cleanData = async () => {
             console.log('Referrers deleted.');
         }
         
-        if (collectionsToClean.companies) {
-            await Company.deleteMany({});
-            console.log('Companies deleted.');
+        if (collectionsToClean.organizations) {
+            await Organization.deleteMany({});
+            console.log('Organizations deleted.');
         }
 
         if (collectionsToClean.services) {

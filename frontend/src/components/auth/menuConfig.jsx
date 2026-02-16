@@ -77,8 +77,8 @@ export const menuConfig = [
     permission: "REFERRER_READ",
   },
   {
-    label: "Companies",
-    path: "/admin/companies",
+    label: "Organizations",
+    path: "/admin/organizations",
     icon: <BusinessIcon />,
     role: "Super Admin",
   },
@@ -102,10 +102,10 @@ export const menuConfig = [
   },
 
   {
-    label: "Company Profile",
-    path: "/company-profile",
+    label: "Organization Profile",
+    path: "/organization-profile",
     icon: <BusinessIcon />,
-    role: "Company Admin",
+    role: "Organization Admin",
   },
   {
     label: "Settings",

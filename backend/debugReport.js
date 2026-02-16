@@ -16,7 +16,7 @@ const run = async () => {
 
         if (sample) {
             console.log('Sample Billing Date:', sample.billingDate);
-            console.log('Sample Billing Company:', sample.company);
+            console.log('Sample Billing Organization:', sample.organization);
         }
 
         // Test Aggregation Logic locally

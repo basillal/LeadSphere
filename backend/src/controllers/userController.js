@@ -13,24 +13,24 @@ const getAllUsers = asyncHandler(async (req, res) => {
     
     // If tenant middleware is logically used or we manual check:
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id;
+    const organizationId = req.user.organization?._id;
 
     if (!isSuperAdmin) {
-        if (!companyId) {
+        if (!organizationId) {
              res.status(403);
              throw new Error('Not authorized'); // Should interact with middleware, but safe fallback
         }
-        query.company = companyId;
+        query.organization = organizationId;
     } else {
-        // Super Admin can filter by company if provided
-        if (req.query.company) {
-            query.company = req.query.company;
+        // Super Admin can filter by organization if provided
+        if (req.query.organization) {
+            query.organization = req.query.organization;
         }
     }
 
     const users = await User.find(query)
         .populate('role')
-        .populate('company', 'name') // Helpful to see company name
+        .populate('organization', 'name') // Helpful to see organization name
         .select('-password');
     res.json(users);
 });
@@ -53,7 +53,7 @@ const getUser = asyncHandler(async (req, res) => {
 // @access  Private (Admin)
 const createUser = asyncHandler(async (req, res) => {
     // ... params extraction code ...
-    const { name, email, password, roleId, isActive, company: companyInput } = req.body;
+    const { name, email, password, roleId, isActive, organization: organizationInput } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -61,13 +61,13 @@ const createUser = asyncHandler(async (req, res) => {
         throw new Error('User already exists');
     }
 
-    // Determine Company
+    // Determine Organization
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    let targetCompany = isSuperAdmin ? companyInput : req.user.company?._id;
+    let targetOrganization = isSuperAdmin ? organizationInput : req.user.organization?._id;
 
-    if (!isSuperAdmin && !targetCompany) {
+    if (!isSuperAdmin && !targetOrganization) {
          res.status(400);
-         throw new Error('Company context missing for new user.');
+         throw new Error('Organization context missing for new user.');
     }
 
     // Role Security Check
@@ -84,7 +84,7 @@ const createUser = asyncHandler(async (req, res) => {
         email,
         password,
         role: roleId,
-        company: targetCompany,
+        organization: targetOrganization,
         isActive: isActive !== undefined ? isActive : true
     });
 
@@ -96,7 +96,7 @@ const createUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            company: user.company,
+            organization: user.organization,
             isActive: user.isActive
         });
     } else {
@@ -120,7 +120,7 @@ const updateUser = asyncHandler(async (req, res) => {
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     
     if (!isSuperAdmin) {
-        if (user.company?.toString() !== req.user.company?._id.toString()) {
+        if (user.organization?.toString() !== req.user.organization?._id.toString()) {
              res.status(404);
              throw new Error('User not found');
         }
@@ -152,7 +152,7 @@ const updateUser = asyncHandler(async (req, res) => {
     
     await logAudit(req, 'UPDATE', 'User', updatedUser._id, `Updated user: ${updatedUser.email}`);
     
-    const userResponse = await User.findById(updatedUser._id).populate('role').populate('company').select('-password');
+    const userResponse = await User.findById(updatedUser._id).populate('role').populate('organization').select('-password');
     res.json(userResponse);
 });
 
@@ -169,7 +169,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     if (!isSuperAdmin) {
-        if (user.company?.toString() !== req.user.company?._id.toString()) {
+        if (user.organization?.toString() !== req.user.organization?._id.toString()) {
              res.status(404);
              throw new Error('User not found');
         }

@@ -1,26 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getCompanies,
-    getCompany,
-    createCompany,
-    updateCompany
-} = require('../controllers/companyController');
+    getOrganizations,
+    getOrganization,
+    createOrganization,
+    updateOrganization
+} = require('../controllers/organizationController');
 
 const { protect } = require('../middleware/authMiddleware');
 
-// All company routes are protected
+// All organization routes are protected
 router.use(protect);
 
 // TODO: strict 'Super Admin' middleware for create/list
 // const { adminOnly } = require('../middleware/authMiddleware'); // Need to implement later
 
 router.route('/')
-    .get(getCompanies)
-    .post(createCompany);
+    .get(getOrganizations)
+    .post(createOrganization);
 
 router.route('/:id')
-    .get(getCompany)
-    .put(updateCompany);
+    .get(getOrganization)
+    .put(updateOrganization);
 
 module.exports = router;

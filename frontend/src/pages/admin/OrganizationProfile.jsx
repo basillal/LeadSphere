@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
-import companyService from "../../services/companyService";
+import organizationService from "../../services/organizationService";
 import { useLoading } from "../../context/LoadingProvider";
 import Toast from "../../components/common/utils/Toast";
 import Input from "../../components/common/fields/Input";
@@ -10,7 +10,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 
-const CompanyProfile = () => {
+const OrganizationProfile = () => {
   const { user } = useAuth();
   const { loading } = useLoading();
   const [saving, setSaving] = useState(false);
@@ -43,38 +43,38 @@ const CompanyProfile = () => {
   });
 
   useEffect(() => {
-    fetchCompanyData();
+    fetchOrganizationData();
   }, [user]);
 
-  const fetchCompanyData = async () => {
-    if (user?.company?._id) {
+  const fetchOrganizationData = async () => {
+    if (user?.organization?._id) {
       try {
-        const response = await companyService.getCompany(user.company._id);
-        const company = response.data;
+        const response = await organizationService.getOrganization(user.organization._id);
+        const organization = response.data;
         setFormData({
-          name: company.name || "",
-          email: company.email || "",
-          phone: company.phone || "",
-          website: company.website || "",
-          description: company.description || "",
+          name: organization.name || "",
+          email: organization.email || "",
+          phone: organization.phone || "",
+          website: organization.website || "",
+          description: organization.description || "",
           address: {
-            street: company.address?.street || "",
-            city: company.address?.city || "",
-            state: company.address?.state || "",
-            zipCode: company.address?.zipCode || "",
-            country: company.address?.country || "",
+            street: organization.address?.street || "",
+            city: organization.address?.city || "",
+            state: organization.address?.state || "",
+            zipCode: organization.address?.zipCode || "",
+            country: organization.address?.country || "",
           },
           settings: {
-            logo: company.settings?.logo || "",
+            logo: organization.settings?.logo || "",
           },
-          plan: company.plan || "Free",
-          isActive: company.isActive,
+          plan: organization.plan || "Free",
+          isActive: organization.isActive,
         });
       } catch (error) {
-        console.error("Error fetching company profile:", error);
+        console.error("Error fetching organization profile:", error);
         setSnackbar({
           open: true,
-          message: "Failed to load company profile.",
+          message: "Failed to load organization profile.",
           severity: "error",
         });
       }
@@ -104,7 +104,7 @@ const CompanyProfile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await companyService.updateCompany(user.company._id, formData);
+      await organizationService.updateOrganization(user.organization._id, formData);
       setSnackbar({
         open: true,
         message: "Profile updated successfully!",
@@ -126,7 +126,7 @@ const CompanyProfile = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    fetchCompanyData();
+    fetchOrganizationData();
   };
 
   if (loading && !formData.name) {
@@ -228,7 +228,7 @@ const CompanyProfile = () => {
                   {isEditing ? (
                     <>
                       <Input
-                        label="Company Name"
+                        label="Organization Name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
@@ -258,7 +258,7 @@ const CompanyProfile = () => {
                   ) : (
                     <>
                       <ViewFieldSmall
-                        label="Company Name"
+                        label="Organization Name"
                         value={formData.name}
                       />
                       <ViewFieldSmall
@@ -398,4 +398,4 @@ const CompanyProfile = () => {
   );
 };
 
-export default CompanyProfile;
+export default OrganizationProfile;

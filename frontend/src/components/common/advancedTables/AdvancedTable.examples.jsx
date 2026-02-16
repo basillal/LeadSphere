@@ -165,7 +165,7 @@ const LeadsTableExample = ({
         </div>
       ),
     },
-    { id: "companyName", label: "Company" },
+    { id: "organizationName", label: "Organization" },
     { id: "phone", label: "Phone" },
     { id: "source", label: "Source" },
     {

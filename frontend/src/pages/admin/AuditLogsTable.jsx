@@ -49,7 +49,7 @@ const AuditLogsTable = ({ rows }) => {
               Entity
             </TableCell>
             <TableCell className="font-semibold text-gray-700">
-              Company
+              Organization
             </TableCell>
             <TableCell className="font-semibold text-gray-700">
               Details
@@ -95,9 +95,9 @@ const AuditLogsTable = ({ rows }) => {
                 </TableCell>
                 <TableCell>{row.entity}</TableCell>
                 <TableCell>
-                  {row.company?.name ||
-                    (row.company
-                      ? "Company ID: " + row.company
+                  {row.organization?.name ||
+                    (row.organization
+                      ? "Organization ID: " + row.organization
                       : "Global/System")}
                 </TableCell>
                 <TableCell>

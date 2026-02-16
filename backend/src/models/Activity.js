@@ -148,9 +148,9 @@ const ActivitySchema = new mongoose.Schema({
     },
     
     // Multi-tenancy
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     }
 }, { 

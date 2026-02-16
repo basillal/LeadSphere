@@ -14,11 +14,11 @@ const getContacts = asyncHandler(async (req, res) => {
     const startIndex = (page - 1) * limit;
 
     // Base filter from Tenant Middleware
-    // Ensure req.companyFilter exists (middleware should handle this, but if missing, default empty safe?)
+    // Ensure req.organizationFilter exists (middleware should handle this, but if missing, default empty safe?)
     // If middleware is missing, this is empty.
-    const query = { ...(req.companyFilter || {}), isDeleted: false };
+    const query = { ...(req.organizationFilter || {}), isDeleted: false };
 
-    // User-Level Isolation: If not Super Admin AND not Company Owner
+    // User-Level Isolation: If not Super Admin AND not Organization Owner
     // Safe check for req.user
     if (!req.user) {
         // Should be caught by auth middleware, but just in case
@@ -26,16 +26,16 @@ const getContacts = asyncHandler(async (req, res) => {
         throw new Error('User not authenticated (Controller Assert)');
     }
 
-    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isOwner = req.user && req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         // Regular user can only see contacts assigned to them or created by them
         query.createdBy = req.user._id;
     }
 
-    // Search by name/phone/email/company
+    // Search by name/phone/email/organization
     if (req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
         query.$and = [
@@ -44,7 +44,7 @@ const getContacts = asyncHandler(async (req, res) => {
                     { name: searchRegex },
                     { phone: searchRegex },
                     { email: searchRegex },
-                    { companyName: searchRegex }
+                    { organizationName: searchRegex }
                 ]
             }
         ];
@@ -69,7 +69,7 @@ const getContacts = asyncHandler(async (req, res) => {
     const contacts = await Contact.find(query)
         .populate('leadId', 'name')
         .populate('createdBy', 'name')
-        .populate('company', 'name')
+        .populate('organization', 'name')
         .sort({ lastInteractionDate: -1, createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -99,7 +99,7 @@ const getContact = asyncHandler(async (req, res) => {
     
     // Check Permissions (Tenant Isolation)
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+         if (!req.user.organization || (contact.organization && contact.organization.toString() !== req.user.organization._id.toString())) {
              res.status(404);
              throw new Error('Contact not found');
          }
@@ -124,10 +124,10 @@ const createContact = asyncHandler(async (req, res) => {
         }
     }
 
-    // Inject Company & Creator
-    // Safe-guard: Check if company exists on user
-    if (!req.body.company && req.user.company) {
-        req.body.company = req.user.company._id || req.user.company; 
+    // Inject Organization & Creator
+    // Safe-guard: Check if organization exists on user
+    if (!req.body.organization && req.user.organization) {
+        req.body.organization = req.user.organization._id || req.user.organization; 
     }
     req.body.createdBy = req.user._id;
 
@@ -155,7 +155,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
 
     // Check Tenant Permission
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || lead.company.toString() !== req.user.company._id.toString()) {
+         if (!req.user.organization || lead.organization.toString() !== req.user.organization._id.toString()) {
              res.status(404);
              throw new Error('Lead not found');
          }
@@ -169,7 +169,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
     }
 
     // Check if phone already exists in contacts
-    const phoneExists = await Contact.findOne({ phone: lead.phone, company: lead.company, isDeleted: false });
+    const phoneExists = await Contact.findOne({ phone: lead.phone, organization: lead.organization, isDeleted: false });
     if (phoneExists) {
         res.status(400);
         throw new Error('A contact with this phone number already exists');
@@ -183,7 +183,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
         phone: lead.phone,
         alternatePhone: lead.alternatePhone,
         email: lead.email,
-        companyName: lead.companyName,
+        organizationName: lead.organizationName,
         designation: lead.designation,
         website: lead.website,
         preferredContactMode: lead.preferredContactMode,
@@ -197,7 +197,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
         tags: req.body.tags || ['Client'], 
         relationshipType: req.body.relationshipType || 'Business',
         createdBy: lead.createdBy || req.user._id,
-        company: lead.company 
+        organization: lead.organization 
     };
     
     const contact = await Contact.create(contactData);
@@ -233,18 +233,18 @@ const updateContact = asyncHandler(async (req, res) => {
     // Check Permissions
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     if (!isSuperAdmin) {
-        // Must belong to user's company
-        if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+        // Must belong to user's organization
+        if (!req.user.organization || (contact.organization && contact.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Contact not found');
         }
     }
 
     // Check User-level isolation if applied
-    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOwner = req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
          if (contact.createdBy?.toString() !== req.user._id.toString()) {
               res.status(403);
               throw new Error('Not authorized to update this contact');
@@ -255,7 +255,7 @@ const updateContact = asyncHandler(async (req, res) => {
     if (req.body.phone && req.body.phone !== contact.phone) {
         const phoneExists = await Contact.findOne({ 
             phone: req.body.phone, 
-            company: contact.company,
+            organization: contact.organization,
             isDeleted: false,
             _id: { $ne: req.params.id }
         });
@@ -292,16 +292,16 @@ const deleteContact = asyncHandler(async (req, res) => {
     // Check Permissions
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
     if (!isSuperAdmin) {
-        if (!req.user.company || (contact.company && contact.company.toString() !== req.user.company._id.toString())) {
+        if (!req.user.organization || (contact.organization && contact.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Contact not found');
         }
     }
 
-    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOwner = req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
          if (contact.createdBy?.toString() !== req.user._id.toString()) {
               res.status(403);
               throw new Error('Not authorized to delete this contact');
@@ -344,16 +344,16 @@ const deleteContact = asyncHandler(async (req, res) => {
 // @route   GET /api/contacts/stats
 // @access  Private
 const getContactStats = asyncHandler(async (req, res) => {
-    // IMPORTANT: Use Company Filter!
-    // Safe check if companyFilter exists
-    const query = { ...(req.companyFilter || {}), isDeleted: false }; 
+    // IMPORTANT: Use Organization Filter!
+    // Safe check if organizationFilter exists
+    const query = { ...(req.organizationFilter || {}), isDeleted: false }; 
 
     // Additional User Isolation if not Super Admin/Owner
-    const isOwner = req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isOwner = req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         query.createdBy = req.user._id;
     }
 

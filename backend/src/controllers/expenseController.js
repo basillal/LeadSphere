@@ -7,7 +7,7 @@ const { logAudit } = require('../utils/auditLogger');
 // @route   GET /api/expenses
 // @access  Private
 const getExpenses = asyncHandler(async (req, res) => {
-    const query = { ...(req.companyFilter || {}), isDeleted: false };
+    const query = { ...(req.organizationFilter || {}), isDeleted: false };
 
     if (req.query.search) {
         query.title = new RegExp(req.query.search, 'i');
@@ -48,11 +48,11 @@ const getExpense = asyncHandler(async (req, res) => {
     }
 
     // Permission check
-    const userCompanyId = req.user.company?._id || req.user.company;
-    const expenseCompanyId = expense.company?._id || expense.company;
+    const userOrganizationId = req.user.organization?._id || req.user.organization;
+    const expenseOrganizationId = expense.organization?._id || expense.organization;
 
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!userCompanyId || (expenseCompanyId && expenseCompanyId.toString() !== userCompanyId.toString())) {
+        if (!userOrganizationId || (expenseOrganizationId && expenseOrganizationId.toString() !== userOrganizationId.toString())) {
              res.status(404);
              throw new Error('Expense not found');
         }
@@ -75,10 +75,10 @@ const createExpense = asyncHandler(async (req, res) => {
         throw new Error('Please provide title, amount and category');
     }
 
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     const expense = await Expense.create({
-        company: companyId,
+        organization: organizationId,
         title,
         amount,
         category,
@@ -109,11 +109,11 @@ const updateExpense = asyncHandler(async (req, res) => {
     }
 
     // Permission check
-    const userCompanyId = req.user.company?._id || req.user.company;
-    const expenseCompanyId = expense.company?._id || expense.company;
+    const userOrganizationId = req.user.organization?._id || req.user.organization;
+    const expenseOrganizationId = expense.organization?._id || expense.organization;
 
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!userCompanyId || (expenseCompanyId && expenseCompanyId.toString() !== userCompanyId.toString())) {
+        if (!userOrganizationId || (expenseOrganizationId && expenseOrganizationId.toString() !== userOrganizationId.toString())) {
              res.status(404);
              throw new Error('Expense not found');
         }
@@ -144,11 +144,11 @@ const deleteExpense = asyncHandler(async (req, res) => {
     }
 
     // Permission check
-    const userCompanyId = req.user.company?._id || req.user.company;
-    const expenseCompanyId = expense.company?._id || expense.company;
+    const userOrganizationId = req.user.organization?._id || req.user.organization;
+    const expenseOrganizationId = expense.organization?._id || expense.organization;
 
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!userCompanyId || (expenseCompanyId && expenseCompanyId.toString() !== userCompanyId.toString())) {
+        if (!userOrganizationId || (expenseOrganizationId && expenseOrganizationId.toString() !== userOrganizationId.toString())) {
              res.status(404);
              throw new Error('Expense not found');
         }

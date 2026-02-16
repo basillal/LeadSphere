@@ -268,7 +268,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                             {c.name}
                           </div>
                           <div className="text-gray-500 text-xs">
-                            {c.companyName ? `${c.companyName} • ` : ""}{" "}
+                            {c.organizationName ? `${c.organizationName} • ` : ""}{" "}
                             {c.email || c.phone}
                           </div>
                         </li>
@@ -308,7 +308,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               <div className="text-gray-900 font-medium p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div className="text-lg">{initialData.contact.name}</div>
                 <div className="text-sm text-gray-500">
-                  {initialData.contact.companyName}
+                  {initialData.contact.organizationName}
                 </div>
               </div>
             )}
@@ -651,7 +651,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 };
 
 const Billings = () => {
-  const { selectedCompany } = useAuth();
+  const { selectedOrganization } = useAuth();
   const [billings, setBillings] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list");
@@ -681,7 +681,7 @@ const Billings = () => {
 
   useEffect(() => {
     fetchBillings();
-  }, [selectedCompany]);
+  }, [selectedOrganization]);
 
   const handleCreate = () => {
     setCurrentBilling(null);
@@ -704,8 +704,8 @@ const Billings = () => {
         });
       } else {
         const payload = { ...data };
-        if (selectedCompany) {
-          payload.company = selectedCompany;
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
         }
         const res = await billingService.createBilling(payload);
         setSnackbar({
@@ -760,11 +760,11 @@ const Billings = () => {
         row.contact?.name ? row.contact.name.toUpperCase() : "UNKNOWN",
     },
     {
-      id: "company",
-      label: "Company",
+      id: "organization",
+      label: "Organization",
       render: (row) => (
         <span className="text-sm font-medium text-gray-700">
-          {row.company?.name || "-"}
+          {row.organization?.name || "-"}
         </span>
       ),
     },

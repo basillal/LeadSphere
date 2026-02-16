@@ -6,9 +6,9 @@ const AuditLogSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company'
+        ref: 'Organization'
     },
     action: {
         type: String,

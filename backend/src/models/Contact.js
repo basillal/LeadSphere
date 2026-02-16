@@ -6,9 +6,9 @@ const ContactSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lead'
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     },
     convertedFrom: {
@@ -39,7 +39,7 @@ const ContactSchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
-    companyName: {
+    organizationName: {
         type: String,
         trim: true
     },
@@ -102,7 +102,7 @@ const ContactSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    companySize: {
+    organizationSize: {
         type: String,
         enum: ['1-10', '11-50', '51-200', '201-500', '500+', 'Unknown'],
         default: 'Unknown'
@@ -186,10 +186,10 @@ const ContactSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Index for faster queries
-ContactSchema.index({ company: 1, phone: 1 }, { unique: true });
+ContactSchema.index({ organization: 1, phone: 1 }, { unique: true });
 ContactSchema.index({ name: 1, phone: 1 });
 ContactSchema.index({ tags: 1 });
-ContactSchema.index({ companyName: 1 });
+ContactSchema.index({ organizationName: 1 });
 ContactSchema.index({ isDeleted: 1, isActive: 1 });
 
 module.exports = mongoose.model('Contact', ContactSchema);

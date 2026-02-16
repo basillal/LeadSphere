@@ -9,7 +9,7 @@ const Counter = require('../models/Counter');
 // @route   GET /api/billings
 // @access  Private
 const getBillings = asyncHandler(async (req, res) => {
-    const query = { ...(req.companyFilter || {}), isDeleted: false };
+    const query = { ...(req.organizationFilter || {}), isDeleted: false };
     
     if (req.query.contactId) {
         query.contact = req.query.contactId;
@@ -34,7 +34,7 @@ const getBillings = asyncHandler(async (req, res) => {
     }
 
     const billings = await Billing.find(query)
-        .populate('contact', 'name email phone companyName')
+        .populate('contact', 'name email phone organizationName')
         .populate('services.serviceId', 'serviceName serviceCode')
         .populate('createdBy', 'name')
         .sort({ billingDate: -1 });
@@ -51,9 +51,9 @@ const getBillings = asyncHandler(async (req, res) => {
 // @access  Private
 const getBilling = asyncHandler(async (req, res) => {
     const billing = await Billing.findById(req.params.id)
-        .populate('contact', 'name email phone companyName address')
+        .populate('contact', 'name email phone organizationName address')
         .populate('services.serviceId', 'serviceName serviceCode description')
-        .populate('company')
+        .populate('organization')
         .populate('createdBy', 'name');
 
     if (!billing || billing.isDeleted) {
@@ -63,10 +63,10 @@ const getBilling = asyncHandler(async (req, res) => {
 
     // Permission Check
     if (req.user.role?.roleName !== 'Super Admin') {
-         const userCompanyId = req.user.company?._id || req.user.company;
-         const billingCompanyId = billing.company?._id || billing.company;
+         const userOrganizationId = req.user.organization?._id || req.user.organization;
+         const billingOrganizationId = billing.organization?._id || billing.organization;
          
-         if (!userCompanyId || (billingCompanyId && billingCompanyId.toString() !== userCompanyId.toString())) {
+         if (!userOrganizationId || (billingOrganizationId && billingOrganizationId.toString() !== userOrganizationId.toString())) {
              res.status(404);
              throw new Error('Billing record not found');
          }
@@ -89,18 +89,18 @@ const createBilling = asyncHandler(async (req, res) => {
         throw new Error('Contact and at least one service are required');
     }
 
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
-    // Verify contact belongs to company
+    // Verify contact belongs to organization
     const contact = await Contact.findById(contactId);
-    if (!contact || contact.company.toString() !== companyId.toString()) {
+    if (!contact || contact.organization.toString() !== organizationId.toString()) {
          res.status(400);
          throw new Error('Invalid contact');
     }
 
     // Generate Invoice Number (Simple sequential or random for now)
     // PROD: Use a counter collection to ensure sequential numbers (INV-001, INV-002)
-    // Format: INV-<GlobalSeq>_<Year>_<CompanyInitials>-<CompanySeq>
+    // Format: INV-<GlobalSeq>_<Year>_<OrganizationInitials>-<OrganizationSeq>
     
     // 1. Global Sequence
     const globalCounter = await Counter.findByIdAndUpdate(
@@ -113,22 +113,22 @@ const createBilling = asyncHandler(async (req, res) => {
     // 2. Year
     const year = new Date().getFullYear();
 
-    // 3. Company Initials
-    const companyName = req.user.company?.name || 'Company';
-    const initials = companyName
+    // 3. Organization Initials
+    const organizationName = req.user.organization?.name || 'Organization';
+    const initials = organizationName
         .match(/\b\w/g) // Get first letter of each word
         .join('')
         .toUpperCase();
 
-    // 4. Company Sequence
-    const companyCounter = await Counter.findByIdAndUpdate(
-        `invoice_company_${companyId}`,
+    // 4. Organization Sequence
+    const organizationCounter = await Counter.findByIdAndUpdate(
+        `invoice_organization_${organizationId}`,
         { $inc: { seq: 1 } },
         { new: true, upsert: true }
     );
-    const companySeq = companyCounter.seq.toString().padStart(3, '0');
+    const organizationSeq = organizationCounter.seq.toString().padStart(3, '0');
 
-    const invoiceNumber = `INV-${globalSeq}-${year}-${initials}-${companySeq}`;
+    const invoiceNumber = `INV-${globalSeq}-${year}-${initials}-${organizationSeq}`;
 
     // Calculate totals (Backend validation)
     let subtotal = 0;
@@ -151,7 +151,7 @@ const createBilling = asyncHandler(async (req, res) => {
 
     const billing = await Billing.create({
         contact: contactId,
-        company: companyId,
+        organization: organizationId,
         invoiceNumber,
         services: processedServices,
         subtotal,
@@ -167,7 +167,7 @@ const createBilling = asyncHandler(async (req, res) => {
     });
 
     logger.info(`Invoice created: ${invoiceNumber} for Contact ${contact.name}`);
-    await logAudit(req, 'CREATE', 'Billing', billing._id, `Created invoice: ${invoiceNumber} (${req.user.company?.currency || '$'}${grandTotal})`);
+    await logAudit(req, 'CREATE', 'Billing', billing._id, `Created invoice: ${invoiceNumber} (${req.user.organization?.currency || '$'}${grandTotal})`);
 
     res.status(201).json({
         success: true,
@@ -188,7 +188,7 @@ const updateBilling = asyncHandler(async (req, res) => {
 
     // Permission check
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!req.user.company || (billing.company && billing.company.toString() !== req.user.company._id.toString())) {
+        if (!req.user.organization || (billing.organization && billing.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Billing record not found');
         }
@@ -230,7 +230,7 @@ const deleteBilling = asyncHandler(async (req, res) => {
 
     // Permission check
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!req.user.company || (billing.company && billing.company.toString() !== req.user.company._id.toString())) {
+        if (!req.user.organization || (billing.organization && billing.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Billing record not found');
         }

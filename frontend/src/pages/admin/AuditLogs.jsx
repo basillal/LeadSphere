@@ -22,7 +22,7 @@ const AuditLogs = () => {
     action: "",
     entity: "",
     userId: "",
-    companyId: "", // Useful for super admin later
+    organizationId: "", // Useful for super admin later
   });
 
   const [snackbar, setSnackbar] = useState({

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 require('./Role'); // Register Role model explicitly
-require('./Company'); // Register Company model explicitly
+require('./Organization'); // Register Organization model explicitly
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -24,9 +24,9 @@ const UserSchema = new mongoose.Schema({
         ref: 'Role'
         // required: true // Can be optional initially, or default to a 'Viewer' role if exists
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company'
+        ref: 'Organization'
     },
     isActive: {
         type: Boolean,

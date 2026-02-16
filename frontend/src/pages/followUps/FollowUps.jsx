@@ -8,7 +8,7 @@ import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
 const FollowUps = () => {
-  const { selectedCompany } = useAuth();
+  const { selectedOrganization } = useAuth();
   const [activeTab, setActiveTab] = useState("today");
   const [followUps, setFollowUps] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,7 +63,7 @@ const FollowUps = () => {
       console.error("Error fetching follow-ups:", error);
     } finally {
     }
-  }, [activeTab, pagination.page, pagination.limit, selectedCompany]);
+  }, [activeTab, pagination.page, pagination.limit, selectedOrganization]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -79,7 +79,7 @@ const FollowUps = () => {
   useEffect(() => {
     fetchFollowUps();
     fetchStats();
-  }, [fetchFollowUps, fetchStats, selectedCompany]);
+  }, [fetchFollowUps, fetchStats, selectedOrganization]);
 
   const handleCreate = () => {
     setCurrentFollowUp(null);
@@ -145,8 +145,8 @@ const FollowUps = () => {
         await followUpService.updateFollowUp(currentFollowUp._id, data);
       } else {
         const payload = { ...data };
-        if (selectedCompany) {
-          payload.company = selectedCompany;
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
         }
         await followUpService.createFollowUp(payload);
       }

@@ -22,7 +22,7 @@ const Breadcrumbs = () => {
     services: "Services",
     followups: "Follow-ups",
     user: "User",
-    companies: "Companies",
+    organizations: "Organizations",
     // Add more mappings as your app grows
   };
 

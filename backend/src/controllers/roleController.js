@@ -10,38 +10,38 @@ const getRoles = asyncHandler(async (req, res) => {
     const query = {};
     
     // Super Admin sees all? Or scoping?
-    // Usually Super Admin wants to see Global System Roles + their own company roles?
+    // Usually Super Admin wants to see Global System Roles + their own organization roles?
     // Let's standardise:
     // 1. Fetch System Roles (Global) - accessible to everyone usually, or just admins?
-    // 2. Fetch Company Scope Roles
+    // 2. Fetch Organization Scope Roles
     
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     if (isSuperAdmin) {
-        // If query param company is provided, filter by that.
-        // Else, show Global System Roles + Roles of specific company context if any
-        // If query param company is provided (via middleware or direct query), filter by that.
-        // req.companyFilter is populated by tenantMiddleware if header/query exists
-        const filterCompany = req.query.company || (req.companyFilter ? req.companyFilter.company : null);
+        // If query param organization is provided, filter by that.
+        // Else, show Global System Roles + Roles of specific organization context if any
+        // If query param organization is provided (via middleware or direct query), filter by that.
+        // req.organizationFilter is populated by tenantMiddleware if header/query exists
+        const filterOrganization = req.query.organization || (req.organizationFilter ? req.organizationFilter.organization : null);
 
-        if (filterCompany) {
-            // Show Global System Roles OR Roles for this specific company
+        if (filterOrganization) {
+            // Show Global System Roles OR Roles for this specific organization
             query.$or = [
                 { scope: 'global' },
-                { company: filterCompany }
+                { organization: filterOrganization }
             ];
         } else {
-            // If no company selected, show ALL roles (System + All Companies)
-            // This matches current behavior, which is likely what "All Companies" mode expects
+            // If no organization selected, show ALL roles (System + All Organizations)
+            // This matches current behavior, which is likely what "All Organizations" mode expects
         }
     } else {
-        // Regular Company Admin/User
-        // Show Global System Roles AND Company Roles
+        // Regular Organization Admin/User
+        // Show Global System Roles AND Organization Roles
         query.$or = [
             { scope: 'global' }, 
-            { company: companyId },
-            { accessibleByCompanyAdmin: true }
+            { organization: organizationId },
+            { accessibleByOrganizationAdmin: true }
         ];
     }
     
@@ -54,7 +54,7 @@ const getRoles = asyncHandler(async (req, res) => {
 
     const roles = await Role.find(query)
         .populate('permissions')
-        .populate('company', 'name');
+        .populate('organization', 'name');
     
     // Filter out "Super Admin" from result if not super admin
     const safeRoles = roles.filter(r => {
@@ -71,7 +71,7 @@ const getRoles = asyncHandler(async (req, res) => {
 const getRole = asyncHandler(async (req, res) => {
     const role = await Role.findById(req.params.id)
         .populate('permissions')
-        .populate('company', 'name');
+        .populate('organization', 'name');
     
     if (!role) {
         res.status(404);
@@ -80,11 +80,11 @@ const getRole = asyncHandler(async (req, res) => {
 
     // Access Check
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     if (!isSuperAdmin) {
-        // Can view if Global OR Belongs to Company
-        if (role.scope !== 'global' && (!role.company || role.company.toString() !== companyId.toString())) {
+        // Can view if Global OR Belongs to Organization
+        if (role.scope !== 'global' && (!role.organization || role.organization.toString() !== organizationId.toString())) {
              res.status(403);
              throw new Error('Not authorized to view this role');
         }
@@ -97,52 +97,52 @@ const getRole = asyncHandler(async (req, res) => {
 // @route   POST /api/roles
 // @access  Private (Admin)
 const createRole = asyncHandler(async (req, res) => {
-    const { roleName, description, permissions, accessibleByCompanyAdmin } = req.body;
+    const { roleName, description, permissions, accessibleByOrganizationAdmin } = req.body;
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
-    // Determine Scope & Company
-    let roleScope = 'company';
-    let roleCompany = companyId;
+    // Determine Scope & Organization
+    let roleScope = 'organization';
+    let roleOrganization = organizationId;
 
     if (isSuperAdmin) {
         // Super Admin can create Global roles
         if (req.body.isSystemRole) { // Or some flag
              roleScope = 'global';
-             roleCompany = null;
-        } else if (req.body.company) {
-             roleCompany = req.body.company;
+             roleOrganization = null;
+        } else if (req.body.organization) {
+             roleOrganization = req.body.organization;
         }
     } else {
-        if (!companyId) {
+        if (!organizationId) {
              res.status(400);
-             throw new Error('Company context missing');
+             throw new Error('Organization context missing');
         }
     }
 
     // Check for duplicate in this scope
     const query = { roleName };
-    if (roleCompany) {
-        query.company = roleCompany;
+    if (roleOrganization) {
+        query.organization = roleOrganization;
     } else {
         // Global role check
-        query.scope = 'global'; // or company: null
+        query.scope = 'global'; // or organization: null
     }
 
     const roleExists = await Role.findOne(query);
     if (roleExists) {
         res.status(400);
-        throw new Error('Role with this name already exists in this company/scope');
+        throw new Error('Role with this name already exists in this organization/scope');
     }
 
     const role = await Role.create({
         roleName,
         description,
         permissions,
-        company: roleCompany,
+        organization: roleOrganization,
         scope: roleScope,
         isSystemRole: false,
-        accessibleByCompanyAdmin: accessibleByCompanyAdmin || false
+        accessibleByOrganizationAdmin: accessibleByOrganizationAdmin || false
     });
 
     if (role) {
@@ -166,7 +166,7 @@ const updateRole = asyncHandler(async (req, res) => {
     }
 
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     // Authorization
     if (!isSuperAdmin) {
@@ -174,7 +174,7 @@ const updateRole = asyncHandler(async (req, res) => {
             res.status(403);
             throw new Error('Cannot edit system/global roles');
         }
-        if (role.company && role.company.toString() !== companyId.toString()) {
+        if (role.organization && role.organization.toString() !== organizationId.toString()) {
             res.status(403);
             throw new Error('Not authorized to edit this role');
         }
@@ -184,7 +184,7 @@ const updateRole = asyncHandler(async (req, res) => {
     if (req.body.roleName && req.body.roleName !== role.roleName) {
          // Check if new name exists in same scope
          const query = { roleName: req.body.roleName };
-         if (role.company) query.company = role.company;
+         if (role.organization) query.organization = role.organization;
          else query.scope = 'global';
          
          const duplicate = await Role.findOne(query);
@@ -197,8 +197,8 @@ const updateRole = asyncHandler(async (req, res) => {
     role.roleName = req.body.roleName || role.roleName;
     role.description = req.body.description || role.description;
     role.permissions = req.body.permissions || role.permissions;
-    if (req.body.accessibleByCompanyAdmin !== undefined) {
-        role.accessibleByCompanyAdmin = req.body.accessibleByCompanyAdmin;
+    if (req.body.accessibleByOrganizationAdmin !== undefined) {
+        role.accessibleByOrganizationAdmin = req.body.accessibleByOrganizationAdmin;
     }
 
     const updatedRole = await role.save();
@@ -220,7 +220,7 @@ const deleteRole = asyncHandler(async (req, res) => {
     }
 
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     // Authorization
     if (!isSuperAdmin) {
@@ -228,7 +228,7 @@ const deleteRole = asyncHandler(async (req, res) => {
             res.status(403);
             throw new Error('Cannot delete system/global roles');
         }
-        if (role.company && role.company.toString() !== companyId.toString()) {
+        if (role.organization && role.organization.toString() !== organizationId.toString()) {
             res.status(403);
             throw new Error('Not authorized to delete this role');
         }

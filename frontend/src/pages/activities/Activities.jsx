@@ -319,7 +319,7 @@ const PreviewModal = ({ activity, onClose }) => {
 };
 
 const Activities = () => {
-  const { selectedCompany } = useAuth();
+  const { selectedOrganization } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
   const [activities, setActivities] = useState([]);
   const [pagination, setPagination] = useState({
@@ -410,7 +410,7 @@ const Activities = () => {
     pagination.page,
     pagination.limit,
     dateRange,
-    selectedCompany,
+    selectedOrganization,
   ]);
 
   const fetchStats = async () => {
@@ -425,7 +425,7 @@ const Activities = () => {
 
   useEffect(() => {
     fetchStats();
-  }, [selectedCompany]);
+  }, [selectedOrganization]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -469,8 +469,8 @@ const Activities = () => {
         showSnackbar("Activity updated successfully", "success");
       } else {
         const payload = { ...data };
-        if (selectedCompany) {
-          payload.company = selectedCompany;
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
         }
         await activityService.createActivity(payload);
         showSnackbar("Activity created successfully", "success");

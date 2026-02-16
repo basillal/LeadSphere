@@ -6,7 +6,7 @@ import expenseService from "../../services/expenseService";
 import Toast from "../../components/common/utils/Toast";
 
 const Expenses = () => {
-  const { selectedCompany } = useAuth();
+  const { selectedOrganization } = useAuth();
   const [expenses, setExpenses] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +35,7 @@ const Expenses = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [selectedCompany]);
+  }, [selectedOrganization]);
 
   const handleCreate = () => {
     setCurrentExpense(null);
@@ -82,8 +82,8 @@ const Expenses = () => {
         Toast("Expense updated successfully", "success");
       } else {
         const payload = { ...formData };
-        if (selectedCompany) {
-          payload.company = selectedCompany;
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
         }
         await expenseService.createExpense(payload);
         Toast("Expense created successfully", "success");
@@ -117,11 +117,11 @@ const Expenses = () => {
       ),
     },
     {
-      id: "company",
-      label: "Company",
+      id: "organization",
+      label: "Organization",
       render: (row) => (
         <span className="text-sm font-medium text-gray-700">
-          {row.company?.name || "-"}
+          {row.organization?.name || "-"}
         </span>
       ),
     },
@@ -168,7 +168,7 @@ const Expenses = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
           <p className="text-sm text-gray-500">
-            Track and manage company expenses
+            Track and manage organization expenses
           </p>
         </div>
         <button

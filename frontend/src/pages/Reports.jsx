@@ -334,7 +334,7 @@ const Reports = () => {
             <thead className="bg-gray-50 text-gray-500 font-medium h-8">
               <tr>
                 <th className="px-4 py-2">Client</th>
-                <th className="px-4 py-2">Company</th>
+                <th className="px-4 py-2">Organization</th>
                 <th className="px-4 py-2 text-right">Count</th>
                 <th className="px-4 py-2 text-right">Total Spent</th>
               </tr>
@@ -346,7 +346,7 @@ const Reports = () => {
                     {item.contactName}
                   </td>
                   <td className="px-4 py-2 text-gray-500">
-                    {item.companyName || "-"}
+                    {item.organizationName || "-"}
                   </td>
                   <td className="px-4 py-2 text-right">{item.invoiceCount}</td>
                   <td className="px-4 py-2 text-right font-medium">

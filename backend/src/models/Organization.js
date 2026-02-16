@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const CompanySchema = new mongoose.Schema({
+const OrganizationSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Please add a company name'],
+        required: [true, 'Please add an organization name'],
         trim: true
     },
     description: {
@@ -42,4 +42,4 @@ const CompanySchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Company', CompanySchema);
+module.exports = mongoose.model('Organization', OrganizationSchema);

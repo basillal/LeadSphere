@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 // @route   GET /api/services
 // @access  Private
 const getServices = asyncHandler(async (req, res) => {
-    const query = { ...(req.companyFilter || {}), isDeleted: false };
+    const query = { ...(req.organizationFilter || {}), isDeleted: false };
     
     // Filters
     if (req.query.industryType) {
@@ -42,9 +42,9 @@ const getService = asyncHandler(async (req, res) => {
         throw new Error('Service not found');
     }
 
-    // Check company permission
+    // Check organization permission
     if (req.user.role?.roleName !== 'Super Admin') {
-         if (!req.user.company || (service.company && service.company.toString() !== req.user.company._id.toString())) {
+         if (!req.user.organization || (service.organization && service.organization.toString() !== req.user.organization._id.toString())) {
              res.status(404);
              throw new Error('Service not found');
          }
@@ -67,14 +67,14 @@ const createService = asyncHandler(async (req, res) => {
         throw new Error('Please include a service name and base amount');
     }
 
-    const companyId = req.user.company?._id || req.user.company;
-    console.log('Company ID:', companyId);
+    const organizationId = req.user.organization?._id || req.user.organization;
+    console.log('Organization ID:', organizationId);
     
-    // Check if code exists in company
+    // Check if code exists in organization
     if (req.body.serviceCode) {
         const codeExists = await Service.findOne({ 
             serviceCode: req.body.serviceCode.toUpperCase(), 
-            company: companyId,
+            organization: organizationId,
             isDeleted: false 
         });
         if (codeExists) {
@@ -85,7 +85,7 @@ const createService = asyncHandler(async (req, res) => {
 
     const service = await Service.create({
         ...req.body,
-        company: companyId,
+        organization: organizationId,
         createdBy: req.user._id
     });
     
@@ -110,7 +110,7 @@ const updateService = asyncHandler(async (req, res) => {
 
     // Permission check
     if (req.user.role?.roleName !== 'Super Admin') {
-        if (!req.user.company || (service.company && service.company.toString() !== req.user.company._id.toString())) {
+        if (!req.user.organization || (service.organization && service.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Service not found');
         }
@@ -140,7 +140,7 @@ const deleteService = asyncHandler(async (req, res) => {
 
      // Permission check
      if (req.user.role?.roleName !== 'Super Admin') {
-        if (!req.user.company || (service.company && service.company.toString() !== req.user.company._id.toString())) {
+        if (!req.user.organization || (service.organization && service.organization.toString() !== req.user.organization._id.toString())) {
             res.status(404);
             throw new Error('Service not found');
         }

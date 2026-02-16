@@ -43,9 +43,9 @@ const ServiceSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     },
     createdBy: {
@@ -66,8 +66,8 @@ ServiceSchema.pre('save', async function() {
     }
 });
 
-// Compound unique index for serviceName within a company
-ServiceSchema.index({ company: 1, serviceName: 1 }, { unique: true });
-ServiceSchema.index({ company: 1, serviceCode: 1 }, { unique: true });
+// Compound unique index for serviceName within an organization
+ServiceSchema.index({ organization: 1, serviceName: 1 }, { unique: true });
+ServiceSchema.index({ organization: 1, serviceCode: 1 }, { unique: true });
 
 module.exports = mongoose.model('Service', ServiceSchema);

@@ -24,22 +24,22 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
 }));
 
 const Header = ({ handleDrawerToggle }) => {
-  const { user, logout, selectedCompany, selectCompany } = useAuth();
+  const { user, logout, selectedOrganization, selectOrganization } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [companies, setCompanies] = React.useState([]);
+  const [organizations, setOrganizations] = React.useState([]);
 
-  // Fetch companies if Super Admin
+  // Fetch organizations if Super Admin
 
-  // Logic to load companies
+  // Logic to load organizations
   React.useEffect(() => {
     if (user?.role?.roleName === "Super Admin") {
-      import("../../services/companyService").then((module) => {
-        const companyService = module.default;
-        companyService
-          .getCompanies({ limit: 100 })
+      import("../../services/organizationService").then((module) => {
+        const organizationService = module.default;
+        organizationService
+          .getOrganizations({ limit: 100 })
           .then((res) => {
-            setCompanies(res.data || []);
+            setOrganizations(res.data || []);
           })
           .catch((err) => console.error(err));
       });
@@ -115,13 +115,13 @@ const Header = ({ handleDrawerToggle }) => {
             LeadSphere
           </Typography>
 
-          {/* Company Switcher for Super Admin */}
+          {/* Organization Switcher for Super Admin */}
           {user?.role?.roleName === "Super Admin" && (
             <Box sx={{ minWidth: 200, mr: 2 }}>
               <FormControl fullWidth size="small">
                 <Select
-                  value={selectedCompany || ""}
-                  onChange={(e) => selectCompany(e.target.value)}
+                  value={selectedOrganization || ""}
+                  onChange={(e) => selectOrganization(e.target.value)}
                   displayEmpty
                   sx={{
                     color: "white",
@@ -150,9 +150,9 @@ const Header = ({ handleDrawerToggle }) => {
                   }}
                 >
                   <MenuItem value="">
-                    <em>All Companies</em>
+                    <em>All Organizations</em>
                   </MenuItem>
-                  {companies.map((c) => (
+                  {organizations.map((c) => (
                     <MenuItem key={c._id} value={c._id}>
                       {c.name}
                     </MenuItem>

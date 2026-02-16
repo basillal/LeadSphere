@@ -11,7 +11,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
       phone: "",
       email: "",
       alternatePhone: "",
-      companyName: "",
+      organizationName: "",
       designation: "",
       notes: "",
       isActive: true,
@@ -83,9 +83,9 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company name"
-            name="companyName"
-            value={formData.companyName}
+            label="Organization name"
+            name="organizationName"
+            value={formData.organizationName}
             onChange={handleChange}
             className="md:col-span-3"
           />

@@ -37,7 +37,7 @@ const ReferrerAutocomplete = ({
     if (!option) return "";
     if (typeof option === "string") return option;
     return `${option.name || "Unknown"} - ${option.phone || "N/A"}${
-      option.companyName ? ` (${option.companyName})` : ""
+      option.organizationName ? ` (${option.organizationName})` : ""
     }`;
   };
 
@@ -58,7 +58,7 @@ const ReferrerAutocomplete = ({
           sx={{ fontSize: "0.75rem" }}
         >
           {option.phone || "N/A"}
-          {option.companyName && ` • ${option.companyName}`}
+          {option.organizationName && ` • ${option.organizationName}`}
         </Typography>
       </Box>
     </Box>
@@ -67,7 +67,7 @@ const ReferrerAutocomplete = ({
   return (
     <Autocomplete
       label={label}
-      placeholder="Search by name, phone, or company..."
+      placeholder="Search by name, phone, or organization..."
       value={value}
       onChange={onChange}
       fetchOptions={fetchReferrers}

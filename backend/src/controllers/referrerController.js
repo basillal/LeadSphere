@@ -9,32 +9,32 @@ exports.getReferrers = async (req, res, next) => {
         const { search, page = 1, limit = 10 } = req.query;
         
         // Build query with Tenant Isolation
-        // Use companyFilter from middleware, or default to empty (Super Admin see all)
+        // Use organizationFilter from middleware, or default to empty (Super Admin see all)
         // If middleware is missing or bypassed, we might have issue, but assume tenantMiddleware runs.
-        const query = { ...(req.companyFilter || {}), isDeleted: false };
+        const query = { ...(req.organizationFilter || {}), isDeleted: false };
         
-        // Additional User Isolation if desired? User request says "depend on company wise". 
-        // "on that referer is belonhs to the company oly all the referer will be able to see super admin" 
-        // -> Implies Company Isolation. Super Admin sees all (handled by middleware usually if query param not set or handled by custom logic).
+        // Additional User Isolation if desired? User request says "depend on organization wise". 
+        // "on that referer is belonhs to the organization oly all the referer will be able to see super admin" 
+        // -> Implies Organization Isolation. Super Admin sees all (handled by middleware usually if query param not set or handled by custom logic).
         
         // Note: middleware logic for Super Admin:
-        // If query.company set -> filter by that.
+        // If query.organization set -> filter by that.
         // If not set -> empty filter (sees all).
         
-        // For Regular User -> Enforces company ID.
+        // For Regular User -> Enforces organization ID.
         
         if (search) {
             query.$or = [
                 { name: { $regex: search, $options: 'i' } },
                 { phone: { $regex: search, $options: 'i' } },
                 { email: { $regex: search, $options: 'i' } },
-                { companyName: { $regex: search, $options: 'i' } }
+                { organizationName: { $regex: search, $options: 'i' } }
             ];
         }
         
         // Execute query with pagination
         const referrers = await Referrer.find(query)
-            .populate('company', 'name')
+            .populate('organization', 'name')
             .populate('createdBy', 'name')
             .sort({ createdAt: -1 })
             .limit(limit * 1)
@@ -76,10 +76,10 @@ exports.getReferrerById = async (req, res, next) => {
 
         // Check Permissions (Tenant Isolation)
         if (req.user.role?.roleName !== 'Super Admin') {
-             const userCompanyId = req.user.company?._id || req.user.company;
-             const referrerCompanyId = referrer.company?._id || referrer.company;
+             const userOrganizationId = req.user.organization?._id || req.user.organization;
+             const referrerOrganizationId = referrer.organization?._id || referrer.organization;
              
-             if (!userCompanyId || (referrerCompanyId && referrerCompanyId.toString() !== userCompanyId.toString())) {
+             if (!userOrganizationId || (referrerOrganizationId && referrerOrganizationId.toString() !== userOrganizationId.toString())) {
                  return res.status(404).json({
                     success: false,
                     message: 'Referrer not found'
@@ -109,20 +109,20 @@ exports.createReferrer = async (req, res, next) => {
             });
         }
         
-        // Company ID is injected by middleware if not Super Admin. 
+        // Organization ID is injected by middleware if not Super Admin. 
         // If Super Admin, middleware injects from body or header context.
         // Just ensure createdBy is set
         req.body.createdBy = req.user._id;
 
-        // Ensure company is present (double safeguard)
-        if (!req.body.company && req.user.company) {
-             req.body.company = req.user.company._id || req.user.company;
+        // Ensure organization is present (double safeguard)
+        if (!req.body.organization && req.user.organization) {
+             req.body.organization = req.user.organization._id || req.user.organization;
         }
 
-        if (!req.body.company) {
+        if (!req.body.organization) {
              return res.status(400).json({
                 success: false,
-                message: 'Company context is required'
+                message: 'Organization context is required'
              });
         }
 
@@ -160,7 +160,7 @@ exports.updateReferrer = async (req, res, next) => {
         // Check Permissions
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            if (!req.user.company || (referrer.company && referrer.company.toString() !== req.user.company._id.toString())) {
+            if (!req.user.organization || (referrer.organization && referrer.organization.toString() !== req.user.organization._id.toString())) {
                 return res.status(404).json({
                     success: false,
                     message: 'Referrer not found'
@@ -206,7 +206,7 @@ exports.deleteReferrer = async (req, res, next) => {
         // Check Permissions
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            if (!req.user.company || (referrer.company && referrer.company.toString() !== req.user.company._id.toString())) {
+            if (!req.user.organization || (referrer.organization && referrer.organization.toString() !== req.user.organization._id.toString())) {
                 return res.status(404).json({
                     success: false,
                     message: 'Referrer not found'
@@ -231,20 +231,20 @@ exports.deleteReferrer = async (req, res, next) => {
 // @access  Private
 exports.getReferrerStats = async (req, res, next) => {
     try {
-        // Isolate Stats by Company
-        const query = { ...(req.companyFilter || {}), isDeleted: false };
+        // Isolate Stats by Organization
+        const query = { ...(req.organizationFilter || {}), isDeleted: false };
 
         const totalReferrers = await Referrer.countDocuments(query);
         const activeReferrers = await Referrer.countDocuments({ ...query, isActive: true });
         
-        // Get total leads referred (Need to join with Referrers or check Leads that refer to VALID referrers in this company?)
+        // Get total leads referred (Need to join with Referrers or check Leads that refer to VALID referrers in this organization?)
         // Issue: Leads store `referredBy` as ObjectId of Referrer.
-        // We know Referrers in this company.
-        // So we should find Leads where referredBy IN [List of Referrers in this Company].
-        // OR, if Leads also have `company` field (they do), we can just filter Leads by company.
-        // Assumption: A lead in Company A is referred by a Referrer in Company A.
+        // We know Referrers in this organization.
+        // So we should find Leads where referredBy IN [List of Referrers in this Organization].
+        // OR, if Leads also have `organization` field (they do), we can just filter Leads by organization.
+        // Assumption: A lead in Organization A is referred by a Referrer in Organization A.
         
-        const leadQuery = { ...(req.companyFilter || {}), isDeleted: false, referredBy: { $exists: true, $ne: null } };
+        const leadQuery = { ...(req.organizationFilter || {}), isDeleted: false, referredBy: { $exists: true, $ne: null } };
 
         const totalLeadsReferred = await Lead.countDocuments(leadQuery);
         
@@ -305,10 +305,10 @@ exports.getReferrerStatsById = async (req, res, next) => {
          // Check Permissions
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            const userCompanyId = req.user.company?._id || req.user.company;
-            const referrerCompanyId = referrer.company?._id || referrer.company;
+            const userOrganizationId = req.user.organization?._id || req.user.organization;
+            const referrerOrganizationId = referrer.organization?._id || referrer.organization;
 
-            if (!userCompanyId || (referrerCompanyId && referrerCompanyId.toString() !== userCompanyId.toString())) {
+            if (!userOrganizationId || (referrerOrganizationId && referrerOrganizationId.toString() !== userOrganizationId.toString())) {
                 return res.status(404).json({
                     success: false,
                     message: 'Referrer not found'
@@ -317,7 +317,7 @@ exports.getReferrerStatsById = async (req, res, next) => {
         }
 
         // Get total leads referred by this referrer
-        // Leads should also be in the same company, but just checking referrer ID is usually enough if IDs are unique.
+        // Leads should also be in the same organization, but just checking referrer ID is usually enough if IDs are unique.
         // But for safety/correctness, we'll trust the ID link.
         const leadQuery = { referredBy: req.params.id, isDeleted: false };
         
@@ -392,7 +392,7 @@ exports.getReferrerLeads = async (req, res, next) => {
         // Check Permissions
         const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
         if (!isSuperAdmin) {
-            if (!req.user.company || (referrer.company && referrer.company.toString() !== req.user.company._id.toString())) {
+            if (!req.user.organization || (referrer.organization && referrer.organization.toString() !== req.user.organization._id.toString())) {
                 return res.status(404).json({
                     success: false,
                     message: 'Referrer not found'

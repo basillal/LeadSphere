@@ -14,7 +14,7 @@ const RoleForm = ({
     roleName: "",
     description: "",
     permissions: [],
-    accessibleByCompanyAdmin: false,
+    accessibleByOrganizationAdmin: false,
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const RoleForm = ({
         roleName: initialData.roleName,
         description: initialData.description || "",
         permissions: initialData.permissions.map((p) => p._id),
-        accessibleByCompanyAdmin: initialData.accessibleByCompanyAdmin || false,
+        accessibleByOrganizationAdmin: initialData.accessibleByOrganizationAdmin || false,
       });
     }
   }, [initialData]);
@@ -102,22 +102,22 @@ const RoleForm = ({
           <div className="flex items-center space-x-2 mb-6">
             <input
               type="checkbox"
-              id="accessibleByCompanyAdmin"
-              name="accessibleByCompanyAdmin"
-              checked={formData.accessibleByCompanyAdmin || false}
+              id="accessibleByOrganizationAdmin"
+              name="accessibleByOrganizationAdmin"
+              checked={formData.accessibleByOrganizationAdmin || false}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  accessibleByCompanyAdmin: e.target.checked,
+                  accessibleByOrganizationAdmin: e.target.checked,
                 }))
               }
               className="h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
             />
             <label
-              htmlFor="accessibleByCompanyAdmin"
+              htmlFor="accessibleByOrganizationAdmin"
               className="text-sm text-gray-700"
             >
-              Allow Company Admins to access this role (System/Global Roles)
+              Allow Organization Admins to access this role (System/Global Roles)
             </label>
           </div>
         )}

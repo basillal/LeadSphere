@@ -37,12 +37,12 @@ const UsersTable = ({
       render: (row) => <span className="text-gray-600">{row.email}</span>,
     },
     {
-      id: "company",
-      label: "Company",
+      id: "organization",
+      label: "Organization",
       width: "w-1/4",
       render: (row) => (
         <span className="text-sm font-medium text-gray-700">
-          {row.company?.name || "-"}
+          {row.organization?.name || "-"}
         </span>
       ),
     },

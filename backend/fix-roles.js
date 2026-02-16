@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
 const User = require('./src/models/User');
 const Role = require('./src/models/Role');
-const Company = require('./src/models/Company');
+const Organization = require('./src/models/Organization');
 
 dotenv.config();
 
@@ -12,27 +12,27 @@ const fixRoles = async () => {
         await connectDB();
         console.log('DB Connected');
 
-        const companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
-        if (!companyAdminRole) {
-            console.error('Company Admin role not found. Run seeder first.');
+        const organizationAdminRole = await Role.findOne({ roleName: 'Organization Admin' });
+        if (!organizationAdminRole) {
+            console.error('Organization Admin role not found. Run seeder first.');
             process.exit(1);
         }
 
         // Find all Companies
-        const companies = await Company.find({});
+        const companies = await Organization.find({});
         console.log(`Checking ${companies.length} companies for owner roles...`);
 
-        for (const company of companies) {
-            if (!company.owner) continue;
+        for (const organization of companies) {
+            if (!organization.owner) continue;
             
-            const owner = await User.findById(company.owner);
+            const owner = await User.findById(organization.owner);
             if (owner) {
                 // Check if owner has a role
                 let needsSave = false;
                 
                 if (!owner.role) {
-                    console.log(`Assigning Role to: ${owner.email} (${company.name})`);
-                    owner.role = companyAdminRole._id;
+                    console.log(`Assigning Role to: ${owner.email} (${organization.name})`);
+                    owner.role = organizationAdminRole._id;
                     needsSave = true;
                 }
 

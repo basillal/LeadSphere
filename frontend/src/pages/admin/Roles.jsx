@@ -9,7 +9,7 @@ import Toast from "../../components/common/utils/Toast";
 import RoleStats from "./RoleStats";
 
 const Roles = () => {
-  const { user, selectedCompany } = useAuth();
+  const { user, selectedOrganization } = useAuth();
   const [roles, setRoles] = useState([]);
   const [stats, setStats] = useState({ total: 0, system: 0, custom: 0 });
   const [groupedPermissions, setGroupedPermissions] = useState({});
@@ -25,13 +25,13 @@ const Roles = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedCompany]);
+  }, [selectedOrganization]);
 
   const fetchData = async () => {
     try {
       // setLoading(true);
       const [rolesData, permissionsData] = await Promise.all([
-        roleService.getRoles(selectedCompany),
+        roleService.getRoles(selectedOrganization),
         roleService.getGroupedPermissions(),
       ]);
       setRoles(rolesData);
@@ -77,8 +77,8 @@ const Roles = () => {
   const handleSubmit = async (formData) => {
     try {
       const payload = { ...formData };
-      if (selectedCompany) {
-        payload.company = selectedCompany;
+      if (selectedOrganization) {
+        payload.organization = selectedOrganization;
       }
 
       if (currentRole) {

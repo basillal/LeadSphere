@@ -28,16 +28,16 @@ api.interceptors.request.use(
             config.headers.Authorization = `Bearer ${token}`;
         }
 
-        // Company Context Injection
-        const selectedCompany = localStorage.getItem('selectedCompany');
-        if (selectedCompany) {
-            config.headers['x-company-context'] = selectedCompany;
+        // Organization Context Injection
+        const selectedOrganization = localStorage.getItem('selectedOrganization');
+        if (selectedOrganization) {
+            config.headers['x-organization-context'] = selectedOrganization;
             
             // Keep query param for backward compatibility or direct GET filters
             if (!config.params) {
                 config.params = {};
             }
-            config.params.company = selectedCompany;
+            config.params.organization = selectedOrganization;
         }
 
         return config;

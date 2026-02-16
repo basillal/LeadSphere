@@ -195,7 +195,7 @@ const ContactDetails = () => {
                 {contact.name}
               </h1>
               <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
-                {contact.companyName && (
+                {contact.organizationName && (
                   <span className="flex items-center gap-1 capitalize">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +211,7 @@ const ContactDetails = () => {
                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                       />
                     </svg>
-                    {contact.companyName}
+                    {contact.organizationName}
                   </span>
                 )}
                 {contact.designation && (
@@ -370,10 +370,10 @@ const ContactDetails = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                      Company Size
+                      Organization Size
                     </label>
                     <p className="text-gray-900">
-                      {contact.companySize || "-"}
+                      {contact.organizationSize || "-"}
                     </p>
                   </div>
                 </div>

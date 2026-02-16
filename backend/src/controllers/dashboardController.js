@@ -15,23 +15,23 @@ exports.getDashboardStats = async (req, res) => {
         const { startDate, endDate } = req.query;
 
         // Base Query using tenant filter
-        // req.companyFilter is set by tenantMiddleware
-        // Example: { company: 'ObjectId', isDeleted: false } or just { isDeleted: false } for SuperAdmin global view
-        const baseQuery = req.companyFilter ? { ...req.companyFilter, isDeleted: false } : { isDeleted: false };
+        // req.organizationFilter is set by tenantMiddleware
+        // Example: { organization: 'ObjectId', isDeleted: false } or just { isDeleted: false } for SuperAdmin global view
+        const baseQuery = req.organizationFilter ? { ...req.organizationFilter, isDeleted: false } : { isDeleted: false };
         
-        // Ensure company is ObjectId for Aggregation (important!)
-        if (baseQuery.company) {
-            baseQuery.company = new mongoose.Types.ObjectId(baseQuery.company);
+        // Ensure organization is ObjectId for Aggregation (important!)
+        if (baseQuery.organization) {
+            baseQuery.organization = new mongoose.Types.ObjectId(baseQuery.organization);
         }
 
         const billingQuery = { ...baseQuery, paymentStatus: 'PAID' };
         
-        // Ensure company is ObjectId for billingQuery aggregation too
-        if (billingQuery.company) {
-             billingQuery.company = new mongoose.Types.ObjectId(billingQuery.company);
+        // Ensure organization is ObjectId for billingQuery aggregation too
+        if (billingQuery.organization) {
+             billingQuery.organization = new mongoose.Types.ObjectId(billingQuery.organization);
         }
 
-        const companyId = baseQuery.company; // For reference in code logic if needed
+        const organizationId = baseQuery.organization; // For reference in code logic if needed
 
         // Apply Date Filter if provided
         if (startDate && endDate) {

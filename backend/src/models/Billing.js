@@ -10,9 +10,9 @@ const BillingSchema = new mongoose.Schema({
         ref: 'Contact',
         required: true
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     },
     invoiceNumber: {
@@ -108,7 +108,7 @@ BillingSchema.pre('save', async function() {
     }
 });
 
-BillingSchema.index({ company: 1, invoiceNumber: 1 }, { unique: true });
+BillingSchema.index({ organization: 1, invoiceNumber: 1 }, { unique: true });
 BillingSchema.index({ contact: 1 });
 BillingSchema.index({ paymentStatus: 1 });
 BillingSchema.index({ billingDate: 1 });

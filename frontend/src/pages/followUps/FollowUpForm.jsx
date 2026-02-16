@@ -35,7 +35,7 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
 
   const isAdmin =
     currentUser?.role?.roleName === "Super Admin" ||
-    currentUser?.role?.roleName === "Company Admin";
+    currentUser?.role?.roleName === "Organization Admin";
 
   useEffect(() => {
     if (initialData) {
@@ -156,11 +156,11 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
                   .filter((u) => {
                     if (currentUser?.role?.roleName === "Super Admin")
                       return true;
-                    // For others, exclude the company owner (who is typically the admin themselves)
-                    // If currentUser.company is an object and owner exists
+                    // For others, exclude the organization owner (who is typically the admin themselves)
+                    // If currentUser.organization is an object and owner exists
                     const ownerId =
-                      currentUser?.company?.owner?._id ||
-                      currentUser?.company?.owner;
+                      currentUser?.organization?.owner?._id ||
+                      currentUser?.organization?.owner;
                     return u._id !== ownerId;
                   })
                   .map((u) => ({ value: u._id, label: u.name })),

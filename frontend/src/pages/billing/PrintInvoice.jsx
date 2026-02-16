@@ -65,7 +65,7 @@ const PrintInvoice = () => {
       <div className="p-12 text-center text-red-500">Invoice not found.</div>
     );
 
-  const company = invoice.company || {};
+  const organization = invoice.organization || {};
   const contact = invoice.contact || {};
 
   return (
@@ -85,10 +85,10 @@ const PrintInvoice = () => {
           <div className="w-1/2">
             {/* Logo or Placeholder */}
             <div className="mb-4">
-              {company.settings?.logo || company.logo ? (
+              {organization.settings?.logo || organization.logo ? (
                 <img
-                  src={company.settings?.logo || company.logo}
-                  alt={company.name}
+                  src={organization.settings?.logo || organization.logo}
+                  alt={organization.name}
                   className="h-16 w-auto object-contain mb-2"
                   onError={(e) => {
                     e.target.style.display = "none";
@@ -102,32 +102,32 @@ const PrintInvoice = () => {
                 className="w-12 h-12 bg-black text-white flex items-center justify-center font-bold text-xl rounded mb-2"
                 style={{
                   display:
-                    company.settings?.logo || company.logo ? "none" : "flex",
+                    organization.settings?.logo || organization.logo ? "none" : "flex",
                 }}
               >
-                {company.name ? company.name.charAt(0) : "L"}
+                {organization.name ? organization.name.charAt(0) : "L"}
               </div>
 
               <h1 className="text-2xl font-bold text-gray-900 uppercase">
-                {company.name || "Your Company Name"}
+                {organization.name || "Your Organization Name"}
               </h1>
             </div>
 
             <div className="text-sm text-gray-600 space-y-1">
               {/* Address rendering */}
-              {company.address ? (
+              {organization.address ? (
                 <>
-                  <p>{company.address.street}</p>
+                  <p>{organization.address.street}</p>
                   <p>
                     {[
-                      company.address.city,
-                      company.address.state,
-                      company.address.zipCode,
+                      organization.address.city,
+                      organization.address.state,
+                      organization.address.zipCode,
                     ]
                       .filter(Boolean)
                       .join(", ")}
                   </p>
-                  <p>{company.address.country}</p>
+                  <p>{organization.address.country}</p>
                 </>
               ) : (
                 // Fallback if no specific address in DB
@@ -137,15 +137,15 @@ const PrintInvoice = () => {
                 </>
               )}
               <p className="pt-2">
-                <strong>Phone:</strong> {company.phone || "+91 98765 43210"}
+                <strong>Phone:</strong> {organization.phone || "+91 98765 43210"}
               </p>
               <p>
                 <strong>Email:</strong>{" "}
-                {company.email || "support@leadsphere.com"}
+                {organization.email || "support@leadsphere.com"}
               </p>
-              {company.website && (
+              {organization.website && (
                 <p>
-                  <strong>Web:</strong> {company.website}
+                  <strong>Web:</strong> {organization.website}
                 </p>
               )}
             </div>
@@ -196,8 +196,8 @@ const PrintInvoice = () => {
             {contact.name || "Unknown Client"}
           </div>
           <div className="text-sm text-gray-600 space-y-0.5">
-            {contact.companyName && (
-              <p className="font-medium text-gray-800">{contact.companyName}</p>
+            {contact.organizationName && (
+              <p className="font-medium text-gray-800">{contact.organizationName}</p>
             )}
             {contact.email && <p>{contact.email}</p>}
             {contact.phone && <p>{contact.phone}</p>}
@@ -292,7 +292,7 @@ const PrintInvoice = () => {
 
         <div className="mt-16 text-center text-xs text-gray-400">
           <p>
-            © {new Date().getFullYear()} {company.name || "LeadSphere Inc."}.
+            © {new Date().getFullYear()} {organization.name || "LeadSphere Inc."}.
             All rights reserved.
           </p>
         </div>

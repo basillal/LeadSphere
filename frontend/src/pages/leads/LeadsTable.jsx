@@ -51,11 +51,11 @@ const LeadsTable = ({
       ),
     },
     {
-      id: "companyName",
+      id: "organizationName",
       label: "Prospect Co.", // Renamed to avoid confusion with Tenant
       width: "w-[15%]",
       render: (row) => (
-        <span className="capitalize">{row.companyName || "-"}</span>
+        <span className="capitalize">{row.organizationName || "-"}</span>
       ),
     },
     {
@@ -66,9 +66,9 @@ const LeadsTable = ({
     },
     {
       id: "tenant",
-      label: "Company",
+      label: "Organization",
       width: "w-[12%]",
-      render: (row) => row.company?.name || "-",
+      render: (row) => row.organization?.name || "-",
     },
     { id: "phone", label: "Phone", width: "w-[15%]" },
     { id: "source", label: "Source", width: "w-[15%]" },
@@ -221,7 +221,7 @@ const LeadsTable = ({
             {row.name}
           </h3>
           <p className="text-xs text-gray-500 capitalize">
-            {row.companyName || "-"}
+            {row.organizationName || "-"}
           </p>
         </div>
         <span

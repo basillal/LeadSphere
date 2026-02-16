@@ -271,7 +271,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 };
 
 const Services = () => {
-  const { selectedCompany } = useAuth();
+  const { selectedOrganization } = useAuth();
   const [services, setServices] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list, create, edit
@@ -297,7 +297,7 @@ const Services = () => {
 
   useEffect(() => {
     fetchServices();
-  }, [selectedCompany]);
+  }, [selectedOrganization]);
 
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
@@ -333,8 +333,8 @@ const Services = () => {
         showSnackbar("Service updated successfully");
       } else {
         const payload = { ...data };
-        if (selectedCompany) {
-          payload.company = selectedCompany;
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
         }
         await serviceService.createService(payload);
         showSnackbar("Service created successfully");
@@ -372,11 +372,11 @@ const Services = () => {
       ),
     },
     {
-      id: "company",
-      label: "Company",
+      id: "organization",
+      label: "Organization",
       render: (row) => (
         <span className="text-sm font-medium text-gray-700">
-          {row.company?.name || "-"}
+          {row.organization?.name || "-"}
         </span>
       ),
     },

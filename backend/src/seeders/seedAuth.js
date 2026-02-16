@@ -58,35 +58,39 @@ const seedAuth = async () => {
                 roleName: 'Super Admin',
                 permissions: allPermissionIds,
                 isSystemRole: true,
+                scope: 'global',
                 description: 'Has access to everything'
             });
             console.log('Super Admin Role created.');
         } else {
              superAdminRole.permissions = allPermissionIds;
+             superAdminRole.scope = 'global'; // Ensure scope is updated
              await superAdminRole.save();
              console.log('Super Admin Role updated.');
         }
 
-        // --- Company Admin ---
-        let companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
-        // All permissions EXCEPT permission management (Company Admin can manage roles now)
-        const companyAdminPermKeys = Object.keys(permissionIds).filter(key => 
+        // --- Organization Admin ---
+        let organizationAdminRole = await Role.findOne({ roleName: 'Organization Admin' });
+        // All permissions EXCEPT permission management (Organization Admin can manage roles now)
+        const organizationAdminPermKeys = Object.keys(permissionIds).filter(key => 
             !['PERMISSION_MANAGE'].includes(key)
         );
-        const companyAdminPermIds = companyAdminPermKeys.map(key => permissionIds[key]);
+        const organizationAdminPermIds = organizationAdminPermKeys.map(key => permissionIds[key]);
 
-        if (!companyAdminRole) {
-            companyAdminRole = await Role.create({
-                roleName: 'Company Admin',
-                permissions: companyAdminPermIds,
+        if (!organizationAdminRole) {
+            organizationAdminRole = await Role.create({
+                roleName: 'Organization Admin',
+                permissions: organizationAdminPermIds,
                 isSystemRole: true,
-                description: 'Admin for a specific company'
+                scope: 'organization',
+                description: 'Admin for a specific organization'
             });
-            console.log('Company Admin Role created.');
+            console.log('Organization Admin Role created.');
         } else {
-            companyAdminRole.permissions = companyAdminPermIds;
-            await companyAdminRole.save();
-            console.log('Company Admin Role updated.');
+            organizationAdminRole.permissions = organizationAdminPermIds;
+            organizationAdminRole.scope = 'organization'; // Ensure scope is updated
+            await organizationAdminRole.save();
+            console.log('Organization Admin Role updated.');
         }
 
         // --- Basic User ---
@@ -120,21 +124,23 @@ const seedAuth = async () => {
                 roleName: 'User',
                 permissions: finalUserPerms, 
                 isSystemRole: false,
-                accessibleByCompanyAdmin: true,
+                scope: 'organization',
+                accessibleByOrganizationAdmin: true,
                 description: 'Standard user'
             });
             console.log('User Role created.');
         } else {
             // Update standard user role permissions to include new features
             userRole.permissions = finalUserPerms;
-            userRole.accessibleByCompanyAdmin = true;
+            userRole.accessibleByOrganizationAdmin = true;
+            userRole.scope = 'organization'; // Ensure scope is updated
             await userRole.save();
             console.log('User Role updated.');
         }
 
-        // 3. Create Default Company (Required for Super Admin)
-        const Company = require('../models/Company');
-        let defaultCompany = await Company.findOne({ name: 'LeadSphere Inc.' });
+        // 3. Create Default Organization (Required for Super Admin)
+        const Organization = require('../models/Organization');
+        let defaultOrganization = await Organization.findOne({ name: 'LeadSphere Inc.' });
         
         // 4. Create Super Admin User
         const adminEmail = process.env.ADMIN_EMAIL || 'admin@leadsphere.com';
@@ -142,7 +148,7 @@ const seedAuth = async () => {
 
         let adminUser = await User.findOne({ email: adminEmail });
         
-        if (!defaultCompany) {
+        if (!defaultOrganization) {
              if (!adminUser) {
                  adminUser = await User.create({
                     name: 'Super Admin',
@@ -152,7 +158,7 @@ const seedAuth = async () => {
                     isActive: true
                 });
              }
-             defaultCompany = await Company.create({
+             defaultOrganization = await Organization.create({
                  name: 'LeadSphere Inc.',
                  owner: adminUser._id,
                  plan: 'Enterprise',
@@ -174,7 +180,7 @@ const seedAuth = async () => {
                      logo: 'https://cdn-icons-png.flaticon.com/512/2702/2702602.png' // Professional placeholder logo
                  }
              });
-             console.log('Default Company created.');
+             console.log('Default Organization created.');
         }
 
         if (!adminUser) {
@@ -183,7 +189,7 @@ const seedAuth = async () => {
                 email: adminEmail,
                 password: adminPassword,
                 role: superAdminRole._id,
-                company: defaultCompany._id,
+                organization: defaultOrganization._id,
                 isActive: true
             });
             console.log(`Super Admin User created: ${adminEmail}`);
@@ -193,8 +199,8 @@ const seedAuth = async () => {
                  adminUser.role = superAdminRole._id;
                  needSave = true;
              }
-             if(!adminUser.company || adminUser.company.toString() !== defaultCompany._id.toString()) {
-                 adminUser.company = defaultCompany._id;
+             if(!adminUser.organization || adminUser.organization.toString() !== defaultOrganization._id.toString()) {
+                 adminUser.organization = defaultOrganization._id;
                  needSave = true;
              }
              const isMatch = await adminUser.matchPassword(adminPassword);
