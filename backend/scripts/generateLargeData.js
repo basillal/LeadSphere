@@ -286,6 +286,26 @@ const generateData = async () => {
 
             // Convert Logic: if converted, create Contact and Billing
             if (lead.isConverted) {
+                const now = new Date();
+                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                const threeYearsAgo = new Date(now.getTime() - 365 * 3 * 24 * 60 * 60 * 1000);
+
+                // Randomly assign a tag
+                const rand = Math.random();
+                let tag = 'Client';
+                if (rand > 0.6) tag = 'Vendor';
+                if (rand > 0.8) tag = 'Partner';
+                if (rand > 0.95) tag = 'Friend';
+
+                // Randomly assign lastInteractionDate
+                const isRecent = Math.random() < 0.4;
+                let lastInteractionDate;
+                if (isRecent) {
+                    lastInteractionDate = getRandomDate(sevenDaysAgo, now);
+                } else {
+                    lastInteractionDate = getRandomDate(threeYearsAgo, sevenDaysAgo);
+                }
+
                 const contact = {
                     leadId: lead._id,
                     organization: org._id,
@@ -293,6 +313,8 @@ const generateData = async () => {
                     phone: lead.phone,
                     email: lead.email,
                     relationshipType: 'Business',
+                    tags: [tag],
+                    lastInteractionDate: lastInteractionDate,
                     createdBy: lead.assignedTo,
                     status: 'Active',
                     createdAt: lead.createdAt
