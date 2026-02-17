@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import activityService from "../../services/activityService";
 import ActivityStats from "./ActivityStats";
 import ActivitiesTable from "./ActivitiesTable";
@@ -318,6 +319,7 @@ const PreviewModal = ({ activity, onClose }) => {
 };
 
 const Activities = () => {
+  const { selectedOrganization } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
   const [activities, setActivities] = useState([]);
   const [pagination, setPagination] = useState({
@@ -401,9 +403,15 @@ const Activities = () => {
       console.error("Error fetching activities:", error);
       showSnackbar("Failed to fetch activities", "error");
     } finally {
-      // setLoading(false);
     }
-  }, [filters, activeTab, pagination.page, pagination.limit, dateRange]);
+  }, [
+    filters,
+    activeTab,
+    pagination.page,
+    pagination.limit,
+    dateRange,
+    selectedOrganization,
+  ]);
 
   const fetchStats = async () => {
     try {
@@ -417,7 +425,7 @@ const Activities = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [selectedOrganization]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -460,7 +468,11 @@ const Activities = () => {
         await activityService.updateActivity(currentActivity._id, data);
         showSnackbar("Activity updated successfully", "success");
       } else {
-        await activityService.createActivity(data);
+        const payload = { ...data };
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
+        }
+        await activityService.createActivity(payload);
         showSnackbar("Activity created successfully", "success");
       }
       setView("list");

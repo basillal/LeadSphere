@@ -14,7 +14,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
       phone: "",
       alternatePhone: "",
       email: "",
-      companyName: "",
+      organizationName: "",
       designation: "",
       website: "",
 
@@ -41,7 +41,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
 
       // Business Info
       industry: "",
-      companySize: "Unknown",
+      organizationSize: "Unknown",
       annualRevenue: "",
 
       // Interaction Tracking
@@ -178,9 +178,9 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company name"
-            name="companyName"
-            value={formData.companyName}
+            label="Organization name"
+            name="organizationName"
+            value={formData.organizationName}
             onChange={handleChange}
             className="md:col-span-2"
           />
@@ -349,7 +349,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         {/* 6. Business Information */}
         <SectionHeader
           title="6. Business Information"
-          subtitle="Company details"
+          subtitle="Organization details"
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
@@ -359,9 +359,9 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
             onChange={handleChange}
           />
           <Select
-            label="Company size"
-            name="companySize"
-            value={formData.companySize}
+            label="Organization size"
+            name="organizationSize"
+            value={formData.organizationSize}
             onChange={handleChange}
             options={["1-10", "11-50", "51-200", "201-500", "500+", "Unknown"]}
           />

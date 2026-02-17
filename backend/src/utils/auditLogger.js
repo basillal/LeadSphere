@@ -3,7 +3,7 @@ const logger = require('./logger');
 
 /**
  * Log an audit event
- * @param {Object} req - Express request object (to extract user, ip, company)
+ * @param {Object} req - Express request object (to extract user, ip, organization)
  * @param {String} action - Action performed (CREATE, UPDATE, DELETE, etc.)
  * @param {String} entity - Entity modified (Lead, Contact, User, etc.)
  * @param {String|Object} entityId - ID of the entity
@@ -19,7 +19,7 @@ const logAudit = async (req, action, entity, entityId, details, metadata = {}) =
 
         const auditEntry = {
             user: req.user._id,
-            company: req.user.company?._id || req.user.company, // Handle populated or unpopulated
+            organization: req.user.organization?._id || req.user.organization, // Handle populated or unpopulated
             action,
             entity,
             entityId,

@@ -14,7 +14,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       phone: "",
       alternatePhone: "",
       email: "",
-      companyName: "",
+      organizationName: "",
       designation: "",
       website: "",
 
@@ -177,9 +177,9 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           />
 
           <Input
-            label="Company name"
-            name="companyName"
-            value={formData.companyName}
+            label="Organization name"
+            name="organizationName"
+            value={formData.organizationName}
             onChange={handleChange}
             className="md:col-span-2"
           />

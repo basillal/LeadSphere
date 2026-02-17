@@ -11,19 +11,19 @@ const getAuditLogs = asyncHandler(async (req, res) => {
 
     const query = {};
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id || req.user.company;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
-    // Filter by Company
+    // Filter by Organization
     if (!isSuperAdmin) {
-        if (!companyId) {
+        if (!organizationId) {
             res.status(403);
             throw new Error('Not authorized');
         }
-        query.company = companyId;
+        query.organization = organizationId;
     } else {
-        // Super Admin can filter by company
-        if (req.query.companyId) {
-            query.company = req.query.companyId;
+        // Super Admin can filter by organization
+        if (req.query.organizationId) {
+            query.organization = req.query.organizationId;
         }
     }
     
@@ -45,7 +45,7 @@ const getAuditLogs = asyncHandler(async (req, res) => {
     const total = await AuditLog.countDocuments(query);
     const logs = await AuditLog.find(query)
         .populate('user', 'name email')
-        .populate('company', 'name') // Helpful for Super Admin
+        .populate('organization', 'name') // Helpful for Super Admin
         .sort({ createdAt: -1 })
         .skip(startIndex)
         .limit(limit);

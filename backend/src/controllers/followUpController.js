@@ -9,14 +9,14 @@ const { logAudit } = require('../utils/auditLogger');
 // @access  Private
 const getFollowUps = asyncHandler(async (req, res) => {
     // Base filter from Tenant Middleware
-    const query = { ...req.companyFilter };
+    const query = { ...req.organizationFilter };
 
     // User-Level Isolation
-    const isOwner = req.user && req.user.company && req.user.company?.owner?.toString() === req.user._id.toString();
+    const isOwner = req.user && req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const isCompanyAdmin = req.user.role?.roleName === 'Company Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
 
-    if (!isSuperAdmin && !isOwner && !isCompanyAdmin) {
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
         // Regular user can only see follow-ups assigned to them OR created by them
         query.$or = [
             { assignedTo: req.user._id },
@@ -44,16 +44,45 @@ const getFollowUps = asyncHandler(async (req, res) => {
         query.status = 'Pending'; 
     }
 
+    // Pagination
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const total = await FollowUp.countDocuments(query);
+
     // Include Lead details
     const followUps = await FollowUp.find(query)
-        .populate('lead', 'name phone email companyName status')
+        .populate('lead', 'name phone email organizationName status')
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
-        .sort({ scheduledAt: 1 });
+        .populate('organization', 'name')
+        .sort({ scheduledAt: 1 })
+        .skip(startIndex)
+        .limit(limit);
+
+    // Pagination result
+    const pagination = {};
+    if (endIndex < total) {
+        pagination.next = {
+            page: page + 1,
+            limit
+        };
+    }
+    if (startIndex > 0) {
+        pagination.prev = {
+            page: page - 1,
+            limit
+        };
+    }
+    pagination.pages = Math.ceil(total / limit);
+    pagination.total = total;
+    pagination.page = page;
 
     res.status(200).json({
         success: true,
         count: followUps.length,
+        pagination,
         data: followUps
     });
 });
@@ -71,9 +100,9 @@ const createFollowUp = asyncHandler(async (req, res) => {
         throw new Error('Lead not found');
     }
 
-    // Inject Company & Creator
-    if (!req.body.company && req.user.company) {
-        req.body.company = req.user.company._id;
+    // Inject Organization & Creator
+    if (!req.body.organization && req.user.organization) {
+        req.body.organization = req.user.organization._id;
     }
     
     req.body.createdBy = req.user._id;
@@ -194,6 +223,7 @@ const getLeadFollowUps = asyncHandler(async (req, res) => {
     const followUps = await FollowUp.find({ lead: req.params.leadId })
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
+        .populate('organization', 'name')
         .sort({ scheduledAt: -1 });
 
     res.status(200).json({
@@ -204,10 +234,88 @@ const getLeadFollowUps = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    Get follow-up statistics
+// @route   GET /api/follow-ups/stats
+// @access  Private
+const getFollowUpStats = asyncHandler(async (req, res) => {
+    // Base filter from Tenant Middleware
+    const query = { ...req.organizationFilter };
+
+    // User-Level Isolation (Same logic as getFollowUps)
+    const isOwner = req.user && req.user.organization && req.user.organization?.owner?.toString() === req.user._id.toString();
+    const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
+    const isOrganizationAdmin = req.user.role?.roleName === 'Organization Admin';
+
+    if (!isSuperAdmin && !isOwner && !isOrganizationAdmin) {
+        query.$or = [
+            { assignedTo: req.user._id },
+            { createdBy: req.user._id }
+        ];
+    }
+
+    // Date Ranges
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    // Aggregation
+    const stats = await FollowUp.aggregate([
+        { $match: query },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: 1 },
+                pending: {
+                    $sum: {
+                        $cond: [
+                            { 
+                                $and: [
+                                    { $eq: ["$status", "Pending"] },
+                                    { $gte: ["$scheduledAt", todayStart] },
+                                    { $lte: ["$scheduledAt", todayEnd] }
+                                ] 
+                            }, 
+                            1, 
+                            0
+                        ]
+                    }
+                },
+                completed: {
+                    $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] }
+                },
+                missed: {
+                    $sum: {
+                        $cond: [
+                            { 
+                                $and: [
+                                    { $ne: ["$status", "Completed"] },
+                                    { $lt: ["$scheduledAt", todayStart] }
+                                ] 
+                            }, 
+                            1, 
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    ]);
+
+    const result = stats.length > 0 ? stats[0] : { total: 0, pending: 0, completed: 0, missed: 0 };
+    delete result._id;
+
+    res.status(200).json({
+        success: true,
+        data: result
+    });
+});
+
 module.exports = {
     getFollowUps,
     createFollowUp,
     updateFollowUp,
     deleteFollowUp,
-    getLeadFollowUps
+    getLeadFollowUps,
+    getFollowUpStats
 };

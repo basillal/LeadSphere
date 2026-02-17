@@ -2,14 +2,14 @@ const asyncHandler = require('express-async-handler');
 
 /**
  * Middleware to enforce multi-tenancy rules.
- * Ensures that operations are scoped to the user's company.
+ * Ensures that operations are scoped to the user's organization.
  * 
  * Logic:
  * 1. Super Admin: Can access everything.
- *    - If 'company' query param is present, scope to that company.
- * 2. Company Admin: Scoped to req.user.company.
- *    - Cannot access other companies' data.
- * 3. Company User: Scoped to req.user.company.
+ *    - If 'organization' query param is present, scope to that organization.
+ * 2. Organization Admin: Scoped to req.user.organization.
+ *    - Cannot access other organizations' data.
+ * 3. Organization User: Scoped to req.user.organization.
  *    - May have additional restrictions (own data only) enforced by controller or additional middleware.
  */
 const tenantFilter = asyncHandler(async (req, res, next) => {
@@ -19,44 +19,44 @@ const tenantFilter = asyncHandler(async (req, res, next) => {
     }
 
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const companyId = req.user.company?._id;
+    const organizationId = req.user.organization?._id;
 
-    // Attach company isolation logic/filter to request object for controllers to use
+    // Attach organization isolation logic/filter to request object for controllers to use
     if (isSuperAdmin) {
-        // Super Admin can see all, or filter by specific company
-        const contextCompany = req.headers['x-company-context'];
+        // Super Admin can see all, or filter by specific organization
+        const contextOrganization = req.headers['x-organization-context'];
 
-        if (contextCompany) {
-            req.companyFilter = { company: contextCompany };
+        if (contextOrganization) {
+            req.organizationFilter = { organization: contextOrganization };
             // Inject into body for creation/updates if present
             if (req.method === 'POST' || req.method === 'PUT') {
-                 if (!req.body.company) {
-                    req.body.company = contextCompany;
+                 if (!req.body.organization) {
+                    req.body.organization = contextOrganization;
                  }
             }
-        } else if (req.query.company) {
-             req.companyFilter = { company: req.query.company };
+        } else if (req.query.organization) {
+             req.organizationFilter = { organization: req.query.organization };
         } else {
-            req.companyFilter = {}; // No filter, see all
+            req.organizationFilter = {}; // No filter, see all
         }
 
-        // IMPORTANT FOR REFERRER CREATION: If Super Admin is creating and no company in body or context,
+        // IMPORTANT FOR REFERRER CREATION: If Super Admin is creating and no organization in body or context,
         // we should probably warn or require it. Referrer model REQUIRES it.
-        if (req.method === 'POST' && !req.body.company) {
+        if (req.method === 'POST' && !req.body.organization) {
              // For now, let it fall through to Mongoose validation which gives 400.
-             // OR default to a system company if desired.
+             // OR default to a system organization if desired.
         }
     } else {
-        // Regular users/admins MUST be isolated to their company
-        if (!companyId) {
+        // Regular users/admins MUST be isolated to their organization
+        if (!organizationId) {
             res.status(403);
-            throw new Error('User does not belong to any company');
+            throw new Error('User does not belong to any organization');
         }
-        req.companyFilter = { company: companyId };
+        req.organizationFilter = { organization: organizationId };
         
-        // Also enforce that any CREATION attempts use this company ID
+        // Also enforce that any CREATION attempts use this organization ID
         if (req.method === 'POST') {
-             req.body.company = companyId;
+             req.body.organization = organizationId;
         }
     }
 

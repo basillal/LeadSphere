@@ -17,7 +17,7 @@ const login = asyncHandler(async (req, res) => {
             path: 'role',
             populate: { path: 'permissions' }
         })
-        .populate('company');
+        .populate('organization');
 
     if (user && (await user.matchPassword(password))) {
         if (!user.isActive) {
@@ -28,9 +28,9 @@ const login = asyncHandler(async (req, res) => {
             throw new Error('User is inactive');
         }
 
-        if (user.company && !user.company.isActive) {
+        if (user.organization && !user.organization.isActive) {
             res.status(401);
-            throw new Error('Company is inactive. Please contact support.');
+            throw new Error('Organization is inactive. Please contact support.');
         }
 
         const accessToken = generateAccessToken(user);
@@ -53,7 +53,7 @@ const login = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            company: user.company,
+            organization: user.organization,
             accessToken
         });
     } else {
@@ -100,7 +100,7 @@ const refresh = asyncHandler(async (req, res) => {
         const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'refreshSecret123');
         const user = await User.findById(decoded.id)
             .populate('role')
-            .populate('company');
+            .populate('organization');
 
         if (!user) {
             res.status(401);
@@ -124,24 +124,24 @@ const getMe = asyncHandler(async (req, res) => {
             path: 'role',
             populate: { path: 'permissions' }
         })
-        .populate('company');
+        .populate('organization');
 
     res.json({
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
-        company: user.company
+        organization: user.organization
     });
 });
 
-// @desc    Register a new Company and Admin User
-// @route   POST /api/auth/register-company
+// @desc    Register a new Organization and Admin User
+// @route   POST /api/auth/register-organization
 // @access  Public
-const registerCompany = asyncHandler(async (req, res) => {
-    const { companyName, adminName, email, password } = req.body;
+const registerOrganization = asyncHandler(async (req, res) => {
+    const { organizationName, adminName, email, password } = req.body;
 
-    if (!companyName || !adminName || !email || !password) {
+    if (!organizationName || !adminName || !email || !password) {
         res.status(400);
         throw new Error('Please provide all required fields');
     }
@@ -153,44 +153,44 @@ const registerCompany = asyncHandler(async (req, res) => {
         throw new Error('User with this email already exists');
     }
 
-    // Check if company exists (optional, maybe allow duplicates? usually not)
-    // For now, let's enforce unique company names for simplicity or check if needed.
+    // Check if organization exists (optional, maybe allow duplicates? usually not)
+    // For now, let's enforce unique organization names for simplicity or check if needed.
     // Schema doesn't enforce unique name, but let's check.
-    const Company = require('../models/Company');
-    const companyExists = await Company.findOne({ name: companyName });
-    if (companyExists) {
+    const Organization = require('../models/Organization');
+    const organizationExists = await Organization.findOne({ name: organizationName });
+    if (organizationExists) {
         res.status(400);
-        throw new Error('Company with this name already exists');
+        throw new Error('Organization with this name already exists');
     }
 
-    // Find "Company Admin" Role
-    // Assuming "Company Admin" is a global role with name "Company Admin"
+    // Find "Organization Admin" Role
+    // Assuming "Organization Admin" is a global role with name "Organization Admin"
     // In seedAuth.js it is created.
-    let companyAdminRole = await Role.findOne({ roleName: 'Company Admin' });
+    let organizationAdminRole = await Role.findOne({ roleName: 'Organization Admin' });
     
-    if (!companyAdminRole) {
+    if (!organizationAdminRole) {
         res.status(500);
-        throw new Error('System Error: Company Admin role not found');
+        throw new Error('System Error: Organization Admin role not found');
     }
 
-    // 1. Create Company (Owner is required, so we might need to create User first, but User needs Company?)
-    // User needs Company (ref) -> Company needs Owner (ref, required).
-    // Solution: Create User with dummy company or no company first (if User schema allows null company, which it does as it's just a ref, not required in Schema definition I saw earlier).
-    // Wait, User Schema: company: { type: ObjectId, ref: 'Company' } - not marked required.
-    // Company Schema: owner: { type: ObjectId, ref: 'User', required: true }
+    // 1. Create Organization (Owner is required, so we might need to create User first, but User needs Organization?)
+    // User needs Organization (ref) -> Organization needs Owner (ref, required).
+    // Solution: Create User with dummy organization or no organization first (if User schema allows null organization, which it does as it's just a ref, not required in Schema definition I saw earlier).
+    // Wait, User Schema: organization: { type: ObjectId, ref: 'Organization' } - not marked required.
+    // Organization Schema: owner: { type: ObjectId, ref: 'User', required: true }
 
     // So:
-    // A. Create User (no company initially).
-    // B. Create Company (owner = user._id).
-    // C. Update User (company = company._id).
+    // A. Create User (no organization initially).
+    // B. Create Organization (owner = user._id).
+    // C. Update User (organization = organization._id).
 
     // Create User
     const user = await User.create({
         name: adminName,
         email,
         password,
-        role: companyAdminRole._id,
-        // company: null // initially
+        role: organizationAdminRole._id,
+        // organization: null // initially
     });
 
     if (!user) {
@@ -198,28 +198,28 @@ const registerCompany = asyncHandler(async (req, res) => {
         throw new Error('Invalid user data');
     }
 
-    // Create Company
-    const company = await Company.create({
-        name: companyName,
+    // Create Organization
+    const organization = await Organization.create({
+        name: organizationName,
         owner: user._id,
         plan: 'Free', // Default plan
         isActive: true
     });
 
-    if (!company) {
-        // Cleanup if company creation fails
+    if (!organization) {
+        // Cleanup if organization creation fails
         await User.findByIdAndDelete(user._id);
         res.status(400);
-        throw new Error('Invalid company data');
+        throw new Error('Invalid organization data');
     }
 
-    // Update User with Company
-    user.company = company._id;
+    // Update User with Organization
+    user.organization = organization._id;
     await user.save();
 
     // Log Audit
     // req.user is not set by middleware here, so manual context needed or skip
-    // await logAudit(req, 'CREATE', 'Company', company._id, `Company registered: ${companyName}`);
+    // await logAudit(req, 'CREATE', 'Organization', organization._id, `Organization registered: ${organizationName}`);
 
     // Generate Token
     const accessToken = generateAccessToken(user);
@@ -237,14 +237,14 @@ const registerCompany = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        company: user.company,
+        organization: user.organization,
         accessToken
     });
 });
 
 module.exports = {
     login,
-    registerCompany, // Export new function
+    registerOrganization, // Export new function
     logout,
     refresh,
     getMe

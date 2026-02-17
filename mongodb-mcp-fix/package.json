@@ -1,0 +1,14 @@
+{
+  "name": "mongodb-mcp-fix",
+  "version": "1.0.0",
+  "description": "Compatibility fix for MongoDB MCP Server running with openid-client ESM error",
+  "scripts": {
+    "start": "bash start.sh"
+  },
+  "dependencies": {
+    "mongodb-mcp-server": "latest"
+  },
+  "overrides": {
+    "openid-client": "5.6.5"
+  }
+}

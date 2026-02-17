@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
 import leadService from "../../services/leadService"; // Added import
@@ -46,7 +47,7 @@ const PreviewModal = ({ contact, onClose }) => {
           <div>
             <h2 className="text-xl font-bold text-gray-900">{contact.name}</h2>
             <p className="text-sm text-gray-500">
-              {contact.companyName || "No Company"}{" "}
+              {contact.organizationName || "No Organization"}{" "}
               {contact.designation && `• ${contact.designation}`}
             </p>
           </div>
@@ -139,9 +140,9 @@ const PreviewModal = ({ contact, onClose }) => {
                 </p>
                 <p className="text-gray-900">
                   <span className="font-semibold w-32 inline-block text-gray-500">
-                    Company Size:
+                    Organization Size:
                   </span>{" "}
-                  {contact.companySize || "-"}
+                  {contact.organizationSize || "-"}
                 </p>
               </div>
             </div>
@@ -355,7 +356,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
                 <div>
                   <h3 className="font-semibold text-gray-900">{lead.name}</h3>
                   <p className="text-sm text-gray-500">
-                    {lead.companyName || "-"}
+                    {lead.organizationName || "-"}
                   </p>
                 </div>
                 <span className="text-sm text-black font-medium opacity-0 group-hover:opacity-100 transition-opacity">
@@ -371,6 +372,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
 };
 
 const Contacts = () => {
+  const { selectedOrganization } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [contacts, setContacts] = useState([]);
@@ -490,14 +492,14 @@ const Contacts = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [selectedOrganization]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchContacts();
     }, 300);
     return () => clearTimeout(timer);
-  }, [fetchContacts]);
+  }, [filters, activeTab, pagination.page, pagination.limit, selectedOrganization]);
 
   const handleCreate = () => {
     setCurrentContact(null);
@@ -533,7 +535,11 @@ const Contacts = () => {
         await contactService.updateContact(currentContact._id, data);
         showSnackbar("Contact updated successfully", "success");
       } else {
-        await contactService.createContact(data);
+        const payload = { ...data };
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
+        }
+        await contactService.createContact(payload);
         showSnackbar("Contact created successfully", "success");
       }
       setView("list");

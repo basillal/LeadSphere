@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import { useLoading } from "../../context/LoadingProvider";
 import roleService from "../../services/roleService";
 import RolesTable from "./RolesTable";
@@ -8,6 +9,7 @@ import Toast from "../../components/common/utils/Toast";
 import RoleStats from "./RoleStats";
 
 const Roles = () => {
+  const { user, selectedOrganization } = useAuth();
   const [roles, setRoles] = useState([]);
   const [stats, setStats] = useState({ total: 0, system: 0, custom: 0 });
   const [groupedPermissions, setGroupedPermissions] = useState({});
@@ -23,13 +25,13 @@ const Roles = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedOrganization]);
 
   const fetchData = async () => {
     try {
       // setLoading(true);
       const [rolesData, permissionsData] = await Promise.all([
-        roleService.getRoles(),
+        roleService.getRoles(selectedOrganization),
         roleService.getGroupedPermissions(),
       ]);
       setRoles(rolesData);
@@ -74,11 +76,16 @@ const Roles = () => {
 
   const handleSubmit = async (formData) => {
     try {
+      const payload = { ...formData };
+      if (selectedOrganization) {
+        payload.organization = selectedOrganization;
+      }
+
       if (currentRole) {
-        await roleService.updateRole(currentRole._id, formData);
+        await roleService.updateRole(currentRole._id, payload);
         showSnackbar("Role updated successfully");
       } else {
-        await roleService.createRole(formData);
+        await roleService.createRole(payload);
         showSnackbar("Role created successfully");
       }
       fetchData();
@@ -167,6 +174,7 @@ const Roles = () => {
                 groupedPermissions={groupedPermissions}
                 onSubmit={handleSubmit}
                 onCancel={handleCancelForm}
+                isSuperAdmin={user?.role?.roleName === "Super Admin"}
               />
             </div>
           )}

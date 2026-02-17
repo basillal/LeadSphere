@@ -29,9 +29,9 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
           <h3 className="text-lg font-bold text-gray-900 truncate">
             {contact.name}
           </h3>
-          {contact.companyName && (
+          {contact.organizationName && (
             <p className="text-sm text-gray-500 truncate">
-              {contact.companyName}
+              {contact.organizationName}
             </p>
           )}
           {contact.designation && (

@@ -36,7 +36,7 @@ const LeadAutocomplete = ({
   const getOptionLabel = (option) => {
     if (!option) return "";
     if (typeof option === "string") return option;
-    return `${option.name || "Unknown"} - ${option.companyName || "N/A"} ${
+    return `${option.name || "Unknown"} - ${option.organizationName || "N/A"} ${
       option.phone ? `(${option.phone})` : ""
     }`;
   };
@@ -57,7 +57,7 @@ const LeadAutocomplete = ({
           color="text.secondary"
           sx={{ fontSize: "0.75rem" }}
         >
-          {option.companyName || "N/A"}
+          {option.organizationName || "N/A"}
           {option.phone && ` • ${option.phone}`}
         </Typography>
       </Box>
@@ -67,7 +67,7 @@ const LeadAutocomplete = ({
   return (
     <Autocomplete
       label={label}
-      placeholder="Search by name, company, or phone..."
+      placeholder="Search by name, organization, or phone..."
       value={value}
       onChange={onChange}
       fetchOptions={fetchLeads}

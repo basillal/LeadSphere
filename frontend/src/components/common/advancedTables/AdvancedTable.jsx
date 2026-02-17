@@ -43,9 +43,21 @@ const AdvancedTable = ({
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("");
   const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(
+    pagination.external && pagination.page ? pagination.page - 1 : 0,
+  );
   const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsPerPage || 10);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Sync state with props for external pagination
+  React.useEffect(() => {
+    if (pagination.external && pagination.page !== undefined) {
+      setPage(pagination.page - 1);
+    }
+    if (pagination.rowsPerPage !== undefined) {
+      setRowsPerPage(pagination.rowsPerPage);
+    }
+  }, [pagination.page, pagination.rowsPerPage, pagination.external]);
 
   // Mobile detection
   React.useEffect(() => {
@@ -110,10 +122,23 @@ const AdvancedTable = ({
   };
 
   // Pagination
-  const handleChangePage = (newPage) => setPage(newPage);
+  const handleChangePage = (newPage) => {
+    setPage(newPage);
+    if (pagination.onPageChange) {
+      // Convert to 1-based index if external expects it, or keep 0-based?
+      // Leads.jsx expects 1-based. AdvancedTable is 0-based.
+      // We will pass the 1-based index to onPageChange as standard for this app seems 1-based (Mongoose pagination usually 1-based)
+      pagination.onPageChange(newPage + 1);
+    }
+  };
+
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
+    if (pagination.onRowsPerPageChange) {
+      pagination.onRowsPerPageChange(newRowsPerPage);
+    }
   };
 
   // Derived data

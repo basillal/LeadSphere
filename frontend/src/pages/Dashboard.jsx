@@ -69,6 +69,17 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        const { startDate, endDate } = getDateRange(timeRange);
+        const params = {
+          revenueInterval,
+        };
+        if (startDate && endDate) {
+          params.startDate = startDate;
+          params.endDate = endDate;
+        }
+
+        const data = await dashboardService.getStats(params);
+        setData(data);
       } catch (error) {
         console.error("Failed to load dashboard data:", error);
       } finally {

@@ -16,7 +16,7 @@ const protect = asyncHandler(async (req, res, next) => {
             // Get user from the token (exclude password)
             req.user = await User.findById(decoded.id).select('-password')
                 .populate({ path: 'role', populate: { path: 'permissions' } })
-                .populate('company');
+                .populate('organization');
 
             if (!req.user) {
                 res.status(401);

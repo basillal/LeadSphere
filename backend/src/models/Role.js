@@ -11,33 +11,33 @@ const RoleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Permission'
   }],
-  company: {
+  organization: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company'
-      // default: null // System roles (Global) have no company
+      ref: 'Organization'
+      // default: null // System roles (Global) have no organization
   },
   description: {
     type: String
   },
   scope: {
       type: String,
-      enum: ['global', 'company'],
-      default: 'company'
+      enum: ['global', 'organization'],
+      default: 'organization'
   },
   isSystemRole: {
     type: Boolean,
     default: false // Identifying system roles like Super Admin that cannot be deleted
   },
-  accessibleByCompanyAdmin: {
+  accessibleByOrganizationAdmin: {
     type: Boolean,
     default: false
   }
 }, { timestamps: true });
 
-// Enforce uniqueness of Role Name per Company
-// If company is null (System Role), duplicate names should still be avoided ideally, 
+// Enforce uniqueness of Role Name per Organization
+// If organization is null (System Role), duplicate names should still be avoided ideally, 
 // but this index allows multiple nulls unless sparse is used correctly.
-// For simplicity, we want (roleName, company) to be unique.
-RoleSchema.index({ roleName: 1, company: 1 }, { unique: true });
+// For simplicity, we want (roleName, organization) to be unique.
+RoleSchema.index({ roleName: 1, organization: 1 }, { unique: true });
 
 module.exports = mongoose.model('Role', RoleSchema);

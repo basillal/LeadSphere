@@ -53,10 +53,10 @@ const ContactsTable = ({
       ),
     },
     {
-      id: "companyName",
+      id: "organizationName",
       label: "Prospect Co.",
       render: (row) => (
-        <span className="capitalize">{row.companyName || "-"}</span>
+        <span className="capitalize">{row.organizationName || "-"}</span>
       ),
     },
     {
@@ -66,8 +66,8 @@ const ContactsTable = ({
     },
     {
       id: "tenant",
-      label: "Company (tenant)",
-      render: (row) => row.company?.name || "-",
+      label: "Organization",
+      render: (row) => row.organization?.name || "-",
     },
     { id: "phone", label: "Phone" },
     {
@@ -217,7 +217,7 @@ const ContactsTable = ({
             {row.name}
           </h3>
           <p className="text-xs text-gray-500 capitalize">
-            {row.companyName || "-"}
+            {row.organizationName || "-"}
           </p>
           {row.designation && (
             <p className="text-xs text-gray-400">{row.designation}</p>

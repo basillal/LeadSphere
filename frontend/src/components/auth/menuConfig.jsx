@@ -50,25 +50,25 @@ export const menuConfig = [
     label: "Billing",
     path: "/billings",
     icon: <ReceiptIcon />,
-    // permission: "BILLING_READ",
+    permission: "BILLING_READ",
   },
   {
     label: "Expenses",
     path: "/expenses",
     icon: <MonetizationOnIcon />,
-    // permission: "EXPENSE_READ",
+    permission: "EXPENSE_READ",
   },
   {
     label: "Reports",
     path: "/reports",
     icon: <AssessmentIcon />,
-    // permission: "REPORT_READ",
+    permission: "REPORT_READ",
   },
   {
     label: "Services",
     path: "/services",
     icon: <CategoryIcon />,
-    // permission: "SERVICE_READ",
+    permission: "SERVICE_READ",
   },
   {
     label: "Referrers",
@@ -77,8 +77,8 @@ export const menuConfig = [
     permission: "REFERRER_READ",
   },
   {
-    label: "Companies",
-    path: "/admin/companies",
+    label: "Organizations",
+    path: "/admin/organizations",
     icon: <BusinessIcon />,
     role: "Super Admin",
   },
@@ -93,20 +93,19 @@ export const menuConfig = [
     path: "/admin/roles",
     icon: <SecurityIcon />, // Changed to Security or Settings
     permission: "ROLE_MANAGE",
-    role: "Super Admin",
   },
   {
-    label: "Team",
+    label: "Users",
     path: "/admin/users",
     icon: <PeopleIcon />,
     permission: "USER_MANAGE",
   },
 
   {
-    label: "Company Profile",
-    path: "/company-profile",
+    label: "Organization Profile",
+    path: "/organization-profile",
     icon: <BusinessIcon />,
-    role: "Company Admin",
+    role: "Organization Admin",
   },
   {
     label: "Settings",

@@ -38,14 +38,19 @@ const ReferrersTable = ({
       render: (row) => row.email || "-",
     },
     {
-      id: "companyName",
-      label: "Company",
-      render: (row) => row.companyName || "-",
+      id: "organizationName",
+      label: "Referrer Co.",
+      render: (row) => row.organizationName || "-",
     },
     {
       id: "createdBy",
       label: "Created by",
       render: (row) => row.createdBy?.name || "System",
+    },
+    {
+      id: "tenant",
+      label: "Organization",
+      render: (row) => row.organization?.name || "-",
     },
     {
       id: "totalLeads",
@@ -181,8 +186,8 @@ const ReferrersTable = ({
             <h3 className="font-semibold text-gray-900 text-sm uppercase">
               {row.name}
             </h3>
-            {row.companyName && (
-              <p className="text-xs text-gray-500">{row.companyName}</p>
+            {row.organizationName && (
+              <p className="text-xs text-gray-500">{row.organizationName}</p>
             )}
             {row.designation && (
               <p className="text-xs text-gray-400">{row.designation}</p>

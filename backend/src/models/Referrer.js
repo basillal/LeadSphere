@@ -25,7 +25,7 @@ const ReferrerSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    companyName: {
+    organizationName: {
         type: String,
         trim: true
     },
@@ -47,10 +47,10 @@ const ReferrerSchema = new mongoose.Schema({
     },
     
     // Multi-tenancy & Ownership
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
-        required: [true, 'Referrer must belong to a company']
+        ref: 'Organization',
+        required: [true, 'Referrer must belong to an organization']
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -70,7 +70,7 @@ const ReferrerSchema = new mongoose.Schema({
 // Index for better query performance
 ReferrerSchema.index({ name: 1 });
 ReferrerSchema.index({ phone: 1 });
-ReferrerSchema.index({ company: 1 });
+ReferrerSchema.index({ organization: 1 });
 ReferrerSchema.index({ isDeleted: 1 });
 
 module.exports = mongoose.model('Referrer', ReferrerSchema);

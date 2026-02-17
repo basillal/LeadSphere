@@ -37,6 +37,16 @@ const UsersTable = ({
       render: (row) => <span className="text-gray-600">{row.email}</span>,
     },
     {
+      id: "organization",
+      label: "Organization",
+      width: "w-1/4",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.organization?.name || "-"}
+        </span>
+      ),
+    },
+    {
       id: "role",
       label: "Role",
       width: "w-1/4",

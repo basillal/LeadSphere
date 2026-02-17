@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const ExpenseSchema = new mongoose.Schema({
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     },
     title: {
@@ -43,7 +43,7 @@ const ExpenseSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-ExpenseSchema.index({ company: 1, expenseDate: 1 });
+ExpenseSchema.index({ organization: 1, expenseDate: 1 });
 ExpenseSchema.index({ category: 1 });
 
 module.exports = mongoose.model('Expense', ExpenseSchema);

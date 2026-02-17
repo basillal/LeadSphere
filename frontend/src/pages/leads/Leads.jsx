@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import leadService from "../../services/leadService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
@@ -25,7 +26,7 @@ const PreviewModal = ({ lead, onClose }) => {
           <div>
             <h2 className="text-xl font-bold text-gray-900">{lead.name}</h2>
             <p className="text-sm text-gray-500">
-              {lead.companyName || "No Company"}
+              {lead.organizationName || "No Organization"}
             </p>
           </div>
           <button
@@ -176,6 +177,7 @@ const PreviewModal = ({ lead, onClose }) => {
 };
 
 const Leads = () => {
+  const { selectedOrganization } = useAuth();
   const [leads, setLeads] = useState([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -228,7 +230,7 @@ const Leads = () => {
   // Fetch stats on mount
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [selectedOrganization]);
 
   // Debounce API calls, but update UI immediately
   useEffect(() => {
@@ -238,7 +240,7 @@ const Leads = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters, pagination.page, pagination.limit]);
+  }, [filters, pagination.page, pagination.limit, selectedOrganization]);
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
@@ -296,7 +298,11 @@ const Leads = () => {
 
   const handleCreateLead = async (leadData) => {
     try {
-      await leadService.createLead(leadData);
+      const payload = { ...leadData };
+      if (selectedOrganization) {
+        payload.organization = selectedOrganization;
+      }
+      await leadService.createLead(payload);
       showSnackbar("Lead added successfully", "success");
       fetchLeads();
       fetchStats();

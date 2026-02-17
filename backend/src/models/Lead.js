@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('./Company'); // Register models to avoid Schema not registered errors
+require('./Organization'); // Register models to avoid Schema not registered errors
 require('./User'); 
 require('./Referrer');
 
@@ -13,7 +13,7 @@ const LeadSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: [true, 'Please add a phone number'],
-        // unique: true, // Removed global uniqueness, using compound index with company
+        // unique: true, // Removed global uniqueness, using compound index with organization
         trim: true
     },
     alternatePhone: {
@@ -27,7 +27,7 @@ const LeadSchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
-    companyName: {
+    organizationName: {
         type: String,
         trim: true
     },
@@ -172,9 +172,9 @@ const LeadSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    company: {
+    organization: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Organization',
         required: true
     },
     assignedTo: {
@@ -184,9 +184,9 @@ const LeadSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Indexing for performance and multi-tenancy
-LeadSchema.index({ company: 1, status: 1 });
-LeadSchema.index({ company: 1, assignedTo: 1 });
-LeadSchema.index({ company: 1, phone: 1 }, { unique: true }); // Ensure phone is unique PER COMPANY (Wait, typically leads are unique per company)
+LeadSchema.index({ organization: 1, status: 1 });
+LeadSchema.index({ organization: 1, assignedTo: 1 });
+LeadSchema.index({ organization: 1, phone: 1 }, { unique: true }); // Ensure phone is unique PER ORGANIZATION (Wait, typically leads are unique per organization)
 
 
 

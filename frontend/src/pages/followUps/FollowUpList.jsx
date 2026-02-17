@@ -75,7 +75,14 @@ const FollowUpList = ({
           <div className="font-medium text-gray-900 text-sm uppercase">
             {row.lead?.name || "Unknown"}
           </div>
-          <div className="text-xs text-gray-500">{row.lead?.phone || ""}</div>
+          <div className="text-xs text-gray-500">
+            {row.lead?.organizationName && (
+              <span className="font-medium text-gray-700 block md:inline md:mr-1">
+                {row.lead.organizationName}
+              </span>
+            )}
+            <span className="block md:inline">{row.lead?.phone || ""}</span>
+          </div>
         </div>
       ),
     },
@@ -92,6 +99,15 @@ const FollowUpList = ({
       render: (row) => (
         <span className="text-sm text-gray-500 line-clamp-2 max-w-xs">
           {row.notes || "-"}
+        </span>
+      ),
+    },
+    {
+      id: "organization",
+      label: "Organization",
+      render: (row) => (
+        <span className="text-sm text-gray-600">
+          {row.organization?.name || "-"}
         </span>
       ),
     },

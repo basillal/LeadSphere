@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import BasicModal from "../../components/common/modals/BasicModal";
 import expenseService from "../../services/expenseService";
 import Toast from "../../components/common/utils/Toast";
 
 const Expenses = () => {
+  const { selectedOrganization } = useAuth();
   const [expenses, setExpenses] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +35,7 @@ const Expenses = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [selectedOrganization]);
 
   const handleCreate = () => {
     setCurrentExpense(null);
@@ -79,7 +81,11 @@ const Expenses = () => {
         await expenseService.updateExpense(currentExpense._id, formData);
         Toast("Expense updated successfully", "success");
       } else {
-        await expenseService.createExpense(formData);
+        const payload = { ...formData };
+        if (selectedOrganization) {
+          payload.organization = selectedOrganization;
+        }
+        await expenseService.createExpense(payload);
         Toast("Expense created successfully", "success");
       }
       setIsModalOpen(false);
@@ -107,6 +113,15 @@ const Expenses = () => {
       render: (row) => (
         <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
           {row.category}
+        </span>
+      ),
+    },
+    {
+      id: "organization",
+      label: "Organization",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {row.organization?.name || "-"}
         </span>
       ),
     },
@@ -153,7 +168,7 @@ const Expenses = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
           <p className="text-sm text-gray-500">
-            Track and manage company expenses
+            Track and manage organization expenses
           </p>
         </div>
         <button

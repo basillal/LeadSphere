@@ -7,8 +7,8 @@ const ReferrerCard = ({ referrer, onEdit, onDelete, onView, stats }) => {
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">{referrer.name}</h3>
-          {referrer.companyName && (
-            <p className="text-sm text-gray-500">{referrer.companyName}</p>
+          {referrer.organizationName && (
+            <p className="text-sm text-gray-500">{referrer.organizationName}</p>
           )}
           {referrer.designation && (
             <p className="text-xs text-gray-400">{referrer.designation}</p>

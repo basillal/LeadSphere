@@ -134,7 +134,7 @@ const Login = () => {
                 autoComplete="email"
                 required
                 className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="name@company.com"
+                placeholder="name@organization.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoFocus
@@ -206,7 +206,7 @@ const Login = () => {
                 to="/register"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
-                Register as Company Admin
+                Register as Organization Admin
               </Link>
             </p>
           </div>
