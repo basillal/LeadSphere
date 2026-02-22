@@ -16,6 +16,8 @@ import Select from "@mui/material/Select";
 
 import { useAuth } from "../auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import KeyIcon from '@mui/icons-material/Key';
+import ChangePasswordModal from "../auth/ChangePasswordModal";
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
@@ -28,6 +30,7 @@ const Header = ({ handleDrawerToggle }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [organizations, setOrganizations] = React.useState([]);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = React.useState(false);
 
   // Fetch organizations if Super Admin
 
@@ -62,6 +65,11 @@ const Header = ({ handleDrawerToggle }) => {
     navigate("/login");
   };
 
+  const handleChangePasswordOpen = () => {
+    handleMenuClose();
+    setIsChangePasswordOpen(true);
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -85,6 +93,10 @@ const Header = ({ handleDrawerToggle }) => {
       <MenuItem disabled sx={{ opacity: "0.7 !important", fontSize: "0.8rem" }}>
         {user?.email}
       </MenuItem>
+      <MenuItem onClick={handleChangePasswordOpen}>
+        <KeyIcon sx={{ mr: 1, fontSize: 20 }} />
+        Change Password
+      </MenuItem>
       <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
         <PowerSettingsNewIcon sx={{ mr: 1, fontSize: 20 }} />
         Logout
@@ -93,105 +105,111 @@ const Header = ({ handleDrawerToggle }) => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }} className="no-print">
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: "block", mr: 4 }}
-          >
-            LeadSphere
-          </Typography>
-
-          {/* Organization Switcher for Super Admin */}
-          {user?.role?.roleName === "Super Admin" && (
-            <Box sx={{ minWidth: 200, mr: 2 }}>
-              <FormControl fullWidth size="small">
-                <Select
-                  value={selectedOrganization || ""}
-                  onChange={(e) => selectOrganization(e.target.value)}
-                  displayEmpty
-                  sx={{
-                    color: "white",
-                    ".MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgba(255, 255, 255, 0.3)",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgba(255, 255, 255, 0.7)",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                    },
-                    ".MuiSvgIcon-root": {
-                      color: "white",
-                    },
-                  }}
-                  MenuProps={{
-                    PaperProps: {
-                      sx: {
-                        bgcolor: "background.paper",
-                        "& .MuiMenuItem-root": {
-                          color: "text.primary",
-                        },
-                      },
-                    },
-                  }}
-                >
-                  <MenuItem value="">
-                    <em>All Organizations</em>
-                  </MenuItem>
-                  {organizations.map((c) => (
-                    <MenuItem key={c._id} value={c._id}>
-                      {c.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-          )}
-
-          <Box sx={{ flexGrow: 1 }} />
-
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              variant="body2"
-              sx={{ mr: 2, display: { xs: "none", sm: "block" } }}
-            >
-              {user?.name}
-              <span
-                style={{ opacity: 0.7, marginLeft: "5px", fontSize: "0.8em" }}
-              >
-                ({user?.role?.roleName})
-              </span>
-            </Typography>
+    <>
+      <Box sx={{ flexGrow: 1 }} className="no-print">
+        <AppBar position="fixed">
+          <Toolbar>
             <IconButton
               size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              edge="start"
               color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
             >
-              <AccountCircle />
+              <MenuIcon />
             </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {renderMenu}
-    </Box>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: "block", mr: 4 }}
+            >
+              LeadSphere
+            </Typography>
+
+            {/* Organization Switcher for Super Admin */}
+            {user?.role?.roleName === "Super Admin" && (
+              <Box sx={{ minWidth: 200, mr: 2 }}>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={selectedOrganization || ""}
+                    onChange={(e) => selectOrganization(e.target.value)}
+                    displayEmpty
+                    sx={{
+                      color: "white",
+                      ".MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(255, 255, 255, 0.3)",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(255, 255, 255, 0.7)",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                      ".MuiSvgIcon-root": {
+                        color: "white",
+                      },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: "background.paper",
+                          "& .MuiMenuItem-root": {
+                            color: "text.primary",
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>All Organizations</em>
+                    </MenuItem>
+                    {organizations.map((c) => (
+                      <MenuItem key={c._id} value={c._id}>
+                        {c.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="body2"
+                sx={{ mr: 2, display: { xs: "none", sm: "block" } }}
+              >
+                {user?.name}
+                <span
+                  style={{ opacity: 0.7, marginLeft: "5px", fontSize: "0.8em" }}
+                >
+                  ({user?.role?.roleName})
+                </span>
+              </Typography>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        {renderMenu}
+        <ChangePasswordModal
+          open={isChangePasswordOpen}
+          onClose={() => setIsChangePasswordOpen(false)}
+        />
+      </Box>
+    </>
   );
 };
 

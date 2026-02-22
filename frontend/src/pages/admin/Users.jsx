@@ -3,19 +3,22 @@ import { useAuth } from "../../components/auth/AuthProvider";
 import { useLoading } from "../../context/LoadingProvider";
 import userService from "../../services/userService";
 import roleService from "../../services/roleService";
+import organizationService from "../../services/organizationService";
 import UsersTable from "./UsersTable";
 import UserForm from "./UserForm";
 import Toast from "../../components/common/utils/Toast";
 
 import UserStats from "./UserStats";
+import UserLogs from "./UserLogs";
 
 const Users = () => {
-  const { selectedOrganization } = useAuth();
+  const { selectedOrganization, user } = useAuth();
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
   const { loading } = useLoading();
-  const [view, setView] = useState("list"); // 'list', 'create', 'edit'
+  const [view, setView] = useState("list"); // 'list', 'create', 'edit', 'logs'
   const [currentUser, setCurrentUser] = useState(null);
   const [filters, setFilters] = useState({ search: "" });
   const [snackbar, setSnackbar] = useState({
@@ -24,6 +27,8 @@ const Users = () => {
     severity: "success",
   });
 
+  const isSuperAdmin = user?.role?.roleName === "Super Admin";
+
   useEffect(() => {
     fetchData();
   }, [selectedOrganization]);
@@ -31,12 +36,24 @@ const Users = () => {
   const fetchData = async () => {
     try {
       // setLoading(true);
-      const [usersData, rolesData] = await Promise.all([
+      const promises = [
         userService.getUsers(),
         roleService.getRoles(),
-      ]);
+      ];
+
+      if (isSuperAdmin) {
+        promises.push(organizationService.getOrganizations({ limit: 100 }));
+      }
+
+      const results = await Promise.all(promises);
+      const usersData = results[0];
+      const rolesData = results[1];
+
       setUsers(usersData);
       setRoles(rolesData);
+      if (isSuperAdmin && results[2]) {
+        setOrganizations(results[2].data || []);
+      }
 
       // Calculate Stats
       setStats({
@@ -70,6 +87,11 @@ const Users = () => {
     setView("edit");
   };
 
+  const handleShowLogs = (user) => {
+    setCurrentUser(user);
+    setView("logs");
+  };
+
   const handleCancelForm = () => {
     setView("list");
     setCurrentUser(null);
@@ -81,9 +103,12 @@ const Users = () => {
       if (!dataToSend.password) delete dataToSend.password;
 
       // Inject selected organization if available (for Super Admin context)
-      if (selectedOrganization) {
+      if (isSuperAdmin && dataToSend.organizationId) {
+        dataToSend.organization = dataToSend.organizationId;
+      } else if (selectedOrganization) {
         dataToSend.organization = selectedOrganization;
       }
+      delete dataToSend.organizationId;
 
       if (currentUser) {
         await userService.updateUser(currentUser._id, dataToSend);
@@ -146,7 +171,9 @@ const Users = () => {
             ? "Users"
             : view === "create"
               ? "Create New User"
-              : "Edit User"}
+              : view === "logs"
+                ? "User Logs"
+                : "Edit User"}
         </h1>
         {view !== "list" && (
           <button
@@ -184,6 +211,7 @@ const Users = () => {
                 onEdit={handleShowEdit}
                 onDelete={handleDelete}
                 onResetPassword={handleResetPassword}
+                onViewLogs={handleShowLogs}
                 filters={filters}
                 onFilterChange={handleFilterChange}
               />
@@ -194,10 +222,15 @@ const Users = () => {
               <UserForm
                 initialData={currentUser}
                 roles={roles}
+                organizations={organizations}
+                isSuperAdmin={isSuperAdmin}
                 onSubmit={handleSubmit}
                 onCancel={handleCancelForm}
               />
             </div>
+          )}
+          {view === "logs" && (
+            <UserLogs user={currentUser} onBack={handleCancelForm} />
           )}
         </>
       )}

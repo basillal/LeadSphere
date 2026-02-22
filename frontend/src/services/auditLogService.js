@@ -1,7 +1,7 @@
 import api from './api';
 
-const getAuditLogs = async (params) => {
-  const response = await api.get('/audit-logs', { params });
+const getAuditLogs = async (params, config = {}) => {
+  const response = await api.get('/audit-logs', { params, ...config });
   return response.data;
 };
 

@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../components/auth/AuthProvider";
 import { useLoading } from "../../context/LoadingProvider";
 import auditLogService from "../../services/auditLogService";
+import organizationService from "../../services/organizationService";
 import AuditLogsTable from "./AuditLogsTable";
 import Toast from "../../components/common/utils/Toast";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 const AuditLogs = () => {
+  const { user } = useAuth();
   const [logs, setLogs] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const { loading } = useLoading();
   const [pagination, setPagination] = useState({
     page: 1,
@@ -14,6 +18,8 @@ const AuditLogs = () => {
     total: 0,
     pages: 1,
   });
+
+  const isSuperAdmin = user?.role?.roleName === "Super Admin";
 
   // Filters could be expanded (Action, Entity, User Search)
   // For now simple refresh
@@ -25,6 +31,13 @@ const AuditLogs = () => {
     organizationId: "", // Useful for super admin later
   });
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    action: "",
+    entity: "",
+    userId: "",
+    organizationId: "",
+  });
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -33,7 +46,19 @@ const AuditLogs = () => {
 
   useEffect(() => {
     fetchLogs();
-  }, [pagination.page]);
+    if (isSuperAdmin) {
+      fetchOrganizations();
+    }
+  }, [pagination.page, appliedFilters]);
+
+  const fetchOrganizations = async () => {
+    try {
+      const res = await organizationService.getOrganizations({ limit: 100 });
+      setOrganizations(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch organizations", err);
+    }
+  };
 
   const fetchLogs = async () => {
     try {
@@ -41,7 +66,7 @@ const AuditLogs = () => {
       const res = await auditLogService.getAuditLogs({
         page: pagination.page,
         limit: pagination.limit,
-        ...filters, // Pass filters to service
+        ...appliedFilters, // Pass applied filters to service
       });
       setLogs(res.data || []);
       setPagination((prev) => ({
@@ -225,8 +250,38 @@ const AuditLogs = () => {
             />
           </div>
 
+          {isSuperAdmin && (
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-400 text-sm">ORG</span>
+              </div>
+              <select
+                className="pl-12 border border-gray-200 p-2.5 rounded-lg w-full focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all appearance-none bg-white"
+                value={filters.organizationId}
+                onChange={(e) =>
+                  setFilters({ ...filters, organizationId: e.target.value })
+                }
+              >
+                <option value="">All Organizations</option>
+                {organizations.map((org) => (
+                  <option key={org._id} value={org._id}>
+                    {org.name}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          )}
+
           <button
-            onClick={() => setPagination({ ...pagination, page: 1 })}
+            onClick={() => {
+              setAppliedFilters(filters);
+              setPagination({ ...pagination, page: 1 });
+            }}
             className="bg-black text-white px-6 py-2.5 rounded-lg hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200 font-medium flex items-center justify-center gap-2"
           >
             <svg

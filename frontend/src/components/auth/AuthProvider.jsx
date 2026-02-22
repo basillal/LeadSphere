@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
+        changePassword: authService.changePassword,
         loading,
         isAuthenticated: !!user,
         selectedOrganization,

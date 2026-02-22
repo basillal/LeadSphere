@@ -47,6 +47,12 @@ const refreshToken = async () => {
     }
 };
 
+// Change Password
+const changePassword = async (currentPassword, newPassword) => {
+    const response = await api.put(`${API_URL}/change-password`, { currentPassword, newPassword });
+    return response.data;
+};
+
 // Setup Axios Interceptors
 export const setupAxiosInterceptors = (navigate) => {
     // Request Interceptor is now handled directly in api.js to avoid race conditions
@@ -85,7 +91,8 @@ const authService = {
     login,
     logout,
     getMe,
-    refreshToken
+    refreshToken,
+    changePassword
 };
 
 export default authService;
