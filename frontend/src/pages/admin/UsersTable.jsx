@@ -54,8 +54,8 @@ const UsersTable = ({
       render: (row) => (
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${row.role?.isSystemRole
-              ? "bg-blue-100 text-blue-800"
-              : "bg-gray-100 text-gray-800"
+            ? "bg-blue-100 text-blue-800"
+            : "bg-gray-100 text-gray-800"
             }`}
         >
           {row.role?.roleName || "No Role"}
@@ -93,7 +93,7 @@ const UsersTable = ({
       label: "View Logs",
       onClick: onViewLogs,
       color: "text-blue-600 hover:bg-blue-100",
-      condition: (row) => onViewLogs,
+      condition: (row) => user?.role?.roleName === "Super Admin" && onViewLogs,
     },
     {
       icon: (
