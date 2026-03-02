@@ -10,8 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 // Connect to Database
-// Connect to Database
-// connectDB(); // Removed for serverless compatibility
+
 
 
 
