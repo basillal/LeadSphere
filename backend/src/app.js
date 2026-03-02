@@ -65,7 +65,6 @@ app.get('/', (req, res) => {
     res.send('Node.js Server is Running');
 });
 
-// Error Handler Middleware (Should be last)
 app.use(errorHandler);
 
 // Start Server
