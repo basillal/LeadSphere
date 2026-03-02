@@ -43,9 +43,9 @@ const login = asyncHandler(async (req, res) => {
             sameSite: 'lax', // Lax is better for SPA navigation
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
-        
+
         // Manually inject user into req for audit log since middleware hasn't run yet
-        req.user = user; 
+        req.user = user;
         await logAudit(req, 'LOGIN', 'Auth', user._id, `User logged in from ${req.ip || 'unknown IP'}`);
 
         res.json({
@@ -73,8 +73,8 @@ const logout = asyncHandler(async (req, res) => {
     // If not protected, we can't reliable log WHO logged out.
     // Assuming we might have user from previous middleware or partial auth?
     // Let's just try logging if req.user exists.
-    
-    if(req.user) {
+
+    if (req.user) {
         await logAudit(req, 'LOGOUT', 'Auth', req.user._id, 'User logged out');
     }
 
@@ -167,7 +167,7 @@ const registerOrganization = asyncHandler(async (req, res) => {
     // Assuming "Organization Admin" is a global role with name "Organization Admin"
     // In seedAuth.js it is created.
     let organizationAdminRole = await Role.findOne({ roleName: 'Organization Admin' });
-    
+
     if (!organizationAdminRole) {
         res.status(500);
         throw new Error('System Error: Organization Admin role not found');
@@ -229,7 +229,7 @@ const registerOrganization = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000 
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.status(201).json({
@@ -242,10 +242,34 @@ const registerOrganization = asyncHandler(async (req, res) => {
     });
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        res.status(400);
+        throw new Error('Please provide both current and new passwords');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (user && (await user.matchPassword(currentPassword))) {
+        // User's pre-save middleware will hash this new password
+        user.password = newPassword;
+        await user.save();
+
+        await logAudit(req, 'UPDATE', 'User', user._id, 'User changed password');
+        res.status(200).json({ message: 'Password changed successfully' });
+    } else {
+        res.status(401);
+        throw new Error('Invalid current password');
+    }
+});
+
 module.exports = {
     login,
     registerOrganization, // Export new function
     logout,
     refresh,
-    getMe
+    getMe,
+    changePassword
 };

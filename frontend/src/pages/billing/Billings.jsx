@@ -24,6 +24,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
   const [contactSearch, setContactSearch] = useState("");
   const [showContactModal, setShowContactModal] = useState(false); // State for modal
+  const [isContactFocused, setIsContactFocused] = useState(false); // State for dropdown visibility
 
   useEffect(() => {
     // Load initial data for edit mode
@@ -62,13 +63,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   // Search Contacts
   useEffect(() => {
     const searchContacts = async () => {
-      if (contactSearch.length > 2) {
-        const res = await contactService.getContacts({
-          search: contactSearch,
-          limit: 10,
-        });
-        setContacts(res.data);
-      }
+      const res = await contactService.getContacts({
+        search: contactSearch, // Supports Name, Phone, Email, Organization
+        limit: 10,
+      });
+      setContacts(res.data);
     };
     const timer = setTimeout(searchContacts, 300);
     return () => clearTimeout(timer);
@@ -242,16 +241,18 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                     </span>
                     <input
                       type="text"
-                      placeholder="Search Client..."
+                      placeholder="Search Client by Name or Phone..."
                       value={contactSearch}
                       onChange={(e) => setContactSearch(e.target.value)}
+                      onFocus={() => setIsContactFocused(true)}
+                      onBlur={() => setTimeout(() => setIsContactFocused(false), 200)}
                       className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black transition-all text-sm"
                     />
                   </div>
                 </div>
 
                 {contacts.length > 0 &&
-                  contactSearch.length > 2 &&
+                  isContactFocused &&
                   !formData.contactId && (
                     <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                       {contacts.map((c) => (
@@ -783,13 +784,12 @@ const Billings = () => {
       label: "Status",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-bold ${
-            row.paymentStatus === "PAID"
+          className={`px-2 py-1 rounded-full text-xs font-bold ${row.paymentStatus === "PAID"
               ? "bg-green-100 text-green-800"
               : row.paymentStatus === "PENDING"
                 ? "bg-yellow-100 text-yellow-800"
                 : "bg-red-100 text-red-800"
-          }`}
+            }`}
         >
           {row.paymentStatus}
         </span>

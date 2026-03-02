@@ -3,12 +3,13 @@ import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
-const UserForm = ({ initialData, roles, onSubmit, onCancel }) => {
+const UserForm = ({ initialData, roles, organizations = [], isSuperAdmin, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     roleId: "",
+    organizationId: "",
     isActive: true,
   });
 
@@ -19,6 +20,7 @@ const UserForm = ({ initialData, roles, onSubmit, onCancel }) => {
         email: initialData.email,
         password: "", // Assume we don't show password
         roleId: initialData.role?._id || "",
+        organizationId: initialData.organization?._id || initialData.organization || "",
         isActive: initialData.isActive,
       });
     }
@@ -42,6 +44,15 @@ const UserForm = ({ initialData, roles, onSubmit, onCancel }) => {
     label: r.roleName || "Unnamed Role",
     value: r._id,
   }));
+
+  // Build organization options for Select component (Super Admin only)
+  const orgOptions = [
+    { label: "Select Organization", value: "" },
+    ...organizations.map((org) => ({
+      label: org.name || "Unnamed Organization",
+      value: org._id,
+    }))
+  ];
 
   return (
     <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
@@ -88,6 +99,18 @@ const UserForm = ({ initialData, roles, onSubmit, onCancel }) => {
             required
             className="md:col-span-1"
           />
+
+          {isSuperAdmin && (
+            <Select
+              label="Organization"
+              name="organizationId"
+              value={formData.organizationId}
+              onChange={handleChange}
+              options={orgOptions}
+              required
+              className="md:col-span-1"
+            />
+          )}
 
           <div className="md:col-span-2 flex items-center space-x-2 py-2">
             <input

@@ -4,17 +4,18 @@ import { getToken } from '../components/auth/tokenUtils';
 // Create axios instance
 // Determine baseURL
 const getBaseUrl = () => {
-  let url = import.meta.env.VITE_API_URL || '/api';
-  // If it's a full URL (prod) and doesn't end with /api, append it
-  if (url !== '/api' && !url.endsWith('/api')) {
-    url = `${url.replace(/\/$/, '')}/api`;
-  }
-  return url;
+    let url = import.meta.env.VITE_API_URL || '/api';
+    // If it's a full URL (prod) and doesn't end with /api, append it
+    if (url !== '/api' && !url.endsWith('/api')) {
+        url = `${url.replace(/\/$/, '')}/api`;
+    }
+    return url;
 };
 
 const api = axios.create({
     baseURL: getBaseUrl(), // Use env var or fallback to proxy
     timeout: 30000, // 30 seconds
+    withCredentials: true, // Send cookies like refreshToken automatically
     headers: {
         'Content-Type': 'application/json'
     }
@@ -32,7 +33,7 @@ api.interceptors.request.use(
         const selectedOrganization = localStorage.getItem('selectedOrganization');
         if (selectedOrganization) {
             config.headers['x-organization-context'] = selectedOrganization;
-            
+
             // Keep query param for backward compatibility or direct GET filters
             if (!config.params) {
                 config.params = {};

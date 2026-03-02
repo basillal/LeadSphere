@@ -33,19 +33,19 @@ const ReferrerSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    
+
     // Additional Information
     notes: {
         type: String,
         trim: true
     },
-    
+
     // Status
     isActive: {
         type: Boolean,
         default: true
     },
-    
+
     // Multi-tenancy & Ownership
     organization: {
         type: mongoose.Schema.Types.ObjectId,
@@ -57,19 +57,18 @@ const ReferrerSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    
+
     // Soft Delete Flag
     isDeleted: {
         type: Boolean,
         default: false
     }
-}, { 
-    timestamps: true 
+}, {
+    timestamps: true
 });
 
 // Index for better query performance
 ReferrerSchema.index({ name: 1 });
-ReferrerSchema.index({ phone: 1 });
 ReferrerSchema.index({ organization: 1 });
 ReferrerSchema.index({ isDeleted: 1 });
 

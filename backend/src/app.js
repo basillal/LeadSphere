@@ -52,7 +52,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/activities', activityRoutes);
-app.use('/api/dashboard', dashboardRoutes); // Added dashboard route
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/referrers', referrerRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/billings', billingRoutes);
@@ -65,13 +65,11 @@ app.get('/', (req, res) => {
     res.send('Node.js Server is Running');
 });
 
-// Error Handler Middleware (Should be last)
 app.use(errorHandler);
 
 // Start Server
 const logger = require('./utils/logger');
 
-// Start Server
 // Start Server
 const PORT = process.env.PORT || 3000;
 

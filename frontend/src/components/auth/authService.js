@@ -32,7 +32,7 @@ const getMe = async () => {
 // Refresh Token
 const refreshToken = async () => {
     try {
-        const response = await api.post(`${API_URL}/refresh`, {}, { skipLoader: true }); 
+        const response = await api.post(`${API_URL}/refresh`, {}, { skipLoader: true });
         // Note: skipLoader optional if we don't want loader during background refresh
         // But for now let's keep it visible so user knows if something is happening, 
         // OR add skipLoader support in api.js interceptor if we want.
@@ -47,6 +47,12 @@ const refreshToken = async () => {
     }
 };
 
+// Change Password
+const changePassword = async (currentPassword, newPassword) => {
+    const response = await api.put(`${API_URL}/change-password`, { currentPassword, newPassword });
+    return response.data;
+};
+
 // Setup Axios Interceptors
 export const setupAxiosInterceptors = (navigate) => {
     // Request Interceptor is now handled directly in api.js to avoid race conditions
@@ -59,7 +65,7 @@ export const setupAxiosInterceptors = (navigate) => {
             const originalRequest = error.config;
 
             // If 401 and not retried yet, and NOT the refresh endpoint itself AND NOT login endpoint
-            if (error.response && error.response.status === 401 && !originalRequest._retry && 
+            if (error.response && error.response.status === 401 && !originalRequest._retry &&
                 !originalRequest.url.includes('/refresh') && !originalRequest.url.includes('/login')) {
                 originalRequest._retry = true;
 
@@ -85,7 +91,8 @@ const authService = {
     login,
     logout,
     getMe,
-    refreshToken
+    refreshToken,
+    changePassword
 };
 
 export default authService;
