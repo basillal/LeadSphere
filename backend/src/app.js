@@ -52,7 +52,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/follow-ups', followUpRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/activities', activityRoutes);
-app.use('/api/dashboard', dashboardRoutes); // Added dashboard route
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/referrers', referrerRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/billings', billingRoutes);
