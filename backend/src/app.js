@@ -71,7 +71,6 @@ app.use(errorHandler);
 const logger = require('./utils/logger');
 
 // Start Server
-// Start Server
 const PORT = process.env.PORT || 3000;
 
 if (require.main === module) {
