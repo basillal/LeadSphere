@@ -208,9 +208,9 @@ const ContactsTable = ({
     ],
   };
 
-  // Custom mobile card
+  // Custom mobile card (used on small screens)
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white/95 rounded-2xl border border-[rgba(46,111,64,0.18)] shadow-sm p-3 sm:p-4 backdrop-blur-md">
       <div className="flex justify-between items-start mb-2">
         <div>
           <h3 className="font-semibold text-gray-900 text-sm capitalize">

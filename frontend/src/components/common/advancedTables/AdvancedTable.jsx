@@ -48,6 +48,7 @@ const AdvancedTable = ({
   );
   const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsPerPage || 10);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Sync state with props for external pagination
   React.useEffect(() => {
@@ -222,7 +223,11 @@ const AdvancedTable = ({
       {/* Toolbar */}
       {toolbar && (
         <div
-          className={`mb-4 ${selected.length > 0 ? "bg-gray-100 rounded-lg p-4" : ""}`}
+          className={`mb-4 ${
+            selected.length > 0
+              ? "glass-effect rounded-lg p-4 text-[#253D2C]"
+              : ""
+          }`}
         >
           {selected.length > 0 && selection.enabled ? (
             <div className="flex items-center w-full justify-between">
@@ -237,62 +242,152 @@ const AdvancedTable = ({
               </button>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-3">
-              {/* Search */}
-              {toolbar.search && (
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder={toolbar.searchPlaceholder || "Search..."}
-                    value={toolbar.search.value}
-                    onChange={(e) => toolbar.search.onChange(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
+            <>
+              {/* Small screen: collapsed filters by default */}
+              {isMobile ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    {toolbar.onCreate && (
+                      <button
+                        onClick={toolbar.onCreate.onClick}
+                        className="bg-[var(--primary-button-bg)] text-white px-4 py-2 rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium text-sm whitespace-nowrap"
+                      >
+                        + {toolbar.onCreate.label || "Add"}
+                      </button>
+                    )}
+                    {(toolbar.search || (toolbar.filters && toolbar.filters.length > 0)) && (
+                      <button
+                        type="button"
+                        onClick={() => setMobileFiltersOpen((open) => !open)}
+                        className="px-2 py-2 border border-[#2E6F40] rounded-lg text-sm font-medium text-[#253D2C] bg-[#CFFFDC]/80 hover:bg-[#CFFFDC] flex items-center justify-center"
+                        aria-label={mobileFiltersOpen ? "Hide filters" : "Show filters"}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-4 w-4 transition-transform ${
+                            mobileFiltersOpen ? "rotate-180" : ""
+                          }`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {mobileFiltersOpen && (
+                    <div className="flex flex-col gap-2">
+                      {toolbar.search && (
+                        <div className="w-full">
+                          <input
+                            type="text"
+                            placeholder={toolbar.searchPlaceholder || "Search..."}
+                            value={toolbar.search.value}
+                            onChange={(e) => toolbar.search.onChange(e.target.value)}
+                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/70"
+                          />
+                        </div>
+                      )}
+
+                      {toolbar.filters &&
+                        toolbar.filters.map((filter, index) => (
+                          <select
+                            key={index}
+                            value={filter.value}
+                            onChange={(e) => filter.onChange(e.target.value)}
+                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+                          >
+                            {filter.options.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        ))}
+
+                      {toolbar.extraButtons &&
+                        toolbar.extraButtons.map((btn, index) => (
+                          <button
+                            key={index}
+                            onClick={btn.onClick}
+                            className={`w-full px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                              btn.className ||
+                              "glass-effect text-[#253D2C] hover:brightness-110"
+                            }`}
+                          >
+                            {btn.label}
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // Desktop: always show filters/search
+                <div className="flex flex-col md:flex-row gap-3">
+                  {/* Search */}
+                  {toolbar.search && (
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder={toolbar.searchPlaceholder || "Search..."}
+                        value={toolbar.search.value}
+                        onChange={(e) => toolbar.search.onChange(e.target.value)}
+                        className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/70"
+                      />
+                    </div>
+                  )}
+
+                  {/* Filters */}
+                  {toolbar.filters &&
+                    toolbar.filters.map((filter, index) => (
+                      <select
+                        key={index}
+                        value={filter.value}
+                        onChange={(e) => filter.onChange(e.target.value)}
+                        className="px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+                      >
+                        {filter.options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ))}
+
+                  {/* Extra Buttons */}
+                  {toolbar.extraButtons &&
+                    toolbar.extraButtons.map((btn, index) => (
+                      <button
+                        key={index}
+                        onClick={btn.onClick}
+                        className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                          btn.className ||
+                          "glass-effect text-[#253D2C] hover:brightness-110"
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+
+                  {/* Create Button */}
+                  {toolbar.onCreate && (
+                    <button
+                      onClick={toolbar.onCreate.onClick}
+                      className="bg-[var(--primary-button-bg)] text-white px-6 py-2 rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium whitespace-nowrap"
+                    >
+                      + {toolbar.onCreate.label || "Add"}
+                    </button>
+                  )}
                 </div>
               )}
-
-              {/* Filters */}
-              {toolbar.filters &&
-                toolbar.filters.map((filter, index) => (
-                  <select
-                    key={index}
-                    value={filter.value}
-                    onChange={(e) => filter.onChange(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-                  >
-                    {filter.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                ))}
-
-              {/* Extra Buttons */}
-              {toolbar.extraButtons &&
-                toolbar.extraButtons.map((btn, index) => (
-                  <button
-                    key={index}
-                    onClick={btn.onClick}
-                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                      btn.className ||
-                      "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {btn.label}
-                  </button>
-                ))}
-
-              {/* Create Button */}
-              {toolbar.onCreate && (
-                <button
-                  onClick={toolbar.onCreate.onClick}
-                  className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium whitespace-nowrap"
-                >
-                  + {toolbar.onCreate.label || "Add"}
-                </button>
-              )}
-            </div>
+            </>
           )}
         </div>
       )}
@@ -301,7 +396,7 @@ const AdvancedTable = ({
       {isMobile ? (
         <div className="space-y-3">
           {visibleRows.length === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <div className="text-center py-8 card-surface">
               <p className="text-gray-500">{emptyMessage}</p>
             </div>
           ) : (
@@ -311,12 +406,12 @@ const AdvancedTable = ({
               ) : (
                 <div
                   key={getRowId(row)}
-                  className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+                  className="glass-effect p-3 rounded-lg border border-[rgba(46,111,64,0.25)] shadow-sm"
                 >
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     {columns.map((col) => (
-                      <div key={col.id} className="text-sm">
-                        <span className="font-medium text-gray-700">
+                      <div key={col.id} className="text-xs">
+                        <span className="font-medium text-gray-700 block">
                           {col.label}:{" "}
                         </span>
                         <span className="text-gray-900">
@@ -353,12 +448,12 @@ const AdvancedTable = ({
         </div>
       ) : (
         /* Desktop View - Table */
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden relative min-h-[200px]">
+        <div className="card-surface overflow-hidden relative min-h-[200px]">
           {/* Loading Overlay */}
           {loading && (
-            <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+            <div className="absolute inset-0 z-20 bg-[#CFFFDC]/60 backdrop-blur-[2px] flex items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-3"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2E6F40] mb-3"></div>
                 <p className="text-sm font-medium text-gray-600">
                   Loading data...
                 </p>
@@ -366,11 +461,11 @@ const AdvancedTable = ({
             </div>
           )}
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="w-full text-xs md:text-sm">
+              <thead className="bg-[#253D2C]/5 border-b border-[rgba(46,111,64,0.25)]">
                 <tr>
                   {selection.enabled && (
-                    <th className="px-4 py-2.5 w-10">
+                    <th className="px-3 md:px-4 py-2 w-10">
                       <input
                         type="checkbox"
                         onChange={handleSelectAllClick}
@@ -384,7 +479,7 @@ const AdvancedTable = ({
                   {columns.map((column) => (
                     <th
                       key={column.id}
-                      className={`px-4 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider ${column.sortable !== false ? "cursor-pointer hover:text-gray-900" : ""} ${column.width || ""}`}
+                      className={`px-3 md:px-4 py-2 text-left font-semibold text-gray-700 uppercase tracking-wide ${column.sortable !== false ? "cursor-pointer hover:text-gray-900" : ""} ${column.width || ""}`}
                       onClick={() =>
                         column.sortable !== false &&
                         handleRequestSort(column.id)
@@ -408,7 +503,7 @@ const AdvancedTable = ({
                   )}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {visibleRows.length === 0 ? (
                   <tr>
                     <td
@@ -433,7 +528,7 @@ const AdvancedTable = ({
                         className={`hover:bg-gray-50 ${selection.enabled ? "cursor-pointer" : ""} transition-colors ${isSelected ? "bg-gray-100" : ""}`}
                       >
                         {selection.enabled && (
-                          <td className="px-4 py-2">
+                          <td className="px-3 md:px-4 py-2">
                             <input
                               type="checkbox"
                               checked={isSelected}
@@ -445,7 +540,7 @@ const AdvancedTable = ({
                         {columns.map((column) => (
                           <td
                             key={column.id}
-                            className={`px-4 py-2 text-sm ${column.className || "text-gray-600"}`}
+                            className={`px-3 md:px-4 py-2 align-top ${column.className || "text-gray-700"}`}
                           >
                             {column.render
                               ? column.render(row)
@@ -453,8 +548,8 @@ const AdvancedTable = ({
                           </td>
                         ))}
                         {actions.length > 0 && (
-                          <td className="px-4 py-2 text-right">
-                            <div className="flex justify-end gap-2">
+                          <td className="px-3 md:px-4 py-2 text-right">
+                            <div className="flex justify-end gap-1.5">
                               {actions.map((action, idx) => {
                                 if (action.condition && !action.condition(row))
                                   return null;
@@ -487,7 +582,7 @@ const AdvancedTable = ({
 
       {/* Pagination */}
       {pagination.enabled && (
-        <div className="mt-4 px-4 py-2.5 bg-white border border-gray-200 rounded-lg flex items-center justify-between">
+        <div className="mt-4 px-4 py-2.5 glass-effect border border-[rgba(46,111,64,0.25)] rounded-lg flex items-center justify-between">
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
@@ -503,7 +598,7 @@ const AdvancedTable = ({
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                className="px-3 py-1.5 border border-[#2E6F40] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E6F40] bg-[#CFFFDC]/80"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map(
                   (option) => (
@@ -517,7 +612,7 @@ const AdvancedTable = ({
                 <button
                   onClick={() => handleChangePage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#2E6F40] bg-[#CFFFDC]/80 text-sm font-medium text-[#253D2C] hover:bg-[#CFFFDC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Previous</span>
                   <svg
@@ -534,7 +629,7 @@ const AdvancedTable = ({
                     />
                   </svg>
                 </button>
-                <div className="flex items-center px-4 py-2 text-sm text-gray-700 border-t border-b border-gray-300 bg-white">
+                <div className="flex items-center px-4 py-2 text-sm text-[#253D2C] border-t border-b border-[#2E6F40] bg-[#CFFFDC]/80">
                   Page {page + 1} of {totalPages || 1}
                 </div>
                 <button
@@ -542,7 +637,7 @@ const AdvancedTable = ({
                     handleChangePage(Math.min(totalPages - 1, page + 1))
                   }
                   disabled={page >= totalPages - 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#2E6F40] bg-[#CFFFDC]/80 text-sm font-medium text-[#253D2C] hover:bg-[#CFFFDC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Next</span>
                   <svg

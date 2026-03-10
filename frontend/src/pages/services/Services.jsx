@@ -103,7 +103,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+      className="glass-effect p-4 md:p-6 rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)]"
     >
       <h2 className="text-xl font-bold mb-6">
         {initialData ? "Edit service" : "Create new service"}
@@ -120,7 +120,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.serviceName}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+            className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
           />
         </div>
 
@@ -135,7 +135,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             onChange={handleChange}
             required
             placeholder="e.g. SRV-001"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black uppercase"
+            className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] uppercase text-sm"
           />
         </div>
 
@@ -147,7 +147,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             name="industryType"
             value={formData.industryType}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+            className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
           >
             {[
               "Education",
@@ -176,7 +176,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
               onChange={handleChange}
               required
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+              className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
             />
           </div>
           <div>
@@ -203,7 +203,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.description}
             onChange={handleChange}
             rows="3"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+            className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
           ></textarea>
         </div>
 
@@ -224,7 +224,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
                   onChange={(e) =>
                     handleCustomFieldChange(field, e.target.value)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                  className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
                 />
               </div>
             ))}
@@ -232,14 +232,14 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
           </div>
         </div>
 
-        <div className="md:col-span-2 flex items-center gap-2">
+        <div className="md:col-span-2 flex items-center gap-2 text-sm">
           <input
             type="checkbox"
             id="isActive"
             name="isActive"
             checked={formData.isActive}
             onChange={handleChange}
-            className="rounded border-gray-300 text-black focus:ring-black h-4 w-4"
+            className="rounded border-[rgba(46,111,64,0.6)] text-[#2E6F40] focus:ring-[#2E6F40] h-4 w-4"
           />
           <label
             htmlFor="isActive"
@@ -250,18 +250,18 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 mt-8">
+      <div className="flex justify-end gap-3 mt-6 text-sm">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+          className="px-4 py-2 glass-effect border border-[rgba(46,111,64,0.5)] text-[#253D2C] rounded-lg hover:brightness-110"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+          className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save service"}
         </button>
@@ -452,7 +452,7 @@ const Services = () => {
   ];
 
   const renderCard = (service, actions) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+    <div className="glass-effect rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col text-sm">
       {/* Card Header */}
       <div className="p-5 border-b border-gray-100 flex justify-between items-start">
         <div>
@@ -532,7 +532,7 @@ const Services = () => {
         {view === "list" && (
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+            className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium"
           >
             + Add service
           </button>

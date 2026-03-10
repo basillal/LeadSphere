@@ -180,7 +180,7 @@ const ReferrersTable = ({
   const renderCard = (row, actions) => {
     const stats = referrerStats?.[row._id] || {};
     return (
-      <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <div className="glass-effect p-3 rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)]">
         <div className="flex justify-between items-start mb-2">
           <div>
             <h3 className="font-semibold text-gray-900 text-sm uppercase">
@@ -264,7 +264,7 @@ const ReferrersTable = ({
 
       {/* External pagination for backend pagination */}
       {pagination && referrers.length > 0 && (
-        <div className="mt-4 px-4 py-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between">
+        <div className="mt-4 px-4 py-3 glass-effect border border-[rgba(46,111,64,0.25)] rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-700">
               Showing{" "}

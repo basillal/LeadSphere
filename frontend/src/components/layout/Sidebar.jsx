@@ -68,20 +68,27 @@ const Sidebar = ({ open, handleDrawerClose }) => {
 
   const menuItems = getVisibleItems();
 
-  // Determine width based on state
-  const widthClass = open ? "w-64" : "w-16";
+  // Width for desktop: expanded vs compact
+  const widthClass = open ? "md:w-64" : "md:w-16";
+
+  // Slide-in behaviour on mobile: hidden when closed, visible when open
+  const translateClass = open
+    ? "translate-x-0"
+    : "-translate-x-full md:translate-x-0";
 
   return (
     <aside
       className={`
-                fixed md:relative z-20 min-h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
-                translate-x-0
-                ${widthClass}
-                flex flex-col
-                no-print
-            `}
+        fixed md:relative inset-y-0 left-0 z-30 min-h-screen
+        glass-effect border-r border-[rgba(46,111,64,0.25)]
+        transition-all duration-300 ease-in-out transform
+        w-64 ${widthClass} ${translateClass}
+        flex flex-col
+        md:m-4 md:rounded-3xl rounded-r-3xl overflow-hidden
+        no-print
+      `}
     >
-      <div className="flex items-center justify-end h-16 border-b border-gray-200 px-4">
+      <div className="flex items-center justify-end h-16 border-b border-[rgba(46,111,64,0.25)] px-4">
         <button
           onClick={handleDrawerClose}
           className="p-1 rounded-md hover:bg-gray-100 md:hidden"
@@ -91,7 +98,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4">
-        <ul className="space-y-1">
+        <ul className="space-y-2 px-2">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -105,14 +112,14 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                     }
                   }}
                   className={`
-                                        flex items-center px-4 py-3 mx-2 rounded-lg transition-colors
-                                        ${
-                                          isActive
-                                            ? "bg-black text-white"
-                                            : "text-gray-700 hover:bg-gray-100 hover:text-black"
-                                        }
-                                        ${open ? "justify-start" : "justify-center"}
-                                    `}
+                    flex items-center px-4 py-3 mx-1 rounded-full transition-all duration-200
+                    ${
+                      isActive
+                        ? "bg-[rgba(46,111,64,0.9)] text-white shadow-md"
+                        : "text-[#253D2C] hover:bg-white/40 hover:text-[#2E6F40]"
+                    }
+                    ${open ? "justify-start" : "justify-center"}
+                  `}
                   title={!open ? item.label : ""}
                 >
                   <span className={`${open ? "mr-3" : ""}`}>{item.icon}</span>

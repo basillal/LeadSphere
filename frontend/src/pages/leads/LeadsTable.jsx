@@ -212,15 +212,15 @@ const LeadsTable = ({
   // Custom mobile card render
   const renderCard = (row, actions) => (
     <div
-      className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+      className="card-surface p-3 text-xs md:text-sm"
       onClick={() => onPreview && onPreview(row)}
     >
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex items-start justify-between gap-2 mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+          <h3 className="font-semibold text-gray-900 text-sm md:text-base capitalize">
             {row.name}
           </h3>
-          <p className="text-xs text-gray-500 capitalize">
+          <p className="text-[11px] text-gray-500 capitalize">
             {row.organizationName || "-"}
           </p>
         </div>
@@ -231,7 +231,7 @@ const LeadsTable = ({
         </span>
       </div>
 
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
+      <div className="space-y-0.5 text-xs text-gray-600 mb-2">
         <p>
           <span className="font-medium">Phone:</span> {row.phone}
         </p>
@@ -246,7 +246,7 @@ const LeadsTable = ({
         </p>
       </div>
 
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+      <div className="flex justify-end gap-1 border-t border-gray-100 pt-2">
         {actions.map((action, idx) => {
           if (action.condition && !action.condition(row)) return null;
           return (

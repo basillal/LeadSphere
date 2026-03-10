@@ -33,7 +33,7 @@ const BasicModal = ({
 
       {/* Modal Content */}
       <div
-        className={`relative bg-white rounded-xl shadow-2xl w-full ${maxWidth} flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200`}
+        className={`relative glass-effect rounded-xl shadow-2xl w-full ${maxWidth} flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"

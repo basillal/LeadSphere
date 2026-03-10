@@ -39,15 +39,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden px-4">
+    <div className="min-h-screen flex items-center justify-center black-theme-bg relative overflow-hidden px-4">
       {/* Dynamic Background Elements */}
-      <motion.div 
-        animate={{ 
-          opacity: [0.1, 0.2, 0.1],
-          scale: [1, 1.1, 1],
+      <motion.div
+        animate={{
+          opacity: [0.35, 0.55, 0.35],
+          scale: [1, 1.05, 1],
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-900/20 via-black to-black -z-10"
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 -z-10 bg-gradient-to-br from-[#2E6F40]/40 via-transparent to-[#253D2C]/80"
       />
       
       <motion.div 
@@ -56,9 +56,9 @@ const Login = () => {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-[400px]"
       >
-        <div className="bg-zinc-900/40 backdrop-blur-xl p-8 sm:p-10 rounded-[2rem] border border-white/5 shadow-2xl">
+        <div className="glass-effect p-8 sm:p-10 rounded-[2rem] border border-[rgba(46,111,64,0.35)] shadow-2xl">
           <div className="text-center mb-6">
-            <p className="text-zinc-400 text-sm font-semibold tracking-wide">
+            <p className="text-[#253D2C]/80 text-sm font-semibold tracking-wide">
               LeadSphere
             </p>
           </div>
@@ -69,7 +69,7 @@ const Login = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl"
+                className="mb-4 bg-[#CFFFDC]/80 border border-[#68BA7F]/60 p-3 rounded-xl"
               >
                 <p className="text-xs font-bold text-emerald-400 text-center">{successMessage}</p>
               </motion.div>
@@ -80,7 +80,7 @@ const Login = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl"
+                className="mb-4 bg-rose-500/10 border border-rose-500/40 p-3 rounded-xl"
               >
                 <p className="text-xs font-bold text-rose-400 text-center">{error}</p>
               </motion.div>
@@ -96,7 +96,7 @@ const Login = () => {
                 <input
                   type="email"
                   required
-                  className="block w-full pl-11 pr-4 py-3 bg-zinc-800/50 border border-zinc-800 rounded-2xl text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/30 transition-all font-medium"
+                  className="block w-full pl-11 pr-4 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -110,7 +110,7 @@ const Login = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  className="block w-full pl-11 pr-11 py-3 bg-zinc-800/50 border border-zinc-800 rounded-2xl text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/30 transition-all font-medium"
+                  className="block w-full pl-11 pr-11 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -118,7 +118,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-500 hover:text-white transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#253D2C]/70 hover:text-[#253D2C] transition-colors"
                 >
                   {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                 </button>
@@ -126,7 +126,7 @@ const Login = () => {
             </div>
 
             <div className="flex justify-end">
-              <Link to="#" className="text-xs font-bold text-zinc-400 hover:text-white transition-colors">
+              <Link to="#" className="text-xs font-bold text-[#253D2C]/80 hover:text-[#253D2C] transition-colors">
                 Forgot password?
               </Link>
             </div>
@@ -135,16 +135,16 @@ const Login = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full py-3.5 bg-white text-black font-bold rounded-2xl shadow-xl hover:bg-zinc-100 transition-colors text-sm"
+              className="w-full py-3.5 bg-[var(--primary-button-bg)] text-white font-bold rounded-2xl shadow-xl hover:bg-[var(--primary-button-hover-bg)] transition-colors text-sm"
             >
               Sign In
             </motion.button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-zinc-500 font-semibold text-xs">
+            <p className="text-[#253D2C]/80 font-semibold text-xs">
               Don't have an account?{" "}
-              <Link to="/register" className="text-white hover:underline transition-all">
+              <Link to="/register" className="text-[#2E6F40] font-semibold hover:underline transition-all">
                 Create one
               </Link>
             </p>
