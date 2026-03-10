@@ -16,10 +16,36 @@ const app = express();
 
 
 // Middleware
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Use env var or default to Vite local
-    credentials: true // Important for cookies
-}));
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+].filter(Boolean);
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow non-browser or same-origin requests
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        // In non-production, allow all origins to avoid LAN/mobile dev CORS issues
+        if (process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true, // Important for cookies
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
 

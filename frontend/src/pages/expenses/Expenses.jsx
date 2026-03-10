@@ -173,7 +173,7 @@ const Expenses = () => {
         </div>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors flex items-center gap-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

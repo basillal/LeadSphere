@@ -18,7 +18,7 @@ const Select = ({
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black appearance-none bg-white transition-colors"
+        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-[rgba(46,111,64,0.5)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] appearance-none bg-[#CFFFDC]/80 transition-colors"
         required={required}
         {...props}
       >

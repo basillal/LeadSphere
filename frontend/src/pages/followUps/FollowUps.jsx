@@ -14,6 +14,7 @@ const FollowUps = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -211,7 +212,7 @@ const FollowUps = () => {
         </div>
         <button
           onClick={handleCreate}
-          className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
+          className="bg-[var(--primary-button-bg)] text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
         >
           <span className="hidden sm:inline">+ Schedule new</span>
           <span className="sm:hidden">+ New</span>
@@ -219,16 +220,16 @@ const FollowUps = () => {
       </div>
 
       {/* Tabs */}
-      <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+      <div className="mb-3 md:mb-5 -mx-4 md:mx-0 px-4 md:px-0">
+        <div className="flex space-x-1 bg-[#CFFFDC]/40 p-1 rounded-xl w-full md:w-fit overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab.id
-                  ? "bg-white text-black shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "bg-[var(--primary-button-bg)] text-white shadow-sm"
+                  : "text-[#253D2C]/80 hover:text-[#253D2C]"
               }`}
             >
               {tab.label}
@@ -241,38 +242,72 @@ const FollowUps = () => {
       <FollowUpStats stats={stats} />
 
       {/* Search and Filters */}
-      <div className="mb-4 flex flex-col md:flex-row gap-3">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search by lead name or phone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-          />
+      <div className="mb-4">
+        {/* Mobile: toggle filters */}
+        <div className="flex items-center justify-between gap-2 md:hidden mb-2">
+          <span className="text-sm text-gray-600">Filters</span>
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen((open) => !open)}
+            className="px-2 py-1.5 border border-[#2E6F40] rounded-lg text-xs font-medium text-[#253D2C] bg-[#CFFFDC]/80 hover:bg-[#CFFFDC] flex items-center justify-center"
+            aria-label={mobileFiltersOpen ? "Hide filters" : "Show filters"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-4 w-4 transition-transform ${
+                mobileFiltersOpen ? "rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+
+        <div
+          className={`flex flex-col md:flex-row gap-3 ${
+            !mobileFiltersOpen ? "hidden md:flex" : ""
+          }`}
         >
-          <option value="">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-          <option value="Missed">Missed</option>
-          <option value="Rescheduled">Rescheduled</option>
-        </select>
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-        >
-          <option value="">All Types</option>
-          <option value="Call">Call</option>
-          <option value="Email">Email</option>
-          <option value="Meeting">Meeting</option>
-          <option value="Task">Task</option>
-        </select>
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search by lead name or phone..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/70"
+            />
+          </div>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+          >
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Missed">Missed</option>
+            <option value="Rescheduled">Rescheduled</option>
+          </select>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-4 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+          >
+            <option value="">All Types</option>
+            <option value="Call">Call</option>
+            <option value="Email">Email</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Task">Task</option>
+          </select>
+        </div>
       </div>
 
       <div className="pb-6">
@@ -329,16 +364,16 @@ const FollowUps = () => {
             />
           </div>
           <div className="flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              onClick={() => setIsOutcomeModalOpen(false)}
-              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
-            >
+          <button
+            type="button"
+            onClick={() => setIsOutcomeModalOpen(false)}
+            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+          >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800"
+            className="px-4 py-2 bg-[var(--primary-button-bg)] text-white font-medium rounded-lg hover:bg-[var(--primary-button-hover-bg)]"
             >
               Complete Follow-up
             </button>

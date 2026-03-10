@@ -175,7 +175,7 @@ const UsersTable = ({
   };
 
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <div className="card-surface p-3">
       <div className="flex justify-between items-start mb-2">
         <div>
           <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>

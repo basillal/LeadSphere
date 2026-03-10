@@ -2,7 +2,7 @@ import React from "react";
 
 const FollowUpStats = ({ stats }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor, percentage }) => (
-    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 relative overflow-hidden">
+    <div className="glass-effect p-5 rounded-xl border border-[rgba(46,111,64,0.25)] shadow-sm hover:shadow-md transition-all hover:border-[rgba(46,111,64,0.5)] relative overflow-hidden">
       <div className="flex items-center gap-4">
         <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
         <div className="flex-1">

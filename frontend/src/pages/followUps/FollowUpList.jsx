@@ -177,7 +177,7 @@ const FollowUpList = ({
 
   // Custom mobile card render
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <div className="card-surface p-3">
       <div className="flex justify-between items-start mb-2">
         <div className="overflow-hidden flex-1">
           <p className="font-semibold text-gray-900 truncate text-sm uppercase">
@@ -202,7 +202,7 @@ const FollowUpList = ({
           <span className="truncate">{formatDate(row.scheduledAt)}</span>
         </div>
         {row.notes && (
-          <div className="bg-gray-50 p-2 rounded text-xs mt-1 break-words">
+          <div className="bg-[#CFFFDC]/70 p-2 rounded text-xs mt-1 break-words">
             {row.notes}
           </div>
         )}

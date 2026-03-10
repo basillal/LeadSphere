@@ -14,8 +14,8 @@ import {
   LabelList,
 } from "recharts";
 
-const Card = ({ title, value, subtext, color = "bg-white" }) => (
-  <div className={`${color} p-5 rounded-lg shadow-sm border border-gray-100`}>
+const Card = ({ title, value, subtext, color = "glass-effect" }) => (
+  <div className={`${color} p-5 rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)]`}>
     <h3 className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">
       {title}
     </h3>
@@ -112,7 +112,7 @@ const Reports = () => {
     paymentStats.find((s) => s._id === "PAID")?.totalAmount || 0;
 
   return (
-    <div className="w-full p-6 space-y-6 bg-gray-50 pb-20">
+    <div className="w-full p-6 space-y-6 bg-transparent pb-20">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold text-gray-800">Financial Reports</h1>
         <div className="flex gap-2">
@@ -125,7 +125,7 @@ const Reports = () => {
                 setYear(parseInt(e.target.value));
               }
             }}
-            className="px-3 py-1.5 border border-gray-300 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-black"
+            className="px-3 py-1.5 border border-[rgba(46,111,64,0.5)] rounded text-sm bg-[#CFFFDC]/80 focus:outline-none focus:ring-1 focus:ring-[#2E6F40]"
           >
             <option value="30d">Last 30 Days</option>
             {[2024, 2025, 2026, 2027].map((y) => (
@@ -136,7 +136,7 @@ const Reports = () => {
           </select>
           <button
             onClick={() => (window.location.href = "/billings")}
-            className="px-3 py-1.5 bg-black text-white rounded hover:bg-gray-800 transition-colors text-xs font-medium"
+            className="px-3 py-1.5 bg-[var(--primary-button-bg)] text-white rounded hover:bg-[var(--primary-button-hover-bg)] transition-colors text-xs font-medium"
           >
             All Transactions
           </button>
@@ -170,7 +170,7 @@ const Reports = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Revenue */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+        <div className="glass-effect p-5 rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-base font-bold text-gray-800">
               {year === "30d" ? "Daily Revenue" : "Monthly Revenue"}
@@ -243,7 +243,7 @@ const Reports = () => {
         </div>
 
         {/* Service Performance */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+        <div className="glass-effect p-5 rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)]">
           <h2 className="text-base font-bold text-gray-800 mb-4">
             Revenue by Service
           </h2>
@@ -274,7 +274,7 @@ const Reports = () => {
       </div>
 
       {/* Detailed Report Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="glass-effect rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)] overflow-hidden">
         <div
           className="p-4 border-b border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50"
           onClick={() => setShowDetailedReport(!showDetailedReport)}
@@ -325,7 +325,7 @@ const Reports = () => {
       </div>
 
       {/* Top Clients Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="glass-effect rounded-lg shadow-sm border border-[rgba(46,111,64,0.25)] overflow-hidden">
         <div className="p-4 border-b border-gray-100">
           <h2 className="text-base font-bold text-gray-800">Top Clients</h2>
         </div>

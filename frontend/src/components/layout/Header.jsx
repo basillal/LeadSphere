@@ -21,8 +21,11 @@ import ChangePasswordModal from "../auth/ChangePasswordModal";
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: "#000000", // Keep it black as requested
-  color: "#ffffff",
+  background: "linear-gradient(135deg, #253D2C 0%, #2E6F40 45%, #68BA7F 100%)",
+  color: "#CFFFDC",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+  boxShadow: "0 18px 45px rgba(37, 61, 44, 0.4)",
 }));
 
 const Header = ({ handleDrawerToggle }) => {
@@ -130,25 +133,74 @@ const Header = ({ handleDrawerToggle }) => {
 
             {/* Organization Switcher for Super Admin */}
             {user?.role?.roleName === "Super Admin" && (
-              <Box sx={{ minWidth: 200, mr: 2 }}>
-                <FormControl fullWidth size="small">
+              <Box sx={{ mr: 2, minWidth: 220 }}>
+                <FormControl
+                  fullWidth
+                  size="small"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "999px",
+                      backgroundColor: "rgba(0,0,0,0.16)",
+                      px: 1.5,
+                      "&:hover": {
+                        backgroundColor: "rgba(0,0,0,0.22)",
+                      },
+                    },
+                  }}
+                >
                   <Select
                     value={selectedOrganization || ""}
                     onChange={(e) => selectOrganization(e.target.value)}
                     displayEmpty
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                              color: "rgba(207, 255, 220, 0.75)",
+                              fontSize: "0.85rem",
+                            }}
+                          >
+                            <span style={{ opacity: 0.8 }}>Organization:</span>
+                            <span style={{ fontWeight: 500 }}>All</span>
+                          </Box>
+                        );
+                      }
+
+                      const org = organizations.find((o) => o._id === selected);
+                      return (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            fontSize: "0.85rem",
+                            color: "#CFFFDC",
+                          }}
+                        >
+                          <span style={{ opacity: 0.8 }}>Organization:</span>
+                          <span style={{ fontWeight: 600 }}>
+                            {org?.name || "Selected"}
+                          </span>
+                        </Box>
+                      );
+                    }}
                     sx={{
-                      color: "white",
+                      color: "#CFFFDC",
                       ".MuiOutlinedInput-notchedOutline": {
-                        borderColor: "rgba(255, 255, 255, 0.3)",
+                        borderColor: "rgba(207, 255, 220, 0.4)",
                       },
                       "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "rgba(255, 255, 255, 0.7)",
+                        borderColor: "rgba(207, 255, 220, 0.8)",
                       },
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
+                        borderColor: "#CFFFDC",
                       },
                       ".MuiSvgIcon-root": {
-                        color: "white",
+                        color: "#CFFFDC",
                       },
                     }}
                     MenuProps={{
@@ -180,7 +232,11 @@ const Header = ({ handleDrawerToggle }) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
                 variant="body2"
-                sx={{ mr: 2, display: { xs: "none", sm: "block" } }}
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", sm: "block" },
+                  color: "#CFFFDC",
+                }}
               >
                 {user?.name}
                 <span

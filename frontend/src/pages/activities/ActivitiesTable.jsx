@@ -148,7 +148,7 @@ const ActivitiesTable = ({
               onClick={() => onDateFilterChange(filter.value)}
               className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                 filters.dateFilter === filter.value
-                  ? "bg-black text-white"
+                  ? "bg-[var(--primary-button-bg)] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -227,7 +227,7 @@ const ActivitiesTable = ({
           {/* Create Button */}
           <button
             onClick={onCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm whitespace-nowrap flex items-center justify-center gap-2"
+            className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium text-sm whitespace-nowrap flex items-center justify-center gap-2"
           >
             <span className="text-lg">+</span>
             <span className="hidden md:inline">New Activity</span>

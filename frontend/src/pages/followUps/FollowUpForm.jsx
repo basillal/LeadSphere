@@ -180,7 +180,7 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800"
+            className="px-4 py-2 bg-[var(--primary-button-bg)] text-white font-medium rounded-lg hover:bg-[var(--primary-button-hover-bg)]"
           >
             Save
           </button>

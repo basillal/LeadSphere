@@ -207,7 +207,7 @@ const OrganizationProfile = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={saving}
-                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-medium text-xs"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] disabled:opacity-50 transition-all shadow-md font-medium text-xs"
                 >
                   <SaveIcon fontSize="small" className="text-sm" />
                   Save

@@ -2,7 +2,7 @@ import React from "react";
 
 const ReferrerCard = ({ referrer, onEdit, onDelete, onView, stats }) => {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+    <div className="glass-effect rounded-lg border border-[rgba(46,111,64,0.25)] shadow-sm p-4">
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -63,7 +63,7 @@ const ReferrerCard = ({ referrer, onEdit, onDelete, onView, stats }) => {
         </button>
         <button
           onClick={() => onEdit(referrer)}
-          className="flex-1 px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+          className="flex-1 px-3 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors text-sm font-medium"
         >
           Edit
         </button>

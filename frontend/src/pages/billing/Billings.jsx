@@ -160,9 +160,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-8 max-w-5xl mx-auto"
+        className="glass-effect rounded-2xl shadow-lg border border-[rgba(46,111,64,0.25)] p-4 md:p-6 max-w-5xl mx-auto"
       >
-        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-6 gap-4">
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 md:mb-6 border-b border-[rgba(46,111,64,0.2)] pb-4 gap-3">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {initialData ? "Edit Invoice" : "Create New Invoice"}
@@ -203,7 +203,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         {/* Client & Date Section */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-8">
           {/* Left: Client Selection */}
-          <div className="md:col-span-8 bg-gray-50 p-3 md:p-6 rounded-xl border border-gray-100">
+          <div className="md:col-span-8 bg-[#CFFFDC]/60 p-3 md:p-4 rounded-xl border border-[rgba(46,111,64,0.25)]">
             <div className="flex justify-between items-center mb-4">
               <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
                 Bill To (Customer)
@@ -246,7 +246,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                       onChange={(e) => setContactSearch(e.target.value)}
                       onFocus={() => setIsContactFocused(true)}
                       onBlur={() => setTimeout(() => setIsContactFocused(false), 200)}
-                      className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black transition-all text-sm"
+                      className="w-full pl-9 pr-4 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all text-sm bg-[#CFFFDC]/80"
                     />
                   </div>
                 </div>
@@ -254,7 +254,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 {contacts.length > 0 &&
                   isContactFocused &&
                   !formData.contactId && (
-                    <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                    <ul className="absolute z-10 w-full glass-effect border border-[rgba(46,111,64,0.25)] mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                       {contacts.map((c) => (
                         <li
                           key={c._id}
@@ -277,7 +277,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                     </ul>
                   )}
                 {formData.contactId && (
-                  <div className="mt-3 flex items-center justify-between bg-green-50 px-4 py-2 rounded-lg border border-green-100">
+                  <div className="mt-3 flex items-center justify-between bg-[#CFFFDC]/90 px-4 py-2 rounded-lg border border-[rgba(46,111,64,0.4)]">
                     <span className="text-sm text-green-700 font-medium flex items-center gap-2">
                       <svg
                         className="w-4 h-4"
@@ -316,7 +316,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           </div>
 
           {/* Right: Dates */}
-          <div className="md:col-span-4 space-y-4">
+          <div className="md:col-span-4 space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Billing Date
@@ -327,7 +327,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, billingDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
               />
             </div>
             <div>
@@ -340,15 +340,15 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, dueDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Line Items */}
-        <div className="mb-6 md:mb-8 border border-gray-200 rounded-xl overflow-hidden">
-          <div className="bg-gray-50 px-4 md:px-6 py-3 border-b border-gray-200 flex justify-between items-center">
+        <div className="mb-6 md:mb-8 border border-[rgba(46,111,64,0.25)] rounded-xl overflow-hidden glass-effect">
+          <div className="bg-[#253D2C]/5 px-4 md:px-6 py-3 border-b border-[rgba(46,111,64,0.25)] flex justify-between items-center">
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
               Line Items
             </h3>
@@ -364,20 +364,20 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           <div className="p-0 overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white border-b border-gray-100 text-xs text-gray-500 uppercase">
-                  <th className="px-6 py-3 font-medium min-w-[200px]">
+                <tr className="bg-[#CFFFDC]/80 border-b border-[rgba(46,111,64,0.25)] text-[11px] md:text-xs text-gray-600 uppercase">
+                  <th className="px-4 md:px-6 py-2 font-semibold min-w-[180px]">
                     Service
                   </th>
-                  <th className="px-4 py-3 font-medium w-24 min-w-[100px]">
+                  <th className="px-3 md:px-4 py-2 font-semibold w-20 min-w-[90px] text-center">
                     Qty
                   </th>
-                  <th className="px-4 py-3 font-medium w-32 min-w-[120px]">
+                  <th className="px-3 md:px-4 py-2 font-semibold w-28 min-w-[110px] text-right">
                     Price
                   </th>
-                  <th className="px-4 py-3 font-medium w-32 text-right min-w-[120px]">
+                  <th className="px-3 md:px-4 py-2 font-semibold w-28 text-right min-w-[110px]">
                     Total
                   </th>
-                  <th className="px-4 py-3 w-16"></th>
+                  <th className="px-3 md:px-4 py-2 w-12"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -396,13 +396,13 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                       key={index}
                       className="group hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-6 py-3">
+                      <td className="px-4 md:px-6 py-2.5">
                         <select
                           value={item.serviceId}
                           onChange={(e) =>
                             handleServiceChange(index, e.target.value)
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-black focus:border-black"
+                          className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] bg-white"
                         >
                           <option value="">Select Service</option>
                           {services.map((s) => (
@@ -412,7 +412,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                           ))}
                         </select>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 md:px-4 py-2.5">
                         <input
                           type="number"
                           min="1"
@@ -423,10 +423,10 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                               parseInt(e.target.value) || 1;
                             setFormData({ ...formData, services: newServices });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-center"
+                          className="w-full px-3 py-2 border border-[rgba(46,111,64,0.4)] rounded-lg text-xs md:text-sm text-center"
                         />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 md:px-4 py-2.5">
                         <input
                           type="number"
                           min="0"
@@ -437,13 +437,13 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                               parseFloat(e.target.value) || 0;
                             setFormData({ ...formData, services: newServices });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-right"
+                          className="w-full px-3 py-2 border border-[rgba(46,111,64,0.4)] rounded-lg text-xs md:text-sm text-right"
                         />
                       </td>
-                      <td className="px-4 py-3 text-right font-medium text-gray-900">
+                      <td className="px-3 md:px-4 py-2.5 text-right font-semibold text-gray-900 text-sm">
                         ₹{(item.quantity * item.unitAmount).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 md:px-4 py-2.5 text-center">
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(index)}
@@ -473,7 +473,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-gray-200 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-[rgba(46,111,64,0.2)] pt-6">
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -485,7 +485,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   setFormData({ ...formData, notes: e.target.value })
                 }
                 rows="3"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
                 placeholder="Terms and conditions or additional notes..."
               ></textarea>
             </div>
@@ -499,7 +499,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, paymentStatus: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg text-sm"
                 >
                   <option value="PENDING">Pending</option>
                   <option value="PAID">Paid</option>
@@ -516,7 +516,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, paymentMode: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border border-[rgba(46,111,64,0.5)] rounded-lg text-sm"
                 >
                   <option value="BANK">Bank Transfer</option>
                   <option value="CASH">Cash</option>
@@ -528,23 +528,23 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 md:p-6 space-y-4 border border-gray-100 shadow-sm">
+          <div className="bg-[#CFFFDC]/70 rounded-xl p-4 md:p-5 space-y-3 border border-[rgba(46,111,64,0.25)] shadow-sm">
             <h3 className="font-bold text-gray-900 border-b border-gray-200 pb-2">
               Payment Summary
             </h3>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs md:text-sm">
               <span className="text-gray-600">Subtotal</span>
               <span className="font-medium text-gray-900">
                 ₹{totals.subtotal.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs md:text-sm">
               <span className="text-gray-600">Tax</span>
               <span className="font-medium text-gray-900">
                 ₹{totals.tax.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between text-sm items-center">
+            <div className="flex justify-between text-xs md:text-sm items-center">
               <span className="text-gray-600">Discount</span>
               <div className="flex items-center gap-2">
                 <span className="text-gray-400">-</span>
@@ -558,34 +558,34 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                       discount: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-24 px-2 py-1 text-right border border-gray-300 rounded bg-white focus:ring-black focus:border-black"
+                  className="w-24 px-2 py-1 text-right border border-[rgba(46,111,64,0.5)] rounded bg-white focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] text-sm"
                 />
               </div>
             </div>
-            <div className="border-t border-gray-300 pt-4 flex justify-between items-center bg-gray-100 -mx-6 -mb-6 p-6 rounded-b-xl mt-4">
-              <span className="text-lg font-bold text-gray-900">
+            <div className="border-t border-[rgba(46,111,64,0.35)] pt-4 flex justify-between items-center bg-[#253D2C]/90 text-[#CFFFDC] -mx-4 -mb-4 px-4 py-4 rounded-b-xl mt-4">
+              <span className="text-base md:text-lg font-bold">
                 Grand Total
               </span>
-              <span className="text-2xl font-bold text-black border-b-4 border-yellow-300">
+              <span className="text-xl md:text-2xl font-extrabold border-b-4 border-[#CFFFDC]">
                 ₹{grandTotal.toFixed(2)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-8 md:mt-10 border-t border-gray-100 pt-6 md:pt-8">
+        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-6 md:mt-8 border-t border-[rgba(46,111,64,0.2)] pt-4 md:pt-6">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+            className="px-4 py-2.5 border border-[rgba(46,111,64,0.5)] rounded-lg text-[#253D2C] hover:bg-[#CFFFDC]/70 font-medium transition-colors text-sm"
           >
             Cancel
           </button>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <button
               type="submit"
               disabled={!formData.contactId || formData.services.length === 0}
-              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md transition-all transform hover:scale-105"
+              className="px-6 py-2.5 bg-[#2E6F40] text-white rounded-lg hover:bg-[#253D2C] disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md transition-all text-sm"
             >
               {initialData ? "Update Invoice" : "Generate Invoice"}
             </button>
@@ -595,9 +595,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
       {/* Add Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm overflow-hidden md:overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-2xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl sticky top-0 z-10">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center p-4 pt-20 bg-black/60 backdrop-blur-sm overflow-y-auto">
+          <div className="glass-effect w-full max-w-4xl rounded-2xl shadow-2xl relative flex flex-col max-h-[90vh]">
+            <div className="px-4 md:px-6 py-4 border-b border-[rgba(46,111,64,0.25)] flex justify-between items-center bg-[#CFFFDC]/80 rounded-t-2xl sticky top-0 z-10">
               <h2 className="text-xl font-bold text-gray-900">
                 Add New Contact
               </h2>
@@ -621,7 +621,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6">
               <ContactForm
                 onCancel={() => setShowContactModal(false)}
                 onSubmit={(data) => {
@@ -798,13 +798,13 @@ const Billings = () => {
   ];
 
   return (
-    <div className="w-full p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="w-full p-3 md:p-6">
+      <div className="mb-4 md:mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h1 className="text-2xl font-bold text-gray-900">Billing & Invoices</h1>
         {view === "list" && (
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+            className="px-4 py-2 bg-[#2E6F40] text-white rounded-lg hover:bg-[#253D2C] transition-colors font-medium text-sm"
           >
             + Create Invoice
           </button>
@@ -862,7 +862,7 @@ const Billings = () => {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a2 2 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                     clipRule="evenodd"
                   />
                 </svg>
@@ -873,13 +873,11 @@ const Billings = () => {
           emptyMessage="No invoices found."
         />
       ) : (
-        <div className="max-w-4xl mx-auto">
-          <BillingForm
-            initialData={currentBilling}
-            onSubmit={handleSubmit}
-            onCancel={() => setView("list")}
-          />
-        </div>
+        <BillingForm
+          initialData={currentBilling}
+          onSubmit={handleSubmit}
+          onCancel={() => setView("list")}
+        />
       )}
 
       <Toast
