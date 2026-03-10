@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import MobileCard from "../MobileCard";
 
 /**
  * AdvancedTable - A reusable, feature-rich table component
@@ -225,7 +226,7 @@ const AdvancedTable = ({
         <div
           className={`mb-4 ${
             selected.length > 0
-              ? "glass-effect rounded-lg p-4 text-[#253D2C]"
+              ? "bg-[#CFFFDC]/95 border border-[#2E6F40]/30 rounded-lg p-4 text-[#253D2C]"
               : ""
           }`}
         >
@@ -259,7 +260,7 @@ const AdvancedTable = ({
                       <button
                         type="button"
                         onClick={() => setMobileFiltersOpen((open) => !open)}
-                        className="px-2 py-2 border border-[#2E6F40] rounded-lg text-sm font-medium text-[#253D2C] bg-[#CFFFDC]/80 hover:bg-[#CFFFDC] flex items-center justify-center"
+                        className="px-2 py-2 border border-[#2E6F40] rounded-lg text-sm font-medium text-[#253D2C] bg-[#CFFFDC] hover:bg-white flex items-center justify-center"
                         aria-label={mobileFiltersOpen ? "Hide filters" : "Show filters"}
                       >
                         <svg
@@ -291,7 +292,7 @@ const AdvancedTable = ({
                             placeholder={toolbar.searchPlaceholder || "Search..."}
                             value={toolbar.search.value}
                             onChange={(e) => toolbar.search.onChange(e.target.value)}
-                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/70"
+                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]"
                           />
                         </div>
                       )}
@@ -302,7 +303,7 @@ const AdvancedTable = ({
                             key={index}
                             value={filter.value}
                             onChange={(e) => filter.onChange(e.target.value)}
-                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+                            className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]"
                           >
                             {filter.options.map((option) => (
                               <option key={option.value} value={option.value}>
@@ -339,7 +340,7 @@ const AdvancedTable = ({
                         placeholder={toolbar.searchPlaceholder || "Search..."}
                         value={toolbar.search.value}
                         onChange={(e) => toolbar.search.onChange(e.target.value)}
-                        className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/70"
+                        className="w-full px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]"
                       />
                     </div>
                   )}
@@ -351,7 +352,7 @@ const AdvancedTable = ({
                         key={index}
                         value={filter.value}
                         onChange={(e) => filter.onChange(e.target.value)}
-                        className="px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]/80"
+                        className="px-4 py-2 border border-[#2E6F40] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E6F40] focus:border-transparent bg-[#CFFFDC]"
                       >
                         {filter.options.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -394,7 +395,7 @@ const AdvancedTable = ({
 
       {/* Mobile View - Cards */}
       {isMobile ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {visibleRows.length === 0 ? (
             <div className="text-center py-8 card-surface">
               <p className="text-gray-500">{emptyMessage}</p>
@@ -404,44 +405,20 @@ const AdvancedTable = ({
               renderCard ? (
                 renderCard(row, actions)
               ) : (
-                <div
+                <MobileCard
                   key={getRowId(row)}
-                  className="glass-effect p-3 rounded-lg border border-[rgba(46,111,64,0.25)] shadow-sm"
-                >
-                  <div className="space-y-1">
-                    {columns.map((col) => (
-                      <div key={col.id} className="text-xs">
-                        <span className="font-medium text-gray-700 block">
-                          {col.label}:{" "}
-                        </span>
-                        <span className="text-gray-900">
-                          {col.render ? col.render(row) : row[col.id]}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  {actions.length > 0 && (
-                    <div className="flex justify-end gap-2 border-t border-gray-100 pt-2 mt-2">
-                      {actions.map((action, idx) => {
-                        if (action.condition && !action.condition(row))
-                          return null;
-                        return (
-                          <button
-                            key={idx}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              action.onClick(row);
-                            }}
-                            className={`p-1.5 rounded-lg transition-colors ${action.color || "text-gray-600 hover:bg-gray-100"}`}
-                            title={action.label}
-                          >
-                            {action.icon}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                  title={row[columns[0]?.id] || "No Title"}
+                  subtitle={row[columns[1]?.id]}
+                  status={row.status}
+                  data={columns.slice(2).map((col) => ({
+                    label: col.label,
+                    value: col.render ? col.render(row) : row[col.id],
+                  }))}
+                  actions={actions.map((action) => ({
+                    ...action,
+                    onClick: () => action.onClick(row),
+                  }))}
+                />
               ),
             )
           )}
@@ -451,7 +428,7 @@ const AdvancedTable = ({
         <div className="card-surface overflow-hidden relative min-h-[200px]">
           {/* Loading Overlay */}
           {loading && (
-            <div className="absolute inset-0 z-20 bg-[#CFFFDC]/60 backdrop-blur-[2px] flex items-center justify-center">
+            <div className="absolute inset-0 z-20 bg-[#CFFFDC]/80 backdrop-blur-[1px] flex items-center justify-center">
               <div className="flex flex-col items-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2E6F40] mb-3"></div>
                 <p className="text-sm font-medium text-gray-600">
@@ -582,7 +559,7 @@ const AdvancedTable = ({
 
       {/* Pagination */}
       {pagination.enabled && (
-        <div className="mt-4 px-4 py-2.5 glass-effect border border-[rgba(46,111,64,0.25)] rounded-lg flex items-center justify-between">
+        <div className="mt-4 px-4 py-2.5 bg-[#CFFFDC]/95 border border-[rgba(46,111,64,0.25)] rounded-lg flex items-center justify-between">
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
@@ -598,7 +575,7 @@ const AdvancedTable = ({
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                className="px-3 py-1.5 border border-[#2E6F40] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E6F40] bg-[#CFFFDC]/80"
+                className="px-3 py-1.5 border border-[#2E6F40] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2E6F40] bg-[#CFFFDC]"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map(
                   (option) => (
@@ -612,7 +589,7 @@ const AdvancedTable = ({
                 <button
                   onClick={() => handleChangePage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#2E6F40] bg-[#CFFFDC]/80 text-sm font-medium text-[#253D2C] hover:bg-[#CFFFDC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#2E6F40] bg-[#CFFFDC] text-sm font-medium text-[#253D2C] hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Previous</span>
                   <svg
@@ -629,7 +606,7 @@ const AdvancedTable = ({
                     />
                   </svg>
                 </button>
-                <div className="flex items-center px-4 py-2 text-sm text-[#253D2C] border-t border-b border-[#2E6F40] bg-[#CFFFDC]/80">
+                <div className="flex items-center px-4 py-2 text-sm text-[#253D2C] border-t border-b border-[#2E6F40] bg-[#CFFFDC]">
                   Page {page + 1} of {totalPages || 1}
                 </div>
                 <button
@@ -637,7 +614,7 @@ const AdvancedTable = ({
                     handleChangePage(Math.min(totalPages - 1, page + 1))
                   }
                   disabled={page >= totalPages - 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#2E6F40] bg-[#CFFFDC]/80 text-sm font-medium text-[#253D2C] hover:bg-[#CFFFDC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#2E6F40] bg-[#CFFFDC] text-sm font-medium text-[#253D2C] hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Next</span>
                   <svg

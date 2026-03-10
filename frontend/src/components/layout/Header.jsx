@@ -23,9 +23,9 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
   background: "linear-gradient(135deg, #253D2C 0%, #2E6F40 45%, #68BA7F 100%)",
   color: "#CFFFDC",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-  boxShadow: "0 18px 45px rgba(37, 61, 44, 0.4)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
+  boxShadow: "0 18px 45px rgba(37, 61, 44, 0.3)",
 }));
 
 const Header = ({ handleDrawerToggle }) => {
@@ -140,10 +140,10 @@ const Header = ({ handleDrawerToggle }) => {
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "999px",
-                      backgroundColor: "rgba(0,0,0,0.16)",
+                      backgroundColor: "rgba(0,0,0,0.3)",
                       px: 1.5,
                       "&:hover": {
-                        backgroundColor: "rgba(0,0,0,0.22)",
+                        backgroundColor: "rgba(0,0,0,0.42)",
                       },
                     },
                   }}
