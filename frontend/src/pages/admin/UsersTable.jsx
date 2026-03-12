@@ -1,4 +1,5 @@
 import React from "react";
+import MobileCard from "../../components/common/MobileCard";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import { useAuth } from "../../components/auth/AuthProvider";
 
@@ -174,41 +175,24 @@ const UsersTable = ({
     },
   };
 
+
+
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>
-          <p className="text-xs text-gray-500">{row.email}</p>
-        </div>
-        <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-            row.isActive,
-          )}`}
-        >
-          {row.isActive ? "Active" : "Inactive"}
-        </span>
-      </div>
-      <div className="text-xs text-gray-600 mb-2">
-        <span className="font-medium">Role:</span>{" "}
-        {row.role?.roleName || "No Role"}
-      </div>
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
-        {actions.map((action, idx) => (
-          <button
-            key={idx}
-            onClick={(e) => {
-              e.stopPropagation();
-              action.onClick(row);
-            }}
-            className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
-            title={action.label}
-          >
-            {action.icon}
-          </button>
-        ))}
-      </div>
-    </div>
+    <MobileCard
+      title={row.name}
+      subtitle={row.email}
+      status={row.isActive ? "Active" : "Inactive"}
+      statusColor={getStatusColor(row.isActive)}
+      data={[
+        { icon: "✉️", value: row.email, label: "Email" },
+        { icon: "🏢", value: row.organization?.name, label: "Org" },
+        { icon: "👤", value: row.role?.roleName || "No Role", label: "Role" },
+      ]}
+      actions={actions.map((action) => ({
+        ...action,
+        onClick: () => action.onClick(row),
+      }))}
+    />
   );
 
   return (

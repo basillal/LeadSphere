@@ -102,10 +102,14 @@ const Dashboard = () => {
 
   const HeroCard = ({ title, value, icon, iconColor, bgColor, isDark }) => (
     <div
-      className={`p-6 rounded-2xl ${isDark ? "bg-gradient-to-br from-gray-900 to-black text-white shadow-xl" : "bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100"} transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
+      className={`p-6 rounded-2xl ${
+        isDark
+          ? "dark-glass-effect text-[#CFFFDC]"
+          : "glass-effect text-[#253D2C]"
+      } transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
     >
       {isDark && (
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#CFFFDC] opacity-10 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
       )}
       <div className="flex items-center gap-5 relative z-10">
         <div
@@ -130,7 +134,7 @@ const Dashboard = () => {
   );
 
   const CompactStat = ({ title, value, icon, color }) => (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+    <div className="glass-effect p-4 rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] flex items-center gap-4 hover:brightness-110 transition-all">
       <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-xl`}>
         {icon}
       </div>
@@ -183,7 +187,7 @@ const Dashboard = () => {
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5 min-w-[150px]"
+          className="glass-effect border border-[rgba(46,111,64,0.4)] text-sm text-[#253D2C] rounded-lg focus:ring-2 focus:ring-[#2E6F40] focus:border-[#2E6F40] block p-2.5 min-w-[150px]"
         >
           <option value="last_30_days">Last 30 Days</option>
           <option value="this_month">This Month</option>
@@ -218,7 +222,7 @@ const Dashboard = () => {
       </div>
 
       {/* Net Profit Section - Full Width Compact Design */}
-      <div className="mb-8 w-full bg-white border border-gray-200 shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
+      <div className="mb-8 w-full glass-effect border border-[rgba(46,111,64,0.35)] shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <div
@@ -245,7 +249,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex gap-6 text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+          <div className="flex gap-6 text-right bg-[#CFFFDC]/70 px-4 py-2 rounded-lg border border-[rgba(46,111,64,0.25)]">
             <div>
               <p className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
                 Revenue
@@ -310,7 +314,7 @@ const Dashboard = () => {
       {/* Advanced Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Financial Overview - Combined Chart */}
-        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
+        <div className="col-span-1 lg:col-span-2 glass-effect p-6 rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] h-96">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-gray-800">
               Financial Overview
@@ -408,7 +412,7 @@ const Dashboard = () => {
       {/* Secondary Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Leads by Status - Pie Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
+        <div className="glass-effect p-6 rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] h-80">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
             Leads Distribution
           </h3>
@@ -517,7 +521,7 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Leads List */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 glass-effect p-6 rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] h-80 overflow-hidden flex flex-col">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Leads</h3>
           <div className="overflow-y-auto flex-grow pr-2">
             <table className="min-w-full divide-y divide-gray-200">
@@ -537,7 +541,7 @@ const Dashboard = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-transparent divide-y divide-gray-200">
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
                     <tr key={lead._id}>
@@ -583,7 +587,7 @@ const Dashboard = () => {
 
       {/* Recent Activities List (Moved to bottom grid) */}
       <div className="grid grid-cols-1 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
+        <div className="glass-effect p-6 rounded-xl shadow-sm border border-[rgba(46,111,64,0.25)] h-80 overflow-hidden flex flex-col">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
             Recent Activity
           </h3>

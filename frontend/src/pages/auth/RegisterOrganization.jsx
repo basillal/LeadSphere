@@ -7,6 +7,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { motion, AnimatePresence } from "framer-motion";
 
 const RegisterOrganization = () => {
   const navigate = useNavigate();
@@ -32,8 +33,6 @@ const RegisterOrganization = () => {
 
     try {
       await api.post("/auth/register-organization", formData);
-      // On success, redirect to login with a success message (could be passed via state)
-      // For now, just redirect
       navigate("/login", {
         state: { message: "Registration successful! Please login." },
       });
@@ -49,158 +48,139 @@ const RegisterOrganization = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
-      {/* Floating Background Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
-      <div className="absolute top-[20%] right-[-10%] w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-2000"></div>
-      <div className="absolute bottom-[-10%] left-[20%] w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-4000"></div>
+    <div className="min-h-screen flex items-center justify-center black-theme-bg relative overflow-hidden px-4 py-12">
+      {/* Dynamic Background Elements */}
+      <motion.div
+        animate={{
+          opacity: [0.35, 0.55, 0.35],
+          scale: [1, 1.05, 1],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 -z-10 bg-gradient-to-bl from-[#68BA7F]/35 via-transparent to-[#253D2C]/85"
+      />
 
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/50 relative z-10 animate-fade-in-up">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center shadow-lg mb-4">
-            <BusinessIcon className="text-black text-3xl" />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-[420px]"
+      >
+        <div className="glass-effect p-8 sm:p-10 rounded-[2rem] border border-[rgba(46,111,64,0.35)] shadow-2xl">
+          <div className="text-center mb-6">
+            <p className="text-[#253D2C]/80 text-sm font-semibold tracking-wide">
+              LeadSphere
+            </p>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Register Organization
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Create your organization account
-          </p>
-        </div>
 
-        {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm animate-fade-in">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-4 bg-rose-500/10 border border-rose-500/40 p-3 rounded-xl"
+              >
+                <p className="text-xs font-bold text-rose-400 text-center">{error}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            {/* Organization Name */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <BusinessIcon className="h-5 w-5 text-black transition-colors" />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="space-y-3">
+              {/* Organization Name */}
+              <div className="group relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <BusinessIcon className="h-4 w-4 text-zinc-500 group-focus-within:text-white transition-colors" />
+                </div>
+                <input
+                  name="organizationName"
+                  type="text"
+                  required
+                  className="block w-full pl-11 pr-4 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
+                  placeholder="Organization Name"
+                  value={formData.organizationName}
+                  onChange={handleChange}
+                />
               </div>
-              <input
-                id="organizationName"
-                name="organizationName"
-                type="text"
-                required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="Organization Name"
-                value={formData.organizationName}
-                onChange={handleChange}
-                autoFocus
-              />
-            </div>
 
-            {/* Admin Name */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <PersonIcon className="h-5 w-5 text-black transition-colors" />
+              {/* Admin Name */}
+              <div className="group relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <PersonIcon className="h-4 w-4 text-zinc-500 group-focus-within:text-white transition-colors" />
+                </div>
+                <input
+                  name="adminName"
+                  type="text"
+                  required
+                  className="block w-full pl-11 pr-4 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
+                  placeholder="Admin Full Name"
+                  value={formData.adminName}
+                  onChange={handleChange}
+                />
               </div>
-              <input
-                id="adminName"
-                name="adminName"
-                type="text"
-                required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="Admin Name"
-                value={formData.adminName}
-                onChange={handleChange}
-              />
-            </div>
 
-            {/* Email */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <EmailIcon className="h-5 w-5 text-black transition-colors" />
+              {/* Email */}
+              <div className="group relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <EmailIcon className="h-4 w-4 text-zinc-500 group-focus-within:text-white transition-colors" />
+                </div>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  className="block w-full pl-11 pr-4 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
+                  placeholder="Admin Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
               </div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="admin@organization.com"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
 
-            {/* Password */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <LockIcon className="h-5 w-5 text-black transition-colors" />
-              </div>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                required
-                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+              {/* Password */}
+              <div className="group relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <LockIcon className="h-4 w-4 text-zinc-500 group-focus-within:text-white transition-colors" />
+                </div>
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="block w-full pl-11 pr-11 py-3 bg-[#CFFFDC]/70 border border-[rgba(46,111,64,0.5)] rounded-2xl text-[#253D2C] text-sm placeholder:text-[#253D2C]/60 focus:outline-none focus:ring-1 focus:ring-[#2E6F40] focus:border-[#2E6F40] transition-all font-medium"
+                  placeholder="Create Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="text-black hover:text-gray-700 focus:outline-none transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#253D2C]/70 hover:text-[#253D2C] transition-colors"
                 >
-                  {showPassword ? (
-                    <VisibilityOff className="h-5 w-5" />
-                  ) : (
-                    <Visibility className="h-5 w-5" />
-                  )}
+                  {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                 </button>
               </div>
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Register Organization
-            </button>
-          </div>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+            <div className="pt-2">
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="w-full py-3.5 bg-[var(--primary-button-bg)] text-white font-bold rounded-2xl shadow-xl hover:bg-[var(--primary-button-hover-bg)] transition-colors text-sm"
               >
+                Register
+              </motion.button>
+            </div>
+          </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-[#253D2C]/80 font-semibold text-xs">
+              Already have an account?{" "}
+              <Link to="/login" className="text-[#2E6F40] font-semibold hover:underline transition-all">
                 Sign In
               </Link>
             </p>
           </div>
-        </form>
-      </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

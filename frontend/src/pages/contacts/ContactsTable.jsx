@@ -208,67 +208,25 @@ const ContactsTable = ({
     ],
   };
 
-  // Custom mobile card
+  // Custom mobile card (used on small screens)
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="font-semibold text-gray-900 text-sm capitalize">
-            {row.name}
-          </h3>
-          <p className="text-xs text-gray-500 capitalize">
-            {row.organizationName || "-"}
-          </p>
-          {row.designation && (
-            <p className="text-xs text-gray-400">{row.designation}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
-        <p>
-          <span className="font-medium">Phone:</span> {row.phone}
-        </p>
-        {row.email && (
-          <p>
-            <span className="font-medium">Email:</span> {row.email}
-          </p>
-        )}
-        <p>
-          <span className="font-medium">Last contact:</span>{" "}
-          {formatDate(row.lastInteractionDate)}
-        </p>
-      </div>
-
-      {row.tags && row.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-2">
-          {row.tags.map((tag, index) => (
-            <span
-              key={index}
-              className={`px-2 py-0.5 rounded-full text-xs font-medium ${getTagColor(tag)}`}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
-        {actions.map((action, idx) => (
-          <button
-            key={idx}
-            onClick={(e) => {
-              e.stopPropagation();
-              action.onClick(row);
-            }}
-            className={`p-1.5 rounded transition-colors ${action.color}`}
-            title={action.label}
-          >
-            {action.icon}
-          </button>
-        ))}
-      </div>
-    </div>
+    <MobileCard
+      title={row.name}
+      subtitle={row.organizationName || "-"}
+      status={row.tags?.[0]}
+      statusColor={getTagColor(row.tags?.[0])}
+      onClick={() => onView && onView(row)}
+      data={[
+        { icon: "📞", value: row.phone, label: "Phone" },
+        { icon: "✉️", value: row.email, label: "Email" },
+        { icon: "🏢", value: row.organization?.name, label: "Org" },
+        { icon: "📅", value: formatDate(row.lastInteractionDate), label: "Last Session" },
+      ]}
+      actions={actions.map((action) => ({
+        ...action,
+        onClick: () => action.onClick(row),
+      }))}
+    />
   );
 
   return (

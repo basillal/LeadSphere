@@ -1,4 +1,5 @@
 import React from "react";
+import MobileCard from "../../components/common/MobileCard";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 
 const LeadsTable = ({
@@ -211,60 +212,24 @@ const LeadsTable = ({
 
   // Custom mobile card render
   const renderCard = (row, actions) => (
-    <div
-      className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+    <MobileCard
+      title={row.name}
+      subtitle={row.organizationName || "No Company"}
+      status={row.isConverted ? "Converted" : row.status}
+      statusColor={getStatusColor(row.status, row.isConverted)}
       onClick={() => onPreview && onPreview(row)}
-    >
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="font-semibold text-gray-900 text-sm capitalize">
-            {row.name}
-          </h3>
-          <p className="text-xs text-gray-500 capitalize">
-            {row.organizationName || "-"}
-          </p>
-        </div>
-        <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
-        >
-          {row.isConverted ? "Converted" : row.status}
-        </span>
-      </div>
-
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
-        <p>
-          <span className="font-medium">Phone:</span> {row.phone}
-        </p>
-        <p>
-          <span className="font-medium">Email:</span> {row.email}
-        </p>
-        <p>
-          <span className="font-medium">Source:</span> {row.source}
-        </p>
-        <p>
-          <span className="font-medium">Priority:</span> {row.priority}
-        </p>
-      </div>
-
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
-        {actions.map((action, idx) => {
-          if (action.condition && !action.condition(row)) return null;
-          return (
-            <button
-              key={idx}
-              onClick={(e) => {
-                e.stopPropagation();
-                action.onClick(row);
-              }}
-              className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
-              title={action.label}
-            >
-              {action.icon}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+      data={[
+        { icon: "📞", value: row.phone, label: "Phone" },
+        { icon: "✉️", value: row.email, label: "Email" },
+        { icon: "🏢", value: row.organization?.name, label: "Org" },
+        { icon: "📍", value: row.source, label: "Source" },
+        { icon: "⚡", value: row.priority, label: "Priority" },
+      ]}
+      actions={actions.map((action) => ({
+        ...action,
+        onClick: () => action.onClick(row),
+      }))}
+    />
   );
 
   return (

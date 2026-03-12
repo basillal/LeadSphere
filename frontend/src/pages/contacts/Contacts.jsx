@@ -330,7 +330,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
             />
             <button
               onClick={fetchLeads}
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm"
+              className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium text-sm"
             >
               Search
             </button>

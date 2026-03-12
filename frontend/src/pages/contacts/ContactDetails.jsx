@@ -157,7 +157,7 @@ const ContactDetails = () => {
         <h2 className="text-2xl font-bold text-gray-900">Contact not found</h2>
         <button
           onClick={() => navigate("/contacts")}
-          className="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+          className="mt-4 px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)]"
         >
           Back to Contacts
         </button>
@@ -225,7 +225,7 @@ const ContactDetails = () => {
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--primary-button-bg)] text-white rounded-lg hover:bg-[var(--primary-button-hover-bg)] transition-colors font-medium text-sm flex items-center gap-2"
               onClick={() => {
                 /* Ideally open edit modal or navigate to edit, keeping it simple for now */
               }}

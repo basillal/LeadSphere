@@ -54,7 +54,7 @@ const PreviewModal = ({ lead, onClose }) => {
         <div className="p-6 space-y-6">
           {/* Status Sections */}
           <div className="flex flex-wrap gap-4">
-            <div className="px-3 py-1 bg-black text-white text-sm font-semibold rounded-full uppercase tracking-wide">
+            <div className="px-3 py-1 bg-[var(--primary-button-bg)] text-white text-sm font-semibold rounded-full uppercase tracking-wide">
               {lead.status}
             </div>
             <div className="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
@@ -364,8 +364,8 @@ const Leads = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-2xl font-bold text-gray-900">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4 px-1 sm:px-2">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">
           {view === "list"
             ? "Leads"
             : view === "create"
@@ -375,7 +375,7 @@ const Leads = () => {
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            className="self-start sm:self-auto p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             title="Back to List"
           >
             <svg
