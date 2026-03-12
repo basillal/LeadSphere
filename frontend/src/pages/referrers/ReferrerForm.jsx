@@ -143,7 +143,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-[var(--primary-button-bg)] text-white font-medium rounded-lg hover:bg-[var(--primary-button-hover-bg)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-button-bg)] transition-colors shadow-sm"
           >
             Save Referrer
           </button>

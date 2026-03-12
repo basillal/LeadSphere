@@ -99,7 +99,7 @@ const PrintInvoice = () => {
 
               {/* Fallback Initial if no logo or error */}
               <div
-                className="w-12 h-12 bg-black text-white flex items-center justify-center font-bold text-xl rounded mb-2"
+                className="w-12 h-12 bg-[var(--primary-button-bg)] text-white flex items-center justify-center font-bold text-xl rounded mb-2"
                 style={{
                   display:
                     organization.settings?.logo || organization.logo ? "none" : "flex",
