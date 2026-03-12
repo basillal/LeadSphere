@@ -69,13 +69,16 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   const menuItems = getVisibleItems();
 
   // Determine width based on state
-  const widthClass = open ? "w-64" : "w-16";
+  const widthClass = open ? "w-64" : "w-64 md:w-16";
+  const translateClass = open
+    ? "translate-x-0"
+    : "-translate-x-full md:translate-x-0";
 
   return (
     <aside
       className={`
                 fixed md:relative z-20 min-h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
-                translate-x-0
+                ${translateClass}
                 ${widthClass}
                 flex flex-col
                 no-print

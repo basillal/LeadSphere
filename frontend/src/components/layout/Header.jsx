@@ -130,7 +130,7 @@ const Header = ({ handleDrawerToggle }) => {
 
             {/* Organization Switcher for Super Admin */}
             {user?.role?.roleName === "Super Admin" && (
-              <Box sx={{ minWidth: 200, mr: 2 }}>
+              <Box sx={{ minWidth: { sm: 200 }, mr: 2, display: { xs: "none", sm: "block" } }}>
                 <FormControl fullWidth size="small">
                   <Select
                     value={selectedOrganization || ""}
