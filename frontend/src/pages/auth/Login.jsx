@@ -69,7 +69,7 @@ const Login = () => {
             LeadSphere
           </h2>
           <p className="mt-2 text-sm text-gray-500">
-            Please sign in to continue
+            Sign in to your workspace
           </p>
         </div>
 
