@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
+    host: true, // allow LAN access (mobile -> your dev machine)
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

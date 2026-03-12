@@ -42,7 +42,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden px-4">
       {/* Floating Background Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
       <div className="absolute top-[20%] right-[-10%] w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-2000"></div>
@@ -66,10 +66,10 @@ const Login = () => {
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Welcome Back
+            LeadSphere
           </h2>
           <p className="mt-2 text-sm text-gray-500">
-            Please sign in to continue
+            Sign in to your workspace
           </p>
         </div>
 
@@ -169,23 +169,6 @@ const Login = () => {
                   )}
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                Remember me
-              </label>
             </div>
           </div>
 

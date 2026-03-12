@@ -11,7 +11,7 @@ const app = express();
 
 // Connect to Database
 // Connect to Database
-// connectDB(); // Removed for serverless compatibility
+// connectDB()s; // Removed for serverless compatibility
 
 
 
@@ -19,21 +19,33 @@ const app = express();
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     'http://localhost:5173',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
 ].filter(Boolean);
+
+const isDev = process.env.NODE_ENV !== 'production';
+const devOriginAllowlist = [
+    /^http:\/\/localhost:\d+$/,
+    /^http:\/\/127\.0\.0\.1:\d+$/,
+    // LAN IPv4 access (e.g. http://192.168.1.20:5173)
+    /^http:\/\/\d{1,3}(?:\.\d{1,3}){3}:\d+$/,
+];
 
 app.use(cors({
     origin: function (origin, callback) {
         // allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            var msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+
+        if (isDev && devOriginAllowlist.some((re) => re.test(origin))) {
+            return callback(null, true);
         }
-        return callback(null, true);
+
+        var msg = 'The CORS policy for this site does not ' +
+            'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
     },
-    credentials: true // Important for cookies
+    credentials: true, // Important for cookies
 }));
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
@@ -89,7 +101,7 @@ const logger = require('./utils/logger');
 const PORT = process.env.PORT || 3000;
 
 if (require.main === module) {
-    app.listen(PORT, async () => {
+    app.listen(PORT, '0.0.0.0', async () => {
         await connectDB();
         logger.info(`Server running on port ${PORT}`);
     });

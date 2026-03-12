@@ -14,6 +14,7 @@ const FollowUps = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -251,10 +252,30 @@ const FollowUps = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
           />
         </div>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center justify-between"
+        >
+          <span>Filters</span>
+          <svg
+            className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+          className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white`}
         >
           <option value="">All Statuses</option>
           <option value="Pending">Pending</option>
@@ -265,7 +286,7 @@ const FollowUps = () => {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+          className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white`}
         >
           <option value="">All Types</option>
           <option value="Call">Call</option>

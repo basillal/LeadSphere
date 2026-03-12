@@ -8,10 +8,7 @@ import {
   TableRow,
   Paper,
   Chip,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
 
 const getActionColor = (action) => {
   switch (action) {
@@ -28,6 +25,20 @@ const getActionColor = (action) => {
   }
 };
 
+const formatEmailOrIp = (row) => {
+  if (row.user?.email) return row.user.email;
+  if (!row.ipAddress) return "-";
+  if (row.ipAddress === "127.0.0.1" || row.ipAddress === "::1") {
+    return "Localhost";
+  }
+  return row.ipAddress;
+};
+
+const formatDetails = (details) => {
+  if (!details) return "-";
+  return details.replace("127.0.0.1", "local machine");
+};
+
 const AuditLogsTable = ({ rows }) => {
   return (
     <TableContainer
@@ -35,7 +46,11 @@ const AuditLogsTable = ({ rows }) => {
       elevation={0}
       className="border border-gray-200 rounded-lg"
     >
-      <Table sx={{ minWidth: 650 }} aria-label="audit logs table">
+      <Table
+        sx={{ minWidth: 650 }}
+        aria-label="audit logs table"
+        size="small"
+      >
         <TableHead className="bg-gray-50">
           <TableRow>
             <TableCell className="font-semibold text-gray-700">
@@ -51,9 +66,7 @@ const AuditLogsTable = ({ rows }) => {
             <TableCell className="font-semibold text-gray-700">
               Organization
             </TableCell>
-            <TableCell className="font-semibold text-gray-700">
-              Details
-            </TableCell>
+            <TableCell className="font-semibold text-gray-700">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -76,11 +89,11 @@ const AuditLogsTable = ({ rows }) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-medium">
+                    <span className="text-sm font-medium">
                       {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {row.user?.email || row.ipAddress}
+                      {formatEmailOrIp(row)}
                     </span>
                   </div>
                 </TableCell>
@@ -101,14 +114,12 @@ const AuditLogsTable = ({ rows }) => {
                       : "Global/System")}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-sm text-gray-700 truncate max-w-xs block"
-                      title={row.details}
-                    >
-                      {row.details}
-                    </span>
-                  </div>
+                  <span
+                    className="text-sm text-gray-700 truncate max-w-xs block"
+                    title={row.details}
+                  >
+                    {formatDetails(row.details)}
+                  </span>
                 </TableCell>
               </TableRow>
             ))
