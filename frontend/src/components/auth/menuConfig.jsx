@@ -111,6 +111,6 @@ export const menuConfig = [
     label: "Settings",
     path: "/settings",
     icon: <SettingsIcon />,
-    role: "Super Admin",
+    // Allow both Super Admin and Organization Admin
   },
 ];

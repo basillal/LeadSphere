@@ -663,6 +663,12 @@ const Billings = () => {
     message: "",
     severity: "success",
   });
+  const [categories, setCategories] = useState([]); // Category state
+  const [filters, setFilters] = useState({
+    search: "",
+    paymentStatus: "",
+    category: "", // Category filter
+  });
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const fetchBillings = async () => {
@@ -672,6 +678,9 @@ const Billings = () => {
       const range = getDateRange(timeRange);
       if (range.startDate) params.startDate = range.startDate;
       if (range.endDate) params.endDate = range.endDate;
+      if (filters.category) params.category = filters.category;
+      if (filters.search) params.search = filters.search;
+      if (filters.paymentStatus) params.paymentStatus = filters.paymentStatus;
       
       const res = await billingService.getBillings(params);
       setBillings(res.data);
@@ -687,9 +696,19 @@ const Billings = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await leadCategoryService.getCategories();
+      setCategories(res.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchBillings();
-  }, [selectedOrganization, timeRange]);
+    fetchCategories();
+  }, [selectedOrganization, timeRange, filters.category, filters.paymentStatus, filters.search]);
 
   const handleCreate = () => {
     setCurrentBilling(null);
@@ -885,6 +904,33 @@ const Billings = () => {
             },
           ]}
           // loading={loading}
+          toolbar={{
+            search: {
+              value: filters.search,
+              onChange: (v) => setFilters(prev => ({ ...prev, search: v })),
+            },
+            filters: [
+              {
+                value: filters.paymentStatus,
+                onChange: (v) => setFilters(prev => ({ ...prev, paymentStatus: v })),
+                options: [
+                  { value: "", label: "Payment status" },
+                  { value: "PAID", label: "Paid" },
+                  { value: "PENDING", label: "Pending" },
+                  { value: "PARTIAL", label: "Partial" },
+                  { value: "OVERDUE", label: "Overdue" },
+                ]
+              },
+              {
+                value: filters.category,
+                onChange: (v) => setFilters(prev => ({ ...prev, category: v })),
+                options: [
+                  { value: "", label: "All Categories" },
+                  ...categories.map(cat => ({ value: cat._id, label: cat.name }))
+                ]
+              }
+            ]
+          }}
           emptyMessage="No invoices found."
         />
       ) : (

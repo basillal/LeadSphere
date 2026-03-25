@@ -6,7 +6,7 @@ import TextArea from "../../components/common/fields/TextArea";
 import ReferrerAutocomplete from "../../components/common/fields/ReferrerAutocomplete";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
-const ContactForm = ({ initialData, onSubmit, onCancel }) => {
+const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
   const [formData, setFormData] = useState(() => {
     const initialState = {
       // Basic Info
@@ -20,7 +20,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
 
       // Relationship & Tags
       tags: [],
-      relationshipType: "Business",
+      category: "",
       referredBy: null,
 
       // Social Profiles
@@ -207,11 +207,14 @@ const ContactForm = ({ initialData, onSubmit, onCancel }) => {
         />
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <Select
-            label="Relationship type"
-            name="relationshipType"
-            value={formData.relationshipType}
+            label="Assigned Category"
+            name="category"
+            value={typeof formData.category === 'object' ? formData.category?._id : formData.category || ""}
             onChange={handleChange}
-            options={["Business", "Personal", "Professional", "Mixed"]}
+            options={[
+              { label: "None", value: "" },
+              ...(categories || []).map((cat) => ({ label: cat.name, value: cat._id })),
+            ]}
             className="md:col-span-3"
           />
           <div className="md:col-span-3">

@@ -17,6 +17,19 @@ const getBillings = asyncHandler(async (req, res) => {
     if (req.query.paymentStatus) {
         query.paymentStatus = req.query.paymentStatus;
     }
+    
+    // Filter by contact's lead category
+    if (req.query.category) {
+        const contactsWithCategory = await Contact.find({
+            ...req.organizationFilter,
+            category: req.query.category,
+            isDeleted: false
+        }).select('_id');
+        
+        const contactIds = contactsWithCategory.map(c => c._id);
+        query.contact = { $in: contactIds };
+    }
+
     if (req.query.search) {
         const searchRegex = new RegExp(req.query.search, 'i');
         query.$or = [

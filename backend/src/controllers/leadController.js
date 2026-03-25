@@ -51,6 +51,11 @@ const getLeads = asyncHandler(async (req, res) => {
         query.source = req.query.source;
     }
 
+    // Filter by category
+    if (req.query.category) {
+        query.category = req.query.category;
+    }
+
     // Filter by Date Range (nextFollowUpDate OR createdAt)
     if (req.query.startDate || req.query.endDate) {
         const dateField = req.query.dateField || 'createdAt';
@@ -95,6 +100,7 @@ const getLeads = asyncHandler(async (req, res) => {
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
         .populate('organization', 'name')
+        .populate('category', 'name color')
         .sort({ createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -119,7 +125,8 @@ const getLead = asyncHandler(async (req, res) => {
     const lead = await Lead.findById(req.params.id)
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
-        .populate('organization', 'name');
+        .populate('organization', 'name')
+        .populate('category', 'name color');
 
     if (!lead || lead.isDeleted) {
         res.status(404);

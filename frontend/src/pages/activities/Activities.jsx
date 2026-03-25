@@ -4,6 +4,7 @@ import activityService from "../../services/activityService";
 import ActivityStats from "./ActivityStats";
 import ActivitiesTable from "./ActivitiesTable";
 import ActivityForm from "./ActivityForm";
+import leadCategoryService from "../../services/leadCategoryService"; // New import
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
@@ -353,7 +354,9 @@ const Activities = () => {
     search: "",
     activityType: "",
     status: "",
+    category: "", // Added category filter
   });
+  const [categories, setCategories] = useState([]); // Added categories state
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const showSnackbar = (message, severity = "success") => {
@@ -374,6 +377,7 @@ const Activities = () => {
 
       if (filters.search) params.search = filters.search;
       if (filters.status) params.status = filters.status;
+      if (filters.category) params.category = filters.category; // Added category param
 
       if (activeTab !== "all") {
         params.activityType = activeTab;
@@ -424,10 +428,20 @@ const Activities = () => {
     }
   }, [timeRange, selectedOrganization]);
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await leadCategoryService.getCategories();
+      setCategories(res.data || []);
+    } catch (err) {
+      console.error("Failed to load categories", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchActivities();
     fetchStats();
-  }, [fetchActivities, fetchStats, selectedOrganization]);
+    fetchCategories();
+  }, [fetchActivities, fetchStats, fetchCategories, selectedOrganization]);
 
   const handleRangeChange = () => {
     // Fetches are triggered by the useEffect depending on timeRange
@@ -599,6 +613,7 @@ const Activities = () => {
             <div className="pb-20">
               <ActivitiesTable
                 activities={activities}
+                categories={categories} // Added categories prop
                 onCreate={handleCreate}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

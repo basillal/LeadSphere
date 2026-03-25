@@ -59,9 +59,16 @@ const getFollowUps = asyncHandler(async (req, res) => {
     const endIndex = page * limit;
     const total = await FollowUp.countDocuments(query);
 
-    // Include Lead details
+    // Include Lead details with nested Category info
     const followUps = await FollowUp.find(query)
-        .populate('lead', 'name phone email organizationName status')
+        .populate({
+            path: 'lead',
+            select: 'name phone email organizationName status category',
+            populate: {
+                path: 'category',
+                select: 'name color'
+            }
+        })
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
         .populate('organization', 'name')

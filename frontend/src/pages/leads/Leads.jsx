@@ -4,6 +4,7 @@ import leadService from "../../services/leadService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
+import leadCategoryService from "../../services/leadCategoryService";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
@@ -64,6 +65,25 @@ const PreviewModal = ({ lead, onClose }) => {
             <div className="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
               {lead.leadTemperature}
             </div>
+            {lead.category && (
+              <div 
+                className="px-4 py-1.5 text-xs font-bold shadow-sm border border-black/5 rounded-full uppercase tracking-wider inline-flex items-center gap-2"
+                style={{ 
+                  backgroundColor: lead.category.color,
+                  color: (function(hex) {
+                    if (!hex) return 'white';
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+                    return yiq >= 128 ? 'black' : 'white';
+                  })(lead.category.color)
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-white/50"></span>
+                {lead.category.name}
+              </div>
+            )}
           </div>
 
           {/* Contact Info */}
@@ -210,7 +230,9 @@ const Leads = () => {
     search: "",
     status: "",
     source: "",
+    category: "",
   });
+  const [categories, setCategories] = useState([]);
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const handleCloseSnackbar = () => {
@@ -250,10 +272,23 @@ const Leads = () => {
     // Avoid double fetch on initial mount if possible, or just accept the debounce.
     const timer = setTimeout(() => {
       fetchLeads();
+      fetchStats();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters, pagination.page, pagination.limit, selectedOrganization, timeRange]);
+  }, [filters.search, filters.status, filters.source, filters.category, pagination.page, pagination.limit, selectedOrganization, timeRange]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await leadCategoryService.getCategories();
+        setCategories(res.data || []);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+    fetchCategories();
+  }, [selectedOrganization]);
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
@@ -269,8 +304,9 @@ const Leads = () => {
       if (filters.search) params.search = filters.search;
       if (filters.status) params.status = filters.status;
       if (filters.source) params.source = filters.source;
-
-      // Global Time Range Filter
+      if (filters.category) params.category = filters.category;
+      // The original content does not have `activeTab` state, so this line is commented out.
+      // if (activeTab === "converted") params.isConverted = true;
       const selectedRange = getDateRange(timeRange);
       if (selectedRange.startDate) params.startDate = selectedRange.startDate;
       if (selectedRange.endDate) params.endDate = selectedRange.endDate;
@@ -436,6 +472,7 @@ const Leads = () => {
 
           <LeadsTable
             rows={leads}
+            categories={categories}
             onCreate={handleShowCreate}
             onEdit={handleShowEdit}
             onDelete={handleDeleteLead}

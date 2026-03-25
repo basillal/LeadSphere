@@ -19,7 +19,7 @@ const tenantFilter = asyncHandler(async (req, res, next) => {
     }
 
     const isSuperAdmin = req.user.role?.roleName === 'Super Admin';
-    const organizationId = req.user.organization?._id;
+    const organizationId = req.user.organization?._id || req.user.organization;
 
     // Attach organization isolation logic/filter to request object for controllers to use
     if (isSuperAdmin) {

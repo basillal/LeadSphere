@@ -13,6 +13,7 @@ const LeadsTable = ({
   onPageChange,
   onLimitChange,
   loading = false,
+  categories = [],
 }) => {
   // Helper function for status colors
   const getStatusColor = (status, isConverted) => {
@@ -52,7 +53,7 @@ const LeadsTable = ({
     },
     {
       id: "organizationName",
-      label: "Prospect Co.", // Renamed to avoid confusion with Tenant
+      label: "Organization",
       width: "w-[15%]",
       render: (row) => (
         <span className="capitalize">{row.organizationName || "-"}</span>
@@ -85,6 +86,37 @@ const LeadsTable = ({
       ),
     },
     { id: "priority", label: "Priority", width: "w-[10%]" },
+    {
+      id: "category",
+      label: "Category",
+      width: "w-[12%]",
+      render: (row) => {
+        if (!row.category || typeof row.category !== 'object') {
+          return <span className="text-gray-400 text-[10px]">-</span>;
+        }
+
+        const getContrastColor = (hex) => {
+          if (!hex) return 'white';
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+          return yiq >= 128 ? 'text-black' : 'text-white';
+        };
+
+        return (
+          <span 
+            className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${getContrastColor(row.category.color)} uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1.5`}
+            style={{ 
+              backgroundColor: row.category.color,
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-white/50"></span>
+            {row.category.name}
+          </span>
+        );
+      }
+    },
   ];
 
   // Action buttons
@@ -194,6 +226,14 @@ const LeadsTable = ({
           { value: "Other", label: "Other" },
         ],
       },
+      {
+        value: filters.category || "",
+        onChange: (value) => onFilterChange("category", value),
+        options: [
+          { value: "", label: "All Categories" },
+          ...((categories || []).map(cat => ({ value: cat._id, label: cat.name })))
+        ],
+      },
     ],
     onCreate: {
       label: "Add lead",
@@ -230,6 +270,21 @@ const LeadsTable = ({
           {row.isConverted ? "Converted" : row.status}
         </span>
       </div>
+
+      {row.category && (
+        <div className="mb-2">
+          <span 
+            className="px-2.5 py-0.5 rounded-full text-[9px] font-bold border uppercase tracking-wider"
+            style={{ 
+              backgroundColor: `${row.category.color}15`, 
+              color: row.category.color,
+              borderColor: `${row.category.color}35`
+            }}
+          >
+            {row.category.name}
+          </span>
+        </div>
+      )}
 
       <div className="space-y-1 text-xs text-gray-600 mb-2">
         <p>

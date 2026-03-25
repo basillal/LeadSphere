@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
-import leadService from "../../services/leadService"; // Added import
+import leadService from "../../services/leadService"; 
+import leadCategoryService from "../../services/leadCategoryService"; // New Import
 import ContactStats from "./ContactStats";
 import ContactsTable from "./ContactsTable";
 import ContactForm from "./ContactForm";
@@ -128,9 +129,9 @@ const PreviewModal = ({ contact, onClose }) => {
               <div className="space-y-2">
                 <p className="text-gray-900">
                   <span className="font-semibold w-32 inline-block text-gray-500">
-                    Type:
+                    Category:
                   </span>{" "}
-                  {contact.relationshipType || "Business"}
+                  {contact.category?.name || "-"}
                 </p>
                 <p className="text-gray-900">
                   <span className="font-semibold w-32 inline-block text-gray-500">
@@ -250,10 +251,11 @@ const PreviewModal = ({ contact, onClose }) => {
 };
 
 // Lead Selection Modal for Conversion
-const LeadSelectionModal = ({ onClose, onSelect }) => {
+const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -262,6 +264,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
       const response = await leadService.getLeads({
         limit: 100,
         search,
+        category: categoryFilter, // Added category filter
         excludeConverted: true,
       });
 
@@ -276,7 +279,7 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [search, categoryFilter]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -320,20 +323,38 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
         </div>
 
         <div className="p-4 border-b border-gray-100">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Search leads..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            />
-            <button
-              onClick={fetchLeads}
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm"
-            >
-              Search
-            </button>
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Search leads..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <button
+                onClick={fetchLeads}
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm"
+              >
+                Search
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-tight">Filter Category:</label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-gray-50"
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -355,9 +376,30 @@ const LeadSelectionModal = ({ onClose, onSelect }) => {
               >
                 <div>
                   <h3 className="font-semibold text-gray-900">{lead.name}</h3>
-                  <p className="text-sm text-gray-500">
-                    {lead.organizationName || "-"}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm text-gray-500">
+                      {lead.organizationName || "-"}
+                    </p>
+                    {lead.category && (
+                      <span 
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1`}
+                        style={{ 
+                          backgroundColor: typeof lead.category === 'object' ? lead.category.color : '',
+                          color: (function(hex) {
+                            if (!hex) return 'white';
+                            const r = parseInt(hex.slice(1, 3), 16);
+                            const g = parseInt(hex.slice(3, 5), 16);
+                            const b = parseInt(hex.slice(5, 7), 16);
+                            const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+                            return yiq >= 128 ? 'black' : 'white';
+                          })(typeof lead.category === 'object' ? lead.category.color : '')
+                        }}
+                      >
+                        <span className="w-1 h-1 rounded-full bg-white/50"></span>
+                        {typeof lead.category === 'object' ? lead.category.name : ''}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span className="text-sm text-black font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Select →
@@ -391,7 +433,8 @@ const Contacts = () => {
     recentInteractions: 0,
   });
   // const [loading, setLoading] = useState(false);
-  const [view, setView] = useState("list"); // 'list', 'create', 'edit'
+  const [view, setView] = useState("list"); 
+  const [categories, setCategories] = useState([]); // Added category state
   const [currentContact, setCurrentContact] = useState(null);
   const [previewContact, setPreviewContact] = useState(null);
 
@@ -456,6 +499,7 @@ const Contacts = () => {
         limit: pagination.limit,
       };
       if (filters.search) params.search = filters.search;
+      if (filters.category) params.category = filters.category;
 
       // Set tag filter based on active tab
       if (activeTab !== "all") {
@@ -490,8 +534,18 @@ const Contacts = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await leadCategoryService.getCategories();
+      setCategories(res.data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
+    fetchCategories();
   }, [selectedOrganization]);
 
   useEffect(() => {
@@ -642,6 +696,7 @@ const Contacts = () => {
           <div className="pb-20">
             <ContactsTable
               contacts={contacts}
+              categories={categories} // Pass categories
               onCreate={() => setView("create")}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -661,6 +716,7 @@ const Contacts = () => {
           <ContactForm
             key={currentContact ? currentContact._id : "new"}
             initialData={currentContact}
+            categories={categories} // Added Prop
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />
@@ -670,6 +726,7 @@ const Contacts = () => {
       {/* Lead Selection Modal */}
       {showLeadPicker && (
         <LeadSelectionModal
+          categories={categories} // Pass categories
           onClose={() => setShowLeadPicker(false)}
           onSelect={handleSelectLead}
         />
@@ -679,6 +736,7 @@ const Contacts = () => {
       {convertingLead && (
         <ConversionDialog
           lead={convertingLead}
+          categories={categories} // Pass categories
           onConfirm={handleConfirmConversion}
           onCancel={handleCancelConversion}
         />

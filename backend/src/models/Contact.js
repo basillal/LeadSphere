@@ -67,6 +67,10 @@ const ContactSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Referrer'
     },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'LeadCategory'
+    },
 
     // 3. Social & Additional Contact Info
     linkedInProfile: {
