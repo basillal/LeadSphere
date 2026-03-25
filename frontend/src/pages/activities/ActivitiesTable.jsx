@@ -133,55 +133,6 @@ const ActivitiesTable = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      {/* Quick Date Filters */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex flex-wrap gap-2">
-          {[
-            { label: "All", value: "" },
-            { label: "Today", value: "today" },
-            { label: "Tomorrow", value: "tomorrow" },
-            { label: "This Week", value: "thisWeek" },
-            { label: "This Month", value: "thisMonth" },
-            { label: "Overdue", value: "overdue" },
-          ].map((filter) => (
-            <button
-              key={filter.value}
-              onClick={() => onDateFilterChange(filter.value)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                filters.dateFilter === filter.value
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-        {/* Custom Date Range Picker */}
-        <div className="mt-3 flex items-center gap-2 text-sm">
-          <label htmlFor="startDate" className="text-gray-600">
-            From:
-          </label>
-          <input
-            type="date"
-            id="startDate"
-            value={dateRange.startDate || ""}
-            onChange={(e) => onDateRangeChange("startDate", e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-transparent"
-          />
-          <label htmlFor="endDate" className="text-gray-600">
-            To:
-          </label>
-          <input
-            type="date"
-            id="endDate"
-            value={dateRange.endDate || ""}
-            onChange={(e) => onDateRangeChange("endDate", e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-transparent"
-          />
-        </div>
-      </div>
-
       {/* Header with Search and Filters */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4">

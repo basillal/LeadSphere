@@ -6,6 +6,7 @@ import contactService from "../../services/contactService";
 import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import ContactForm from "../contacts/ContactForm"; // Import ContactForm
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const [contacts, setContacts] = useState([]);
@@ -662,11 +663,17 @@ const Billings = () => {
     message: "",
     severity: "success",
   });
+  const [timeRange, setTimeRange] = useState("last_30_days");
 
   const fetchBillings = async () => {
     // setLoading(true);
     try {
-      const res = await billingService.getBillings();
+      const params = {};
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
+      
+      const res = await billingService.getBillings(params);
       setBillings(res.data);
     } catch (err) {
       console.error(err);
@@ -682,7 +689,7 @@ const Billings = () => {
 
   useEffect(() => {
     fetchBillings();
-  }, [selectedOrganization]);
+  }, [selectedOrganization, timeRange]);
 
   const handleCreate = () => {
     setCurrentBilling(null);
@@ -777,7 +784,7 @@ const Billings = () => {
     {
       id: "grandTotal",
       label: "Amount",
-      render: (row) => `₹${row.grandTotal.toFixed(2)}`,
+      render: (row) => `₹${(row.grandTotal || 0).toFixed(2)}`,
     },
     {
       id: "paymentStatus",
@@ -801,14 +808,22 @@ const Billings = () => {
     <div className="w-full p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Billing & Invoices</h1>
-        {view === "list" && (
-          <button
-            onClick={handleCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
-          >
-            + Create Invoice
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {view === "list" && (
+            <>
+              <TimeRangeFilter
+                value={timeRange}
+                onChange={setTimeRange}
+              />
+              <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium whitespace-nowrap"
+              >
+                + Create Invoice
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {view === "list" ? (

@@ -6,6 +6,7 @@ import FollowUpList from "./FollowUpList";
 import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 const FollowUps = () => {
   const { selectedOrganization } = useAuth();
@@ -15,6 +16,7 @@ const FollowUps = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [timeRange, setTimeRange] = useState("last_30_days");
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -49,6 +51,11 @@ const FollowUps = () => {
       else if (activeTab === "missed") params.range = "overdue";
       else if (activeTab === "completed") params.status = "Completed";
 
+      // Global Time Range Filter
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
+
       const response = await followUpService.getFollowUps(params);
       setFollowUps(response.data);
 
@@ -64,23 +71,32 @@ const FollowUps = () => {
       console.error("Error fetching follow-ups:", error);
     } finally {
     }
-  }, [activeTab, pagination.page, pagination.limit, selectedOrganization]);
+  }, [activeTab, pagination.page, pagination.limit, selectedOrganization, timeRange]);
 
   const fetchStats = useCallback(async () => {
     try {
-      const response = await followUpService.getFollowUpStats();
+      const params = {};
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
+
+      const response = await followUpService.getFollowUpStats(params);
       if (response.success) {
         setStats(response.data);
       }
     } catch (error) {
       console.error("Error fetching stats:", error);
     }
-  }, []);
+  }, [timeRange, selectedOrganization]);
 
   useEffect(() => {
     fetchFollowUps();
     fetchStats();
   }, [fetchFollowUps, fetchStats, selectedOrganization]);
+
+  const handleRangeChange = (range) => {
+    // Already handled by effects
+  };
 
   const handleCreate = () => {
     setCurrentFollowUp(null);
@@ -210,13 +226,19 @@ const FollowUps = () => {
             Track and manage your customer interactions
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
-        >
-          <span className="hidden sm:inline">+ Schedule new</span>
-          <span className="sm:hidden">+ New</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <TimeRangeFilter
+            value={timeRange}
+            onChange={setTimeRange}
+          />
+          <button
+            onClick={handleCreate}
+            className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
+          >
+            <span className="hidden sm:inline">+ Schedule new</span>
+            <span className="sm:hidden">+ New</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

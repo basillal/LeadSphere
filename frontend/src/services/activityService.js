@@ -39,8 +39,8 @@ const getActivitiesByRelated = async (relatedTo, relatedId) => {
 };
 
 // Get activity statistics
-const getActivityStats = async () => {
-    const response = await api.get(`${API_URL}/stats`);
+const getActivityStats = async (params) => {
+    const response = await api.get(`${API_URL}/stats`, { params });
     return response.data;
 };
 

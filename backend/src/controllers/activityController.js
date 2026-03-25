@@ -159,7 +159,7 @@ exports.getActivityStats = async (req, res) => {
             filters.organization = req.user.organization?._id || req.user.organization;
         }
 
-        const stats = await activityService.getActivityStats(filters);
+        const stats = await activityService.getActivityStats(filters, req.query);
         res.status(200).json({ data: stats });
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -5,6 +5,7 @@ import ActivityStats from "./ActivityStats";
 import ActivitiesTable from "./ActivitiesTable";
 import ActivityForm from "./ActivityForm";
 import Toast from "../../components/common/utils/Toast";
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 // Preview Modal Component
 const PreviewModal = ({ activity, onClose }) => {
@@ -352,12 +353,8 @@ const Activities = () => {
     search: "",
     activityType: "",
     status: "",
-    dateFilter: "today",
   });
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
-    endDate: "",
-  });
+  const [timeRange, setTimeRange] = useState("last_30_days");
 
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
@@ -377,7 +374,6 @@ const Activities = () => {
 
       if (filters.search) params.search = filters.search;
       if (filters.status) params.status = filters.status;
-      if (filters.dateFilter) params.dateFilter = filters.dateFilter;
 
       if (activeTab !== "all") {
         params.activityType = activeTab;
@@ -385,10 +381,10 @@ const Activities = () => {
         params.activityType = filters.activityType;
       }
 
-      if (dateRange.startDate && dateRange.endDate) {
-        params.startDate = dateRange.startDate;
-        params.endDate = dateRange.endDate;
-      }
+      // Add Global Time Range Filter
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
 
       const response = await activityService.getActivities(params);
       setActivities(response.data);
@@ -409,30 +405,33 @@ const Activities = () => {
     activeTab,
     pagination.page,
     pagination.limit,
-    dateRange,
     selectedOrganization,
+    timeRange
   ]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
-      const response = await activityService.getActivityStats();
+      const params = {};
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
+      
+      const response = await activityService.getActivityStats(params);
       setStats(response.data);
     } catch (error) {
       // Fail silently for background stats
       console.warn("Failed to fetch activity stats:", error);
     }
-  };
+  }, [timeRange, selectedOrganization]);
 
   useEffect(() => {
+    fetchActivities();
     fetchStats();
-  }, [selectedOrganization]);
+  }, [fetchActivities, fetchStats, selectedOrganization]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchActivities();
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [fetchActivities]);
+  const handleRangeChange = () => {
+    // Fetches are triggered by the useEffect depending on timeRange
+  };
 
   const handleCreate = () => {
     setCurrentActivity(null);
@@ -496,21 +495,12 @@ const Activities = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to page 1 on filter change
   };
 
-  const handleDateFilterChange = (dateFilter) => {
-    setFilters((prev) => ({ ...prev, dateFilter }));
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    // Reset date range if not custom
-    if (dateFilter !== "custom") {
-      setDateRange({ startDate: "", endDate: "" });
-    }
-  };
-
-  const handleDateRangeChange = (key, value) => {
-    setDateRange((prev) => ({ ...prev, [key]: value }));
-  };
-
   const handleStatClick = (filter) => {
-    handleDateFilterChange(filter);
+    // Existing stat click logic might need adjustment if it used dateFilter
+    // For now we'll just let it be or update it to set timeRange
+    if (filter === 'today') {
+      setTimeRange('today');
+    }
   };
 
   const handlePageChange = (newPage) => {
@@ -544,27 +534,35 @@ const Activities = () => {
               ? "Create New Activity"
               : "Edit Activity"}
         </h1>
-        {view !== "list" && (
-          <button
-            onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            title="Back to List"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        <div className="flex items-center gap-2">
+          {view === "list" && (
+            <TimeRangeFilter
+              value={timeRange}
+              onChange={setTimeRange}
+            />
+          )}
+          {view !== "list" && (
+            <button
+              onClick={handleCancelForm}
+              className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              title="Back to List"
             >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* {loading && view === "list" ? (
@@ -607,9 +605,6 @@ const Activities = () => {
                 onView={handleView}
                 filters={filters}
                 onFilterChange={handleFilterChange}
-                onDateFilterChange={handleDateFilterChange}
-                dateRange={dateRange}
-                onDateRangeChange={handleDateRangeChange}
                 pagination={pagination}
                 onPageChange={handlePageChange}
                 onLimitChange={handleLimitChange}

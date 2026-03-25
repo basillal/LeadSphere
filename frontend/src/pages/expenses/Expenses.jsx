@@ -4,6 +4,7 @@ import AdvancedTable from "../../components/common/advancedTables/AdvancedTable"
 import BasicModal from "../../components/common/modals/BasicModal";
 import expenseService from "../../services/expenseService";
 import Toast from "../../components/common/utils/Toast";
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 const Expenses = () => {
   const { selectedOrganization } = useAuth();
@@ -11,6 +12,7 @@ const Expenses = () => {
   // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExpense, setCurrentExpense] = useState(null);
+  const [timeRange, setTimeRange] = useState("last_30_days");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -23,7 +25,12 @@ const Expenses = () => {
   const fetchExpenses = async () => {
     // setLoading(true);
     try {
-      const response = await expenseService.getExpenses();
+      const params = {};
+      const range = getDateRange(timeRange);
+      if (range.startDate) params.startDate = range.startDate;
+      if (range.endDate) params.endDate = range.endDate;
+      
+      const response = await expenseService.getExpenses(params);
       setExpenses(response.data.data || []);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -35,7 +42,11 @@ const Expenses = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [selectedOrganization]);
+  }, [selectedOrganization, timeRange]);
+
+  const handleRangeChange = (range) => {
+    // Already handled by effects
+  };
 
   const handleCreate = () => {
     setCurrentExpense(null);
@@ -171,24 +182,31 @@ const Expenses = () => {
             Track and manage organization expenses
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        <div className="flex items-center gap-2">
+          <TimeRangeFilter
+            value={timeRange}
+            onChange={setTimeRange}
+            onRangeChange={handleRangeChange}
+          />
+          <button
+            onClick={handleCreate}
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Add Expense
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Add Expense
+          </button>
+        </div>
       </div>
 
       <AdvancedTable

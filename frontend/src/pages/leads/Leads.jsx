@@ -5,6 +5,7 @@ import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
 import Toast from "../../components/common/utils/Toast";
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 // Simple Modal for Preview (Tailwind based)
 // We could use MUI Drawer/Dialog, but user asked for "removed all MUI" earlier, although some imports remain in this file.
@@ -182,10 +183,12 @@ const Leads = () => {
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
-    contacted: 0,
-    followUp: 0,
-    converted: 0,
+    pending: 0,
+    inProgress: 0,
+    onHold: 0,
+    completed: 0,
     lost: 0,
+    converted: 0,
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -208,6 +211,7 @@ const Leads = () => {
     status: "",
     source: "",
   });
+  const [timeRange, setTimeRange] = useState("last_30_days");
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -218,19 +222,28 @@ const Leads = () => {
   };
 
   // Fetch lead statistics
-  const fetchStats = async () => {
+  const fetchStats = async (range) => {
     try {
-      const resp = await leadService.getLeadStats();
+      const params = {};
+      const selectedRange = range || getDateRange(timeRange);
+      if (selectedRange.startDate) params.startDate = selectedRange.startDate;
+      if (selectedRange.endDate) params.endDate = selectedRange.endDate;
+      
+      const resp = await leadService.getLeadStats(params);
       setStats(resp.data);
     } catch (err) {
       console.error("Error fetching stats:", err);
     }
   };
 
-  // Fetch stats on mount
+  // Fetch stats on mount and on range change
   useEffect(() => {
     fetchStats();
-  }, [selectedOrganization]);
+  }, [selectedOrganization, timeRange]);
+
+  const handleRangeChange = (range) => {
+    // Already handled by effects
+  };
 
   // Debounce API calls, but update UI immediately
   useEffect(() => {
@@ -240,7 +253,7 @@ const Leads = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters, pagination.page, pagination.limit, selectedOrganization]);
+  }, [filters, pagination.page, pagination.limit, selectedOrganization, timeRange]);
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
@@ -256,6 +269,14 @@ const Leads = () => {
       if (filters.search) params.search = filters.search;
       if (filters.status) params.status = filters.status;
       if (filters.source) params.source = filters.source;
+
+      // Global Time Range Filter
+      const selectedRange = getDateRange(timeRange);
+      if (selectedRange.startDate) params.startDate = selectedRange.startDate;
+      if (selectedRange.endDate) params.endDate = selectedRange.endDate;
+
+      // Default to createdAt for general list filtering
+      if (params.startDate || params.endDate) params.dateField = 'createdAt';
 
       const data = await leadService.getLeads(params);
       setLeads(data.data);
@@ -371,29 +392,37 @@ const Leads = () => {
             : view === "create"
               ? "Create new lead"
               : "Edit lead"}
-        </h1>
-        {view !== "list" && (
-          <button
-            onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            title="Back to List"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-        )}
-      </div>
+          </h1>
+          <div className="flex gap-2">
+            {view === "list" && (
+              <TimeRangeFilter
+                value={timeRange}
+                onChange={setTimeRange}
+              />
+            )}
+            {view !== "list" && (
+              <button
+                onClick={handleCancelForm}
+                className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                title="Back to List"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
 
       {error && (
         <div className="bg-red-50 text-red-800 p-4 rounded-lg mb-4 border border-red-200">

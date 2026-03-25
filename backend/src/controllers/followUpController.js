@@ -44,6 +44,14 @@ const getFollowUps = asyncHandler(async (req, res) => {
         query.status = 'Pending'; 
     }
 
+    // Explicit date range support
+    if (req.query.startDate && req.query.endDate) {
+        query.scheduledAt = {
+            $gte: new Date(req.query.startDate),
+            $lte: new Date(req.query.endDate)
+        };
+    }
+
     // Pagination
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -258,6 +266,17 @@ const getFollowUpStats = asyncHandler(async (req, res) => {
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
+
+    // Apply date range filters if provided
+    if (req.query.startDate || req.query.endDate) {
+        query.scheduledAt = {};
+        if (req.query.startDate) query.scheduledAt.$gte = new Date(req.query.startDate);
+        if (req.query.endDate) {
+            const end = new Date(req.query.endDate);
+            if (req.query.endDate.length <= 10) end.setHours(23, 59, 59, 999);
+            query.scheduledAt.$lte = end;
+        }
+    }
 
     // Aggregation
     const stats = await FollowUp.aggregate([

@@ -19,9 +19,10 @@ import {
 } from "recharts";
 import dashboardService from "../services/dashboardService";
 import { useAuth } from "../components/auth/AuthProvider";
+import TimeRangeFilter, { getDateRange } from "../components/common/TimeRangeFilter";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, selectedOrganization } = useAuth();
   // const [loading, setLoading] = useState(true); // Handled globally
   const [data, setData] = useState({
     counts: {
@@ -46,25 +47,7 @@ const Dashboard = () => {
   const [timeRange, setTimeRange] = useState("last_30_days"); // Default to Last 30 Days
   const [revenueInterval, setRevenueInterval] = useState("daily"); // Default daily for Revenue Trend
 
-  const getDateRange = (range) => {
-    const today = new Date();
-    const endDate = today.toISOString();
-    let startDate = null;
 
-    if (range === "this_month") {
-      const start = new Date(today.getFullYear(), today.getMonth(), 1);
-      startDate = start.toISOString();
-    } else if (range === "this_year") {
-      const start = new Date(today.getFullYear(), 0, 1);
-      startDate = start.toISOString();
-    } else if (range === "last_30_days") {
-      const start = new Date();
-      start.setDate(today.getDate() - 30);
-      startDate = start.toISOString();
-    }
-    // "all_time" returns null startDate
-    return { startDate, endDate };
-  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -88,7 +71,7 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, [timeRange, revenueInterval]);
+  }, [timeRange, revenueInterval, selectedOrganization]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
@@ -180,16 +163,10 @@ const Dashboard = () => {
             Here's what's happening in your business today.
           </p>
         </div>
-        <select
+        <TimeRangeFilter
           value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5 min-w-[150px]"
-        >
-          <option value="last_30_days">Last 30 Days</option>
-          <option value="this_month">This Month</option>
-          <option value="this_year">This Year</option>
-          <option value="all_time">All Time</option>
-        </select>
+          onChange={setTimeRange}
+        />
       </div>
 
       {/* Hero Stats Grid - Primary Metrics */}
