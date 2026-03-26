@@ -84,20 +84,8 @@ const FollowUpList = ({
             <span className="block md:inline">{row.lead?.phone || ""}</span>
             {row.lead?.category && (
               <span 
-                className={`ml-2 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1`}
-                style={{ 
-                  backgroundColor: typeof row.lead.category === 'object' ? row.lead.category.color : '',
-                  color: (function(hex) {
-                    if (!hex) return 'white';
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-                    return yiq >= 128 ? 'black' : 'white';
-                  })(row.lead.category.color)
-                }}
+                className="ml-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider"
               >
-                <span className="w-1 h-1 rounded-full bg-white/50"></span>
                 {typeof row.lead.category === 'object' ? row.lead.category.name : ''}
               </span>
             )}

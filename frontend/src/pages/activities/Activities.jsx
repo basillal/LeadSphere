@@ -435,13 +435,19 @@ const Activities = () => {
     } catch (err) {
       console.error("Failed to load categories", err);
     }
-  }, []);
+  }, [selectedOrganization]);
 
   useEffect(() => {
     fetchActivities();
+  }, [fetchActivities]);
+
+  useEffect(() => {
     fetchStats();
+  }, [fetchStats]);
+
+  useEffect(() => {
     fetchCategories();
-  }, [fetchActivities, fetchStats, fetchCategories, selectedOrganization]);
+  }, [fetchCategories]);
 
   const handleRangeChange = () => {
     // Fetches are triggered by the useEffect depending on timeRange

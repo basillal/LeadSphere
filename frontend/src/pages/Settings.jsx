@@ -12,7 +12,7 @@ const Settings = () => {
   const [loading, setLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ name: "", color: "#3b82f6" });
+  const [formData, setFormData] = useState({ name: "" });
   const [toast, setToast] = useState({ open: false, message: "", severity: "success" });
 
   const showToast = (message, severity = "success") => {
@@ -37,20 +37,20 @@ const Settings = () => {
 
   const handleAdd = () => {
     setEditingId(null);
-    setFormData({ name: "", color: "#3b82f6" });
+    setFormData({ name: "" });
     setIsAdding(true);
   };
 
   const handleEdit = (category) => {
     setIsAdding(false);
     setEditingId(category._id);
-    setFormData({ name: category.name, color: category.color });
+    setFormData({ name: category.name });
   };
 
   const handleCancel = () => {
     setIsAdding(false);
     setEditingId(null);
-    setFormData({ name: "", color: "#3b82f6" });
+    setFormData({ name: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -149,15 +149,7 @@ const Settings = () => {
                           autoFocus
                         />
                       </div>
-                      <div className="w-full sm:w-24">
-                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Color</label>
-                        <input
-                          type="color"
-                          value={formData.color}
-                          onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                          className="w-full h-10 p-1 bg-white border border-gray-300 rounded-lg cursor-pointer"
-                        />
-                      </div>
+
                       <div className="flex gap-2">
                         <button
                           type="submit"
@@ -204,45 +196,20 @@ const Settings = () => {
                                 autoFocus
                                 required
                               />
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="color"
-                                    value={formData.color}
-                                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                                    className="w-8 h-8 rounded-lg cursor-pointer border-none p-0"
-                                  />
-                                  <span className="text-[10px] font-mono uppercase text-gray-400">{formData.color}</span>
-                                </div>
-                                <div className="flex gap-1">
-                                  <button type="submit" className="text-[11px] font-bold bg-black text-white px-3 py-1 rounded">Save</button>
-                                  <button type="button" onClick={handleCancel} className="text-[11px] font-bold bg-gray-100 px-3 py-1 rounded">Cancel</button>
-                                </div>
+                              <div className="flex justify-end gap-1">
+                                <button type="submit" className="text-[11px] font-bold bg-black text-white px-3 py-1 rounded">Save</button>
+                                <button type="button" onClick={handleCancel} className="text-[11px] font-bold bg-gray-100 px-3 py-1 rounded">Cancel</button>
                               </div>
+
                             </form>
                           ) : (
                             <>
-                              <div
-                                className="absolute top-0 left-0 w-1 h-full"
-                                style={{ backgroundColor: cat.color }}
-                              ></div>
+
                               <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-3">
                                   <span 
-                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border border-black/10 inline-flex items-center gap-1.5`}
-                                    style={{ 
-                                      backgroundColor: cat.color,
-                                      color: (function(hex) {
-                                        if (!hex) return 'white';
-                                        const r = parseInt(hex.slice(1, 3), 16);
-                                        const g = parseInt(hex.slice(3, 5), 16);
-                                        const b = parseInt(hex.slice(5, 7), 16);
-                                        const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-                                        return yiq >= 128 ? 'black' : 'white';
-                                      })(cat.color)
-                                    }}
+                                    className="text-[11px] font-bold uppercase tracking-wider text-gray-700"
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white/50"></span>
                                     {cat.name}
                                   </span>
                                 </div>

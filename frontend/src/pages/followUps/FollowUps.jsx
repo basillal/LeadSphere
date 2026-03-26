@@ -91,8 +91,11 @@ const FollowUps = () => {
 
   useEffect(() => {
     fetchFollowUps();
+  }, [fetchFollowUps]);
+
+  useEffect(() => {
     fetchStats();
-  }, [fetchFollowUps, fetchStats, selectedOrganization]);
+  }, [fetchStats]);
 
   const handleRangeChange = (range) => {
     // Already handled by effects

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../services/api";
 import Loader from "../components/common/Loader";
 
@@ -9,11 +10,19 @@ export const useLoading = () => useContext(LoadingContext);
 export const LoadingProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
+  const location = useLocation();
+
+  // Safety reset on route change to login
+  useEffect(() => {
+    if (location.pathname === "/login") {
+      setRequestCount(0);
+      setLoading(false);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const reqInterceptor = api.interceptors.request.use(
       (config) => {
-        // You can conditionally skip loader using config.skipLoader = true
         if (!config.skipLoader) {
           setRequestCount((prev) => prev + 1);
           setLoading(true);
@@ -24,10 +33,6 @@ export const LoadingProvider = ({ children }) => {
         if (!error?.config?.skipLoader) {
           setRequestCount((prev) => Math.max(0, prev - 1));
         }
-        // If count hits 0, hide loader
-        // Note: state updates in error/response might race if not careful,
-        // but checking setRequestCount callback is safer.
-        // Actually, cleaner logging:
         return Promise.reject(error);
       },
     );
@@ -58,13 +63,12 @@ export const LoadingProvider = ({ children }) => {
     if (requestCount > 0) {
       setLoading(true);
     } else {
-      // Small debounce could be added here to prevent flickering
       setLoading(false);
     }
   }, [requestCount]);
 
   return (
-    <LoadingContext.Provider value={{ loading, setLoading }}>
+    <LoadingContext.Provider value={{ loading, setLoading, setRequestCount }}>
       {loading && <Loader />}
       {children}
     </LoadingContext.Provider>

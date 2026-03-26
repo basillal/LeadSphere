@@ -1,14 +1,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService, { setupAxiosInterceptors } from "./authService";
-import { getToken } from "./tokenUtils";
+import { getToken, getUser, setUser as setSessionUser, removeUser } from "./tokenUtils";
 import api from "../../services/api";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(getToken() ? getUser() : null);
+  const [loading, setLoading] = useState(!!getToken() && !getUser());
   const [selectedOrganization, setSelectedOrganization] = useState(
     localStorage.getItem("selectedOrganization") || "",
   );
@@ -21,14 +21,6 @@ export const AuthProvider = ({ children }) => {
     } else {
       localStorage.removeItem("selectedOrganization");
     }
-    // Force reload/refresh context?
-    // Usually React state update triggers re-render, and subsequent API calls will use new ID via interceptor (if configured).
-    // We might need to refresh CURRENT page data.
-    // Best way: navigate(0) or let the user navigate?
-    // Let's just update state. The interceptor will pick it up on next request.
-    // Ideally, we trigger a global refresh or the Header switcher triggers a data refetch.
-    // For now, state update is enough.
-    // If we want immediate effect on current view, simple page reload `window.location.reload()` is often easiest for global context switch.
     window.location.reload();
   };
 
@@ -40,13 +32,20 @@ export const AuthProvider = ({ children }) => {
     // Check for existing token and load user
     const initAuth = async () => {
       const token = getToken();
-      if (token) {
+      const cachedUser = getUser();
+      
+      if (!token) {
+        removeUser();
+        setUser(null);
+      } else if (!cachedUser) {
         try {
           const userData = await authService.getMe();
           setUser(userData);
+          setSessionUser(userData);
         } catch (error) {
-          // Token invalid or expired, clear it
           console.error("Failed to fetch user", error);
+          removeUser();
+          setUser(null);
         }
       }
       setLoading(false);
@@ -73,12 +72,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const data = await authService.login(email, password);
     setUser(data);
+    setSessionUser(data);
     navigate("/"); // Redirect to dashboard
   };
 
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    removeUser();
     navigate("/login");
   };
 

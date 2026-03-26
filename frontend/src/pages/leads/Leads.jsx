@@ -67,20 +67,8 @@ const PreviewModal = ({ lead, onClose }) => {
             </div>
             {lead.category && (
               <div 
-                className="px-4 py-1.5 text-xs font-bold shadow-sm border border-black/5 rounded-full uppercase tracking-wider inline-flex items-center gap-2"
-                style={{ 
-                  backgroundColor: lead.category.color,
-                  color: (function(hex) {
-                    if (!hex) return 'white';
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-                    return yiq >= 128 ? 'black' : 'white';
-                  })(lead.category.color)
-                }}
+                className="text-xs font-bold text-gray-600 uppercase tracking-wider"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-white/50"></span>
                 {lead.category.name}
               </div>
             )}
@@ -258,21 +246,15 @@ const Leads = () => {
     }
   };
 
-  // Fetch stats on mount and on range change
+  // Fetch lead statistics independently of lead list filters
   useEffect(() => {
     fetchStats();
   }, [selectedOrganization, timeRange]);
 
-  const handleRangeChange = (range) => {
-    // Already handled by effects
-  };
-
-  // Debounce API calls, but update UI immediately
+  // Debounce API calls for lead list
   useEffect(() => {
-    // Avoid double fetch on initial mount if possible, or just accept the debounce.
     const timer = setTimeout(() => {
       fetchLeads();
-      fetchStats();
     }, 500);
 
     return () => clearTimeout(timer);
