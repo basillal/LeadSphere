@@ -13,6 +13,7 @@ const LeadsTable = ({
   onPageChange,
   onLimitChange,
   loading = false,
+  categories = [],
 }) => {
   // Helper function for status colors
   const getStatusColor = (status, isConverted) => {
@@ -52,7 +53,7 @@ const LeadsTable = ({
     },
     {
       id: "organizationName",
-      label: "Prospect Co.", // Renamed to avoid confusion with Tenant
+      label: "Organization",
       width: "w-[15%]",
       render: (row) => (
         <span className="capitalize">{row.organizationName || "-"}</span>
@@ -85,6 +86,24 @@ const LeadsTable = ({
       ),
     },
     { id: "priority", label: "Priority", width: "w-[10%]" },
+    {
+      id: "category",
+      label: "Category",
+      width: "w-[12%]",
+      render: (row) => {
+        if (!row.category || typeof row.category !== 'object') {
+          return <span className="text-gray-400 text-[10px]">-</span>;
+        }
+
+        return (
+          <span 
+            className="text-[10px] font-bold text-gray-600 uppercase tracking-wider"
+          >
+            {row.category.name}
+          </span>
+        );
+      }
+    },
   ];
 
   // Action buttons
@@ -194,6 +213,14 @@ const LeadsTable = ({
           { value: "Other", label: "Other" },
         ],
       },
+      {
+        value: filters.category || "",
+        onChange: (value) => onFilterChange("category", value),
+        options: [
+          { value: "", label: "All Categories" },
+          ...((categories || []).map(cat => ({ value: cat._id, label: cat.name })))
+        ],
+      },
     ],
     onCreate: {
       label: "Add lead",
@@ -230,6 +257,16 @@ const LeadsTable = ({
           {row.isConverted ? "Converted" : row.status}
         </span>
       </div>
+
+      {row.category && (
+        <div className="mb-2">
+          <span 
+            className="text-[9px] font-bold text-gray-500 uppercase tracking-wider"
+          >
+            {row.category.name}
+          </span>
+        </div>
+      )}
 
       <div className="space-y-1 text-xs text-gray-600 mb-2">
         <p>

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
-const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
+const ConversionDialog = ({ lead, categories = [], onConfirm, onCancel }) => {
   const [tags, setTags] = useState(["Client"]);
-  const [relationshipType, setRelationshipType] = useState("Business");
+  const [category, setCategory] = useState(
+    typeof lead.category === 'object' ? lead.category?._id : lead.category || ""
+  );
 
   const availableTags = ["Client", "Vendor", "Partner", "Friend", "Other"];
 
@@ -13,7 +15,7 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
   };
 
   const handleSubmit = () => {
-    onConfirm({ tags, relationshipType });
+    onConfirm({ tags, category });
   };
 
   if (!lead) return null;
@@ -39,9 +41,28 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
 
         {/* Body */}
         <div className="p-6 space-y-6">
+          {/* Category Selection */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-tight text-[11px] text-gray-400">
+              Assigned Category
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-gray-50"
+            >
+              <option value="">None</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Tags Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+            <label className="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-tight text-[11px] text-gray-400">
               Contact Tags <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
@@ -50,50 +71,23 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
                   key={tag}
                   type="button"
                   onClick={() => handleTagToggle(tag)}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-transform transform active:scale-95 ${
                     tags.includes(tag)
-                      ? "bg-black text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-black text-white shadow-md shadow-black/10"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                   }`}
                 >
                   {tag}
                 </button>
               ))}
             </div>
-            {tags.length > 0 && (
-              <p className="text-xs text-gray-500 mt-2">
-                Selected: {tags.join(", ")}
-              </p>
-            )}
-            {tags.length === 0 && (
-              <p className="text-xs text-red-500 mt-2">
-                Please select at least one tag
-              </p>
-            )}
-          </div>
-
-          {/* Relationship Type */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Relationship Type <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={relationshipType}
-              onChange={(e) => setRelationshipType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-            >
-              <option value="Business">Business</option>
-              <option value="Personal">Personal</option>
-              <option value="Professional">Professional</option>
-              <option value="Mixed">Mixed</option>
-            </select>
           </div>
 
           {/* Info Box */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-xl">
             <div className="flex">
               <svg
-                className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0"
+                className="w-5 h-5 text-gray-400 mt-0.5 mr-3 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -101,16 +95,16 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <div className="text-sm text-blue-800">
-                <p className="font-semibold mb-1">What happens next:</p>
-                <ul className="list-disc list-inside space-y-1 text-xs">
-                  <li>A new contact will be created with all lead data</li>
-                  <li>The lead status will be updated to "Converted"</li>
-                  <li>You can manage the contact in the Contacts page</li>
+              <div className="text-sm text-gray-300">
+                <p className="font-bold mb-1 text-white uppercase text-[10px] tracking-widest opacity-60">Succession Plan</p>
+                <ul className="list-disc list-inside space-y-1 text-[11px] font-medium leading-relaxed">
+                  <li>Original Lead will be archived as <span className="text-white">Converted</span></li>
+                  <li>A permanent Contact profile will be created</li>
+                  <li>Relationship category and tags will be retained</li>
                 </ul>
               </div>
             </div>
@@ -121,14 +115,14 @@ const ConversionDialog = ({ lead, onConfirm, onCancel }) => {
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-xl">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+            className="px-4 py-2 text-gray-500 font-bold text-sm hover:underline"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={tags.length === 0}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-black text-white rounded-xl hover:bg-gray-800 font-bold text-sm transition-all shadow-lg active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Convert to Contact
           </button>

@@ -30,8 +30,8 @@ import "./styles/App.css";
 function App() {
   return (
     <BrowserRouter>
-      <LoadingProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <LoadingProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterOrganization />} />
@@ -80,8 +80,8 @@ function App() {
               </Route>
             </Route>
           </Routes>
-        </AuthProvider>
-      </LoadingProvider>
+        </LoadingProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

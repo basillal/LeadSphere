@@ -2,8 +2,14 @@ import api from './api';
 
 const API_URL = '/users';
 
-const getUsers = async () => {
+let usersCache = null;
+
+const getUsers = async (forceRefresh = false) => {
+    if (usersCache && !forceRefresh) {
+        return usersCache;
+    }
     const response = await api.get(API_URL);
+    usersCache = response.data;
     return response.data;
 };
 
@@ -14,16 +20,19 @@ const getUser = async (id) => {
 
 const createUser = async (userData) => {
     const response = await api.post(API_URL, userData);
+    usersCache = null; // Invalidate
     return response.data;
 };
 
 const updateUser = async (id, userData) => {
     const response = await api.put(`${API_URL}/${id}`, userData);
+    usersCache = null; // Invalidate
     return response.data;
 };
 
 const deleteUser = async (id) => {
     const response = await api.delete(`${API_URL}/${id}`);
+    usersCache = null; // Invalidate
     return response.data;
 };
 

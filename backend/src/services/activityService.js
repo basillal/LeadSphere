@@ -44,8 +44,13 @@ class ActivityService {
             query.relatedId = relatedId;
         }
 
-        // Date filter
-        if (dateFilter) {
+        // Custom Date Range
+        if (startDate && endDate) {
+            query.activityDate = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        } else if (dateFilter) {
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const tomorrow = new Date(today);
@@ -99,19 +104,6 @@ class ActivityService {
                     // Scheduled activities with dates in the past
                     query.activityDate = { $lt: today };
                     query.status = 'Scheduled';
-                    break;
-
-                case 'custom':
-                    if (startDate && endDate) {
-                        const start = new Date(startDate);
-                        const end = new Date(endDate);
-                        end.setDate(end.getDate() + 1); // Include end date
-                        
-                        query.activityDate = {
-                            $gte: start,
-                            $lt: end
-                        };
-                    }
                     break;
             }
         }
@@ -237,9 +229,20 @@ class ActivityService {
     }
 
     // Get activity statistics
-    async getActivityStats(filters = {}) {
+    async getActivityStats(filters = {}, queryParams = {}) {
         const baseQuery = { isDeleted: false };
         if (filters.organization) baseQuery.organization = filters.organization;
+
+        // Apply date range filters if provided
+        if (queryParams.startDate || queryParams.endDate) {
+            baseQuery.activityDate = {};
+            if (queryParams.startDate) baseQuery.activityDate.$gte = new Date(queryParams.startDate);
+            if (queryParams.endDate) {
+                const end = new Date(queryParams.endDate);
+                if (queryParams.endDate.length <= 10) end.setHours(23, 59, 59, 999);
+                baseQuery.activityDate.$lte = end;
+            }
+        }
 
         const total = await Activity.countDocuments(baseQuery);
         

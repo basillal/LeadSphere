@@ -12,7 +12,8 @@ const ContactsTable = ({
   pagination,
   onPageChange,
   onLimitChange,
-  handleStartConversion, // New Prop
+  handleStartConversion, 
+  categories = [], // Categories for filter
   loading = false,
 }) => {
   // Helper functions
@@ -68,6 +69,23 @@ const ContactsTable = ({
       id: "tenant",
       label: "Organization",
       render: (row) => row.organization?.name || "-",
+    },
+    {
+      id: "category",
+      label: "Category",
+      render: (row) => {
+        if (!row.category || typeof row.category !== 'object') {
+          return <span className="text-gray-400 text-xs">-</span>;
+        }
+        
+        return (
+          <span
+            className="text-[10px] font-bold text-gray-600 uppercase tracking-wider"
+          >
+            {cat.name}
+          </span>
+        );
+      },
     },
     { id: "phone", label: "Phone" },
     {
@@ -191,6 +209,14 @@ const ContactsTable = ({
           { value: "Partner", label: "Partner" },
           { value: "Friend", label: "Friend" },
           { value: "Other", label: "Other" },
+        ],
+      },
+      {
+        value: filters.category,
+        onChange: (value) => onFilterChange("category", value),
+        options: [
+          { value: "", label: "All Categories" },
+          ...(categories || []).map((cat) => ({ value: cat._id, label: cat.name })),
         ],
       },
     ],

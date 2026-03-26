@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import leadCategoryService from "../../services/leadCategoryService";
 import Label from "../../components/common/fields/Label";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
@@ -26,6 +27,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
       // 3. Status & Priority
       status: "New",
+      category: "",
       priority: "Medium",
       leadTemperature: "Warm",
       isActive: true,
@@ -84,6 +86,20 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     return initialState;
   });
 
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await leadCategoryService.getCategories();
+        setCategories(res.data);
+      } catch (err) {
+        console.error("Failed to load categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -124,11 +140,16 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
 
     // Convert attachments string to array
     if (cleanedData.attachments) {
-      cleanedData.attachments = cleanedData.attachments
-        .split("\n")
-        .filter((url) => url.trim() !== "");
+      cleanedData.attachments = typeof cleanedData.attachments === "string" 
+        ? cleanedData.attachments.split("\n").filter((url) => url.trim() !== "")
+        : Array.isArray(cleanedData.attachments) ? cleanedData.attachments : [];
     } else {
       cleanedData.attachments = [];
+    }
+
+    // Convert category to ID if it's an object
+    if (cleanedData.category && typeof cleanedData.category === "object") {
+      cleanedData.category = cleanedData.category._id;
     }
 
     onSubmit(cleanedData);
@@ -255,7 +276,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           title="3. Lead Status & Priority"
           subtitle="Current state of the lead"
         />
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Select
             label="Status"
             name="status"
@@ -267,10 +288,22 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
               "In Progress",
               "On Hold",
               "Completed",
+              "Converted",
               "Lost",
             ]}
             required
-            className="md:col-span-2"
+            className="w-full"
+          />
+          <Select
+            label="Category"
+            name="category"
+            value={typeof formData.category === 'object' ? formData.category?._id : formData.category}
+            onChange={handleChange}
+            options={[
+              { label: "None", value: "" },
+              ...categories.map(cat => ({ label: cat.name, value: cat._id }))
+            ]}
+            className="w-full"
           />
           <Select
             label="Priority"
@@ -278,7 +311,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.priority}
             onChange={handleChange}
             options={["Low", "Medium", "High"]}
-            className="md:col-span-2"
+            className="w-full"
           />
           <Select
             label="Temperature"

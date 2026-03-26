@@ -68,6 +68,7 @@ const getContacts = asyncHandler(async (req, res) => {
     const total = await Contact.countDocuments(query);
     const contacts = await Contact.find(query)
         .populate('leadId', 'name')
+        .populate('category') // Populate category for table display
         .populate('createdBy', 'name')
         .populate('organization', 'name')
         .sort({ lastInteractionDate: -1, createdAt: -1 })
@@ -195,7 +196,7 @@ const convertLeadToContact = asyncHandler(async (req, res) => {
         lastInteractionDate: lead.lastContactedAt || new Date(),
         nextFollowUpDate: lead.nextFollowUpDate,
         tags: req.body.tags || ['Client'], 
-        relationshipType: req.body.relationshipType || 'Business',
+        category: req.body.category || lead.category, // Map category during conversion
         createdBy: lead.createdBy || req.user._id,
         organization: lead.organization 
     };

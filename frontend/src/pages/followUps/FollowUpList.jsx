@@ -82,6 +82,13 @@ const FollowUpList = ({
               </span>
             )}
             <span className="block md:inline">{row.lead?.phone || ""}</span>
+            {row.lead?.category && (
+              <span 
+                className="ml-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider"
+              >
+                {typeof row.lead.category === 'object' ? row.lead.category.name : ''}
+              </span>
+            )}
           </div>
         </div>
       ),

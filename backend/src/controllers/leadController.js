@@ -51,16 +51,26 @@ const getLeads = asyncHandler(async (req, res) => {
         query.source = req.query.source;
     }
 
-    // Filter by Date Range (nextFollowUpDate)
+    // Filter by category
+    if (req.query.category) {
+        query.category = req.query.category;
+    }
+
+    // Filter by Date Range (nextFollowUpDate OR createdAt)
     if (req.query.startDate || req.query.endDate) {
-        if (!query.nextFollowUpDate) query.nextFollowUpDate = {};
+        const dateField = req.query.dateField || 'createdAt';
+        if (!query[dateField]) query[dateField] = {};
         if (req.query.startDate) {
-            query.nextFollowUpDate.$gte = new Date(req.query.startDate);
+            query[dateField].$gte = new Date(req.query.startDate);
         }
         if (req.query.endDate) {
              const end = new Date(req.query.endDate);
-             end.setHours(23, 59, 59, 999);
-            query.nextFollowUpDate.$lte = end;
+             // If the date string is just a YYYY-MM-DD, set to end of day.
+             // If it's a full ISO string (which it likely is from the frontend), use it.
+             if (req.query.endDate.length <= 10) {
+                end.setHours(23, 59, 59, 999);
+             }
+            query[dateField].$lte = end;
         }
     }
 
@@ -90,6 +100,7 @@ const getLeads = asyncHandler(async (req, res) => {
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
         .populate('organization', 'name')
+        .populate('category', 'name color')
         .sort({ createdAt: -1 })
         .skip(startIndex)
         .limit(limit);
@@ -114,7 +125,8 @@ const getLead = asyncHandler(async (req, res) => {
     const lead = await Lead.findById(req.params.id)
         .populate('assignedTo', 'name email')
         .populate('createdBy', 'name')
-        .populate('organization', 'name');
+        .populate('organization', 'name')
+        .populate('category', 'name color');
 
     if (!lead || lead.isDeleted) {
         res.status(404);
@@ -358,14 +370,37 @@ const getLeadStats = asyncHandler(async (req, res) => {
         query.assignedTo = req.user._id;
     }
 
-    const total = await Lead.countDocuments(query);
-    const newLeads = await Lead.countDocuments({ ...query, status: 'New' });
-    const pending = await Lead.countDocuments({ ...query, status: 'Pending' });
-    const inProgress = await Lead.countDocuments({ ...query, status: 'In Progress' });
-    const onHold = await Lead.countDocuments({ ...query, status: 'On Hold' });
-    const completed = await Lead.countDocuments({ ...query, status: 'Completed' });
-    const lost = await Lead.countDocuments({ ...query, status: 'Lost' });
-    const converted = await Lead.countDocuments({ ...query, isConverted: true });
+    // Filter stats by date range if provided
+    if (req.query.startDate || req.query.endDate) {
+        const dateField = req.query.dateField || 'createdAt';
+        if (!query[dateField]) query[dateField] = {};
+        if (req.query.startDate) query[dateField].$gte = new Date(req.query.startDate);
+        if (req.query.endDate) {
+            const end = new Date(req.query.endDate);
+            if (req.query.endDate.length <= 10) end.setHours(23, 59, 59, 999);
+            query[dateField].$lte = end;
+        }
+    }
+
+    const [
+        total,
+        newLeads,
+        pending,
+        inProgress,
+        onHold,
+        completed,
+        lost,
+        converted
+    ] = await Promise.all([
+        Lead.countDocuments(query),
+        Lead.countDocuments({ ...query, status: 'New' }),
+        Lead.countDocuments({ ...query, status: 'Pending' }),
+        Lead.countDocuments({ ...query, status: 'In Progress' }),
+        Lead.countDocuments({ ...query, status: 'On Hold' }),
+        Lead.countDocuments({ ...query, status: 'Completed' }),
+        Lead.countDocuments({ ...query, status: 'Lost' }),
+        Lead.countDocuments({ ...query, isConverted: true })
+    ]);
 
     res.status(200).json({
         success: true,

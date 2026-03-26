@@ -33,8 +33,8 @@ const deleteLead = async (id) => {
 };
 
 // Get lead stats
-const getLeadStats = async () => {
-    const response = await api.get(`${API_URL}/stats`);
+const getLeadStats = async (params) => {
+    const response = await api.get(`${API_URL}/stats`, { params });
     return response.data;
 };
 

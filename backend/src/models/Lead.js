@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 require('./Organization'); // Register models to avoid Schema not registered errors
 require('./User'); 
 require('./Referrer');
+require('./LeadCategory'); // Register LeadCategory model explicitly
 
 const LeadSchema = new mongoose.Schema({
     // 1. Basic Lead Information
@@ -57,11 +58,15 @@ const LeadSchema = new mongoose.Schema({
         ref: 'Referrer'
     },
 
-    // 3. Lead Status & Priority
+    // 3. Lead Status & Category
     status: {
         type: String,
         enum: ['New', 'Pending', 'In Progress', 'On Hold', 'Completed', 'Lost', 'Converted'],
         default: 'New'
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'LeadCategory'
     },
     priority: {
         type: String,

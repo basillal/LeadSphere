@@ -4,7 +4,9 @@ import leadService from "../../services/leadService";
 import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
+import leadCategoryService from "../../services/leadCategoryService";
 import Toast from "../../components/common/utils/Toast";
+import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 // Simple Modal for Preview (Tailwind based)
 // We could use MUI Drawer/Dialog, but user asked for "removed all MUI" earlier, although some imports remain in this file.
@@ -63,6 +65,13 @@ const PreviewModal = ({ lead, onClose }) => {
             <div className="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
               {lead.leadTemperature}
             </div>
+            {lead.category && (
+              <div 
+                className="text-xs font-bold text-gray-600 uppercase tracking-wider"
+              >
+                {lead.category.name}
+              </div>
+            )}
           </div>
 
           {/* Contact Info */}
@@ -182,10 +191,12 @@ const Leads = () => {
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
-    contacted: 0,
-    followUp: 0,
-    converted: 0,
+    pending: 0,
+    inProgress: 0,
+    onHold: 0,
+    completed: 0,
     lost: 0,
+    converted: 0,
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -207,7 +218,10 @@ const Leads = () => {
     search: "",
     status: "",
     source: "",
+    category: "",
   });
+  const [categories, setCategories] = useState([]);
+  const [timeRange, setTimeRange] = useState("last_30_days");
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -218,29 +232,45 @@ const Leads = () => {
   };
 
   // Fetch lead statistics
-  const fetchStats = async () => {
+  const fetchStats = async (range) => {
     try {
-      const resp = await leadService.getLeadStats();
+      const params = {};
+      const selectedRange = range || getDateRange(timeRange);
+      if (selectedRange.startDate) params.startDate = selectedRange.startDate;
+      if (selectedRange.endDate) params.endDate = selectedRange.endDate;
+      
+      const resp = await leadService.getLeadStats(params);
       setStats(resp.data);
     } catch (err) {
       console.error("Error fetching stats:", err);
     }
   };
 
-  // Fetch stats on mount
+  // Fetch lead statistics independently of lead list filters
   useEffect(() => {
     fetchStats();
-  }, [selectedOrganization]);
+  }, [selectedOrganization, timeRange]);
 
-  // Debounce API calls, but update UI immediately
+  // Debounce API calls for lead list
   useEffect(() => {
-    // Avoid double fetch on initial mount if possible, or just accept the debounce.
     const timer = setTimeout(() => {
       fetchLeads();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters, pagination.page, pagination.limit, selectedOrganization]);
+  }, [filters.search, filters.status, filters.source, filters.category, pagination.page, pagination.limit, selectedOrganization, timeRange]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await leadCategoryService.getCategories();
+        setCategories(res.data || []);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+    fetchCategories();
+  }, [selectedOrganization]);
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
@@ -256,6 +286,15 @@ const Leads = () => {
       if (filters.search) params.search = filters.search;
       if (filters.status) params.status = filters.status;
       if (filters.source) params.source = filters.source;
+      if (filters.category) params.category = filters.category;
+      // The original content does not have `activeTab` state, so this line is commented out.
+      // if (activeTab === "converted") params.isConverted = true;
+      const selectedRange = getDateRange(timeRange);
+      if (selectedRange.startDate) params.startDate = selectedRange.startDate;
+      if (selectedRange.endDate) params.endDate = selectedRange.endDate;
+
+      // Default to createdAt for general list filtering
+      if (params.startDate || params.endDate) params.dateField = 'createdAt';
 
       const data = await leadService.getLeads(params);
       setLeads(data.data);
@@ -371,29 +410,37 @@ const Leads = () => {
             : view === "create"
               ? "Create new lead"
               : "Edit lead"}
-        </h1>
-        {view !== "list" && (
-          <button
-            onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            title="Back to List"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-        )}
-      </div>
+          </h1>
+          <div className="flex gap-2">
+            {view === "list" && (
+              <TimeRangeFilter
+                value={timeRange}
+                onChange={setTimeRange}
+              />
+            )}
+            {view !== "list" && (
+              <button
+                onClick={handleCancelForm}
+                className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                title="Back to List"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
 
       {error && (
         <div className="bg-red-50 text-red-800 p-4 rounded-lg mb-4 border border-red-200">
@@ -407,6 +454,7 @@ const Leads = () => {
 
           <LeadsTable
             rows={leads}
+            categories={categories}
             onCreate={handleShowCreate}
             onEdit={handleShowEdit}
             onDelete={handleDeleteLead}
