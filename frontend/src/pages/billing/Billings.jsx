@@ -3,6 +3,8 @@ import { useAuth } from "../../components/auth/AuthProvider";
 import billingService from "../../services/billingService";
 import serviceService from "../../services/serviceService";
 import contactService from "../../services/contactService";
+import leadCategoryService from "../../services/leadCategoryService";
+import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import ContactForm from "../contacts/ContactForm"; // Import ContactForm
@@ -10,7 +12,7 @@ import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRange
 
 const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const [contacts, setContacts] = useState([]);
-  const [services, setServices] = useState([]);
+  const { services } = useData();
 
   const [formData, setFormData] = useState({
     contactId: "",
@@ -28,13 +30,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const [isContactFocused, setIsContactFocused] = useState(false); // State for dropdown visibility
 
   useEffect(() => {
-    // Load initial data for edit mode
+    // Services are handled globally by DataContext
     const loadData = async () => {
       try {
-        // Fetch active services
-        const serviceRes = await serviceService.getServices({ isActive: true });
-        setServices(serviceRes.data);
-
         // If editing, populate form
         if (initialData) {
           setFormData({
@@ -663,7 +661,7 @@ const Billings = () => {
     message: "",
     severity: "success",
   });
-  const [categories, setCategories] = useState([]); // Category state
+  const { categories } = useData();
   const [filters, setFilters] = useState({
     search: "",
     paymentStatus: "",
@@ -696,18 +694,8 @@ const Billings = () => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const res = await leadCategoryService.getCategories();
-      setCategories(res.data || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
     fetchBillings();
-    fetchCategories();
   }, [selectedOrganization, timeRange, filters.category, filters.paymentStatus, filters.search]);
 
   const handleCreate = () => {

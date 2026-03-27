@@ -82,7 +82,7 @@ const ContactsTable = ({
           <span
             className="text-[10px] font-bold text-gray-600 uppercase tracking-wider"
           >
-            {cat.name}
+            {row.category.name}
           </span>
         );
       },

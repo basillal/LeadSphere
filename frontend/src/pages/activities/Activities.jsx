@@ -5,6 +5,7 @@ import ActivityStats from "./ActivityStats";
 import ActivitiesTable from "./ActivitiesTable";
 import ActivityForm from "./ActivityForm";
 import leadCategoryService from "../../services/leadCategoryService"; // New import
+import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
@@ -356,7 +357,7 @@ const Activities = () => {
     status: "",
     category: "", // Added category filter
   });
-  const [categories, setCategories] = useState([]); // Added categories state
+  const { categories } = useData();
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const showSnackbar = (message, severity = "success") => {
@@ -428,15 +429,6 @@ const Activities = () => {
     }
   }, [timeRange, selectedOrganization]);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const res = await leadCategoryService.getCategories();
-      setCategories(res.data || []);
-    } catch (err) {
-      console.error("Failed to load categories", err);
-    }
-  }, [selectedOrganization]);
-
   useEffect(() => {
     fetchActivities();
   }, [fetchActivities]);
@@ -444,10 +436,6 @@ const Activities = () => {
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   const handleRangeChange = () => {
     // Fetches are triggered by the useEffect depending on timeRange

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import contactService from "../../services/contactService";
 import leadService from "../../services/leadService"; 
 import leadCategoryService from "../../services/leadCategoryService"; // New Import
+import { useData } from "../../context/DataContext";
 import ContactStats from "./ContactStats";
 import ContactsTable from "./ContactsTable";
 import ContactForm from "./ContactForm";
@@ -434,7 +435,7 @@ const Contacts = () => {
   });
   // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); 
-  const [categories, setCategories] = useState([]); // Added category state
+  const { categories } = useData();
   const [currentContact, setCurrentContact] = useState(null);
   const [previewContact, setPreviewContact] = useState(null);
 
@@ -534,18 +535,8 @@ const Contacts = () => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const res = await leadCategoryService.getCategories();
-      setCategories(res.data || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
   useEffect(() => {
     fetchStats();
-    fetchCategories();
   }, [selectedOrganization]);
 
   useEffect(() => {

@@ -5,6 +5,9 @@ import React from 'react';
  */
 export const getDateRange = (range) => {
     const today = new Date();
+    // Normalize to the start of the current minute to ensure stability 
+    // for multiple calls made in quick succession (like React.StrictMode)
+    today.setSeconds(0, 0); 
     let endDate = today.toISOString();
     let startDate = null;
 

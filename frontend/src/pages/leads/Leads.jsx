@@ -5,6 +5,7 @@ import LeadForm from "./LeadForm";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
 import leadCategoryService from "../../services/leadCategoryService";
+import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
@@ -220,7 +221,7 @@ const Leads = () => {
     source: "",
     category: "",
   });
-  const [categories, setCategories] = useState([]);
+  const { categories } = useData();
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const handleCloseSnackbar = () => {
@@ -259,18 +260,6 @@ const Leads = () => {
 
     return () => clearTimeout(timer);
   }, [filters.search, filters.status, filters.source, filters.category, pagination.page, pagination.limit, selectedOrganization, timeRange]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await leadCategoryService.getCategories();
-        setCategories(res.data || []);
-      } catch (err) {
-        console.error("Failed to load categories", err);
-      }
-    };
-    fetchCategories();
-  }, [selectedOrganization]);
 
   const fetchLeads = async () => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay

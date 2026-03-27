@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import leadCategoryService from "../../services/leadCategoryService";
+import { useData } from "../../context/DataContext";
 import Label from "../../components/common/fields/Label";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
@@ -86,19 +87,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     return initialState;
   });
 
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await leadCategoryService.getCategories();
-        setCategories(res.data);
-      } catch (err) {
-        console.error("Failed to load categories:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { categories } = useData();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

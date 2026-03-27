@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../components/auth/AuthProvider";
 import leadCategoryService from "../services/leadCategoryService";
+import { useData } from "../context/DataContext";
 import Toast from "../components/common/utils/Toast";
 import SectionHeader from "../components/common/sections/SectionHeader";
 import Input from "../components/common/fields/Input";
@@ -8,8 +9,7 @@ import Input from "../components/common/fields/Input";
 const Settings = () => {
   const { user, selectedOrganization } = useAuth();
   const [activeTab, setActiveTab] = useState("categories");
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { categories, categoriesLoading: loading, refreshCategories } = useData();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: "" });
@@ -19,20 +19,8 @@ const Settings = () => {
     setToast({ open: true, message, severity });
   };
 
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const res = await leadCategoryService.getCategories();
-      setCategories(res.data);
-    } catch (err) {
-      showToast("Failed to load categories", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
+    // Categories are now handled by DataContext automatically
   }, [selectedOrganization]);
 
   const handleAdd = () => {
@@ -65,7 +53,7 @@ const Settings = () => {
       }
       setIsAdding(false);
       setEditingId(null);
-      fetchCategories();
+      refreshCategories();
     } catch (err) {
       showToast(err.response?.data?.message || "Operation failed", "error");
     }
@@ -76,7 +64,7 @@ const Settings = () => {
       try {
         await leadCategoryService.deleteCategory(id);
         showToast("Category deleted");
-        fetchCategories();
+        refreshCategories();
       } catch (err) {
         showToast("Failed to delete category", "error");
       }

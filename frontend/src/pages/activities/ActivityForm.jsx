@@ -8,9 +8,10 @@ import LeadAutocomplete from "../../components/common/fields/LeadAutocomplete";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 
 import serviceService from "../../services/serviceService";
+import { useData } from "../../context/DataContext";
 
 const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
-  const [services, setServices] = useState([]);
+  const { services } = useData();
   const [formData, setFormData] = useState(() => {
     const initialState = {
       // Basic Info
@@ -81,19 +82,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
     return initialState;
   });
 
-  // Fetch Services
-  React.useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await serviceService.getServices({ isActive: true });
-        setServices(res.data);
-      } catch (err) {
-        console.error("Failed to load services", err);
-      }
-    };
-    fetchServices();
-  }, []);
-
+  // Services are now handled by DataContext
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
