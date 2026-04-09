@@ -113,8 +113,8 @@ const Expenses = () => {
       label: "Title",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900">{row.title}</div>
-          <div className="text-xs text-gray-500">{row.description}</div>
+          <div className="font-light text-black">{row.title}</div>
+          <div className="text-base text-black">{row.description}</div>
         </div>
       ),
     },
@@ -122,7 +122,7 @@ const Expenses = () => {
       id: "category",
       label: "Category",
       render: (row) => (
-        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+        <span className="px-2 py-1 bg-gray-100 text-black text-base rounded-full">
           {row.category}
         </span>
       ),
@@ -131,7 +131,7 @@ const Expenses = () => {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-base font-light text-black">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -145,7 +145,7 @@ const Expenses = () => {
       id: "amount",
       label: "Amount",
       render: (row) => (
-        <span className="font-bold text-red-600">
+        <span className="font-light text-red-600">
           {new Intl.NumberFormat("en-IN", {
             style: "currency",
             currency: "INR",
@@ -177,8 +177,8 @@ const Expenses = () => {
     <div className="w-full p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-base font-light text-black">Expenses</h1>
+          <p className="text-base text-black">
             Track and manage organization expenses
           </p>
         </div>
@@ -225,7 +225,7 @@ const Expenses = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-light text-black">
               Title *
             </label>
             <input
@@ -241,7 +241,7 @@ const Expenses = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-light text-black">
                 Amount *
               </label>
               <input
@@ -257,7 +257,7 @@ const Expenses = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-light text-black">
                 Date *
               </label>
               <input
@@ -273,7 +273,7 @@ const Expenses = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-light text-black">
               Category *
             </label>
             <select
@@ -296,7 +296,7 @@ const Expenses = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-light text-black">
               Description
             </label>
             <textarea
@@ -313,13 +313,13 @@ const Expenses = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-base font-light text-black hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-light text-white bg-black hover:bg-gray-800"
             >
               Save Expense
             </button>

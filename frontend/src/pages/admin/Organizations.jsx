@@ -136,10 +136,10 @@ const Organizations = () => {
       label: "Owner",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 uppercase">
+          <div className="font-light text-black uppercase">
             {row.owner?.name || "-"}
           </div>
-          <div className="text-xs text-gray-500">{row.owner?.email || "-"}</div>
+          <div className="text-base text-black">{row.owner?.email || "-"}</div>
         </div>
       ),
     },
@@ -152,7 +152,7 @@ const Organizations = () => {
             e.stopPropagation();
             handleStatusToggle(row);
           }}
-          className={`px-2 py-1 rounded-full text-xs font-semibold cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
+          className={`px-2 py-1 rounded-full text-base font-light cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
           title="Click to toggle status"
         >
           {row.isActive ? "Active" : "Inactive"}
@@ -235,7 +235,7 @@ const Organizations = () => {
             {/* Left Column */}
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Organization name *
                 </label>
                 <input
@@ -250,7 +250,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Plan
                 </label>
                 <select
@@ -268,7 +268,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Status
                 </label>
                 <select
@@ -287,7 +287,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Description
                 </label>
                 <textarea
@@ -301,7 +301,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Logo (URL)
                 </label>
                 <input
@@ -318,18 +318,18 @@ const Organizations = () => {
 
             {/* Right Column */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 border-b pb-1">
+              <h3 className="text-base font-light text-black border-b pb-1">
                 Contact & Address
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Organization email
                   </label>
                   <input
                     type="email"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.email || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -337,12 +337,12 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Phone
                   </label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.phone || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
@@ -352,12 +352,12 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Website
                 </label>
                 <input
                   type="text"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                   value={formData.website || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, website: e.target.value })
@@ -366,12 +366,12 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="block text-base font-light text-black">
                   Street address
                 </label>
                 <input
                   type="text"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                   value={formData.address?.street || ""}
                   onChange={(e) =>
                     setFormData({
@@ -384,12 +384,12 @@ const Organizations = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     City
                   </label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.address?.city || ""}
                     onChange={(e) =>
                       setFormData({
@@ -400,12 +400,12 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     State
                   </label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.address?.state || ""}
                     onChange={(e) =>
                       setFormData({
@@ -419,12 +419,12 @@ const Organizations = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Zip code
                   </label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.address?.zipCode || ""}
                     onChange={(e) =>
                       setFormData({
@@ -438,12 +438,12 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Country
                   </label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 text-base"
                     value={formData.address?.country || ""}
                     onChange={(e) =>
                       setFormData({
@@ -462,12 +462,12 @@ const Organizations = () => {
 
           {!currentOrganization && (
             <div className="border-t pt-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <h3 className="text-base font-light text-black mb-3">
                 Owner Account
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Owner name *
                   </label>
                   <input
@@ -481,7 +481,7 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-base font-light text-black">
                     Owner email *
                   </label>
                   <input
@@ -502,13 +502,13 @@ const Organizations = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-base font-light text-black hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-light text-white bg-black hover:bg-gray-800"
             >
               Save
             </button>
@@ -525,10 +525,10 @@ const Organizations = () => {
       >
         <div className="space-y-4">
           <div className="p-4 bg-red-50 text-red-800 rounded-md">
-            <p className="text-sm font-medium">
+            <p className="text-base font-light">
               Warning: This action is irreversible!
             </p>
-            <p className="text-xs mt-1">
+            <p className="text-base mt-1">
               Deleting <strong>{organizationToDelete?.name}</strong> will remove all
               associated Users, Leads, Contacts, Activities, Services, Billing,
               Expenses, and settings.
@@ -536,11 +536,11 @@ const Organizations = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-base font-light text-black mb-1">
               To confirm, type the code below:
             </label>
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-block px-3 py-1 bg-gray-200 text-gray-800 font-mono font-bold tracking-widest rounded border select-none">
+              <span className="inline-block px-3 py-1 bg-gray-200 text-black font-mono font-light tracking-widest rounded border select-none">
                 {captchaCode}
               </span>
               <button
@@ -550,7 +550,7 @@ const Organizations = () => {
                     Math.random().toString(36).substring(2, 8).toUpperCase(),
                   )
                 }
-                className="text-xs text-blue-600 hover:underline"
+                className="text-base text-blue-600 hover:underline"
               >
                 Refresh Code
               </button>
@@ -568,7 +568,7 @@ const Organizations = () => {
             <button
               type="button"
               onClick={() => setDeleteModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-base font-light text-black hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -576,7 +576,7 @@ const Organizations = () => {
               type="button"
               onClick={handleDeleteConfirm}
               disabled={captchaInput !== captchaCode}
-              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-light text-white 
                       ${captchaInput === captchaCode ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
             >
               Delete Organization

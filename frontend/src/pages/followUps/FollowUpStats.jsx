@@ -2,16 +2,16 @@ import React from "react";
 
 const FollowUpStats = ({ stats }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor, percentage }) => (
-    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 relative overflow-hidden">
-      <div className="flex items-center gap-4">
-        <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
+    <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 relative overflow-hidden">
+      <div className="flex items-center gap-2">
+        <div className={`${iconBg} ${iconColor} p-2 rounded-lg`}>{icon}</div>
         <div className="flex-1">
-          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">
+          <p className="text-base text-black font-bold uppercase tracking-wider mb-1">
             {title}
           </p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-base font-light text-black">{value}</p>
           {percentage && (
-            <p className="text-[10px] text-gray-400 mt-1 uppercase font-medium">
+            <p className="text-base text-black mt-1 uppercase font-light">
               {percentage}
             </p>
           )}
@@ -27,12 +27,12 @@ const FollowUpStats = ({ stats }) => {
     totalTasks > 0 ? Math.round((stats.completed / totalTasks) * 100) : 0;
 
   return (
-    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
       <StatCard
         title="Total Follow-ups"
         value={stats.total || 0}
         iconBg="bg-slate-100"
-        iconColor="text-slate-600"
+        iconColor="text-black"
         icon={
           <svg
             className="w-6 h-6"

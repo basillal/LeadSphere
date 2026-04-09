@@ -222,10 +222,10 @@ const FollowUps = () => {
     <div className="w-full max-w-full overflow-x-hidden">
       <div className="flex justify-between items-center mb-4 md:mb-6 gap-2 md:gap-4">
         <div className="min-w-0 flex-1">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">
+          <h1 className="text-base md:text-base font-light text-black truncate">
             Follow-up management
           </h1>
-          <p className="text-gray-500 text-sm hidden md:block">
+          <p className="text-black text-base hidden md:block">
             Track and manage your customer interactions
           </p>
         </div>
@@ -236,7 +236,7 @@ const FollowUps = () => {
           />
           <button
             onClick={handleCreate}
-            className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-xs md:text-sm font-medium whitespace-nowrap flex-shrink-0"
+            className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-base md:text-base font-light whitespace-nowrap flex-shrink-0"
           >
             <span className="hidden sm:inline">+ Schedule new</span>
             <span className="sm:hidden">+ New</span>
@@ -251,10 +251,10 @@ const FollowUps = () => {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab.id
                   ? "bg-white text-black shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-black hover:text-black"
               }`}
             >
               {tab.label}
@@ -280,7 +280,7 @@ const FollowUps = () => {
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
-          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center justify-between"
+          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
         >
           <span>Filters</span>
           <svg
@@ -355,15 +355,15 @@ const FollowUps = () => {
         title="Follow-up outcome"
       >
         <form onSubmit={handleOutcomeSubmit} className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-black">
             Please provide a remark/outcome for this follow-up with{" "}
-            <span className="font-semibold">
+            <span className="font-light">
               {followUpToUpdate?.lead?.name}
             </span>
             .
           </p>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-base font-light text-black">
               Outcome / Remarks <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -378,13 +378,13 @@ const FollowUps = () => {
             <button
               type="button"
               onClick={() => setIsOutcomeModalOpen(false)}
-              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+              className="px-4 py-2 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800"
+              className="px-4 py-2 bg-black text-white font-light rounded-lg hover:bg-gray-800"
             >
               Complete Follow-up
             </button>

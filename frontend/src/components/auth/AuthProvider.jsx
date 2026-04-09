@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import authService, { setupAxiosInterceptors } from "./authService";
 import { getToken, getUser, setUser as setSessionUser, removeUser } from "./tokenUtils";
@@ -83,19 +83,19 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
+  const authValue = React.useMemo(() => ({
+    user,
+    login,
+    logout,
+    changePassword: authService.changePassword,
+    loading,
+    isAuthenticated: !!user,
+    selectedOrganization,
+    selectOrganization,
+  }), [user, loading, selectedOrganization]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        changePassword: authService.changePassword,
-        loading,
-        isAuthenticated: !!user,
-        selectedOrganization,
-        selectOrganization,
-      }}
-    >
+    <AuthContext.Provider value={authValue}>
       {!loading && children}
     </AuthContext.Provider>
   );

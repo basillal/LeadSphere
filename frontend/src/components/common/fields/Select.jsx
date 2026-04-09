@@ -18,7 +18,7 @@ const Select = ({
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black appearance-none bg-white transition-colors"
+        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black appearance-none bg-white transition-colors"
         required={required}
         {...props}
       >
@@ -29,7 +29,7 @@ const Select = ({
         ))}
       </select>
       {/* Custom Arrow Icon */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black">
         <svg
           className="fill-current h-4 w-4"
           xmlns="http://www.w3.org/2000/svg"

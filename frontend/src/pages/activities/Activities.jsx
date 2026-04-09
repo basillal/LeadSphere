@@ -5,6 +5,7 @@ import ActivityStats from "./ActivityStats";
 import ActivitiesTable from "./ActivitiesTable";
 import ActivityForm from "./ActivityForm";
 import leadCategoryService from "../../services/leadCategoryService"; // New import
+import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
@@ -32,17 +33,17 @@ const PreviewModal = ({ activity, onClose }) => {
       Pending: "bg-yellow-100 text-yellow-800",
       Cancelled: "bg-red-100 text-red-800",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-gray-100 text-black";
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      Low: "bg-gray-100 text-gray-600",
+      Low: "bg-gray-100 text-black",
       Medium: "bg-blue-100 text-blue-600",
       High: "bg-orange-100 text-orange-600",
       Urgent: "bg-red-100 text-red-600",
     };
-    return colors[priority] || "bg-gray-100 text-gray-600";
+    return colors[priority] || "bg-gray-100 text-black";
   };
 
   const formatDate = (date) => {
@@ -66,14 +67,14 @@ const PreviewModal = ({ activity, onClose }) => {
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">
+            <span className="text-base">
               {getActivityTypeIcon(activity.activityType)}
             </span>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-base font-light text-black">
                 {activity.title}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-base text-black">
                 {activity.activityType} • {activity.relatedName} (
                 {activity.relatedTo})
               </p>
@@ -81,7 +82,7 @@ const PreviewModal = ({ activity, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition-colors"
+            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -105,22 +106,22 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Status and Priority */}
           <div className="flex flex-wrap gap-2">
             <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(activity.status)}`}
+              className={`px-3 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
             >
               {activity.status}
             </span>
             <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${getPriorityColor(activity.priority)}`}
+              className={`px-3 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
             >
               {activity.priority}
             </span>
             {activity.category && (
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-base font-light">
                 {activity.category}
               </span>
             )}
             {activity.outcome && activity.outcome !== "None" && (
-              <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-base font-light">
                 {activity.outcome}
               </span>
             )}
@@ -129,10 +130,10 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Description */}
           {activity.description && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Description
               </h3>
-              <p className="text-gray-700 bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
                 {activity.description}
               </p>
             </div>
@@ -141,23 +142,23 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-xl text-white">
             <div>
-              <div className="text-xs text-gray-400 uppercase">Date</div>
-              <div className="text-sm font-bold">
+              <div className="text-base text-black uppercase">Date</div>
+              <div className="text-base font-light">
                 {formatDate(activity.activityDate)}
               </div>
             </div>
             {activity.startTime && (
               <div>
-                <div className="text-xs text-gray-400 uppercase">
+                <div className="text-base text-black uppercase">
                   Start Time
                 </div>
-                <div className="text-sm font-bold">{activity.startTime}</div>
+                <div className="text-base font-light">{activity.startTime}</div>
               </div>
             )}
             {activity.endTime && (
               <div>
-                <div className="text-xs text-gray-400 uppercase">End Time</div>
-                <div className="text-sm font-bold">{activity.endTime}</div>
+                <div className="text-base text-black uppercase">End Time</div>
+                <div className="text-base font-light">{activity.endTime}</div>
               </div>
             )}
           </div>
@@ -165,13 +166,13 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Call Details */}
           {activity.activityType === "Call" && activity.callDetails && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Call Details
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {activity.callDetails.duration && (
                   <div>
-                    <span className="font-semibold text-gray-500">
+                    <span className="font-light text-black">
                       Duration:
                     </span>{" "}
                     {activity.callDetails.duration}
@@ -179,13 +180,13 @@ const PreviewModal = ({ activity, onClose }) => {
                 )}
                 {activity.callDetails.callType && (
                   <div>
-                    <span className="font-semibold text-gray-500">Type:</span>{" "}
+                    <span className="font-light text-black">Type:</span>{" "}
                     {activity.callDetails.callType}
                   </div>
                 )}
                 {activity.callDetails.callStatus && (
                   <div>
-                    <span className="font-semibold text-gray-500">Status:</span>{" "}
+                    <span className="font-light text-black">Status:</span>{" "}
                     {activity.callDetails.callStatus}
                   </div>
                 )}
@@ -196,13 +197,13 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Meeting Details */}
           {activity.activityType === "Meeting" && activity.meetingDetails && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Meeting Details
               </h3>
               <div className="space-y-2">
                 {activity.meetingDetails.location && (
                   <p>
-                    <span className="font-semibold text-gray-500">
+                    <span className="font-light text-black">
                       Location:
                     </span>{" "}
                     {activity.meetingDetails.location}
@@ -210,14 +211,14 @@ const PreviewModal = ({ activity, onClose }) => {
                 )}
                 {activity.meetingDetails.meetingType && (
                   <p>
-                    <span className="font-semibold text-gray-500">Type:</span>{" "}
+                    <span className="font-light text-black">Type:</span>{" "}
                     {activity.meetingDetails.meetingType}
                   </p>
                 )}
                 {activity.meetingDetails.agenda && (
                   <div>
-                    <span className="font-semibold text-gray-500">Agenda:</span>
-                    <p className="mt-1 text-gray-700 bg-gray-50 p-3 rounded-lg">
+                    <span className="font-light text-black">Agenda:</span>
+                    <p className="mt-1 text-black bg-gray-50 p-3 rounded-lg">
                       {activity.meetingDetails.agenda}
                     </p>
                   </div>
@@ -229,10 +230,10 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Notes */}
           {activity.notes && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Notes
               </h3>
-              <p className="text-gray-700 bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
                 {activity.notes}
               </p>
             </div>
@@ -241,18 +242,18 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Follow-up */}
           {activity.followUpRequired && (
             <div className="space-y-2 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-              <h3 className="text-sm font-bold text-yellow-800 uppercase tracking-wider">
+              <h3 className="text-base font-light text-yellow-800 uppercase tracking-wider">
                 Follow-up Required
               </h3>
               {activity.followUpDate && (
-                <p className="text-gray-700">
-                  <span className="font-semibold">Date:</span>{" "}
+                <p className="text-black">
+                  <span className="font-light">Date:</span>{" "}
                   {formatDate(activity.followUpDate)}
                 </p>
               )}
               {activity.followUpNotes && (
-                <p className="text-gray-700">
-                  <span className="font-semibold">Notes:</span>{" "}
+                <p className="text-black">
+                  <span className="font-light">Notes:</span>{" "}
                   {activity.followUpNotes}
                 </p>
               )}
@@ -262,14 +263,14 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Tags */}
           {activity.tags && activity.tags.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {activity.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
+                    className="px-3 py-1 bg-gray-100 text-black rounded-full text-base font-light"
                   >
                     {tag}
                   </span>
@@ -281,7 +282,7 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Attachments */}
           {activity.attachments && activity.attachments.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Attachments
               </h3>
               <div className="space-y-2">
@@ -290,12 +291,12 @@ const PreviewModal = ({ activity, onClose }) => {
                     key={index}
                     className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
                   >
-                    <span className="text-2xl">📎</span>
+                    <span className="text-base">📎</span>
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-light text-black">
                         {attachment.fileName}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-base text-black">
                         {attachment.fileType}
                       </div>
                     </div>
@@ -310,7 +311,7 @@ const PreviewModal = ({ activity, onClose }) => {
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-medium"
+            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
           >
             Close Preview
           </button>
@@ -356,7 +357,7 @@ const Activities = () => {
     status: "",
     category: "", // Added category filter
   });
-  const [categories, setCategories] = useState([]); // Added categories state
+  const { categories } = useData();
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const showSnackbar = (message, severity = "success") => {
@@ -428,15 +429,6 @@ const Activities = () => {
     }
   }, [timeRange, selectedOrganization]);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const res = await leadCategoryService.getCategories();
-      setCategories(res.data || []);
-    } catch (err) {
-      console.error("Failed to load categories", err);
-    }
-  }, [selectedOrganization]);
-
   useEffect(() => {
     fetchActivities();
   }, [fetchActivities]);
@@ -444,10 +436,6 @@ const Activities = () => {
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   const handleRangeChange = () => {
     // Fetches are triggered by the useEffect depending on timeRange
@@ -547,7 +535,7 @@ const Activities = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-base font-light text-black">
           {view === "list"
             ? "Activities"
             : view === "create"
@@ -564,7 +552,7 @@ const Activities = () => {
           {view !== "list" && (
             <button
               onClick={handleCancelForm}
-              className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
               title="Back to List"
             >
               <svg
@@ -603,10 +591,10 @@ const Activities = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
                       activeTab === tab.id
                         ? "bg-white text-black shadow-sm"
-                        : "text-gray-500 hover:text-gray-700"
+                        : "text-black hover:text-black"
                     }`}
                   >
                     {tab.label}

@@ -53,7 +53,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Action",
             width: "w-1/4",
             render: (row) => (
-                <span className="font-medium text-gray-900">{row.action}</span>
+                <span className="font-light text-black">{row.action}</span>
             ),
         },
         {
@@ -61,7 +61,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Details",
             width: "w-1/4",
             render: (row) => (
-                <span className="text-sm text-gray-600 truncate max-w-xs inline-block" title={row.details}>
+                <span className="text-base text-black truncate max-w-xs inline-block" title={row.details}>
                     {row.details || "-"}
                 </span>
             ),
@@ -71,7 +71,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Performed By",
             width: "w-1/4",
             render: (row) => (
-                <span className="text-sm text-gray-700">
+                <span className="text-base text-black">
                     {user?.name || "-"}
                 </span>
             ),
@@ -105,10 +105,10 @@ const UserLogs = ({ user, onBack }) => {
         <div className="w-full">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-base font-light text-black">
                         Activity Logs: {user?.name}
                     </h2>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
+                    <p className="text-base text-black">{user?.email}</p>
                 </div>
             </div>
             <AdvancedTable
@@ -140,27 +140,27 @@ const UserLogs = ({ user, onBack }) => {
                     <div className="space-y-4">
                         <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 grid grid-cols-2 gap-4">
                             <div>
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Date & Time</h4>
-                                <p className="text-sm font-medium text-gray-900">{new Date(selectedLog.createdAt).toLocaleString()}</p>
+                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Date & Time</h4>
+                                <p className="text-base font-light text-black">{new Date(selectedLog.createdAt).toLocaleString()}</p>
                             </div>
                             <div>
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Entity</h4>
-                                <p className="text-sm font-medium text-gray-900">{selectedLog.entity || "-"}</p>
+                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Entity</h4>
+                                <p className="text-base font-light text-black">{selectedLog.entity || "-"}</p>
                             </div>
                             <div>
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Action</h4>
-                                <p className="text-sm font-medium text-gray-900">{selectedLog.action}</p>
+                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Action</h4>
+                                <p className="text-base font-light text-black">{selectedLog.action}</p>
                             </div>
                             <div>
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Performed By</h4>
-                                <p className="text-sm font-medium text-gray-900">{user?.name || "-"}</p>
+                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Performed By</h4>
+                                <p className="text-base font-light text-black">{user?.name || "-"}</p>
                             </div>
                         </div>
 
                         <div>
-                            <h4 className="text-sm font-semibold text-gray-900 mb-2">Full Details</h4>
+                            <h4 className="text-base font-light text-black mb-2">Full Details</h4>
                             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans break-words">
+                                <pre className="text-base text-black whitespace-pre-wrap font-sans break-words">
                                     {selectedLog.details || "-"}
                                 </pre>
                             </div>

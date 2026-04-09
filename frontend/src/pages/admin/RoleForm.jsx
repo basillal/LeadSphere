@@ -115,7 +115,7 @@ const RoleForm = ({
             />
             <label
               htmlFor="accessibleByOrganizationAdmin"
-              className="text-sm text-gray-700"
+              className="text-base text-black"
             >
               Allow Organization Admins to access this role (System/Global Roles)
             </label>
@@ -143,14 +143,14 @@ const RoleForm = ({
                   className="border border-gray-200 rounded-lg p-4 bg-gray-50"
                 >
                   <div className="flex justify-between items-center mb-3 border-b border-gray-200 pb-2">
-                    <h3 className="font-semibold text-gray-900">{resource}</h3>
+                    <h3 className="font-light text-black">{resource}</h3>
                     <button
                       type="button"
                       onClick={() => handleResourceToggle(permissionIds)}
-                      className={`text-xs font-semibold px-2 py-1 rounded transition-colors ${
+                      className={`text-base font-light px-2 py-1 rounded transition-colors ${
                         allSelected
                           ? "bg-black text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          : "bg-gray-200 text-black hover:bg-gray-300"
                       }`}
                     >
                       {allSelected ? "Unselect All" : "Select All"}
@@ -171,12 +171,12 @@ const RoleForm = ({
                         />
                         <label
                           htmlFor={perm._id}
-                          className="text-sm text-gray-700 cursor-pointer select-none"
+                          className="text-base text-black cursor-pointer select-none"
                         >
-                          <span className="font-medium text-gray-900 block">
+                          <span className="font-light text-black block">
                             {perm.permissionName}
                           </span>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-black text-base">
                             {perm.description}
                           </span>
                         </label>
@@ -192,13 +192,13 @@ const RoleForm = ({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-light rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
           >
             Save Role
           </button>

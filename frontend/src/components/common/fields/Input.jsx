@@ -18,7 +18,7 @@ const Input = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full px-2 py-1.5 md:px-3 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
+      className="w-full px-2 py-1.5 md:px-3 md:py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
       required={required}
       {...props}
     />

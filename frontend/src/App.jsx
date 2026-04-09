@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { LoadingProvider } from "./context/LoadingProvider";
+import { DataProvider } from "./context/DataContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Login from "./pages/auth/Login";
 import RegisterOrganization from "./pages/auth/RegisterOrganization";
@@ -15,7 +16,6 @@ import Activities from "./pages/activities/Activities";
 import Services from "./pages/services/Services";
 import Billings from "./pages/billing/Billings";
 import Expenses from "./pages/expenses/Expenses";
-
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Organizations from "./pages/admin/Organizations";
@@ -32,7 +32,8 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <LoadingProvider>
-          <Routes>
+          <DataProvider>
+            <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterOrganization />} />
 
@@ -79,7 +80,8 @@ function App() {
                 />
               </Route>
             </Route>
-          </Routes>
+            </Routes>
+          </DataProvider>
         </LoadingProvider>
       </AuthProvider>
     </BrowserRouter>

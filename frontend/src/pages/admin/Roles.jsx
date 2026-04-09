@@ -120,7 +120,7 @@ const Roles = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-base font-light text-black">
           {view === "list"
             ? "Roles"
             : view === "create"
@@ -130,7 +130,7 @@ const Roles = () => {
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
             title="Back to List"
           >
             <svg

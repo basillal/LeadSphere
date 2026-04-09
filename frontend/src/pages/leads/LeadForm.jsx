@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import leadCategoryService from "../../services/leadCategoryService";
+import { useData } from "../../context/DataContext";
 import Label from "../../components/common/fields/Label";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
@@ -86,19 +87,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     return initialState;
   });
 
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await leadCategoryService.getCategories();
-        setCategories(res.data);
-      } catch (err) {
-        console.error("Failed to load categories:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { categories } = useData();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -333,7 +322,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             />
             <label
               htmlFor="isActive"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-light text-black"
             >
               Is active
             </label>
@@ -473,7 +462,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             />
             <label
               htmlFor="doNotDisturb"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-light text-black"
             >
               Do not disturb (DND)
             </label>
@@ -495,13 +484,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-gray-200 text-black rounded-full text-sm font-medium flex items-center"
+                className="px-3 py-1 bg-gray-200 text-black rounded-full text-base font-light flex items-center"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleTagDelete(tag)}
-                  className="ml-2 text-gray-500 hover:text-black focus:outline-none"
+                  className="ml-2 text-black hover:text-black focus:outline-none"
                 >
                   &times;
                 </button>
@@ -550,13 +539,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-light rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
           >
             Save Lead
           </button>

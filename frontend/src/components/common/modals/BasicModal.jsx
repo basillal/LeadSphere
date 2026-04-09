@@ -40,12 +40,12 @@ const BasicModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900" id="modal-title">
+          <h3 className="text-base font-light text-black" id="modal-title">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="text-black hover:text-black hover:bg-gray-100 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-label="Close modal"
           >
             <svg

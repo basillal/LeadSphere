@@ -23,7 +23,7 @@ const ContactsTable = ({
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-gray-800",
+      Other: "bg-gray-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
@@ -44,11 +44,11 @@ const ContactsTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900 uppercase">
+          <span className="font-light text-black uppercase">
             {row.name}
           </span>
           {row.designation && (
-            <span className="text-xs text-gray-500">{row.designation}</span>
+            <span className="text-base text-black">{row.designation}</span>
           )}
         </div>
       ),
@@ -75,14 +75,14 @@ const ContactsTable = ({
       label: "Category",
       render: (row) => {
         if (!row.category || typeof row.category !== 'object') {
-          return <span className="text-gray-400 text-xs">-</span>;
+          return <span className="text-black text-base">-</span>;
         }
         
         return (
           <span
-            className="text-[10px] font-bold text-gray-600 uppercase tracking-wider"
+            className="text-base font-light text-black uppercase tracking-wider"
           >
-            {cat.name}
+            {row.category.name}
           </span>
         );
       },
@@ -103,13 +103,13 @@ const ContactsTable = ({
             row.tags.map((tag, index) => (
               <span
                 key={index}
-                className={`px-2 py-1 rounded-full text-xs font-medium ${getTagColor(tag)}`}
+                className={`px-2 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
               >
                 {tag}
               </span>
             ))
           ) : (
-            <span className="text-gray-400 text-xs">No tags</span>
+            <span className="text-black text-base">No tags</span>
           )}
         </div>
       ),
@@ -147,7 +147,7 @@ const ContactsTable = ({
       ),
       label: "View",
       onClick: onView,
-      color: "text-gray-600 hover:bg-gray-100",
+      color: "text-black hover:bg-gray-100",
     },
     {
       icon: (
@@ -167,7 +167,7 @@ const ContactsTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-gray-600 hover:bg-gray-100",
+      color: "text-black hover:bg-gray-100",
     },
     {
       icon: (
@@ -229,7 +229,7 @@ const ContactsTable = ({
         label: "Convert lead",
         onClick: handleStartConversion,
         className:
-          "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50",
+          "bg-white border border-gray-300 text-black hover:bg-gray-50",
       },
     ],
   };
@@ -239,29 +239,29 @@ const ContactsTable = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+          <h3 className="font-light text-black text-base capitalize">
             {row.name}
           </h3>
-          <p className="text-xs text-gray-500 capitalize">
+          <p className="text-base text-black capitalize">
             {row.organizationName || "-"}
           </p>
           {row.designation && (
-            <p className="text-xs text-gray-400">{row.designation}</p>
+            <p className="text-base text-black">{row.designation}</p>
           )}
         </div>
       </div>
 
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
+      <div className="space-y-1 text-base text-black mb-2">
         <p>
-          <span className="font-medium">Phone:</span> {row.phone}
+          <span className="font-light">Phone:</span> {row.phone}
         </p>
         {row.email && (
           <p>
-            <span className="font-medium">Email:</span> {row.email}
+            <span className="font-light">Email:</span> {row.email}
           </p>
         )}
         <p>
-          <span className="font-medium">Last contact:</span>{" "}
+          <span className="font-light">Last contact:</span>{" "}
           {formatDate(row.lastInteractionDate)}
         </p>
       </div>
@@ -271,7 +271,7 @@ const ContactsTable = ({
           {row.tags.map((tag, index) => (
             <span
               key={index}
-              className={`px-2 py-0.5 rounded-full text-xs font-medium ${getTagColor(tag)}`}
+              className={`px-2 py-0.5 rounded-full text-base font-light ${getTagColor(tag)}`}
             >
               {tag}
             </span>

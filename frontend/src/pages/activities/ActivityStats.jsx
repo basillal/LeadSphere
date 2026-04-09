@@ -68,7 +68,7 @@ const ActivityStats = ({ stats, onStatClick }) => {
   ];
 
   return (
-    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 md:gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 md:gap-2 mb-6">
       {statCards.map((stat, index) => (
         <div
           key={index}
@@ -76,11 +76,11 @@ const ActivityStats = ({ stats, onStatClick }) => {
           className={`${stat.color} text-white rounded-xl p-3 md:p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${stat.filter ? "cursor-pointer" : ""}`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="text-2xl md:text-3xl mb-1 md:mb-2">{stat.icon}</div>
-            <div className="text-xl md:text-2xl font-bold mb-1">
+            <div className="text-base md:text-base mb-1 md:mb-2">{stat.icon}</div>
+            <div className="text-base md:text-base font-light mb-1">
               {stat.value}
             </div>
-            <div className="text-xs md:text-sm opacity-90 font-medium">
+            <div className="text-base md:text-base opacity-90 font-light">
               {stat.title}
             </div>
           </div>

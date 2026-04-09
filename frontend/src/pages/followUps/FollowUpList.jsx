@@ -30,7 +30,7 @@ const FollowUpList = ({
       Missed: "bg-red-100 text-red-800",
       Rescheduled: "bg-yellow-100 text-yellow-800",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-gray-100 text-black";
   };
 
   // Define columns
@@ -42,7 +42,7 @@ const FollowUpList = ({
       render: (row) => (
         <div className="flex flex-col gap-1">
           <span
-            className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(row.status)}`}
+            className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(row.status)}`}
           >
             {row.status}
           </span>
@@ -52,7 +52,7 @@ const FollowUpList = ({
                 e.stopPropagation();
                 onStatusChange(row, "Completed");
               }}
-              className="text-xs text-green-600 hover:underline"
+              className="text-base text-green-600 hover:underline"
             >
               Mark done
             </button>
@@ -64,7 +64,7 @@ const FollowUpList = ({
       id: "scheduledAt",
       label: "Due date",
       render: (row) => (
-        <span className="text-sm">{formatDate(row.scheduledAt)}</span>
+        <span className="text-base">{formatDate(row.scheduledAt)}</span>
       ),
     },
     {
@@ -72,19 +72,19 @@ const FollowUpList = ({
       label: "Lead",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 text-sm uppercase">
+          <div className="font-light text-black text-base uppercase">
             {row.lead?.name || "Unknown"}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-base text-black">
             {row.lead?.organizationName && (
-              <span className="font-medium text-gray-700 block md:inline md:mr-1">
+              <span className="font-light text-black block md:inline md:mr-1">
                 {row.lead.organizationName}
               </span>
             )}
             <span className="block md:inline">{row.lead?.phone || ""}</span>
             {row.lead?.category && (
               <span 
-                className="ml-2 text-[9px] font-bold text-gray-500 uppercase tracking-wider"
+                className="ml-2 text-base font-light text-black uppercase tracking-wider"
               >
                 {typeof row.lead.category === 'object' ? row.lead.category.name : ''}
               </span>
@@ -97,14 +97,14 @@ const FollowUpList = ({
       id: "type",
       label: "Type",
       render: (row) => (
-        <span className="text-sm text-gray-600">{row.type}</span>
+        <span className="text-base text-black">{row.type}</span>
       ),
     },
     {
       id: "notes",
       label: "Notes",
       render: (row) => (
-        <span className="text-sm text-gray-500 line-clamp-2 max-w-xs">
+        <span className="text-base text-black line-clamp-2 max-w-xs">
           {row.notes || "-"}
         </span>
       ),
@@ -113,7 +113,7 @@ const FollowUpList = ({
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-sm text-gray-600">
+        <span className="text-base text-black">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -122,7 +122,7 @@ const FollowUpList = ({
       id: "createdBy",
       label: "Created by",
       render: (row) => (
-        <span className="text-sm text-gray-600">
+        <span className="text-base text-black">
           {row.createdBy?.name || "System"}
         </span>
       ),
@@ -131,7 +131,7 @@ const FollowUpList = ({
       id: "assignedTo",
       label: "Assigned to",
       render: (row) => (
-        <span className="text-sm text-blue-600 font-medium">
+        <span className="text-base text-blue-600 font-light">
           {row.assignedTo?.name || "System"}
         </span>
       ),
@@ -187,29 +187,29 @@ const FollowUpList = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div className="overflow-hidden flex-1">
-          <p className="font-semibold text-gray-900 truncate text-sm uppercase">
+          <p className="font-light text-black truncate text-base uppercase">
             {row.lead?.name || "Unknown"}
           </p>
-          <p className="text-xs text-gray-500 truncate">{row.lead?.phone}</p>
+          <p className="text-base text-black truncate">{row.lead?.phone}</p>
         </div>
         <span
-          className={`flex-shrink-0 px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusColor(row.status)}`}
+          className={`flex-shrink-0 px-2 py-0.5 text-base font-light rounded-full ${getStatusColor(row.status)}`}
         >
           {row.status}
         </span>
       </div>
 
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
+      <div className="space-y-1 text-base text-black mb-2">
         <div className="flex items-center">
-          <span className="w-16 font-medium flex-shrink-0">Type:</span>
+          <span className="w-16 font-light flex-shrink-0">Type:</span>
           <span className="truncate">{row.type}</span>
         </div>
         <div className="flex items-center">
-          <span className="w-16 font-medium flex-shrink-0">Due:</span>
+          <span className="w-16 font-light flex-shrink-0">Due:</span>
           <span className="truncate">{formatDate(row.scheduledAt)}</span>
         </div>
         {row.notes && (
-          <div className="bg-gray-50 p-2 rounded text-xs mt-1 break-words">
+          <div className="bg-gray-50 p-2 rounded text-base mt-1 break-words">
             {row.notes}
           </div>
         )}
@@ -222,7 +222,7 @@ const FollowUpList = ({
               e.stopPropagation();
               onStatusChange(row, "Completed");
             }}
-            className="text-xs text-green-600 font-medium hover:text-green-700"
+            className="text-base text-green-600 font-light hover:text-green-700"
           >
             Mark Done
           </button>

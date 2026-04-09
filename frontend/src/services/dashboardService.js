@@ -3,7 +3,6 @@ import api from './api';
 const dashboardService = {
   getStats: async (params = {}) => {
     try {
-        // Convert to query string
         const queryString = new URLSearchParams(params).toString();
         const response = await api.get(`/dashboard?${queryString}`);
         return response.data;

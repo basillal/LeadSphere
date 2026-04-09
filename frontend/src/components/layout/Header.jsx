@@ -108,7 +108,7 @@ const Header = ({ handleDrawerToggle }) => {
     <>
       <Box sx={{ flexGrow: 1 }} className="no-print">
         <AppBar position="fixed">
-          <Toolbar>
+          <Toolbar sx={{ minHeight: "30px !important", px: { xs: 0.5, sm: 1 } }}>
             <IconButton
               size="large"
               edge="start"
@@ -117,13 +117,13 @@ const Header = ({ handleDrawerToggle }) => {
               onClick={handleDrawerToggle}
               sx={{ mr: 2 }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ fontSize: 16 }} />
             </IconButton>
             <Typography
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: "block", mr: 4 }}
+              sx={{ display: "block", mr: 1, fontSize: "1.4rem" }}
             >
               LeadSphere
             </Typography>
@@ -180,11 +180,11 @@ const Header = ({ handleDrawerToggle }) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
                 variant="body2"
-                sx={{ mr: 2, display: { xs: "none", sm: "block" } }}
+                sx={{ mr: 2, display: { xs: "none", sm: "block" }, fontSize: "1.1rem" }}
               >
                 {user?.name}
                 <span
-                  style={{ opacity: 0.7, marginLeft: "5px", fontSize: "0.8em" }}
+                  style={{ opacity: 0.7, marginLeft: "5px", fontSize: "0.9rem" }}
                 >
                   ({user?.role?.roleName})
                 </span>
@@ -198,7 +198,7 @@ const Header = ({ handleDrawerToggle }) => {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <AccountCircle />
+                <AccountCircle sx={{ fontSize: 22 }} />
               </IconButton>
             </Box>
           </Toolbar>

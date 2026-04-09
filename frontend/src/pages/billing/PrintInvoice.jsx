@@ -58,7 +58,7 @@ const PrintInvoice = () => {
 
   if (loading)
     return (
-      <div className="p-12 text-center text-gray-500">Loading Invoice...</div>
+      <div className="p-12 text-center text-black">Loading Invoice...</div>
     );
   if (!invoice)
     return (
@@ -69,7 +69,7 @@ const PrintInvoice = () => {
   const contact = invoice.contact || {};
 
   return (
-    <div className="bg-white min-h-screen text-gray-800 font-sans print:p-0 p-8 max-w-5xl mx-auto">
+    <div className="bg-white min-h-screen text-black font-sans print:p-0 p-8 max-w-5xl mx-auto">
       {/* Print Specific Styles */}
       <style>{`
         @media print {
@@ -99,7 +99,7 @@ const PrintInvoice = () => {
 
               {/* Fallback Initial if no logo or error */}
               <div
-                className="w-12 h-12 bg-black text-white flex items-center justify-center font-bold text-xl rounded mb-2"
+                className="w-12 h-12 bg-black text-white flex items-center justify-center font-light text-base rounded mb-2"
                 style={{
                   display:
                     organization.settings?.logo || organization.logo ? "none" : "flex",
@@ -108,12 +108,12 @@ const PrintInvoice = () => {
                 {organization.name ? organization.name.charAt(0) : "L"}
               </div>
 
-              <h1 className="text-2xl font-bold text-gray-900 uppercase">
+              <h1 className="text-base font-light text-black uppercase">
                 {organization.name || "Your Organization Name"}
               </h1>
             </div>
 
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="text-base text-black space-y-1">
               {/* Address rendering */}
               {organization.address ? (
                 <>
@@ -152,29 +152,29 @@ const PrintInvoice = () => {
           </div>
 
           <div className="text-right w-1/2">
-            <h2 className="text-5xl font-extrabold text-gray-100 uppercase tracking-widest mb-4">
+            <h2 className="text-base font-light text-black uppercase tracking-widest mb-4">
               Invoice
             </h2>
             <div className="inline-block text-left">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                <div className="text-gray-500 font-medium">Invoice No:</div>
-                <div className="font-bold text-gray-900">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-base">
+                <div className="text-black font-light">Invoice No:</div>
+                <div className="font-light text-black">
                   #{invoice.invoiceNumber}
                 </div>
 
-                <div className="text-gray-500 font-medium">Date:</div>
-                <div className="font-bold text-gray-900">
+                <div className="text-black font-light">Date:</div>
+                <div className="font-light text-black">
                   {formatDate(invoice.billingDate)}
                 </div>
 
-                <div className="text-gray-500 font-medium">Due Date:</div>
-                <div className="font-bold text-gray-900">
+                <div className="text-black font-light">Due Date:</div>
+                <div className="font-light text-black">
                   {invoice.dueDate ? formatDate(invoice.dueDate) : "Immediate"}
                 </div>
 
-                <div className="text-gray-500 font-medium">Status:</div>
+                <div className="text-black font-light">Status:</div>
                 <div
-                  className={`font-bold uppercase text-xs px-2 py-0.5 rounded w-fit ${
+                  className={`font-light uppercase text-base px-2 py-0.5 rounded w-fit ${
                     invoice.paymentStatus === "PAID"
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"
@@ -189,15 +189,15 @@ const PrintInvoice = () => {
 
         {/* Bill To Section */}
         <div className="mb-10 p-6 bg-gray-50 rounded-lg border border-gray-100">
-          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+          <h3 className="text-base font-light text-black uppercase tracking-wider mb-3">
             Bill To
           </h3>
-          <div className="text-lg font-bold text-gray-900 mb-1 uppercase">
+          <div className="text-base font-light text-black mb-1 uppercase">
             {contact.name || "Unknown Client"}
           </div>
-          <div className="text-sm text-gray-600 space-y-0.5">
+          <div className="text-base text-black space-y-0.5">
             {contact.organizationName && (
-              <p className="font-medium text-gray-800">{contact.organizationName}</p>
+              <p className="font-light text-black">{contact.organizationName}</p>
             )}
             {contact.email && <p>{contact.email}</p>}
             {contact.phone && <p>{contact.phone}</p>}
@@ -219,7 +219,7 @@ const PrintInvoice = () => {
         <div className="mb-8">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-900 text-white text-sm uppercase tracking-wider">
+              <tr className="bg-gray-900 text-white text-base uppercase tracking-wider">
                 <th className="py-3 px-4 text-left rounded-l-lg">
                   Description
                 </th>
@@ -230,17 +230,17 @@ const PrintInvoice = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="text-sm text-gray-700">
+            <tbody className="text-base text-black">
               {invoice.services.map((item, index) => (
                 <tr key={index} className="border-b border-gray-100">
-                  <td className="py-4 px-4 font-medium uppercase">
+                  <td className="py-4 px-4 font-light uppercase">
                     {item.serviceName}
                   </td>
                   <td className="py-4 px-4 text-center">{item.quantity}</td>
                   <td className="py-4 px-4 text-right">
                     {formatCurrency(item.unitAmount)}
                   </td>
-                  <td className="py-4 px-4 text-right font-bold">
+                  <td className="py-4 px-4 text-right font-light">
                     {formatCurrency(item.totalAmount)}
                   </td>
                 </tr>
@@ -252,27 +252,27 @@ const PrintInvoice = () => {
         {/* Totals Section */}
         <div className="flex justify-end mb-12">
           <div className="w-1/2 lg:w-1/3 space-y-3">
-            <div className="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-2">
+            <div className="flex justify-between text-base text-black border-b border-gray-100 pb-2">
               <span>Subtotal</span>
-              <span className="font-medium">
+              <span className="font-light">
                 {formatCurrency(invoice.subtotal)}
               </span>
             </div>
-            <div className="flex justify-between text-sm text-gray-600 border-b border-gray-100 pb-2">
+            <div className="flex justify-between text-base text-black border-b border-gray-100 pb-2">
               <span>Tax</span>
-              <span className="font-medium">
+              <span className="font-light">
                 {formatCurrency(invoice.taxTotal)}
               </span>
             </div>
             {invoice.discount > 0 && (
-              <div className="flex justify-between text-sm text-green-600 border-b border-gray-100 pb-2">
+              <div className="flex justify-between text-base text-green-600 border-b border-gray-100 pb-2">
                 <span>Discount</span>
-                <span className="font-medium">
+                <span className="font-light">
                   -{formatCurrency(invoice.discount)}
                 </span>
               </div>
             )}
-            <div className="flex justify-between text-xl font-bold text-gray-900 pt-2">
+            <div className="flex justify-between text-base font-light text-black pt-2">
               <span>Grand Total</span>
               <span>{formatCurrency(invoice.grandTotal)}</span>
             </div>
@@ -281,16 +281,16 @@ const PrintInvoice = () => {
 
         {/* Footer / Notes & Terms */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">
+          <h3 className="text-base font-light text-black mb-2">
             Notes & Terms
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-black">
             {invoice.notes ||
               "Thank you for your business. Payment is due within the specified time. Please include invoice number on your check."}
           </p>
         </div>
 
-        <div className="mt-16 text-center text-xs text-gray-400">
+        <div className="mt-16 text-center text-base text-black">
           <p>
             © {new Date().getFullYear()} {organization.name || "LeadSphere Inc."}.
             All rights reserved.

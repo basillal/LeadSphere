@@ -142,7 +142,7 @@ const ContactDetails = () => {
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-gray-800",
+      Other: "bg-gray-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
@@ -154,7 +154,7 @@ const ContactDetails = () => {
   if (!contact) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Contact not found</h2>
+        <h2 className="text-base font-light text-black">Contact not found</h2>
         <button
           onClick={() => navigate("/contacts")}
           className="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
@@ -173,7 +173,7 @@ const ContactDetails = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/contacts")}
-              className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg text-black transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -191,10 +191,10 @@ const ContactDetails = () => {
               </svg>
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 capitalize">
+              <h1 className="text-base font-light text-black capitalize">
                 {contact.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+              <div className="flex items-center gap-2 mt-1 text-base text-black">
                 {contact.organizationName && (
                   <span className="flex items-center gap-1 capitalize">
                     <svg
@@ -225,7 +225,7 @@ const ContactDetails = () => {
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm flex items-center gap-2"
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base flex items-center gap-2"
               onClick={() => {
                 /* Ideally open edit modal or navigate to edit, keeping it simple for now */
               }}
@@ -261,10 +261,10 @@ const ContactDetails = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-1 text-sm font-medium capitalize border-b-2 transition-colors whitespace-nowrap ${
+              className={`pb-3 px-1 text-base font-light capitalize border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab
                   ? "border-black text-black"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  : "border-transparent text-black hover:text-black hover:border-gray-300"
               }`}
             >
               {tab.replace("-", " ")}
@@ -279,34 +279,34 @@ const ContactDetails = () => {
             {/* Contact Information */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                <h2 className="text-base font-light text-black mb-4">
                   Contact Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Phone
                     </label>
-                    <p className="text-gray-900 font-medium">{contact.phone}</p>
+                    <p className="text-black font-light">{contact.phone}</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Email
                     </label>
-                    <p className="text-gray-900 font-medium">
+                    <p className="text-black font-light">
                       {contact.email || "-"}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Alternate Phone
                     </label>
-                    <p className="text-gray-900">
+                    <p className="text-black">
                       {contact.alternatePhone || "-"}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Website
                     </label>
                     <a
@@ -329,22 +329,22 @@ const ContactDetails = () => {
 
               {/* Additional Info */}
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                <h2 className="text-base font-light text-black mb-4">
                   Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Relationship Type
                     </label>
                     <span
-                      className={`px-2 py-1 rounded text-xs font-semibold bg-gray-100 text-gray-800`}
+                      className={`px-2 py-1 rounded text-base font-light bg-gray-100 text-black`}
                     >
                       {contact.relationshipType}
                     </span>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Tags
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -352,27 +352,27 @@ const ContactDetails = () => {
                         contact.tags.map((tag, idx) => (
                           <span
                             key={idx}
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${getTagColor(tag)}`}
+                            className={`px-2 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
                           >
                             {tag}
                           </span>
                         ))}
                       {(!contact.tags || contact.tags.length === 0) && (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-black">-</span>
                       )}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Industry
                     </label>
-                    <p className="text-gray-900">{contact.industry || "-"}</p>
+                    <p className="text-black">{contact.industry || "-"}</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Organization Size
                     </label>
-                    <p className="text-gray-900">
+                    <p className="text-black">
                       {contact.organizationSize || "-"}
                     </p>
                   </div>
@@ -386,10 +386,10 @@ const ContactDetails = () => {
                   contact.address.state ||
                   contact.address.country) && (
                   <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h2 className="text-lg font-bold text-gray-900 mb-4">
+                    <h2 className="text-base font-light text-black mb-4">
                       Address
                     </h2>
-                    <p className="text-gray-700">
+                    <p className="text-black">
                       {contact.address.street && (
                         <span className="block">{contact.address.street}</span>
                       )}
@@ -416,14 +416,14 @@ const ContactDetails = () => {
               {/* Attachments */}
               {contact.attachments && contact.attachments.length > 0 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">
+                  <h2 className="text-base font-light text-black mb-4">
                     Attachments
                   </h2>
                   <ul className="space-y-2">
                     {contact.attachments.map((file, idx) => (
                       <li
                         key={idx}
-                        className="flex items-center gap-2 text-sm text-blue-600"
+                        className="flex items-center gap-2 text-base text-blue-600"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -456,10 +456,10 @@ const ContactDetails = () => {
               {/* Notes */}
               {contact.notes && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">
+                  <h2 className="text-base font-light text-black mb-4">
                     Notes
                   </h2>
-                  <p className="text-gray-700 whitespace-pre-wrap">
+                  <p className="text-black whitespace-pre-wrap">
                     {contact.notes}
                   </p>
                 </div>
@@ -469,28 +469,28 @@ const ContactDetails = () => {
             {/* Sidebar Stats */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                <h2 className="text-base font-light text-black mb-4">
                   Engagement
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Last Interaction
                     </label>
-                    <p className="text-gray-900 font-medium">
+                    <p className="text-black font-light">
                       {formatDate(contact.lastInteractionDate)}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-base text-black">
                       {contact.lastInteractionType &&
                         `Via ${contact.lastInteractionType}`}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                       Next Follow-up
                     </label>
                     <p
-                      className={`font-medium ${new Date(contact.nextFollowUpDate) < new Date() ? "text-red-600" : "text-gray-900"}`}
+                      className={`font-light ${new Date(contact.nextFollowUpDate) < new Date() ? "text-red-600" : "text-black"}`}
                     >
                       {formatDate(contact.nextFollowUpDate)}
                     </p>
@@ -500,7 +500,7 @@ const ContactDetails = () => {
 
               {/* Social Profiles */}
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                <h2 className="text-base font-light text-black mb-4">
                   Social Profiles
                 </h2>
                 <div className="space-y-3">
@@ -509,7 +509,7 @@ const ContactDetails = () => {
                       href={contact.linkedInProfile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors"
+                      className="flex items-center gap-3 text-black hover:text-blue-600 transition-colors"
                     >
                       <span className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                         LI
@@ -536,7 +536,7 @@ const ContactDetails = () => {
                       href={`https://twitter.com/${contact.twitterHandle.replace("@", "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-gray-700 hover:text-sky-500 transition-colors"
+                      className="flex items-center gap-3 text-black hover:text-sky-500 transition-colors"
                     >
                       <span className="p-2 bg-sky-50 text-sky-500 rounded-lg">
                         TW
@@ -563,7 +563,7 @@ const ContactDetails = () => {
                       href={contact.facebookProfile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-gray-700 hover:text-blue-800 transition-colors"
+                      className="flex items-center gap-3 text-black hover:text-blue-800 transition-colors"
                     >
                       <span className="p-2 bg-blue-50 text-blue-800 rounded-lg">
                         FB
@@ -588,7 +588,7 @@ const ContactDetails = () => {
                   {!contact.linkedInProfile &&
                     !contact.twitterHandle &&
                     !contact.facebookProfile && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-base text-black">
                         No social profiles added
                       </p>
                     )}
@@ -601,58 +601,58 @@ const ContactDetails = () => {
         {/* Lead Info Tab */}
         {activeTab === "lead-info" && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">
+            <h2 className="text-base font-light text-black mb-6">
               Original Lead Details
             </h2>
             {lead ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Lead Source
                   </label>
-                  <p className="text-gray-900">
+                  <p className="text-black">
                     {lead.sourceName || "Unknown"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Status
                   </label>
-                  <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">
+                  <span className="inline-block px-2 py-1 rounded text-base font-light bg-green-100 text-green-800">
                     {lead.status}
                   </span>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Captured At
                   </label>
-                  <p className="text-gray-900">{formatDate(lead.createdAt)}</p>
+                  <p className="text-black">{formatDate(lead.createdAt)}</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Converted At
                   </label>
-                  <p className="text-gray-900">
+                  <p className="text-black">
                     {formatDate(lead.convertedAt)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Original Owner
                   </label>
-                  <p className="text-gray-900">
+                  <p className="text-black">
                     {lead.ownerName || lead.createdBy?.name || "-"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
                     Lead Score
                   </label>
-                  <p className="text-gray-900">{lead.leadScore || 0}</p>
+                  <p className="text-black">{lead.leadScore || 0}</p>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-black">
                 This contact is not associated with any lead data.
               </div>
             )}
@@ -663,7 +663,7 @@ const ContactDetails = () => {
         {activeTab === "activities" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-base font-light text-black">
                 Activity History
               </h2>
               {/* Could add filter controls here */}
@@ -689,7 +689,7 @@ const ContactDetails = () => {
                                               : activity.activityType ===
                                                   "Email"
                                                 ? "bg-yellow-100 text-yellow-600"
-                                                : "bg-gray-100 text-gray-600"
+                                                : "bg-gray-100 text-black"
                                         }`}
                         >
                           {/* Icons based on type */}
@@ -746,13 +746,13 @@ const ContactDetails = () => {
                             )}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-light text-black">
                             {activity.title}
                           </h3>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-base text-black mt-1">
                             {activity.description || "No description provided."}
                           </p>
-                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                          <div className="flex items-center gap-4 mt-2 text-base text-black">
                             <span>{formatDate(activity.activityDate)}</span>
                             <span>•</span>
                             <span>{activity.status}</span>
@@ -765,17 +765,17 @@ const ContactDetails = () => {
                           </div>
                         </div>
                       </div>
-                      <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      <span className="text-base font-light text-black bg-gray-100 px-2 py-1 rounded">
                         {activity.relatedTo} Reference
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-500">
+                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-black">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12 mx-auto text-gray-300 mb-4"
+                    className="h-12 w-12 mx-auto text-black mb-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -798,7 +798,7 @@ const ContactDetails = () => {
         {activeTab === "follow-ups" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-base font-light text-black">
                 Follow Up Schedule
               </h2>
             </div>
@@ -812,26 +812,26 @@ const ContactDetails = () => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`px-2 py-0.5 rounded text-xs font-bold uppercase 
+                          className={`px-2 py-0.5 rounded text-base font-light uppercase 
                                         ${
                                           item.status === "Pending"
                                             ? "bg-yellow-100 text-yellow-800"
                                             : item.status === "Completed"
                                               ? "bg-green-100 text-green-800"
-                                              : "bg-gray-100 text-gray-800"
+                                              : "bg-gray-100 text-black"
                                         }`}
                         >
                           {item.status}
                         </span>
-                        <span className="text-sm font-semibold text-gray-600">
+                        <span className="text-base font-light text-black">
                           {item.type}
                         </span>
                       </div>
-                      <p className="text-gray-900 font-medium">
+                      <p className="text-black font-light">
                         {formatDate(item.scheduledAt)}
                       </p>
                       {item.notes && (
-                        <p className="text-sm text-gray-500 mt-2 italic">
+                        <p className="text-base text-black mt-2 italic">
                           "{item.notes}"
                         </p>
                       )}
@@ -840,10 +840,10 @@ const ContactDetails = () => {
                   </div>
                 ))
               ) : (
-                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-500">
+                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-black">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12 mx-auto text-gray-300 mb-4"
+                    className="h-12 w-12 mx-auto text-black mb-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -866,20 +866,20 @@ const ContactDetails = () => {
         {activeTab === "billings" && (
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-base font-light text-black">
                 Invoices & Billing
               </h2>
               <button
                 onClick={() => navigate("/billings")}
-                className="text-sm font-medium text-blue-600 hover:underline"
+                className="text-base font-light text-blue-600 hover:underline"
               >
                 Create New Invoice
               </button>
             </div>
             {billings.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
+                <table className="w-full text-base text-left">
+                  <thead className="bg-gray-50 text-black font-light border-b border-gray-100">
                     <tr>
                       <th className="px-6 py-3">Invoice #</th>
                       <th className="px-6 py-3">Date</th>
@@ -892,18 +892,18 @@ const ContactDetails = () => {
                   <tbody className="divide-y divide-gray-100">
                     {billings.map((bill) => (
                       <tr key={bill._id} className="hover:bg-gray-50">
-                        <td className="px-6 py-3 font-medium text-gray-900">
+                        <td className="px-6 py-3 font-light text-black">
                           {bill.invoiceNumber}
                         </td>
-                        <td className="px-6 py-3 text-gray-600">
+                        <td className="px-6 py-3 text-black">
                           {new Date(bill.billingDate).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-3 font-medium">
+                        <td className="px-6 py-3 font-light">
                           ₹{bill.grandTotal.toFixed(2)}
                         </td>
                         <td className="px-6 py-3">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs font-bold ${
+                            className={`px-2 py-1 rounded-full text-base font-light ${
                               bill.paymentStatus === "PAID"
                                 ? "bg-green-100 text-green-800"
                                 : bill.paymentStatus === "PENDING"
@@ -914,7 +914,7 @@ const ContactDetails = () => {
                             {bill.paymentStatus}
                           </span>
                         </td>
-                        <td className="px-6 py-3 text-gray-500">
+                        <td className="px-6 py-3 text-black">
                           {bill.paymentMode}
                         </td>
                         <td className="px-6 py-3 text-right">
@@ -925,7 +925,7 @@ const ContactDetails = () => {
                                 "_blank",
                               )
                             }
-                            className="text-gray-500 hover:text-black transition-colors"
+                            className="text-black hover:text-black transition-colors"
                             title="Print Invoice"
                           >
                             <svg
@@ -950,7 +950,7 @@ const ContactDetails = () => {
                 </table>
               </div>
             ) : (
-              <div className="p-12 text-center text-gray-500">
+              <div className="p-12 text-center text-black">
                 No invoices found for this contact.
               </div>
             )}

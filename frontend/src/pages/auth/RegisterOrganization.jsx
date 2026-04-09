@@ -58,12 +58,12 @@ const RegisterOrganization = () => {
       <div className="max-w-md w-full bg-white/80 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/50 relative z-10 animate-fade-in-up">
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center shadow-lg mb-4">
-            <BusinessIcon className="text-black text-3xl" />
+            <BusinessIcon className="text-black text-base" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+          <h2 className="text-base font-light text-black tracking-tight">
             Register Organization
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-base text-black">
             Create your organization account
           </p>
         </div>
@@ -86,7 +86,7 @@ const RegisterOrganization = () => {
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-base text-red-700">{error}</p>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ const RegisterOrganization = () => {
                 name="organizationName"
                 type="text"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="Organization Name"
                 value={formData.organizationName}
                 onChange={handleChange}
@@ -122,7 +122,7 @@ const RegisterOrganization = () => {
                 name="adminName"
                 type="text"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="Admin Name"
                 value={formData.adminName}
                 onChange={handleChange}
@@ -140,7 +140,7 @@ const RegisterOrganization = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="admin@organization.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -158,7 +158,7 @@ const RegisterOrganization = () => {
                 type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 required
-                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -167,7 +167,7 @@ const RegisterOrganization = () => {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="text-black hover:text-gray-700 focus:outline-none transition-colors"
+                  className="text-black hover:text-black focus:outline-none transition-colors"
                 >
                   {showPassword ? (
                     <VisibilityOff className="h-5 w-5" />
@@ -182,18 +182,18 @@ const RegisterOrganization = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-light rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Register Organization
             </button>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-black">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+                className="font-light text-indigo-600 hover:text-indigo-500"
               >
                 Sign In
               </Link>

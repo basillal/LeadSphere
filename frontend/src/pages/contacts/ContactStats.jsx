@@ -2,19 +2,19 @@ import React from "react";
 
 const ContactStats = ({ stats }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
-      <div className="flex items-center gap-4">
-        <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
+    <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
+      <div className="flex items-center gap-2">
+        <div className={`${iconBg} ${iconColor} p-2 rounded-lg`}>{icon}</div>
         <div className="flex-1">
-          <p className="text-sm text-gray-500 font-medium mb-1">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-base text-black font-light mb-1">{title}</p>
+          <p className="text-base font-light text-black">{value}</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
       <StatCard
         title="Total Contacts"
         value={stats.total || 0}

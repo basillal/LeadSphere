@@ -84,7 +84,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 no-print
             `}
     >
-      <div className="flex items-center justify-end h-16 border-b border-gray-200 px-4">
+      <div className="flex items-center justify-end border-b border-gray-200 px-4" style={{ height: '44px' }}>
         <button
           onClick={handleDrawerClose}
           className="p-1 rounded-md hover:bg-gray-100 md:hidden"
@@ -112,7 +112,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                                         ${
                                           isActive
                                             ? "bg-black text-white"
-                                            : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                                            : "text-black hover:bg-gray-100 hover:text-black"
                                         }
                                         ${open ? "justify-start" : "justify-center"}
                                     `}
@@ -120,7 +120,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 >
                   <span className={`${open ? "mr-3" : ""}`}>{item.icon}</span>
                   {open && (
-                    <span className="font-medium text-sm whitespace-nowrap">
+                    <span className="font-light text-lg whitespace-nowrap">
                       {item.label}
                     </span>
                   )}

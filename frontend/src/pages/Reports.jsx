@@ -16,11 +16,11 @@ import {
 
 const Card = ({ title, value, subtext, color = "bg-white" }) => (
   <div className={`${color} p-5 rounded-lg shadow-sm border border-gray-100`}>
-    <h3 className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">
+    <h3 className="text-black text-base font-light uppercase tracking-wider mb-2">
       {title}
     </h3>
-    <p className="text-2xl font-bold text-gray-900">{value}</p>
-    {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
+    <p className="text-base font-light text-black">{value}</p>
+    {subtext && <p className="text-base text-black mt-1">{subtext}</p>}
   </div>
 );
 
@@ -114,7 +114,7 @@ const Reports = () => {
   return (
     <div className="w-full p-6 space-y-6 bg-gray-50 pb-20">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-gray-800">Financial Reports</h1>
+        <h1 className="text-base font-light text-black">Financial Reports</h1>
         <div className="flex gap-2">
           <select
             value={year}
@@ -125,7 +125,7 @@ const Reports = () => {
                 setYear(parseInt(e.target.value));
               }
             }}
-            className="px-3 py-1.5 border border-gray-300 rounded text-sm bg-white focus:outline-none focus:ring-1 focus:ring-black"
+            className="px-3 py-1.5 border border-gray-300 rounded text-base bg-white focus:outline-none focus:ring-1 focus:ring-black"
           >
             <option value="30d">Last 30 Days</option>
             {[2024, 2025, 2026, 2027].map((y) => (
@@ -136,7 +136,7 @@ const Reports = () => {
           </select>
           <button
             onClick={() => (window.location.href = "/billings")}
-            className="px-3 py-1.5 bg-black text-white rounded hover:bg-gray-800 transition-colors text-xs font-medium"
+            className="px-3 py-1.5 bg-black text-white rounded hover:bg-gray-800 transition-colors text-base font-light"
           >
             All Transactions
           </button>
@@ -172,7 +172,7 @@ const Reports = () => {
         {/* Monthly Revenue */}
         <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-base font-bold text-gray-800">
+            <h2 className="text-base font-light text-black">
               {year === "30d" ? "Daily Revenue" : "Monthly Revenue"}
             </h2>
           </div>
@@ -244,13 +244,13 @@ const Reports = () => {
 
         {/* Service Performance */}
         <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-base font-bold text-gray-800 mb-4">
+          <h2 className="text-base font-light text-black mb-4">
             Revenue by Service
           </h2>
           <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
             {serviceRevenue.map((item, idx) => (
-              <div key={idx} className="text-sm">
-                <div className="flex justify-between font-medium mb-1 text-gray-700">
+              <div key={idx} className="text-base">
+                <div className="flex justify-between font-light mb-1 text-black">
                   <span>{item.serviceName}</span>
                   <span>{formatCurrency(item.totalRevenue)}</span>
                 </div>
@@ -265,7 +265,7 @@ const Reports = () => {
               </div>
             ))}
             {serviceRevenue.length === 0 && (
-              <p className="text-gray-400 text-center py-8 text-xs">
+              <p className="text-black text-center py-8 text-base">
                 No services data
               </p>
             )}
@@ -279,18 +279,18 @@ const Reports = () => {
           className="p-4 border-b border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50"
           onClick={() => setShowDetailedReport(!showDetailedReport)}
         >
-          <h2 className="text-base font-bold text-gray-800">
+          <h2 className="text-base font-light text-black">
             Detailed Breakdown
           </h2>
-          <span className="text-xl text-gray-500">
+          <span className="text-base text-black">
             {showDetailedReport ? "−" : "+"}
           </span>
         </div>
 
         {showDetailedReport && (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-gray-50 text-gray-500 font-medium">
+            <table className="w-full text-base text-left">
+              <thead className="bg-gray-50 text-black font-light">
                 <tr>
                   <th className="px-4 py-2">Period</th>
                   <th className="px-4 py-2 text-right">Invoices</th>
@@ -301,16 +301,16 @@ const Reports = () => {
               <tbody className="divide-y divide-gray-100">
                 {[...monthlyStats].reverse().map((item, idx) => (
                   <tr key={idx} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 font-medium text-gray-900">
+                    <td className="px-4 py-2 font-light text-black">
                       {item.label || item.monthName}
                     </td>
-                    <td className="px-4 py-2 text-right text-gray-600">
+                    <td className="px-4 py-2 text-right text-black">
                       {item.count}
                     </td>
-                    <td className="px-4 py-2 text-right font-medium text-gray-900">
+                    <td className="px-4 py-2 text-right font-light text-black">
                       {formatCurrency(item.revenue)}
                     </td>
-                    <td className="px-4 py-2 text-right text-gray-500">
+                    <td className="px-4 py-2 text-right text-black">
                       {totalRevenue > 0
                         ? ((item.revenue / totalRevenue) * 100).toFixed(1)
                         : 0}
@@ -327,11 +327,11 @@ const Reports = () => {
       {/* Top Clients Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-800">Top Clients</h2>
+          <h2 className="text-base font-light text-black">Top Clients</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-gray-50 text-gray-500 font-medium h-8">
+          <table className="w-full text-base text-left">
+            <thead className="bg-gray-50 text-black font-light h-8">
               <tr>
                 <th className="px-4 py-2">Client</th>
                 <th className="px-4 py-2">Organization</th>
@@ -342,14 +342,14 @@ const Reports = () => {
             <tbody className="divide-y divide-gray-100">
               {contactBilling.slice(0, 5).map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 font-medium text-gray-900">
+                  <td className="px-4 py-2 font-light text-black">
                     {item.contactName}
                   </td>
-                  <td className="px-4 py-2 text-gray-500">
+                  <td className="px-4 py-2 text-black">
                     {item.organizationName || "-"}
                   </td>
                   <td className="px-4 py-2 text-right">{item.invoiceCount}</td>
-                  <td className="px-4 py-2 text-right font-medium">
+                  <td className="px-4 py-2 text-right font-light">
                     {formatCurrency(item.totalSpent)}
                   </td>
                 </tr>

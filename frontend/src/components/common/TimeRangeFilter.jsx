@@ -5,6 +5,9 @@ import React from 'react';
  */
 export const getDateRange = (range) => {
     const today = new Date();
+    // Normalize to the start of the current minute to ensure stability 
+    // for multiple calls made in quick succession (like React.StrictMode)
+    today.setSeconds(0, 0); 
     let endDate = today.toISOString();
     let startDate = null;
 
@@ -39,7 +42,7 @@ const TimeRangeFilter = ({ value, onChange, className = "" }) => {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5 min-w-[150px] ${className}`}
+      className={`bg-white border border-gray-300 text-black text-base rounded-lg focus:ring-black focus:border-black block p-2.5 min-w-[150px] ${className}`}
     >
       <option value="last_30_days">Last 30 Days</option>
       <option value="today">Today</option>

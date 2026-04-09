@@ -27,7 +27,7 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 uppercase">{row.name}</div>
+          <div className="font-light text-black uppercase">{row.name}</div>
         </div>
       ),
     },
@@ -35,14 +35,14 @@ const UsersTable = ({
       id: "email",
       label: "Email",
       width: "w-1/4",
-      render: (row) => <span className="text-gray-600">{row.email}</span>,
+      render: (row) => <span className="text-black">{row.email}</span>,
     },
     {
       id: "organization",
       label: "Organization",
       width: "w-1/4",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-base font-light text-black">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -53,9 +53,9 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded text-xs font-medium ${row.role?.isSystemRole
+          className={`px-2 py-1 rounded text-base font-light ${row.role?.isSystemRole
             ? "bg-blue-100 text-blue-800"
-            : "bg-gray-100 text-gray-800"
+            : "bg-gray-100 text-black"
             }`}
         >
           {row.role?.roleName || "No Role"}
@@ -68,7 +68,7 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(
             row.isActive,
           )}`}
         >
@@ -113,7 +113,7 @@ const UsersTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-gray-600 hover:bg-gray-200",
+      color: "text-black hover:bg-gray-200",
     },
     {
       icon: (
@@ -178,19 +178,19 @@ const UsersTable = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{row.name}</h3>
-          <p className="text-xs text-gray-500">{row.email}</p>
+          <h3 className="font-light text-black text-base">{row.name}</h3>
+          <p className="text-base text-black">{row.email}</p>
         </div>
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(
             row.isActive,
           )}`}
         >
           {row.isActive ? "Active" : "Inactive"}
         </span>
       </div>
-      <div className="text-xs text-gray-600 mb-2">
-        <span className="font-medium">Role:</span>{" "}
+      <div className="text-base text-black mb-2">
+        <span className="font-light">Role:</span>{" "}
         {row.role?.roleName || "No Role"}
       </div>
       <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
@@ -201,7 +201,7 @@ const UsersTable = ({
               e.stopPropagation();
               action.onClick(row);
             }}
-            className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
+            className={`text-base font-light flex items-center gap-1 ${action.color}`}
             title={action.label}
           >
             {action.icon}
