@@ -6,7 +6,7 @@ const UserStats = ({ stats }) => {
       className={`${bgColor} p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow`}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-black text-base font-light uppercase tracking-wide">
+        <span className="text-black text-base font-bold uppercase tracking-wide">
           {title}
         </span>
         {icon && <div className={`${textColor} opacity-80`}>{icon}</div>}
@@ -16,7 +16,7 @@ const UserStats = ({ stats }) => {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-6">
       <StatCard
         title="Total Users"
         value={stats.total || 0}

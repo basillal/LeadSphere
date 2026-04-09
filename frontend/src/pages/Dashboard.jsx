@@ -85,20 +85,20 @@ const Dashboard = () => {
 
   const HeroCard = ({ title, value, icon, iconColor, bgColor, isDark }) => (
     <div
-      className={`p-6 rounded-2xl ${isDark ? "bg-gradient-to-br from-gray-900 to-black text-white shadow-xl" : "bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100"} transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
+      className={`p-4 rounded-xl ${isDark ? "bg-gradient-to-br from-gray-900 to-black text-white shadow-xl" : "bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100"} transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
     >
       {isDark && (
         <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
       )}
-      <div className="flex items-center gap-5 relative z-10">
+      <div className="flex items-center gap-3 relative z-10">
         <div
-          className={`p-4 rounded-2xl ${bgColor} ${iconColor} flex items-center justify-center`}
+          className={`p-2 rounded-xl ${bgColor} ${iconColor} flex items-center justify-center`}
         >
           <span className="text-base">{icon}</span>
         </div>
         <div>
           <p
-            className={`text-base font-light tracking-widest uppercase mb-1 ${isDark ? "text-black" : "text-black"}`}
+            className={`text-base font-bold tracking-widest uppercase mb-1 ${isDark ? "text-black" : "text-black"}`}
           >
             {title}
           </p>
@@ -113,12 +113,12 @@ const Dashboard = () => {
   );
 
   const CompactStat = ({ title, value, icon, color }) => (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+    <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors">
       <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-base`}>
         {icon}
       </div>
       <div>
-        <p className="text-base text-black font-light uppercase tracking-wider">
+        <p className="text-base text-black font-bold uppercase tracking-wider">
           {title}
         </p>
         <h3 className="text-base font-light text-black">{value}</h3>
@@ -154,7 +154,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-2">
         <div>
           <h1 className="text-base font-light text-black">
             Welcome back, {user?.name?.split(" ")[0]}! 👋
@@ -196,8 +196,8 @@ const Dashboard = () => {
 
       {/* Net Profit Section - Full Width Compact Design */}
       <div className="mb-8 w-full bg-white border border-gray-200 shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+          <div className="flex items-center gap-2">
             <div
               className={`p-3 rounded-xl ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
             >
@@ -205,7 +205,7 @@ const Dashboard = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h2 className="text-base font-light tracking-widest uppercase text-black">
+                <h2 className="text-base font-bold tracking-widest uppercase text-black">
                   Net Profit
                 </h2>
                 <span
@@ -224,7 +224,7 @@ const Dashboard = () => {
 
           <div className="flex gap-6 text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
             <div>
-              <p className="text-base font-light uppercase text-black mb-0.5">
+              <p className="text-base font-bold uppercase text-black mb-0.5">
                 Revenue
               </p>
               <p className="font-light text-black">
@@ -233,7 +233,7 @@ const Dashboard = () => {
             </div>
             <div className="w-px bg-gray-200"></div>
             <div>
-              <p className="text-base font-light uppercase text-black mb-0.5">
+              <p className="text-base font-bold uppercase text-black mb-0.5">
                 Expenses
               </p>
               <p className="font-light text-black">
@@ -245,7 +245,7 @@ const Dashboard = () => {
       </div>
 
       {/* Secondary Stats Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
         <CompactStat
           title="Total Leads"
           value={data.counts.leads}

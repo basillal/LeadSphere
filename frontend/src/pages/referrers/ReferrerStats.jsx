@@ -2,11 +2,11 @@ import React from "react";
 
 const ReferrerStats = ({ stats }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
-      <div className="flex items-center gap-4">
-        <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
+    <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
+      <div className="flex items-center gap-2">
+        <div className={`${iconBg} ${iconColor} p-2 rounded-lg`}>{icon}</div>
         <div className="flex-1">
-          <p className="text-base text-black font-light uppercase tracking-wider mb-1">
+          <p className="text-base text-black font-bold uppercase tracking-wider mb-1">
             {title}
           </p>
           <p className="text-base font-light text-black">{value}</p>
@@ -16,7 +16,7 @@ const ReferrerStats = ({ stats }) => {
   );
 
   return (
-    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-6">
       <StatCard
         title="Total Referrers"
         value={stats.totalReferrers || 0}

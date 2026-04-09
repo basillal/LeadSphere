@@ -2,7 +2,7 @@
 @import "./App.css";
 
 html {
-  font-size: 57%;
+  font-size: 50%;
   /* Reduces all rem-based sizes in Tailwind */
 }
 

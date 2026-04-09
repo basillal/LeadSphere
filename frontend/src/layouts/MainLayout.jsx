@@ -60,7 +60,7 @@ const MainLayout = () => {
         />
       )}
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow p-3 md:p-6 w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20 md:pt-24">
+      <main className="flex-grow p-3 md:p-6 w-full max-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20 md:pt-28">
         <Breadcrumbs />
         <Outlet />
       </main>
