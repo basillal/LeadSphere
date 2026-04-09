@@ -6,12 +6,12 @@ const UserStats = ({ stats }) => {
       className={`${bgColor} p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow`}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-gray-600 text-sm font-medium uppercase tracking-wide">
+        <span className="text-black text-base font-light uppercase tracking-wide">
           {title}
         </span>
         {icon && <div className={`${textColor} opacity-80`}>{icon}</div>}
       </div>
-      <div className={`text-3xl font-bold ${textColor}`}>{value}</div>
+      <div className={`text-base font-light ${textColor}`}>{value}</div>
     </div>
   );
 

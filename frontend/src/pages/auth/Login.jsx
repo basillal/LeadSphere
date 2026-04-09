@@ -65,10 +65,10 @@ const Login = () => {
               ></path>
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+          <h2 className="text-base font-light text-black tracking-tight">
             LeadSphere
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-base text-black">
             Sign in to your workspace
           </p>
         </div>
@@ -91,7 +91,7 @@ const Login = () => {
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm text-green-700">{successMessage}</p>
+                <p className="text-base text-green-700">{successMessage}</p>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@ const Login = () => {
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-base text-red-700">{error}</p>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="name@organization.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -151,7 +151,7 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -160,7 +160,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="text-black hover:text-gray-700 focus:outline-none transition-colors"
+                  className="text-black hover:text-black focus:outline-none transition-colors"
                 >
                   {showPassword ? (
                     <VisibilityOff className="h-5 w-5" />
@@ -175,19 +175,19 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-light rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Sign In
             </button>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-black">
               Don't have an account?{" "}
-              {/* <span className="font-medium text-gray-900">Contact Admin</span> */}
+              {/* <span className="font-light text-black">Contact Admin</span> */}
               <Link
                 to="/register"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+                className="font-light text-indigo-600 hover:text-indigo-500"
               >
                 Register as Organization Admin
               </Link>

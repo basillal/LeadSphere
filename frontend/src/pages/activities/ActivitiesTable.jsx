@@ -88,17 +88,17 @@ const ActivitiesTable = ({
       Pending: "bg-yellow-100 text-yellow-800",
       Cancelled: "bg-red-100 text-red-800",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-gray-100 text-black";
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      Low: "bg-gray-100 text-gray-600",
+      Low: "bg-gray-100 text-black",
       Medium: "bg-blue-100 text-blue-600",
       High: "bg-orange-100 text-orange-600",
       Urgent: "bg-red-100 text-red-600",
     };
-    return colors[priority] || "bg-gray-100 text-gray-600";
+    return colors[priority] || "bg-gray-100 text-black";
   };
 
   const formatDate = (date) => {
@@ -144,14 +144,14 @@ const ActivitiesTable = ({
               placeholder="Search activities..."
               value={filters.search || ""}
               onChange={(e) => onFilterChange("search", e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setFiltersOpen((v) => !v)}
-            className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center justify-between"
+            className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
           >
             <span>Filters</span>
             <svg
@@ -173,7 +173,7 @@ const ActivitiesTable = ({
           <select
             value={filters.activityType || ""}
             onChange={(e) => onFilterChange("activityType", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-white`}
+            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white`}
           >
             <option value="">All Types</option>
             <option value="Call">📞 Call</option>
@@ -189,7 +189,7 @@ const ActivitiesTable = ({
           <select
             value={filters.status || ""}
             onChange={(e) => onFilterChange("status", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-white`}
+            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white`}
           >
             <option value="">All Status</option>
             <option value="Completed">Completed</option>
@@ -202,7 +202,7 @@ const ActivitiesTable = ({
           <select
             value={filters.category || ""}
             onChange={(e) => onFilterChange("category", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm bg-white min-w-[120px]`}
+            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white min-w-[120px]`}
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -215,9 +215,9 @@ const ActivitiesTable = ({
           {/* Create Button */}
           <button
             onClick={onCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm whitespace-nowrap flex items-center justify-center gap-2"
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base whitespace-nowrap flex items-center justify-center gap-2"
           >
-            <span className="text-lg">+</span>
+            <span className="text-base">+</span>
             <span className="hidden md:inline">New Activity</span>
             <span className="md:hidden">Create</span>
           </button>
@@ -240,28 +240,28 @@ const ActivitiesTable = ({
                   className="rounded border-gray-300"
                 />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Title
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Related To
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Organization
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Priority
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -269,7 +269,7 @@ const ActivitiesTable = ({
           <tbody className="divide-y divide-gray-200">
             {activities.length === 0 ? (
               <tr>
-                <td colSpan="8" className="px-4 py-8 text-center text-gray-500">
+                <td colSpan="8" className="px-4 py-8 text-center text-black">
                   No activities found. Create your first activity!
                 </td>
               </tr>
@@ -300,45 +300,45 @@ const ActivitiesTable = ({
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-2xl">
+                      <span className="text-base">
                         {getActivityTypeIcon(activity.activityType)}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-gray-900 uppercase">
+                      <div className="font-light text-black uppercase">
                         {activity.title}
                       </div>
                       {activity.description && (
-                        <div className="text-sm text-gray-500 truncate max-w-xs">
+                        <div className="text-base text-black truncate max-w-xs">
                           {activity.description}
                         </div>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm">
-                        <div className="font-medium text-gray-900">
+                      <div className="text-base">
+                        <div className="font-light text-black">
                           {activity.relatedName}
                         </div>
-                        <div className="text-gray-500 text-xs">
+                        <div className="text-black text-base">
                           {activity.relatedTo}
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm">
+                      <div className="text-base">
                         <div
-                          className={`font-medium ${dateContext === "today" ? "text-blue-600 font-bold" : dateContext === "overdue" ? "text-red-600 font-bold" : "text-gray-900"}`}
+                          className={`font-light ${dateContext === "today" ? "text-blue-600 font-light" : dateContext === "overdue" ? "text-red-600 font-light" : "text-black"}`}
                         >
                           {getRelativeDate(activity.activityDate)}
                         </div>
                         {activity.startTime && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-base text-black">
                             {activity.startTime}
                           </div>
                         )}
                         {dateContext === "overdue" && (
                           <div className="mt-1">
-                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-semibold">
+                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-base font-light">
                               Overdue
                             </span>
                           </div>
@@ -346,20 +346,20 @@ const ActivitiesTable = ({
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-gray-900">
+                      <span className="text-base text-black">
                         {activity.organization?.name || "-"}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
+                        className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
                       >
                         {activity.status}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
+                        className={`px-2 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
                       >
                         {activity.priority}
                       </span>
@@ -445,7 +445,7 @@ const ActivitiesTable = ({
       {/* Mobile Card View */}
       <div className="md:hidden divide-y divide-gray-200">
         {activities.length === 0 ? (
-          <div className="px-4 py-8 text-center text-gray-500">
+          <div className="px-4 py-8 text-center text-black">
             No activities found. Create your first activity!
           </div>
         ) : (
@@ -468,14 +468,14 @@ const ActivitiesTable = ({
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">
+                    <span className="text-base">
                       {getActivityTypeIcon(activity.activityType)}
                     </span>
                     <div>
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-light text-black">
                         {activity.title}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-base text-black">
                         {activity.relatedName} • {activity.relatedTo}
                       </div>
                     </div>
@@ -483,35 +483,35 @@ const ActivitiesTable = ({
                 </div>
 
                 {activity.description && (
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                  <p className="text-base text-black mb-2 line-clamp-2">
                     {activity.description}
                   </p>
                 )}
 
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(activity.status)}`}
+                    className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
                   >
                     {activity.status}
                   </span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(activity.priority)}`}
+                    className={`px-2 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
                   >
                     {activity.priority}
                   </span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    className={`px-2 py-1 rounded-full text-base font-light ${
                       dateContext === "today"
                         ? "bg-blue-100 text-blue-800"
                         : dateContext === "overdue"
                           ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-700"
+                          : "bg-gray-100 text-black"
                     }`}
                   >
                     {getRelativeDate(activity.activityDate)}
                   </span>
                   {dateContext === "overdue" && (
-                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">
+                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-base font-light">
                       Overdue
                     </span>
                   )}
@@ -520,19 +520,19 @@ const ActivitiesTable = ({
                 <div className="flex gap-2">
                   <button
                     onClick={() => onView(activity)}
-                    className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+                    className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-base font-light hover:bg-blue-100 transition-colors"
                   >
                     View
                   </button>
                   <button
                     onClick={() => onEdit(activity)}
-                    className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                    className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-base font-light hover:bg-green-100 transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => onDelete(activity._id)}
-                    className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                    className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-base font-light hover:bg-red-100 transition-colors"
                   >
                     Delete
                   </button>
@@ -546,7 +546,7 @@ const ActivitiesTable = ({
       {/* Pagination */}
       {pagination.total > 0 && (
         <div className="px-4 py-3 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="text-sm text-gray-600">
+          <div className="text-base text-black">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
             {pagination.total} activities
@@ -556,7 +556,7 @@ const ActivitiesTable = ({
             <select
               value={pagination.limit}
               onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-black focus:border-transparent"
             >
               <option value={10}>10 per page</option>
               <option value={25}>25 per page</option>
@@ -568,14 +568,14 @@ const ActivitiesTable = ({
               <button
                 onClick={() => onPageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-light hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => onPageChange(pagination.page + 1)}
                 disabled={pagination.page >= pagination.pages}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-light hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>

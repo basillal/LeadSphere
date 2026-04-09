@@ -53,20 +53,20 @@ const AuditLogsTable = ({ rows }) => {
       >
         <TableHead className="bg-gray-50">
           <TableRow>
-            <TableCell className="font-semibold text-gray-700">
+            <TableCell className="font-light text-black">
               Date/Time
             </TableCell>
-            <TableCell className="font-semibold text-gray-700">User</TableCell>
-            <TableCell className="font-semibold text-gray-700">
+            <TableCell className="font-light text-black">User</TableCell>
+            <TableCell className="font-light text-black">
               Action
             </TableCell>
-            <TableCell className="font-semibold text-gray-700">
+            <TableCell className="font-light text-black">
               Entity
             </TableCell>
-            <TableCell className="font-semibold text-gray-700">
+            <TableCell className="font-light text-black">
               Organization
             </TableCell>
-            <TableCell className="font-semibold text-gray-700">Details</TableCell>
+            <TableCell className="font-light text-black">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -79,20 +79,20 @@ const AuditLogsTable = ({ rows }) => {
               >
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium">
+                    <span className="text-base font-light">
                       {new Date(row.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-base text-black">
                       {new Date(row.createdAt).toLocaleTimeString()}
                     </span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium">
+                    <span className="text-base font-light">
                       {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-base text-black">
                       {formatEmailOrIp(row)}
                     </span>
                   </div>
@@ -103,7 +103,7 @@ const AuditLogsTable = ({ rows }) => {
                     color={getActionColor(row.action)}
                     size="small"
                     variant="outlined"
-                    className="font-semibold"
+                    className="font-light"
                   />
                 </TableCell>
                 <TableCell>{row.entity}</TableCell>
@@ -115,7 +115,7 @@ const AuditLogsTable = ({ rows }) => {
                 </TableCell>
                 <TableCell>
                   <span
-                    className="text-sm text-gray-700 truncate max-w-xs block"
+                    className="text-base text-black truncate max-w-xs block"
                     title={row.details}
                   >
                     {formatDetails(row.details)}
@@ -128,7 +128,7 @@ const AuditLogsTable = ({ rows }) => {
               <TableCell
                 colSpan={6}
                 align="center"
-                className="py-8 text-gray-500"
+                className="py-8 text-black"
               >
                 No logs found matching your criteria.
               </TableCell>

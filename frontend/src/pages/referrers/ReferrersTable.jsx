@@ -22,11 +22,11 @@ const ReferrersTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900 uppercase">
+          <span className="font-light text-black uppercase">
             {row.name}
           </span>
           {row.designation && (
-            <span className="text-xs text-gray-500">{row.designation}</span>
+            <span className="text-base text-black">{row.designation}</span>
           )}
         </div>
       ),
@@ -59,7 +59,7 @@ const ReferrersTable = ({
       render: (row) => {
         const stats = referrerStats?.[row._id] || {};
         return (
-          <span className="font-semibold text-gray-900">
+          <span className="font-light text-black">
             {stats.totalLeads || 0}
           </span>
         );
@@ -72,7 +72,7 @@ const ReferrersTable = ({
       render: (row) => {
         const stats = referrerStats?.[row._id] || {};
         return (
-          <span className="font-semibold text-gray-900">
+          <span className="font-light text-black">
             {stats.convertedLeads || 0}
           </span>
         );
@@ -85,7 +85,7 @@ const ReferrersTable = ({
       render: (row) => {
         const stats = referrerStats?.[row._id] || {};
         return (
-          <span className="font-semibold text-gray-900">
+          <span className="font-light text-black">
             {stats.conversionPercentage || 0}%
           </span>
         );
@@ -119,7 +119,7 @@ const ReferrersTable = ({
       ),
       label: "View",
       onClick: onView,
-      color: "text-gray-600 hover:bg-gray-100",
+      color: "text-black hover:bg-gray-100",
     },
     {
       icon: (
@@ -139,7 +139,7 @@ const ReferrersTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-gray-600 hover:bg-gray-100",
+      color: "text-black hover:bg-gray-100",
     },
     {
       icon: (
@@ -183,48 +183,48 @@ const ReferrersTable = ({
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm uppercase">
+            <h3 className="font-light text-black text-base uppercase">
               {row.name}
             </h3>
             {row.organizationName && (
-              <p className="text-xs text-gray-500">{row.organizationName}</p>
+              <p className="text-base text-black">{row.organizationName}</p>
             )}
             {row.designation && (
-              <p className="text-xs text-gray-400">{row.designation}</p>
+              <p className="text-base text-black">{row.designation}</p>
             )}
           </div>
           {!row.isActive && (
-            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+            <span className="px-2 py-0.5 bg-gray-100 text-black text-base rounded-full">
               Inactive
             </span>
           )}
         </div>
 
-        <div className="space-y-1 text-xs text-gray-600 mb-2">
+        <div className="space-y-1 text-base text-black mb-2">
           <p>
-            <span className="font-medium">Phone:</span> {row.phone}
+            <span className="font-light">Phone:</span> {row.phone}
           </p>
           {row.email && (
             <p>
-              <span className="font-medium">Email:</span> {row.email}
+              <span className="font-light">Email:</span> {row.email}
             </p>
           )}
         </div>
 
         <div className="grid grid-cols-3 gap-2 p-2 bg-gray-900 rounded-lg text-white mb-2">
           <div>
-            <div className="text-xs text-gray-400 uppercase">Total</div>
-            <div className="text-base font-bold">{stats.totalLeads || 0}</div>
+            <div className="text-base text-black uppercase">Total</div>
+            <div className="text-base font-light">{stats.totalLeads || 0}</div>
           </div>
           <div>
-            <div className="text-xs text-gray-400 uppercase">Converted</div>
-            <div className="text-base font-bold">
+            <div className="text-base text-black uppercase">Converted</div>
+            <div className="text-base font-light">
               {stats.convertedLeads || 0}
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-400 uppercase">Rate</div>
-            <div className="text-base font-bold">
+            <div className="text-base text-black uppercase">Rate</div>
+            <div className="text-base font-light">
               {stats.conversionPercentage || 0}%
             </div>
           </div>
@@ -266,22 +266,22 @@ const ReferrersTable = ({
       {pagination && referrers.length > 0 && (
         <div className="mt-4 px-4 py-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-700">
+            <div className="text-base text-black">
               Showing{" "}
-              <span className="font-medium">
+              <span className="font-light">
                 {(pagination.page - 1) * pagination.limit + 1}
               </span>{" "}
               to{" "}
-              <span className="font-medium">
+              <span className="font-light">
                 {Math.min(pagination.page * pagination.limit, pagination.total)}
               </span>{" "}
-              of <span className="font-medium">{pagination.total}</span>{" "}
+              of <span className="font-light">{pagination.total}</span>{" "}
               referrers
             </div>
             <select
               value={pagination.limit}
               onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-black"
             >
               <option value={10}>10 per page</option>
               <option value={25}>25 per page</option>
@@ -293,17 +293,17 @@ const ReferrersTable = ({
             <button
               onClick={() => onPageChange(pagination.page - 1)}
               disabled={pagination.page === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
-            <div className="flex items-center px-4 py-2 text-sm text-gray-700">
+            <div className="flex items-center px-4 py-2 text-base text-black">
               Page {pagination.page} of {pagination.pages}
             </div>
             <button
               onClick={() => onPageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>

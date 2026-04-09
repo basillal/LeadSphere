@@ -6,12 +6,12 @@ const FollowUpStats = ({ stats }) => {
       <div className="flex items-center gap-4">
         <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
         <div className="flex-1">
-          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">
+          <p className="text-base text-black font-light uppercase tracking-wider mb-1">
             {title}
           </p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-base font-light text-black">{value}</p>
           {percentage && (
-            <p className="text-[10px] text-gray-400 mt-1 uppercase font-medium">
+            <p className="text-base text-black mt-1 uppercase font-light">
               {percentage}
             </p>
           )}
@@ -32,7 +32,7 @@ const FollowUpStats = ({ stats }) => {
         title="Total Follow-ups"
         value={stats.total || 0}
         iconBg="bg-slate-100"
-        iconColor="text-slate-600"
+        iconColor="text-black"
         icon={
           <svg
             className="w-6 h-6"

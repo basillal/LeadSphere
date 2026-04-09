@@ -6,8 +6,8 @@ const ContactStats = ({ stats }) => {
       <div className="flex items-center gap-4">
         <div className={`${iconBg} ${iconColor} p-3 rounded-lg`}>{icon}</div>
         <div className="flex-1">
-          <p className="text-sm text-gray-500 font-medium mb-1">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-base text-black font-light mb-1">{title}</p>
+          <p className="text-base font-light text-black">{value}</p>
         </div>
       </div>
     </div>

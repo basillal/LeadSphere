@@ -27,14 +27,14 @@ const PreviewModal = ({ lead, onClose }) => {
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{lead.name}</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-base font-light text-black">{lead.name}</h2>
+            <p className="text-base text-black">
               {lead.organizationName || "No Organization"}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition-colors"
+            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,18 +57,18 @@ const PreviewModal = ({ lead, onClose }) => {
         <div className="p-6 space-y-6">
           {/* Status Sections */}
           <div className="flex flex-wrap gap-4">
-            <div className="px-3 py-1 bg-black text-white text-sm font-semibold rounded-full uppercase tracking-wide">
+            <div className="px-3 py-1 bg-black text-white text-base font-light rounded-full uppercase tracking-wide">
               {lead.status}
             </div>
-            <div className="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
+            <div className="px-3 py-1 bg-gray-100 text-black text-base font-light rounded-full">
               {lead.priority} Priority
             </div>
-            <div className="px-3 py-1 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
+            <div className="px-3 py-1 bg-gray-100 text-black text-base font-light rounded-full">
               {lead.leadTemperature}
             </div>
             {lead.category && (
               <div 
-                className="text-xs font-bold text-gray-600 uppercase tracking-wider"
+                className="text-base font-light text-black uppercase tracking-wider"
               >
                 {lead.category.name}
               </div>
@@ -78,30 +78,30 @@ const PreviewModal = ({ lead, onClose }) => {
           {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Contact Details
               </h3>
               <div className="space-y-2">
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Phone:
                   </span>{" "}
                   {lead.phone}
                 </p>
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Email:
                   </span>{" "}
                   {lead.email}
                 </p>
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Alt Phone:
                   </span>{" "}
                   {lead.alternatePhone || "-"}
                 </p>
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Website:
                   </span>{" "}
                   {lead.website || "-"}
@@ -109,24 +109,24 @@ const PreviewModal = ({ lead, onClose }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-base font-light text-black uppercase tracking-wider">
                 Source Info
               </h3>
               <div className="space-y-2">
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Source:
                   </span>{" "}
                   {lead.source}
                 </p>
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Campaign:
                   </span>{" "}
                   {lead.campaignName || "-"}
                 </p>
-                <p className="text-gray-900">
-                  <span className="font-semibold w-24 inline-block text-gray-500">
+                <p className="text-black">
+                  <span className="font-light w-24 inline-block text-black">
                     Referred By:
                   </span>{" "}
                   {lead.referredBy || "-"}
@@ -137,10 +137,10 @@ const PreviewModal = ({ lead, onClose }) => {
 
           {/* Requirements */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+            <h3 className="text-base font-light text-black uppercase tracking-wider">
               Business Requirement
             </h3>
-            <p className="text-gray-700 bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+            <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
               {lead.requirement || "No requirements specified."}
             </p>
           </div>
@@ -148,22 +148,22 @@ const PreviewModal = ({ lead, onClose }) => {
           {/* Deal Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-900 rounded-xl text-white">
             <div>
-              <div className="text-xs text-gray-400 uppercase">Deal Value</div>
-              <div className="text-lg font-bold">{lead.dealValue || "-"}</div>
+              <div className="text-base text-black uppercase">Deal Value</div>
+              <div className="text-base font-light">{lead.dealValue || "-"}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase">Budget</div>
-              <div className="text-lg font-bold">{lead.budgetRange || "-"}</div>
+              <div className="text-base text-black uppercase">Budget</div>
+              <div className="text-base font-light">{lead.budgetRange || "-"}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase">Product</div>
-              <div className="text-lg font-bold">
+              <div className="text-base text-black uppercase">Product</div>
+              <div className="text-base font-light">
                 {lead.interestedProduct || "-"}
               </div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase">Closure</div>
-              <div className="text-lg font-bold">
+              <div className="text-base text-black uppercase">Closure</div>
+              <div className="text-base font-light">
                 {lead.expectedClosureDate
                   ? new Date(lead.expectedClosureDate).toLocaleDateString()
                   : "-"}
@@ -176,7 +176,7 @@ const PreviewModal = ({ lead, onClose }) => {
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-medium"
+            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
           >
             Close Preview
           </button>
@@ -393,7 +393,7 @@ const Leads = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-base font-light text-black">
           {view === "list"
             ? "Leads"
             : view === "create"
@@ -410,7 +410,7 @@ const Leads = () => {
             {view !== "list" && (
               <button
                 onClick={handleCancelForm}
-                className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
                 title="Back to List"
               >
                 <svg

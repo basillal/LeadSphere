@@ -34,7 +34,7 @@ const LeadsTable = ({
       case "Lost":
         return "bg-red-50 text-red-700 border border-red-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-black";
     }
   };
 
@@ -46,8 +46,8 @@ const LeadsTable = ({
       width: "w-1/5",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 uppercase">{row.name}</div>
-          <span className="block text-xs text-gray-500">{row.email}</span>
+          <div className="font-light text-black uppercase">{row.name}</div>
+          <span className="block text-base text-black">{row.email}</span>
         </div>
       ),
     },
@@ -79,7 +79,7 @@ const LeadsTable = ({
       width: "w-[10%]",
       render: (row) => (
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusColor(row.status, row.isConverted)}`}
+          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(row.status, row.isConverted)}`}
         >
           {row.isConverted ? "Converted" : row.status}
         </span>
@@ -92,12 +92,12 @@ const LeadsTable = ({
       width: "w-[12%]",
       render: (row) => {
         if (!row.category || typeof row.category !== 'object') {
-          return <span className="text-gray-400 text-[10px]">-</span>;
+          return <span className="text-black text-base">-</span>;
         }
 
         return (
           <span 
-            className="text-[10px] font-bold text-gray-600 uppercase tracking-wider"
+            className="text-base font-light text-black uppercase tracking-wider"
           >
             {row.category.name}
           </span>
@@ -132,7 +132,7 @@ const LeadsTable = ({
       ),
       label: "Preview",
       onClick: onPreview,
-      color: "text-gray-600 hover:bg-gray-200",
+      color: "text-black hover:bg-gray-200",
     },
 
     {
@@ -153,7 +153,7 @@ const LeadsTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-gray-600 hover:bg-gray-200",
+      color: "text-black hover:bg-gray-200",
     },
 
     {
@@ -244,15 +244,15 @@ const LeadsTable = ({
     >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm capitalize">
+          <h3 className="font-light text-black text-base capitalize">
             {row.name}
           </h3>
-          <p className="text-xs text-gray-500 capitalize">
+          <p className="text-base text-black capitalize">
             {row.organizationName || "-"}
           </p>
         </div>
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
+          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(row.status, row.isConverted)}`}
         >
           {row.isConverted ? "Converted" : row.status}
         </span>
@@ -261,25 +261,25 @@ const LeadsTable = ({
       {row.category && (
         <div className="mb-2">
           <span 
-            className="text-[9px] font-bold text-gray-500 uppercase tracking-wider"
+            className="text-base font-light text-black uppercase tracking-wider"
           >
             {row.category.name}
           </span>
         </div>
       )}
 
-      <div className="space-y-1 text-xs text-gray-600 mb-2">
+      <div className="space-y-1 text-base text-black mb-2">
         <p>
-          <span className="font-medium">Phone:</span> {row.phone}
+          <span className="font-light">Phone:</span> {row.phone}
         </p>
         <p>
-          <span className="font-medium">Email:</span> {row.email}
+          <span className="font-light">Email:</span> {row.email}
         </p>
         <p>
-          <span className="font-medium">Source:</span> {row.source}
+          <span className="font-light">Source:</span> {row.source}
         </p>
         <p>
-          <span className="font-medium">Priority:</span> {row.priority}
+          <span className="font-light">Priority:</span> {row.priority}
         </p>
       </div>
 
@@ -293,7 +293,7 @@ const LeadsTable = ({
                 e.stopPropagation();
                 action.onClick(row);
               }}
-              className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
+              className={`text-base font-light flex items-center gap-1 ${action.color}`}
               title={action.label}
             >
               {action.icon}

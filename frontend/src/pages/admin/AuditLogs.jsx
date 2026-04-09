@@ -144,20 +144,20 @@ const AuditLogs = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            <h1 className="text-base md:text-base font-light text-black">
               Audit Logs
             </h1>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-black text-base font-light">
               {filteredLogs.length} logs
             </span>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-black">
             Track system activity and security events
           </p>
         </div>
         <button
           onClick={fetchLogs}
-          className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 bg-white border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors shadow-sm"
           title="Refresh logs"
         >
           <RefreshIcon fontSize="small" />
@@ -167,7 +167,7 @@ const AuditLogs = () => {
       {/* Filters Section */}
       <div className="bg-white p-4 md:p-5 rounded-xl shadow-sm mb-6 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2 text-black">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -181,7 +181,7 @@ const AuditLogs = () => {
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
               />
             </svg>
-            <h3 className="font-semibold text-sm md:text-base">Filter logs</h3>
+            <h3 className="font-light text-base md:text-base">Filter logs</h3>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -195,10 +195,10 @@ const AuditLogs = () => {
                 key={opt.id}
                 type="button"
                 onClick={() => setDateFilter(opt.id)}
-                className={`px-3 py-1.5 rounded-full text-xs md:text-sm border transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-base md:text-base border transition-colors ${
                   dateFilter === opt.id
                     ? "bg-black text-white border-black"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    : "bg-white text-black border-gray-300 hover:bg-gray-50"
                 }`}
               >
                 {opt.label}
@@ -262,7 +262,7 @@ const AuditLogs = () => {
                 setAppliedFilters(filters);
                 setPagination({ ...pagination, page: 1 });
               }}
-              className="w-full md:w-auto bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-2 text-sm"
+              className="w-full md:w-auto bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-light flex items-center justify-center gap-2 text-base"
             >
               <svg
                 className="w-4 h-4"
@@ -293,10 +293,10 @@ const AuditLogs = () => {
                   width: "w-1/5",
                   render: (row) => (
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium">
+                      <span className="text-base font-light">
                         {new Date(row.createdAt).toLocaleDateString()}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-base text-black">
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </span>
                     </div>
@@ -308,10 +308,10 @@ const AuditLogs = () => {
                   width: "w-1/5",
                   render: (row) => (
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium">
+                      <span className="text-base font-light">
                         {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-base text-black">
                         {formatEmailOrIp(row)}
                       </span>
                     </div>
@@ -322,7 +322,7 @@ const AuditLogs = () => {
                   label: "Action",
                   width: "w-1/6",
                   render: (row) => (
-                    <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-base font-light bg-gray-100 text-black">
                       {row.action}
                     </span>
                   ),
@@ -349,7 +349,7 @@ const AuditLogs = () => {
                   width: "w-1/3",
                   render: (row) => (
                     <span
-                      className="text-sm text-gray-700 truncate max-w-xs block"
+                      className="text-base text-black truncate max-w-xs block"
                       title={row.details}
                     >
                       {formatDetails(row.details)}

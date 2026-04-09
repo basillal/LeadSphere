@@ -112,7 +112,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                                         ${
                                           isActive
                                             ? "bg-black text-white"
-                                            : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                                            : "text-black hover:bg-gray-100 hover:text-black"
                                         }
                                         ${open ? "justify-start" : "justify-center"}
                                     `}
@@ -120,7 +120,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 >
                   <span className={`${open ? "mr-3" : ""}`}>{item.icon}</span>
                   {open && (
-                    <span className="font-medium text-sm whitespace-nowrap">
+                    <span className="font-light text-base whitespace-nowrap">
                       {item.label}
                     </span>
                   )}

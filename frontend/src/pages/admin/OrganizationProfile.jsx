@@ -135,17 +135,17 @@ const OrganizationProfile = () => {
 
   const ViewFieldSmall = ({ label, value }) => (
     <div className="mb-2">
-      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 leading-none">
+      <div className="text-base font-light text-black uppercase tracking-wider mb-0.5 leading-none">
         {label}
       </div>
-      <div className="text-sm font-medium text-gray-900 truncate min-h-[1.25rem]">
+      <div className="text-base font-light text-black truncate min-h-[1.25rem]">
         {value || "-"}
       </div>
     </div>
   );
 
   const SectionTitle = ({ children }) => (
-    <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1 mb-3">
+    <h3 className="text-base font-light text-black uppercase tracking-wider border-b border-gray-200 pb-1 mb-3">
       {children}
     </h3>
   );
@@ -165,20 +165,20 @@ const OrganizationProfile = () => {
                   className="h-full w-full object-contain"
                 />
               ) : (
-                <BusinessIcon className="text-gray-300" fontSize="small" />
+                <BusinessIcon className="text-black" fontSize="small" />
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-gray-900 leading-tight truncate">
+              <h1 className="text-base font-light text-black leading-tight truncate">
                 {formData.name}
               </h1>
               <div className="flex flex-wrap gap-2 mt-1">
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
+                  className={`text-base font-light px-1.5 py-0.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
                 >
                   {formData.isActive ? "Active" : "Inactive"}
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
+                <span className="text-base font-light px-1.5 py-0.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
                   {formData.plan} Plan
                 </span>
               </div>
@@ -189,9 +189,9 @@ const OrganizationProfile = () => {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs shadow-sm"
+                className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-all font-light text-base shadow-sm"
               >
-                <EditIcon fontSize="small" className="text-sm" />
+                <EditIcon fontSize="small" className="text-base" />
                 Edit Profile
               </button>
             ) : (
@@ -199,17 +199,17 @@ const OrganizationProfile = () => {
                 <button
                   onClick={handleCancel}
                   disabled={saving}
-                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium text-xs"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-all font-light text-base"
                 >
-                  <CloseIcon fontSize="small" className="text-sm" />
+                  <CloseIcon fontSize="small" className="text-base" />
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={saving}
-                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-medium text-xs"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-light text-base"
                 >
-                  <SaveIcon fontSize="small" className="text-sm" />
+                  <SaveIcon fontSize="small" className="text-base" />
                   Save
                 </button>
               </div>
@@ -372,10 +372,10 @@ const OrganizationProfile = () => {
                         value={formData.settings.logo}
                       />
                       <div className="mt-2">
-                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 leading-none">
+                        <div className="text-base font-light text-black uppercase tracking-wider mb-1 leading-none">
                           Description
                         </div>
-                        <div className="text-sm font-medium text-gray-900 bg-gray-50 border border-gray-100 rounded-lg p-3 whitespace-pre-wrap min-h-[6rem]">
+                        <div className="text-base font-light text-black bg-gray-50 border border-gray-100 rounded-lg p-3 whitespace-pre-wrap min-h-[6rem]">
                           {formData.description || "No description provided."}
                         </div>
                       </div>

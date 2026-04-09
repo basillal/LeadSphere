@@ -231,7 +231,7 @@ const AdvancedTable = ({
         >
           {selected.length > 0 && selection.enabled ? (
             <div className="flex items-center w-full justify-between">
-              <span className="text-sm font-medium text-black">
+              <span className="text-base font-light text-black">
                 {selected.length} selected
               </span>
               <button
@@ -261,7 +261,7 @@ const AdvancedTable = ({
                 <button
                   type="button"
                   onClick={() => setFiltersOpen((v) => !v)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center justify-between"
+                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
                 >
                   <span>Filters</span>
                   <svg
@@ -304,9 +304,9 @@ const AdvancedTable = ({
                   <button
                     key={index}
                     onClick={btn.onClick}
-                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                    className={`px-4 py-2 rounded-lg font-light whitespace-nowrap transition-colors ${
                       btn.className ||
-                      "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      "bg-white border border-gray-300 text-black hover:bg-gray-50"
                     }`}
                   >
                     {btn.label}
@@ -317,7 +317,7 @@ const AdvancedTable = ({
               {toolbar.onCreate && (
                 <button
                   onClick={toolbar.onCreate.onClick}
-                  className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium whitespace-nowrap"
+                  className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-light whitespace-nowrap"
                 >
                   + {toolbar.onCreate.label || "Add"}
                 </button>
@@ -332,7 +332,7 @@ const AdvancedTable = ({
         <div className="space-y-3">
           {visibleRows.length === 0 ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <p className="text-gray-500">{emptyMessage}</p>
+              <p className="text-black">{emptyMessage}</p>
             </div>
           ) : (
             visibleRows.map((row) =>
@@ -345,11 +345,11 @@ const AdvancedTable = ({
                 >
                   <div className="space-y-1.5">
                     {columns.map((col) => (
-                      <div key={col.id} className="text-sm">
-                        <span className="font-medium text-gray-700">
+                      <div key={col.id} className="text-base">
+                        <span className="font-light text-black">
                           {col.label}:{" "}
                         </span>
-                        <span className="text-gray-900">
+                        <span className="text-black">
                           {col.render ? col.render(row) : row[col.id]}
                         </span>
                       </div>
@@ -367,7 +367,7 @@ const AdvancedTable = ({
                               e.stopPropagation();
                               action.onClick(row);
                             }}
-                            className={`p-1.5 rounded-lg transition-colors ${action.color || "text-gray-600 hover:bg-gray-100"}`}
+                            className={`p-1.5 rounded-lg transition-colors ${action.color || "text-black hover:bg-gray-100"}`}
                             title={action.label}
                           >
                             {action.icon}
@@ -389,7 +389,7 @@ const AdvancedTable = ({
             <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
               <div className="flex flex-col items-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-3"></div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-base font-light text-black">
                   Loading data...
                 </p>
               </div>
@@ -414,7 +414,7 @@ const AdvancedTable = ({
                   {columns.map((column) => (
                     <th
                       key={column.id}
-                      className={`px-4 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider ${column.sortable !== false ? "cursor-pointer hover:text-gray-900" : ""} ${column.width || ""}`}
+                      className={`px-4 py-2.5 text-left text-base font-light text-black uppercase tracking-wider ${column.sortable !== false ? "cursor-pointer hover:text-black" : ""} ${column.width || ""}`}
                       onClick={() =>
                         column.sortable !== false &&
                         handleRequestSort(column.id)
@@ -432,7 +432,7 @@ const AdvancedTable = ({
                     </th>
                   ))}
                   {actions.length > 0 && (
-                    <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-4 py-2.5 text-right text-base font-light text-black uppercase tracking-wider">
                       Actions
                     </th>
                   )}
@@ -449,7 +449,7 @@ const AdvancedTable = ({
                       }
                       className="px-4 py-8 text-center"
                     >
-                      <p className="text-gray-500">{emptyMessage}</p>
+                      <p className="text-black">{emptyMessage}</p>
                     </td>
                   </tr>
                 ) : (
@@ -475,7 +475,7 @@ const AdvancedTable = ({
                         {columns.map((column) => (
                           <td
                             key={column.id}
-                            className={`px-4 py-2 text-sm ${column.className || "text-gray-600"}`}
+                            className={`px-4 py-2 text-base ${column.className || "text-black"}`}
                           >
                             {column.render
                               ? column.render(row)
@@ -495,7 +495,7 @@ const AdvancedTable = ({
                                       e.stopPropagation();
                                       action.onClick(row);
                                     }}
-                                    className={`p-1.5 rounded-lg transition-colors ${action.color || "text-gray-600 hover:bg-gray-100"}`}
+                                    className={`p-1.5 rounded-lg transition-colors ${action.color || "text-black hover:bg-gray-100"}`}
                                     title={action.label}
                                   >
                                     {action.icon}
@@ -520,20 +520,20 @@ const AdvancedTable = ({
         <div className="mt-4 px-4 py-2.5 bg-white border border-gray-200 rounded-lg flex items-center justify-between">
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-base text-black">
                 Showing{" "}
-                <span className="font-medium">{page * rowsPerPage + 1}</span> to{" "}
-                <span className="font-medium">
+                <span className="font-light">{page * rowsPerPage + 1}</span> to{" "}
+                <span className="font-light">
                   {Math.min((page + 1) * rowsPerPage, totalItems)}
                 </span>{" "}
-                of <span className="font-medium">{totalItems}</span> results
+                of <span className="font-light">{totalItems}</span> results
               </p>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-black"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map(
                   (option) => (
@@ -547,7 +547,7 @@ const AdvancedTable = ({
                 <button
                   onClick={() => handleChangePage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Previous</span>
                   <svg
@@ -564,7 +564,7 @@ const AdvancedTable = ({
                     />
                   </svg>
                 </button>
-                <div className="flex items-center px-4 py-2 text-sm text-gray-700 border-t border-b border-gray-300 bg-white">
+                <div className="flex items-center px-4 py-2 text-base text-black border-t border-b border-gray-300 bg-white">
                   Page {page + 1} of {totalPages || 1}
                 </div>
                 <button
@@ -572,7 +572,7 @@ const AdvancedTable = ({
                     handleChangePage(Math.min(totalPages - 1, page + 1))
                   }
                   disabled={page >= totalPages - 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Next</span>
                   <svg
@@ -597,11 +597,11 @@ const AdvancedTable = ({
             <button
               onClick={() => handleChangePage(Math.max(0, page - 1))}
               disabled={page === 0}
-              className="px-3 py-1.5 border border-gray-300 rounded text-sm disabled:opacity-50"
+              className="px-3 py-1.5 border border-gray-300 rounded text-base disabled:opacity-50"
             >
               Prev
             </button>
-            <span className="text-sm self-center">
+            <span className="text-base self-center">
               {page + 1} / {totalPages || 1}
             </span>
             <button
@@ -609,7 +609,7 @@ const AdvancedTable = ({
                 handleChangePage(Math.min(totalPages - 1, page + 1))
               }
               disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 border border-gray-300 rounded text-sm disabled:opacity-50"
+              className="px-3 py-1.5 border border-gray-300 rounded text-base disabled:opacity-50"
             >
               Next
             </button>

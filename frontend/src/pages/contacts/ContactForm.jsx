@@ -237,10 +237,10 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
                   key={tag}
                   type="button"
                   onClick={() => handleTagToggle(tag)}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-lg font-light text-base transition-colors ${
                     formData.tags.includes(tag)
                       ? "bg-black text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-gray-100 text-black hover:bg-gray-200"
                   }`}
                 >
                   {tag}
@@ -248,7 +248,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
               ))}
             </div>
             {formData.tags.length > 0 && (
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-base text-black mt-2">
                 Selected: {formData.tags.join(", ")}
               </p>
             )}
@@ -457,7 +457,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
             />
             <label
               htmlFor="doNotDisturb"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-light text-black"
             >
               Do not disturb (DND)
             </label>
@@ -505,7 +505,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
             />
             <label
               htmlFor="isActive"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-light text-black"
             >
               Is active
             </label>
@@ -517,13 +517,13 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-light rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
           >
             Save Contact
           </button>

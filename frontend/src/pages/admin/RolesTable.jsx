@@ -17,11 +17,11 @@ const RolesTable = ({
       width: "w-1/4",
       render: (row) => (
         <div>
-          <div className="font-medium text-gray-900 uppercase">
+          <div className="font-light text-black uppercase">
             {row.roleName}
           </div>
           {row.isSystemRole && (
-            <span className="text-[10px] uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold">
+            <span className="text-base uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-light">
               System
             </span>
           )}
@@ -33,7 +33,7 @@ const RolesTable = ({
       label: "Organization",
       width: "w-1/4",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-base font-light text-black">
           {row.organization?.name || "System/All"}
         </span>
       ),
@@ -42,14 +42,14 @@ const RolesTable = ({
       id: "description",
       label: "Description",
       width: "w-1/2",
-      render: (row) => <span className="text-gray-600">{row.description}</span>,
+      render: (row) => <span className="text-black">{row.description}</span>,
     },
     {
       id: "permissions",
       label: "Permissions",
       width: "w-1/4",
       render: (row) => (
-        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+        <span className="px-2 py-1 bg-gray-100 text-black rounded text-base">
           {row.permissions?.length || 0} permissions
         </span>
       ),
@@ -76,7 +76,7 @@ const RolesTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-gray-600 hover:bg-gray-200",
+      color: "text-black hover:bg-gray-200",
     },
     {
       icon: (
@@ -120,20 +120,20 @@ const RolesTable = ({
     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">
+          <h3 className="font-light text-black text-base">
             {row.roleName}
           </h3>
           {row.isSystemRole && (
-            <span className="text-[10px] uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold">
+            <span className="text-base uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-light">
               System
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+        <span className="text-base text-black bg-gray-100 px-2 py-0.5 rounded">
           {row.permissions?.length || 0} perms
         </span>
       </div>
-      <p className="text-xs text-gray-600 mb-2">{row.description}</p>
+      <p className="text-base text-black mb-2">{row.description}</p>
 
       <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
         {actions.map((action, idx) => {
@@ -145,7 +145,7 @@ const RolesTable = ({
                 e.stopPropagation();
                 action.onClick(row);
               }}
-              className={`text-sm font-medium flex items-center gap-1 ${action.color}`}
+              className={`text-base font-light flex items-center gap-1 ${action.color}`}
               title={action.label}
             >
               {action.icon}

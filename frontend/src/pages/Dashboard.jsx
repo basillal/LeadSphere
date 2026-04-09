@@ -94,16 +94,16 @@ const Dashboard = () => {
         <div
           className={`p-4 rounded-2xl ${bgColor} ${iconColor} flex items-center justify-center`}
         >
-          <span className="text-3xl">{icon}</span>
+          <span className="text-base">{icon}</span>
         </div>
         <div>
           <p
-            className={`text-xs font-bold tracking-widest uppercase mb-1 ${isDark ? "text-gray-400" : "text-gray-400"}`}
+            className={`text-base font-light tracking-widest uppercase mb-1 ${isDark ? "text-black" : "text-black"}`}
           >
             {title}
           </p>
           <h3
-            className={`text-3xl font-bold tracking-tight ${isDark ? "text-white" : "text-gray-900"}`}
+            className={`text-base font-light tracking-tight ${isDark ? "text-white" : "text-black"}`}
           >
             {value}
           </h3>
@@ -114,14 +114,14 @@ const Dashboard = () => {
 
   const CompactStat = ({ title, value, icon, color }) => (
     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-      <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-xl`}>
+      <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-base`}>
         {icon}
       </div>
       <div>
-        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+        <p className="text-base text-black font-light uppercase tracking-wider">
           {title}
         </p>
-        <h3 className="text-lg font-bold text-gray-700">{value}</h3>
+        <h3 className="text-base font-light text-black">{value}</h3>
       </div>
     </div>
   );
@@ -138,10 +138,10 @@ const Dashboard = () => {
   if (!data || !data.counts) {
     return (
       <div className="flex justify-center items-center h-screen flex-col">
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-base font-light text-black">
           Something went wrong
         </h2>
-        <p className="text-gray-500 mt-2">
+        <p className="text-black mt-2">
           Failed to load dashboard statistics.
         </p>
       </div>
@@ -156,10 +156,10 @@ const Dashboard = () => {
     <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-base font-light text-black">
             Welcome back, {user?.name?.split(" ")[0]}! 👋
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-black text-base mt-1">
             Here's what's happening in your business today.
           </p>
         </div>
@@ -201,21 +201,21 @@ const Dashboard = () => {
             <div
               className={`p-3 rounded-xl ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
             >
-              <span className="text-2xl">🏦</span>
+              <span className="text-base">🏦</span>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h2 className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                <h2 className="text-base font-light tracking-widest uppercase text-black">
                   Net Profit
                 </h2>
                 <span
-                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${netProfit >= 0 ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}
+                  className={`px-1.5 py-0.5 rounded text-base font-light border ${netProfit >= 0 ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}
                 >
                   {netProfit >= 0 ? "PROFIT" : "LOSS"}
                 </span>
               </div>
               <h3
-                className={`text-2xl font-bold tracking-tight ${netProfit >= 0 ? "text-gray-900" : "text-red-600"}`}
+                className={`text-base font-light tracking-tight ${netProfit >= 0 ? "text-black" : "text-red-600"}`}
               >
                 {formatCurrency(netProfit)}
               </h3>
@@ -224,19 +224,19 @@ const Dashboard = () => {
 
           <div className="flex gap-6 text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
             <div>
-              <p className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
+              <p className="text-base font-light uppercase text-black mb-0.5">
                 Revenue
               </p>
-              <p className="font-semibold text-gray-900">
+              <p className="font-light text-black">
                 {formatCurrency(data.counts.revenue)}
               </p>
             </div>
             <div className="w-px bg-gray-200"></div>
             <div>
-              <p className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
+              <p className="text-base font-light uppercase text-black mb-0.5">
                 Expenses
               </p>
-              <p className="font-semibold text-gray-900">
+              <p className="font-light text-black">
                 {formatCurrency(data.counts.totalExpenses || 0)}
               </p>
             </div>
@@ -289,13 +289,13 @@ const Dashboard = () => {
         {/* Financial Overview - Combined Chart */}
         <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800">
+            <h3 className="text-base font-light text-black">
               Financial Overview
             </h3>
             <select
               value={revenueInterval}
               onChange={(e) => setRevenueInterval(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-black focus:border-black block p-1.5"
+              className="bg-gray-50 border border-gray-300 text-black text-base rounded-lg focus:ring-black focus:border-black block p-1.5"
             >
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
@@ -386,7 +386,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Leads by Status - Pie Chart */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">
+          <h3 className="text-base font-light text-black mb-4">
             Leads Distribution
           </h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -417,7 +417,7 @@ const Dashboard = () => {
 
         {/* Top Services */}
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">
+          <h3 className="text-base font-light text-black mb-4">
             Top Performing Services
           </h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -453,7 +453,7 @@ const Dashboard = () => {
                 />
               </BarChart>
             ) : (
-              <div className="flex justify-center items-center h-full text-gray-400">
+              <div className="flex justify-center items-center h-full text-black">
                 No data available
               </div>
             )}
@@ -465,7 +465,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Leads by Source - Pie Chart */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Lead Sources</h3>
+          <h3 className="text-base font-light text-black mb-4">Lead Sources</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -495,21 +495,21 @@ const Dashboard = () => {
 
         {/* Recent Leads List */}
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Leads</h3>
+          <h3 className="text-base font-light text-black mb-4">Recent Leads</h3>
           <div className="overflow-y-auto flex-grow pr-2">
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
                     Source
                   </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
                     Date
                   </th>
                 </tr>
@@ -518,26 +518,26 @@ const Dashboard = () => {
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
                     <tr key={lead._id}>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 uppercase">
+                      <td className="px-3 py-2 whitespace-nowrap text-base font-light text-black uppercase">
                         {lead.name}
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
                         <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          className={`px-2 inline-flex text-base leading-5 font-light rounded-full ${
                             lead.status === "Won"
                               ? "bg-green-100 text-green-800"
                               : lead.status === "New"
                                 ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
+                                : "bg-gray-100 text-black"
                           }`}
                         >
                           {lead.status}
                         </span>
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
                         {lead.source}
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
                         {new Date(lead.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
@@ -546,7 +546,7 @@ const Dashboard = () => {
                   <tr>
                     <td
                       colSpan="4"
-                      className="px-3 py-4 text-center text-sm text-gray-500"
+                      className="px-3 py-4 text-center text-base text-black"
                     >
                       No recent leads
                     </td>
@@ -561,12 +561,12 @@ const Dashboard = () => {
       {/* Recent Activities List (Moved to bottom grid) */}
       <div className="grid grid-cols-1 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">
+          <h3 className="text-base font-light text-black mb-4">
             Recent Activity
           </h3>
           <div className="overflow-y-auto flex-grow pr-2 space-y-4">
             {data.recentActivities.length === 0 ? (
-              <p className="text-center text-gray-400 text-sm mt-10">
+              <p className="text-center text-black text-base mt-10">
                 No recent activities
               </p>
             ) : (
@@ -585,18 +585,18 @@ const Dashboard = () => {
                     }`}
                   ></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 line-clamp-1 uppercase">
+                    <p className="text-base font-light text-black line-clamp-1 uppercase">
                       {activity.title}{" "}
-                      <span className="text-gray-400 font-normal normal-case">
+                      <span className="text-black font-normal normal-case">
                         ({activity.activityType})
                       </span>
                     </p>
-                    <p className="text-xs text-gray-500 line-clamp-2">
+                    <p className="text-base text-black line-clamp-2">
                       {activity.description
                         ? activity.description
                         : "No details provided"}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-base text-black mt-1">
                       {activity.relatedId?.name || "Unknown"} •{" "}
                       {new Date(activity.activityDate).toLocaleDateString()}
                     </p>
