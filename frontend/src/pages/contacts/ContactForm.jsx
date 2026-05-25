@@ -130,6 +130,13 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
     if (!cleanedData.lastInteractionType)
       delete cleanedData.lastInteractionType;
 
+    // Convert category to ID if it's an object, or null if empty string
+    if (cleanedData.category && typeof cleanedData.category === "object") {
+      cleanedData.category = cleanedData.category._id;
+    } else if (cleanedData.category === "") {
+      cleanedData.category = null;
+    }
+
     onSubmit(cleanedData);
   };
 
