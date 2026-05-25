@@ -28,6 +28,7 @@ const AdvancedTable = ({
   columns = [],
   actions = [],
   renderCard,
+  onRowClick,
   toolbar = {},
   pagination = {
     enabled: true,
@@ -400,9 +401,10 @@ const AdvancedTable = ({
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   {selection.enabled && (
-                    <th className="px-4 py-2.5 w-10">
+                      <th className="px-4 py-2.5 w-10">
                       <input
                         type="checkbox"
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSelectAllClick}
                         checked={
                           data.length > 0 && selected.length === data.length
@@ -459,7 +461,7 @@ const AdvancedTable = ({
                     return (
                       <tr
                         key={rowId}
-                        onClick={() => selection.enabled && handleClick(rowId)}
+                        onClick={() => (onRowClick ? onRowClick(row) : selection.enabled && handleClick(rowId))}
                         className={`hover:bg-gray-50 ${selection.enabled ? "cursor-pointer" : ""} transition-colors ${isSelected ? "bg-gray-100" : ""}`}
                       >
                         {selection.enabled && (
@@ -467,7 +469,11 @@ const AdvancedTable = ({
                             <input
                               type="checkbox"
                               checked={isSelected}
-                              readOnly
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleClick(rowId);
+                              }}
                               className="rounded border-gray-300 text-black focus:ring-black h-4 w-4"
                             />
                           </td>

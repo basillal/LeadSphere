@@ -5,6 +5,7 @@ import ReferrerStats from "./ReferrerStats";
 import ReferrersTable from "./ReferrersTable";
 import ReferrerForm from "./ReferrerForm";
 import Toast from "../../components/common/utils/Toast";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 // Preview Modal Component
 const PreviewModal = ({ referrer, stats, onClose }) => {
@@ -406,7 +407,9 @@ const Referrers = () => {
       {view === "list" ? (
         <>
           {/* Stats */}
-          <ReferrerStats stats={stats} />
+          <StatsWrapper title="Referrers Overview">
+            <ReferrerStats stats={stats} />
+          </StatsWrapper>
 
           {/* Referrers Table */}
           <div className="pb-20">

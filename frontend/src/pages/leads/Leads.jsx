@@ -8,6 +8,7 @@ import leadCategoryService from "../../services/leadCategoryService";
 import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 // Simple Modal for Preview (Tailwind based)
 // We could use MUI Drawer/Dialog, but user asked for "removed all MUI" earlier, although some imports remain in this file.
@@ -439,7 +440,9 @@ const Leads = () => {
 
       {view === "list" ? (
         <>
-          <LeadStats stats={stats} />
+          <StatsWrapper title="Leads Overview">
+            <LeadStats stats={stats} />
+          </StatsWrapper>
 
           <LeadsTable
             rows={leads}

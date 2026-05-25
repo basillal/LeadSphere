@@ -2,7 +2,7 @@
 @import "./App.css";
 
 html {
-  font-size: 50%;
+  font-size: 90%;
   /* Reduces all rem-based sizes in Tailwind */
 }
 
@@ -192,4 +192,53 @@ body {
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Premium MUI Menu and Dropdown Popovers */
+.MuiPaper-root.MuiMenu-paper {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background-color: #ffffff !important;
+}
+
+/* Style the Menu List Container */
+.MuiList-root.MuiMenu-list {
+  padding: 6px !important;
+}
+
+/* Style Menu Items for a premium and professional look */
+.MuiMenuItem-root {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #1f2937 !important; /* Dark gray for modern contrast */
+  border-radius: 8px !important;
+  margin: 2px 4px !important;
+  padding: 8px 12px !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+/* Hover state */
+.MuiMenuItem-root:hover {
+  background-color: #f3f4f6 !important; /* Light gray modern background */
+  color: #000000 !important;
+}
+
+/* Selected state (for options in selects or filters) */
+.MuiMenuItem-root.Mui-selected {
+  background-color: #f3f4f6 !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+.MuiMenuItem-root.Mui-selected:hover {
+  background-color: #e5e7eb !important;
+}
+
+/* Disabled Items in Menus (used as Headers/Subtitles) */
+.MuiMenuItem-root.Mui-disabled {
+  opacity: 1 !important;
+  background-color: transparent !important;
+  cursor: default !important;
 }

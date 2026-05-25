@@ -7,6 +7,7 @@ import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 const FollowUps = () => {
   const { selectedOrganization } = useAuth();
@@ -25,6 +26,8 @@ const FollowUps = () => {
   });
   const [stats, setStats] = useState({
     total: 0,
+    today: 0,
+    upcoming: 0,
     pending: 0,
     completed: 0,
     missed: 0,
@@ -92,6 +95,11 @@ const FollowUps = () => {
   useEffect(() => {
     fetchFollowUps();
   }, [fetchFollowUps]);
+
+  // Refresh stats when active tab changes so labels reflect current view
+  useEffect(() => {
+    fetchStats();
+  }, [activeTab]);
 
   useEffect(() => {
     fetchStats();
@@ -180,11 +188,11 @@ const FollowUps = () => {
   };
 
   const tabs = [
-    { id: "today", label: "Today's Actions" },
-    { id: "all", label: `All Records (${stats.total})` },
-    { id: "upcoming", label: "Upcoming" },
-    { id: "missed", label: `Missed/Overdue (${stats.missed})` },
-    { id: "completed", label: `Completed (${stats.completed})` },
+    { id: "today", label: `Today's Actions (${stats.today || 0})` },
+    { id: "all", label: `All Records (${stats.total || 0})` },
+    { id: "upcoming", label: `Upcoming (${stats.upcoming || 0})` },
+    { id: "missed", label: `Missed/Overdue (${stats.missed || 0})` },
+    { id: "completed", label: `Completed (${stats.completed || 0})` },
   ];
 
   const handlePageChange = (newPage) => {
@@ -264,7 +272,9 @@ const FollowUps = () => {
       </div>
 
       {/* Stats */}
-      <FollowUpStats stats={stats} />
+      <StatsWrapper title="Follow-Ups Overview">
+        <FollowUpStats stats={stats} />
+      </StatsWrapper>
 
       {/* Search and Filters */}
       <div className="mb-4 flex flex-col md:flex-row gap-3">

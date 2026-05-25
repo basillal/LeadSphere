@@ -4,7 +4,74 @@ import { getToken } from '../components/auth/tokenUtils';
 // Global request cache to prevent redundant/simultaneous calls
 const pendingRequests = new Map();
 const resultCache = new Map();
-const CACHE_TTL = 800; // 800ms cache to merge StrictMode/simultaneous component loads
+const CACHE_TTL = 5000; // Long enough to cover StrictMode/remount bursts
+
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const stableSerialize = (value) => {
+    if (value === null || value === undefined) {
+        return JSON.stringify(value);
+    }
+
+    if (Array.isArray(value)) {
+        return `[${value.map((item) => stableSerialize(item)).join(',')}]`;
+    }
+
+    if (isPlainObject(value)) {
+        return `{${Object.keys(value)
+            .sort()
+            .map((key) => `${JSON.stringify(key)}:${stableSerialize(value[key])}`)
+            .join(',')}}`;
+    }
+
+    return JSON.stringify(value);
+};
+
+const mergeUrlParams = (url) => {
+    if (!url) {
+        return { path: '', params: {} };
+    }
+
+    try {
+        const parsedUrl = new URL(url, 'http://localhost');
+        const params = {};
+
+        parsedUrl.searchParams.forEach((value, key) => {
+            if (params[key] === undefined) {
+                params[key] = value;
+                return;
+            }
+
+            if (Array.isArray(params[key])) {
+                params[key] = [...params[key], value];
+                return;
+            }
+
+            params[key] = [params[key], value];
+        });
+
+        return { path: parsedUrl.pathname, params };
+    } catch {
+        const [path, query = ''] = String(url).split('?');
+        const params = {};
+
+        new URLSearchParams(query).forEach((value, key) => {
+            if (params[key] === undefined) {
+                params[key] = value;
+                return;
+            }
+
+            if (Array.isArray(params[key])) {
+                params[key] = [...params[key], value];
+                return;
+            }
+
+            params[key] = [params[key], value];
+        });
+
+        return { path, params };
+    }
+};
 
 // Create axios instance
 const getBaseUrl = () => {
@@ -50,59 +117,69 @@ api.interceptors.response.use(
     (error) => Promise.reject(error)
 );
 
-// Override the request method to handle simultaneous promise tracking synchronously
 const originalRequest = api.request;
-api.request = function(config) {
-    // Basic normalization of config for GET requests
-    if (config.method?.toLowerCase() === 'get' || (!config.method && config.url)) {
-        const method = config.method?.toLowerCase() || 'get';
-        
-        // We need to simulate what the interceptor will do to compute a stable cache key
-        const params = { ...(config.params || {}) };
-        const selectedOrganization = localStorage.getItem('selectedOrganization');
-        if (selectedOrganization && !params.organization) {
-            params.organization = selectedOrganization;
-        }
-        
-        const cacheKey = `${method}:${config.url}:${JSON.stringify(params)}`;
-        const now = Date.now();
+const originalGet = api.get;
 
-        // 1. Check for a very recent identical response
-        const cachedValue = resultCache.get(cacheKey);
-        if (cachedValue && (now - cachedValue.timestamp < CACHE_TTL)) {
-            return Promise.resolve({
-                data: cachedValue.data,
-                status: 200,
-                statusText: 'OK (from global cache)',
-                headers: {},
-                config: { ...config, url: config.url, method }
-            });
-        }
+const buildGetCacheKey = (url, config = {}) => {
+    const { path, params: urlParams } = mergeUrlParams(url);
+    const params = { ...urlParams, ...(config.params || {}) };
 
-        // 2. Check for an active identical request
-        if (pendingRequests.has(cacheKey)) {
-            return pendingRequests.get(cacheKey);
-        }
-
-        // 3. Fire the request and track it immediately
-        const requestPromise = originalRequest.call(this, config).then(response => {
-            // Success: Store for next callers (TTL cache)
-            resultCache.set(cacheKey, {
-                data: response.data,
-                timestamp: Date.now()
-            });
-            pendingRequests.delete(cacheKey);
-            return response;
-        }).catch(error => {
-            // Error: Don't cache error, just cleanup pending
-            pendingRequests.delete(cacheKey);
-            throw error;
-        });
-        
-        pendingRequests.set(cacheKey, requestPromise);
-        return requestPromise;
+    const selectedOrganization = localStorage.getItem('selectedOrganization');
+    if (selectedOrganization && params.organization === undefined) {
+        params.organization = selectedOrganization;
     }
-    
+
+    return `get:${path}:${stableSerialize(params)}`;
+};
+
+api.get = function(url, config = {}) {
+    if (config.skipCache) {
+        return originalGet.call(this, url, config);
+    }
+
+    const cacheKey = buildGetCacheKey(url, config);
+    const now = Date.now();
+
+    const cachedValue = resultCache.get(cacheKey);
+    if (cachedValue && (now - cachedValue.timestamp < CACHE_TTL)) {
+        return Promise.resolve({
+            data: cachedValue.data,
+            status: 200,
+            statusText: 'OK (from global cache)',
+            headers: {},
+            config: { ...config, url, method: 'get' }
+        });
+    }
+
+    if (pendingRequests.has(cacheKey)) {
+        return pendingRequests.get(cacheKey);
+    }
+
+    const requestPromise = originalGet.call(this, url, config).then((response) => {
+        resultCache.set(cacheKey, {
+            data: response.data,
+            timestamp: Date.now()
+        });
+        pendingRequests.delete(cacheKey);
+        return response;
+    }).catch((error) => {
+        pendingRequests.delete(cacheKey);
+        throw error;
+    });
+
+    pendingRequests.set(cacheKey, requestPromise);
+    return requestPromise;
+};
+
+api.request = function(config) {
+    if (config.method?.toLowerCase() === 'get' || (!config.method && config.url)) {
+        return originalRequest.call(this, config);
+    }
+
+    // Any mutation should invalidate the short-lived GET cache so subsequent reads refresh.
+    resultCache.clear();
+    pendingRequests.clear();
+
     return originalRequest.call(this, config);
 };
 

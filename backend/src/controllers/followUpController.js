@@ -35,21 +35,31 @@ const getFollowUps = asyncHandler(async (req, res) => {
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
 
+    const dateClauses = [];
+
     if (req.query.range === 'today') {
-        query.scheduledAt = { $gte: todayStart, $lte: todayEnd };
+        dateClauses.push({ scheduledAt: { $gte: todayStart, $lte: todayEnd } });
     } else if (req.query.range === 'upcoming') {
-        query.scheduledAt = { $gt: todayEnd };
+        dateClauses.push({ scheduledAt: { $gt: todayEnd } });
     } else if (req.query.range === 'overdue') {
-        query.scheduledAt = { $lt: todayStart };
+        dateClauses.push({ scheduledAt: { $lt: todayStart } });
         query.status = 'Pending'; 
     }
 
     // Explicit date range support
     if (req.query.startDate && req.query.endDate) {
-        query.scheduledAt = {
-            $gte: new Date(req.query.startDate),
-            $lte: new Date(req.query.endDate)
-        };
+        dateClauses.push({
+            scheduledAt: {
+                $gte: new Date(req.query.startDate),
+                $lte: new Date(req.query.endDate)
+            }
+        });
+    }
+
+    if (dateClauses.length === 1) {
+        query.scheduledAt = dateClauses[0].scheduledAt;
+    } else if (dateClauses.length > 1) {
+        query.$and = [...(query.$and || []), ...dateClauses];
     }
 
     // Pagination
@@ -292,6 +302,29 @@ const getFollowUpStats = asyncHandler(async (req, res) => {
             $group: {
                 _id: null,
                 total: { $sum: 1 },
+                today: {
+                    $sum: {
+                        $cond: [
+                            {
+                                $and: [
+                                    { $gte: ["$scheduledAt", todayStart] },
+                                    { $lte: ["$scheduledAt", todayEnd] }
+                                ]
+                            },
+                            1,
+                            0
+                        ]
+                    }
+                },
+                upcoming: {
+                    $sum: {
+                        $cond: [
+                            { $gt: ["$scheduledAt", todayEnd] },
+                            1,
+                            0
+                        ]
+                    }
+                },
                 pending: {
                     $sum: {
                         $cond: [
@@ -328,7 +361,7 @@ const getFollowUpStats = asyncHandler(async (req, res) => {
         }
     ]);
 
-    const result = stats.length > 0 ? stats[0] : { total: 0, pending: 0, completed: 0, missed: 0 };
+    const result = stats.length > 0 ? stats[0] : { total: 0, today: 0, upcoming: 0, pending: 0, completed: 0, missed: 0 };
     delete result._id;
 
     res.status(200).json({

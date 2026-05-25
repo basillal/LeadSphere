@@ -1,17 +1,17 @@
 import React from "react";
 
-const FollowUpStats = ({ stats }) => {
+const FollowUpStats = ({ stats, mobileMode = false }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor, percentage }) => (
-    <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 relative overflow-hidden">
-      <div className="flex items-center gap-2">
-        <div className={`${iconBg} ${iconColor} p-2 rounded-lg`}>{icon}</div>
-        <div className="flex-1">
-          <p className="text-base text-black font-bold uppercase tracking-wider mb-1">
+    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 relative overflow-hidden">
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className={`${iconBg} ${iconColor} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>{icon}</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5 truncate">
             {title}
           </p>
-          <p className="text-base font-light text-black">{value}</p>
+          <p className="text-xs sm:text-sm font-semibold text-black leading-tight">{value}</p>
           {percentage && (
-            <p className="text-base text-black mt-1 uppercase font-light">
+            <p className="text-[8px] sm:text-[9px] text-gray-500 mt-0.5 uppercase font-light truncate">
               {percentage}
             </p>
           )}
@@ -27,7 +27,7 @@ const FollowUpStats = ({ stats }) => {
     totalTasks > 0 ? Math.round((stats.completed / totalTasks) * 100) : 0;
 
   return (
-    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
+    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6"}>
       <StatCard
         title="Total Follow-ups"
         value={stats.total || 0}
@@ -35,7 +35,7 @@ const FollowUpStats = ({ stats }) => {
         iconColor="text-black"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ const FollowUpStats = ({ stats }) => {
         percentage={`${pendingPercentage}% of total`}
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -79,7 +79,7 @@ const FollowUpStats = ({ stats }) => {
         percentage={`${completedPercentage}% done`}
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -101,7 +101,7 @@ const FollowUpStats = ({ stats }) => {
         percentage={stats.missed > 0 ? "Needs attention" : "All on track"}
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

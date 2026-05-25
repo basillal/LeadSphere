@@ -311,6 +311,7 @@ const LeadsTable = ({
       actions={actions}
       toolbar={toolbar}
       renderCard={renderCard}
+      onRowClick={onPreview}
       loading={loading}
       emptyMessage="No leads found"
       getRowId={(row) => row._id}
