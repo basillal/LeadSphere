@@ -1,22 +1,22 @@
 import React from "react";
 
-const LeadStats = ({ stats }) => {
+const LeadStats = ({ stats, mobileMode = false }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
-      <div className="flex items-center gap-2">
-        <div className={`${iconBg} ${iconColor} p-2 rounded-lg`}>{icon}</div>
-        <div className="flex-1">
-          <p className="text-base text-black font-bold uppercase tracking-wider mb-1">
+    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className={`${iconBg} ${iconColor} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>{icon}</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5 truncate">
             {title}
           </p>
-          <p className="text-base font-light text-black">{value}</p>
+          <p className="text-xs sm:text-sm font-semibold text-black leading-tight">{value}</p>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
+    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6"}>
       <StatCard
         title="Total"
         value={stats.total || 0}
@@ -24,7 +24,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-blue-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-emerald-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-black"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -88,7 +88,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-amber-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -109,7 +109,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-indigo-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -130,7 +130,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-orange-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -151,7 +151,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-green-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -172,7 +172,7 @@ const LeadStats = ({ stats }) => {
         iconColor="text-rose-600"
         icon={
           <svg
-            className="w-6 h-6"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

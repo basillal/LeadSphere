@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActivityStats = ({ stats, onStatClick }) => {
+const ActivityStats = ({ stats, onStatClick, mobileMode = false }) => {
   const statCards = [
     {
       title: "Total Activities",
@@ -68,19 +68,19 @@ const ActivityStats = ({ stats, onStatClick }) => {
   ];
 
   return (
-    <div className="hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 md:gap-2 mb-6">
+    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-2 mb-6"}>
       {statCards.map((stat, index) => (
         <div
           key={index}
           onClick={() => stat.filter && onStatClick && onStatClick(stat.filter)}
-          className={`${stat.color} text-white rounded-xl p-3 md:p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${stat.filter ? "cursor-pointer" : ""}`}
+          className={`${stat.color} text-white rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${stat.filter ? "cursor-pointer" : ""}`}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="text-base md:text-base mb-1 md:mb-2">{stat.icon}</div>
-            <div className="text-base md:text-base font-light mb-1">
+            <div className="text-base sm:text-lg mb-1">{stat.icon}</div>
+            <div className="text-xs sm:text-sm font-light mb-0.5">
               {stat.value}
             </div>
-            <div className="text-base md:text-base opacity-90 font-light">
+            <div className="text-[9px] sm:text-[10px] uppercase opacity-90 font-bold tracking-wider leading-tight">
               {stat.title}
             </div>
           </div>

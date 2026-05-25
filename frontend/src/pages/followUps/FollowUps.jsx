@@ -7,6 +7,7 @@ import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
 import SectionHeader from "../../components/common/sections/SectionHeader";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 const FollowUps = () => {
   const { selectedOrganization } = useAuth();
@@ -264,7 +265,9 @@ const FollowUps = () => {
       </div>
 
       {/* Stats */}
-      <FollowUpStats stats={stats} />
+      <StatsWrapper title="Follow-Ups Overview">
+        <FollowUpStats stats={stats} />
+      </StatsWrapper>
 
       {/* Search and Filters */}
       <div className="mb-4 flex flex-col md:flex-row gap-3">

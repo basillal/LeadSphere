@@ -10,6 +10,7 @@ import ContactsTable from "./ContactsTable";
 import ContactForm from "./ContactForm";
 import ConversionDialog from "../leads/ConversionDialog"; // Importing from leads for reuse, or should move it to common? Keeping it here for now.
 import Toast from "../../components/common/utils/Toast";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 // Preview Modal Component
 const PreviewModal = ({ contact, onClose }) => {
@@ -664,7 +665,9 @@ const Contacts = () => {
 
       {view === "list" ? (
         <>
-          <ContactStats stats={stats} />
+          <StatsWrapper title="Contacts Overview">
+            <ContactStats stats={stats} />
+          </StatsWrapper>
 
           <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">

@@ -8,6 +8,7 @@ import leadCategoryService from "../../services/leadCategoryService"; // New imp
 import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import StatsWrapper from "../../components/common/sections/StatsWrapper";
 
 // Preview Modal Component
 const PreviewModal = ({ activity, onClose }) => {
@@ -582,7 +583,9 @@ const Activities = () => {
         {view === "list" && (
           <>
             {/* Stats */}
-            <ActivityStats stats={stats} onStatClick={handleStatClick} />
+            <StatsWrapper title="Activities Overview">
+              <ActivityStats stats={stats} onStatClick={handleStatClick} />
+            </StatsWrapper>
 
             {/* Tabs */}
             <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
