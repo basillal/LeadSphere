@@ -26,6 +26,8 @@ const FollowUps = () => {
   });
   const [stats, setStats] = useState({
     total: 0,
+    today: 0,
+    upcoming: 0,
     pending: 0,
     completed: 0,
     missed: 0,
@@ -93,6 +95,11 @@ const FollowUps = () => {
   useEffect(() => {
     fetchFollowUps();
   }, [fetchFollowUps]);
+
+  // Refresh stats when active tab changes so labels reflect current view
+  useEffect(() => {
+    fetchStats();
+  }, [activeTab]);
 
   useEffect(() => {
     fetchStats();
@@ -181,11 +188,11 @@ const FollowUps = () => {
   };
 
   const tabs = [
-    { id: "today", label: "Today's Actions" },
-    { id: "all", label: `All Records (${stats.total})` },
-    { id: "upcoming", label: "Upcoming" },
-    { id: "missed", label: `Missed/Overdue (${stats.missed})` },
-    { id: "completed", label: `Completed (${stats.completed})` },
+    { id: "today", label: `Today's Actions (${stats.today || 0})` },
+    { id: "all", label: `All Records (${stats.total || 0})` },
+    { id: "upcoming", label: `Upcoming (${stats.upcoming || 0})` },
+    { id: "missed", label: `Missed/Overdue (${stats.missed || 0})` },
+    { id: "completed", label: `Completed (${stats.completed || 0})` },
   ];
 
   const handlePageChange = (newPage) => {

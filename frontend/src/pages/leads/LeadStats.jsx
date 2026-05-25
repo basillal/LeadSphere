@@ -2,9 +2,9 @@ import React from "react";
 
 const LeadStats = ({ stats, mobileMode = false }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        <div className={`${iconBg} ${iconColor} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>{icon}</div>
+    <div className="bg-white p-1 sm:p-1.5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300 flex-1">
+      <div className="flex items-center gap-1">
+        <div className={`${iconBg} ${iconColor} p-1 sm:p-1.5 rounded-lg flex-shrink-0`}>{icon}</div>
         <div className="flex-1 min-w-0">
           <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5 truncate">
             {title}
@@ -16,7 +16,13 @@ const LeadStats = ({ stats, mobileMode = false }) => {
   );
 
   return (
-    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6"}>
+    <div
+      className={
+        mobileMode
+          ? "flex flex-row flex-wrap gap-2 mb-4 py-1"
+          : "hidden md:flex md:flex-row md:flex-nowrap md:gap-2 md:items-stretch mb-6 py-1"
+      }
+    >
       <StatCard
         title="Total"
         value={stats.total || 0}
