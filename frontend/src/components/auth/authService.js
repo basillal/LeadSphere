@@ -2,6 +2,7 @@ import api from '../../services/api';
 import { getToken, setToken, removeToken } from './tokenUtils';
 
 const API_URL = '/auth';
+let refreshPromise = null;
 
 // Login User
 const login = async (email, password) => {
@@ -31,6 +32,11 @@ const getMe = async () => {
 
 // Refresh Token
 const refreshToken = async () => {
+    if (refreshPromise) {
+        return refreshPromise;
+    }
+
+    refreshPromise = (async () => {
     try {
         const response = await api.post(`${API_URL}/refresh`, {}, { skipLoader: true });
         // Note: skipLoader optional if we don't want loader during background refresh
@@ -41,10 +47,16 @@ const refreshToken = async () => {
             setToken(response.data.accessToken);
             return response.data.accessToken;
         }
+        return null;
     } catch (error) {
         console.error('Refresh token failed', error);
         throw error;
+    } finally {
+        refreshPromise = null;
     }
+    })();
+
+    return refreshPromise;
 };
 
 // Change Password

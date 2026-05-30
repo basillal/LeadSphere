@@ -99,11 +99,7 @@ const FollowUps = () => {
   // Refresh stats when active tab changes so labels reflect current view
   useEffect(() => {
     fetchStats();
-  }, [activeTab]);
-
-  useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+  }, [activeTab, fetchStats]);
 
   const handleRangeChange = (range) => {
     // Already handled by effects

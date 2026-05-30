@@ -1,7 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import authService, { setupAxiosInterceptors } from "./authService";
-import { getToken, getUser, setUser as setSessionUser, removeUser } from "./tokenUtils";
+import {
+  getToken,
+  getUser,
+  setUser as setSessionUser,
+  removeUser,
+  setToken,
+  getTokenRemainingMs,
+} from "./tokenUtils";
 import api from "../../services/api";
 
 const AuthContext = createContext(null);
@@ -12,7 +19,48 @@ export const AuthProvider = ({ children }) => {
   const [selectedOrganization, setSelectedOrganization] = useState(
     localStorage.getItem("selectedOrganization") || "",
   );
+  const refreshTimerRef = useRef(null);
   const navigate = useNavigate();
+
+  const clearRefreshTimer = () => {
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+      refreshTimerRef.current = null;
+    }
+  };
+
+  const syncTokenRefresh = async () => {
+    const token = getToken();
+    if (!token) {
+      clearRefreshTimer();
+      return;
+    }
+
+    const remainingMs = getTokenRemainingMs(token);
+    if (remainingMs === null) {
+      clearRefreshTimer();
+      return;
+    }
+
+    clearRefreshTimer();
+
+    const refreshDelay = Math.max(remainingMs - 60000, 0);
+    refreshTimerRef.current = setTimeout(async () => {
+      try {
+        const newToken = await authService.refreshToken();
+        if (newToken) {
+          setToken(newToken);
+          await syncTokenRefresh();
+        }
+      } catch (error) {
+        console.error("Automatic token refresh failed", error);
+        clearRefreshTimer();
+        removeUser();
+        setUser(null);
+        navigate("/login", { replace: true });
+      }
+    }, refreshDelay);
+  };
 
   const selectOrganization = (organizationId) => {
     setSelectedOrganization(organizationId);
@@ -48,12 +96,20 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
         }
       }
+
+      if (token) {
+        await syncTokenRefresh();
+      } else {
+        clearRefreshTimer();
+      }
+
       setLoading(false);
     };
 
     initAuth();
 
     return () => {
+      clearRefreshTimer();
       if (
         requestInterceptor !== undefined &&
         api.interceptors.request.handlers[requestInterceptor]
@@ -73,10 +129,12 @@ export const AuthProvider = ({ children }) => {
     const data = await authService.login(email, password);
     setUser(data);
     setSessionUser(data);
+    await syncTokenRefresh();
     navigate("/"); // Redirect to dashboard
   };
 
   const logout = async () => {
+    clearRefreshTimer();
     await authService.logout();
     setUser(null);
     removeUser();
