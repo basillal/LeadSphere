@@ -15,7 +15,7 @@ import {
 } from "recharts";
 
 const Card = ({ title, value, subtext, color = "bg-white" }) => (
-  <div className={`${color} p-5 rounded-lg shadow-sm border border-gray-100`}>
+  <div className={`${color} p-4 sm:p-5 rounded-lg shadow-sm border border-gray-100`}>
     <h3 className="text-black text-base font-light uppercase tracking-wider mb-2">
       {title}
     </h3>
@@ -112,7 +112,7 @@ const Reports = () => {
     paymentStats.find((s) => s._id === "PAID")?.totalAmount || 0;
 
   return (
-    <div className="w-full p-6 space-y-6 bg-gray-50 pb-20">
+    <div className="w-full p-4 sm:p-6 space-y-6 bg-gray-50 pb-20">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-base font-light text-black">Financial Reports</h1>
         <div className="flex gap-2">

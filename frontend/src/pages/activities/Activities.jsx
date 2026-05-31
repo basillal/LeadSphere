@@ -535,8 +535,8 @@ const Activities = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
+        <h1 className="text-lg sm:text-base font-medium text-black">
           {view === "list"
             ? "Activities"
             : view === "create"

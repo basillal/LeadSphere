@@ -69,7 +69,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   const menuItems = getVisibleItems();
 
   // Determine width based on state
-  const widthClass = open ? "w-64" : "w-64 md:w-16";
+  const widthClass = open ? "w-[86vw] max-w-xs md:w-64" : "w-[86vw] max-w-xs md:w-16";
   const translateClass = open
     ? "translate-x-0"
     : "-translate-x-full md:translate-x-0";
@@ -77,23 +77,26 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   return (
     <aside
       className={`
-                fixed md:relative z-20 min-h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+                fixed top-0 left-0 md:relative z-20 h-[100dvh] md:h-screen bg-white border-r border-gray-200 shadow-2xl md:shadow-none transition-all duration-300 ease-in-out
                 ${translateClass}
                 ${widthClass}
                 flex flex-col
+                overflow-hidden
                 no-print
             `}
     >
-      <div className="flex items-center justify-end border-b border-gray-200 px-4" style={{ height: '44px' }}>
+      <div className="flex items-center justify-between border-b border-gray-200 px-4" style={{ height: '52px' }}>
+        <div className="md:hidden text-base font-light text-black">Menu</div>
         <button
           onClick={handleDrawerClose}
-          className="p-1 rounded-md hover:bg-gray-100 md:hidden"
+          className="p-2 rounded-md hover:bg-gray-100 md:hidden"
+          aria-label="Close menu"
         >
           <ChevronLeftIcon />
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-auto py-3 md:py-4">
         <ul className="space-y-1">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -108,7 +111,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                     }
                   }}
                   className={`
-                                        flex items-center px-4 py-3 mx-2 rounded-lg transition-colors
+                                        flex items-center px-4 py-3.5 mx-2 rounded-xl transition-colors min-h-[48px]
                                         ${
                                           isActive
                                             ? "bg-black text-white"
@@ -120,7 +123,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 >
                   <span className={`${open ? "mr-3" : ""}`}>{item.icon}</span>
                   {open && (
-                    <span className="font-light text-lg whitespace-nowrap">
+                    <span className="font-light text-base md:text-lg whitespace-nowrap truncate">
                       {item.label}
                     </span>
                   )}

@@ -54,13 +54,13 @@ const MainLayout = () => {
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       {!isDesktop && open && (
         <div
-          className="fixed inset-0 z-10 bg-black/40 md:hidden"
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
           onClick={handleDrawerClose}
           aria-hidden="true"
         />
       )}
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow p-3 md:p-6 w-full max-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20 md:pt-28">
+      <main className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-16 md:pt-20 px-3 sm:px-4 md:px-6 pb-6">
         <Breadcrumbs />
         <Outlet />
       </main>
