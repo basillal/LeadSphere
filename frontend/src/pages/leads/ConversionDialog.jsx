@@ -86,8 +86,8 @@ const ConversionDialog = ({ lead, categories = [], onConfirm, onCancel }) => {
           {/* Info Box */}
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-xl">
             <div className="flex">
-              <svg
-                className="w-5 h-5 text-black mt-0.5 mr-3 flex-shrink-0"
+                <svg
+                  className="w-5 h-5 text-white mt-0.5 mr-3 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -99,10 +99,10 @@ const ConversionDialog = ({ lead, categories = [], onConfirm, onCancel }) => {
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <div className="text-base text-black">
-                <p className="font-light mb-1 text-white uppercase text-base tracking-widest opacity-60">Succession Plan</p>
-                <ul className="list-disc list-inside space-y-1 text-base font-light leading-relaxed">
-                  <li>Original Lead will be archived as <span className="text-white">Converted</span></li>
+              <div>
+                <p className="font-light mb-1 text-white uppercase text-base tracking-widest opacity-80">Succession Plan</p>
+                <ul className="list-disc list-inside space-y-1 text-sm text-white/90 font-light leading-relaxed">
+                  <li>Original Lead will be archived as <span className="font-semibold">Converted</span></li>
                   <li>A permanent Contact profile will be created</li>
                   <li>Relationship category and tags will be retained</li>
                 </ul>

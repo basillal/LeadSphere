@@ -118,9 +118,15 @@ const Header = ({ handleDrawerToggle }) => {
               color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerToggle}
-              sx={{ mr: 1.5, bgcolor: "rgba(15, 23, 42, 0.05)" }}
+              sx={{
+                mr: 2.25,
+                ml:1.10,
+                bgcolor: "rgba(15, 23, 42, 0.05)",
+                width: 42,
+                height: 42,
+              }}
             >
-              <MenuIcon sx={{ fontSize: 18 }} />
+              <MenuIcon sx={{ fontSize: 22 }} />
             </IconButton>
             <Typography
               variant="h6"

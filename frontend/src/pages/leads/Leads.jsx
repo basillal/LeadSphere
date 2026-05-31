@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import leadService from "../../services/leadService";
 import LeadForm from "./LeadForm";
+import followUpService from "../../services/followUpService";
 import LeadsTable from "./LeadsTable";
 import LeadStats from "./LeadStats";
 import leadCategoryService from "../../services/leadCategoryService";
@@ -262,13 +263,13 @@ const Leads = () => {
     return () => clearTimeout(timer);
   }, [filters.search, filters.status, filters.source, filters.category, pagination.page, pagination.limit, selectedOrganization, timeRange]);
 
-  const fetchLeads = async () => {
+  const fetchLeads = async ({ page = pagination.page } = {}) => {
     // Set loading to true for every fetch to trigger the AdvancedTable overlay
     // setLoading(true);
     try {
       // Build params with pagination
       const params = {
-        page: pagination.page,
+        page,
         limit: pagination.limit,
       };
 
@@ -331,10 +332,38 @@ const Leads = () => {
       if (selectedOrganization) {
         payload.organization = selectedOrganization;
       }
-      await leadService.createLead(payload);
+      const created = await leadService.createLead(payload);
+      const createdLead = created?.data || created;
+
+      // Show the new lead immediately, then refresh from the server.
+      if (createdLead?._id) {
+        setLeads((prev) => [
+          createdLead,
+          ...prev.filter((lead) => lead._id !== createdLead._id),
+        ]);
+        setPagination((prev) => ({
+          ...prev,
+          page: 1,
+          total: prev.total + 1,
+        }));
+      }
+
+      // Auto-create follow-up only when a follow-up date is provided and followUpMode is set
+      if (payload.nextFollowUpDate && payload.followUpMode) {
+        try {
+          await followUpService.createFollowUp({
+            lead: createdLead._id || createdLead.id,
+            scheduledAt: payload.nextFollowUpDate,
+            type: payload.followUpMode,
+            notes: payload.followUpRemarks || ""
+          });
+        } catch (err) {
+          console.error("Failed to auto-create follow-up:", err);
+        }
+      }
       showSnackbar("Lead added successfully", "success");
-      fetchLeads();
-      fetchStats();
+      await fetchLeads({ page: 1 });
+      await fetchStats();
       setView("list");
     } catch (err) {
       console.error("Error creating lead:", err);
@@ -347,8 +376,8 @@ const Leads = () => {
     try {
       await leadService.updateLead(leadData._id, leadData);
       showSnackbar("Lead updated successfully", "success");
-      fetchLeads();
-      fetchStats();
+      await fetchLeads();
+      await fetchStats();
       setView("list");
       setEditingLead(null);
     } catch (err) {
@@ -363,8 +392,8 @@ const Leads = () => {
       try {
         await leadService.deleteLead(id);
         showSnackbar("Lead deleted successfully", "success");
-        fetchLeads();
-        fetchStats();
+        await fetchLeads();
+        await fetchStats();
       } catch (err) {
         console.error("Error deleting lead:", err);
         showSnackbar("Failed to delete lead", "error");

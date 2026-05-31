@@ -79,22 +79,22 @@ const Settings = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
       <div className="mb-8">
-        <h1 className="text-base font-light text-black tracking-tight">Settings</h1>
-        <p className="text-black mt-1">Manage your application preferences and configurations.</p>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Settings</h1>
+        <p className="text-slate-600 mt-1 text-sm md:text-base">Manage your application preferences and configurations.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar Tabs */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <div className="space-y-1">
+          <div className="md:space-y-1 flex md:flex-col gap-2 overflow-x-auto scrollbar-hide pb-1 md:pb-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-light transition-all duration-200 ${
+                className={`inline-flex md:w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm md:text-base font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
-                    ? "bg-black text-white shadow-lg shadow-black/10"
-                    : "text-black hover:bg-gray-100"
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                    : "text-slate-600 bg-white/80 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
                 <span className="text-base">{tab.icon}</span>
@@ -111,13 +111,13 @@ const Settings = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div>
-                    <h2 className="text-base font-light text-black">Lead Categories</h2>
-                    <p className="text-base text-black">Classify your leads for better organization.</p>
+                    <h2 className="text-base font-semibold text-slate-900">Lead Categories</h2>
+                    <p className="text-sm md:text-base text-slate-600">Classify your leads for better organization.</p>
                   </div>
                   {!isAdding && (
                     <button
                       onClick={handleAdd}
-                      className="bg-black text-white px-4 py-2 rounded-lg text-base font-light hover:bg-gray-800 transition-colors"
+                      className="bg-slate-900 text-white px-4 py-2 rounded-2xl text-sm font-semibold hover:bg-slate-800 transition-colors"
                     >
                       + Add Category
                     </button>

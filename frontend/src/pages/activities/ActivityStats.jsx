@@ -67,21 +67,58 @@ const ActivityStats = ({ stats, onStatClick, mobileMode = false }) => {
     },
   ];
 
+  const accentStyles = {
+    blue: { badge: "bg-blue-50 text-blue-600", ring: "ring-blue-100" },
+    cyan: { badge: "bg-cyan-50 text-cyan-600", ring: "ring-cyan-100" },
+    red: { badge: "bg-rose-50 text-rose-600", ring: "ring-rose-100" },
+    green: { badge: "bg-emerald-50 text-emerald-600", ring: "ring-emerald-100" },
+    purple: { badge: "bg-violet-50 text-violet-600", ring: "ring-violet-100" },
+    orange: { badge: "bg-orange-50 text-orange-600", ring: "ring-orange-100" },
+    pink: { badge: "bg-pink-50 text-pink-600", ring: "ring-pink-100" },
+    indigo: { badge: "bg-indigo-50 text-indigo-600", ring: "ring-indigo-100" },
+    yellow: { badge: "bg-amber-50 text-amber-600", ring: "ring-amber-100" },
+  };
+
+  const getAccentForIndex = (index) => {
+    const palette = [
+      accentStyles.blue,
+      accentStyles.cyan,
+      accentStyles.red,
+      accentStyles.green,
+      accentStyles.purple,
+      accentStyles.orange,
+      accentStyles.pink,
+      accentStyles.indigo,
+      accentStyles.yellow,
+    ];
+    return palette[index % palette.length];
+  };
+
+  const gridClass = mobileMode
+    ? "flex flex-nowrap gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1"
+    : "hidden md:flex md:flex-nowrap gap-3 mb-6 overflow-x-auto scrollbar-hide pb-1";
+
   return (
-    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-2 mb-6"}>
+    <div className={gridClass}>
       {statCards.map((stat, index) => (
         <div
           key={index}
           onClick={() => stat.filter && onStatClick && onStatClick(stat.filter)}
-          className={`${stat.color} text-white rounded-lg p-2 sm:p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ${stat.filter ? "cursor-pointer" : ""}`}
+          className={`group bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 ${stat.filter ? "cursor-pointer hover:-translate-y-0.5" : ""} ${mobileMode ? "min-w-[160px] flex-shrink-0" : "min-w-[170px] flex-1"}`}
         >
-          <div className="flex flex-col items-center text-center">
-            <div className="text-base sm:text-lg mb-1">{stat.icon}</div>
-            <div className="text-xs sm:text-sm font-light mb-0.5">
-              {stat.value}
+          <div className="flex items-start gap-3">
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ring-1 ${getAccentForIndex(index).badge} ${getAccentForIndex(index).ring}`}
+            >
+              <span className="text-base sm:text-lg">{stat.icon}</span>
             </div>
-            <div className="text-[9px] sm:text-[10px] uppercase opacity-90 font-bold tracking-wider leading-tight">
-              {stat.title}
+            <div className="min-w-0 flex-1">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 leading-none">
+                {stat.value}
+              </div>
+              <div className="mt-1 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] font-semibold text-slate-500 leading-tight">
+                {stat.title}
+              </div>
             </div>
           </div>
         </div>

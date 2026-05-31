@@ -22,6 +22,11 @@ const Select = ({
         required={required}
         {...props}
       >
+        {/* Ensure a top 'None' option exists so dropdowns default to None when value is empty */}
+        {Array.isArray(options) && !options.some((o) => (typeof o === 'object' ? o.value === '' : o === '')) && (
+          <option value="">None</option>
+        )}
+
         {options.map((opt) => (
           <option key={opt.value || opt} value={opt.value || opt}>
             {opt.label || opt}

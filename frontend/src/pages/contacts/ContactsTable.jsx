@@ -234,52 +234,48 @@ const ContactsTable = ({
     ],
   };
 
-  // Custom mobile card
+  // Custom mobile card (standardized)
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex justify-between items-start mb-2">
+    <div className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
+      <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <div className="text-lg font-bold text-slate-900 truncate">{row.name}</div>
+            {row.designation ? (
+              <div className="text-sm text-slate-500 truncate">{row.designation}</div>
+            ) : (
+              <div className="text-sm text-slate-500 truncate">{(row.tags || []).slice(0,2).join(", ") || ""}</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
         <div>
-          <h3 className="font-light text-black text-base capitalize">
-            {row.name}
-          </h3>
-          <p className="text-base text-black capitalize">
-            {row.organizationName || "-"}
-          </p>
-          {row.designation && (
-            <p className="text-base text-black">{row.designation}</p>
-          )}
+          <div className="text-xs text-slate-500">Phone</div>
+          <div className="mt-0.5 truncate">{row.phone || "-"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Email</div>
+          <div className="mt-0.5 truncate">{row.email || "-"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Last contact</div>
+          <div className="mt-0.5 truncate">{formatDate(row.lastInteractionDate)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Tags</div>
+          <div className="mt-0.5 truncate">{(row.tags || []).join(", ") || "-"}</div>
         </div>
       </div>
 
-      <div className="space-y-1 text-base text-black mb-2">
-        <p>
-          <span className="font-light">Phone:</span> {row.phone}
-        </p>
-        {row.email && (
-          <p>
-            <span className="font-light">Email:</span> {row.email}
-          </p>
-        )}
-        <p>
-          <span className="font-light">Last contact:</span>{" "}
-          {formatDate(row.lastInteractionDate)}
-        </p>
-      </div>
-
-      {row.tags && row.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-2">
-          {row.tags.map((tag, index) => (
-            <span
-              key={index}
-              className={`px-2 py-0.5 rounded-full text-base font-light ${getTagColor(tag)}`}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+      <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
         {actions.map((action, idx) => (
           <button
             key={idx}
@@ -287,7 +283,7 @@ const ContactsTable = ({
               e.stopPropagation();
               action.onClick(row);
             }}
-            className={`p-1.5 rounded transition-colors ${action.color}`}
+            className={`p-2 rounded-lg transition-colors ${action.color}`}
             title={action.label}
           >
             {action.icon}

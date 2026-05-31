@@ -10,8 +10,8 @@ import { useAuth } from "../../components/auth/AuthProvider";
 const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     scheduledAt: "",
-    type: "Call",
-    status: "Pending",
+    type: "",
+    status: "",
     notes: "",
     outcome: "",
     lead: lead?._id || "",

@@ -21,7 +21,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       website: "",
 
       // 2. Lead Source
-      source: "Website",
+      source: "Other",
       sourceDetails: "",
       campaignName: "",
       referredBy: null,
@@ -29,13 +29,13 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
       // 3. Status & Priority
       status: "New",
       category: "",
-      priority: "Medium",
+        priority: "",
       leadTemperature: "Warm",
       isActive: true,
       lostReason: "",
 
       // 4. Follow-Up
-      nextFollowUpDate: "",
+      nextFollowUpDate: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16),
       followUpMode: "",
       followUpRemarks: "",
       followUpCount: 0,
@@ -126,6 +126,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     if (!cleanedData.nextFollowUpDate) delete cleanedData.nextFollowUpDate;
     if (!cleanedData.expectedClosureDate)
       delete cleanedData.expectedClosureDate;
+    if (cleanedData.priority === "") delete cleanedData.priority;
 
     // Convert attachments string to array
     if (cleanedData.attachments) {
@@ -160,6 +161,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
+            uppercaseOnly
             required
             className="md:col-span-3"
           />
@@ -361,7 +363,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             name="followUpMode"
             value={formData.followUpMode}
             onChange={handleChange}
-            options={["Call", "WhatsApp", "Email", "Meeting", "None"].map(
+            options={["None", "Call", "WhatsApp", "Email", "Meeting"].map(
               (opt) => ({ label: opt, value: opt === "None" ? "" : opt }),
             )}
             className="md:col-span-2"

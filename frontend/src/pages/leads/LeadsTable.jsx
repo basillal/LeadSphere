@@ -236,54 +236,57 @@ const LeadsTable = ({
     },
   };
 
-  // Custom mobile card render
+  // Custom mobile card render (standardized)
   const renderCard = (row, actions) => (
     <div
-      className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+      className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
       onClick={() => onPreview && onPreview(row)}
     >
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h3 className="font-light text-black text-base capitalize">
-            {row.name}
-          </h3>
-          <p className="text-base text-black capitalize">
-            {row.organizationName || "-"}
-          </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-sky-50 text-sky-700 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <div className="text-lg font-bold text-sky-700 truncate">{row.name}</div>
+            <div className="text-sm text-slate-500 truncate">{row.category?.name || ""}</div>
+          </div>
         </div>
-        <span
-          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(row.status, row.isConverted)}`}
-        >
-          {row.isConverted ? "Converted" : row.status}
-        </span>
+
+        <div className="flex items-start gap-2">
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(row.status, row.isConverted)}`}>{row.isConverted ? "Converted" : row.status}</span>
+        </div>
       </div>
 
       {row.category && (
-        <div className="mb-2">
-          <span 
-            className="text-base font-light text-black uppercase tracking-wider"
-          >
-            {row.category.name}
-          </span>
+        <div className="mt-3">
+          <span className="text-sm font-light text-slate-700 uppercase tracking-wider">{row.category.name}</span>
         </div>
       )}
 
-      <div className="space-y-1 text-base text-black mb-2">
-        <p>
-          <span className="font-light">Phone:</span> {row.phone}
-        </p>
-        <p>
-          <span className="font-light">Email:</span> {row.email}
-        </p>
-        <p>
-          <span className="font-light">Source:</span> {row.source}
-        </p>
-        <p>
-          <span className="font-light">Priority:</span> {row.priority}
-        </p>
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
+        <div>
+          <div className="text-xs text-slate-500">Phone</div>
+          <div className="mt-0.5 truncate">{row.phone || "-"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Email</div>
+          <div className="mt-0.5 truncate">{row.email || "-"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Source</div>
+          <div className="mt-0.5 truncate">{row.source || "-"}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500">Priority</div>
+          <div className="mt-0.5 truncate">{row.priority || "-"}</div>
+        </div>
       </div>
 
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+      <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
         {actions.map((action, idx) => {
           if (action.condition && !action.condition(row)) return null;
           return (
@@ -293,7 +296,7 @@ const LeadsTable = ({
                 e.stopPropagation();
                 action.onClick(row);
               }}
-              className={`text-base font-light flex items-center gap-1 ${action.color}`}
+              className={`p-2 rounded-lg transition-colors ${action.color}`}
               title={action.label}
             >
               {action.icon}

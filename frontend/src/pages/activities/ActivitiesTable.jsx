@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import EmptyTableState from "../../components/common/EmptyTableState";
 
 const ActivitiesTable = ({
   activities,
@@ -133,7 +134,7 @@ const ActivitiesTable = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[540px] md:min-h-[620px] flex flex-col">
       {/* Header with Search and Filters */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4">
@@ -225,7 +226,7 @@ const ActivitiesTable = ({
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto flex-1">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -269,8 +270,11 @@ const ActivitiesTable = ({
           <tbody className="divide-y divide-gray-200">
             {activities.length === 0 ? (
               <tr>
-                <td colSpan="8" className="px-4 py-8 text-center text-black">
-                  No activities found. Create your first activity!
+                <td colSpan="8" className="px-0 py-0 text-black">
+                  <EmptyTableState
+                    title="No activities found"
+                    description="Create your first activity to start tracking meetings, calls, and follow-ups."
+                  />
                 </td>
               </tr>
             ) : (
@@ -443,11 +447,12 @@ const ActivitiesTable = ({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden divide-y divide-gray-200">
+      <div className="md:hidden divide-y divide-gray-200 flex-1">
         {activities.length === 0 ? (
-          <div className="px-4 py-8 text-center text-black">
-            No activities found. Create your first activity!
-          </div>
+          <EmptyTableState
+            title="No activities found"
+            description="Create your first activity to start tracking meetings, calls, and follow-ups."
+          />
         ) : (
           activities.map((activity) => {
             const dateContext = getDateContext(
@@ -461,84 +466,64 @@ const ActivitiesTable = ({
                   ? "border-l-4 border-l-red-500 bg-red-50/30"
                   : "";
 
-            return (
-              <div
-                key={activity._id}
-                className={`p-4 hover:bg-gray-50 ${borderClass}`}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-base">
-                      {getActivityTypeIcon(activity.activityType)}
-                    </span>
-                    <div>
-                      <div className="font-light text-black">
-                        {activity.title}
+              return (
+                <div
+                  key={activity._id}
+                  className={`p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] bg-white ${borderClass}`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
+                        <span className="text-base">{getActivityTypeIcon(activity.activityType)}</span>
                       </div>
-                      <div className="text-base text-black">
-                        {activity.relatedName} • {activity.relatedTo}
+                      <div className="min-w-0">
+                        <div className="text-lg font-bold text-slate-900 truncate">{activity.title}</div>
+                        <div className="text-sm text-slate-500 truncate">{activity.relatedName} • {activity.relatedTo}</div>
                       </div>
                     </div>
+
+                    <div className="flex items-start gap-2">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(activity.status)}`}>{activity.status}</span>
+                    </div>
+                  </div>
+
+                  {activity.description && (
+                    <p className="text-sm text-slate-700 mb-2 line-clamp-2 mt-3">{activity.description}</p>
+                  )}
+
+                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
+                    <div>
+                      <div className="text-xs text-slate-500">Priority</div>
+                      <div className="mt-0.5 truncate">{activity.priority}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-500">When</div>
+                      <div className="mt-0.5 truncate">{getRelativeDate(activity.activityDate)}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      onClick={() => onView(activity)}
+                      className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-sm font-medium hover:bg-blue-100 transition-colors"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => onEdit(activity)}
+                      className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-md text-sm font-medium hover:bg-green-100 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => onDelete(activity._id)}
+                      className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-md text-sm font-medium hover:bg-red-100 transition-colors"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
-
-                {activity.description && (
-                  <p className="text-base text-black mb-2 line-clamp-2">
-                    {activity.description}
-                  </p>
-                )}
-
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
-                  >
-                    {activity.status}
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
-                  >
-                    {activity.priority}
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-base font-light ${
-                      dateContext === "today"
-                        ? "bg-blue-100 text-blue-800"
-                        : dateContext === "overdue"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-black"
-                    }`}
-                  >
-                    {getRelativeDate(activity.activityDate)}
-                  </span>
-                  {dateContext === "overdue" && (
-                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-base font-light">
-                      Overdue
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => onView(activity)}
-                    className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-base font-light hover:bg-blue-100 transition-colors"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => onEdit(activity)}
-                    className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-base font-light hover:bg-green-100 transition-colors"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => onDelete(activity._id)}
-                    className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-base font-light hover:bg-red-100 transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
+              );
           })
         )}
       </div>

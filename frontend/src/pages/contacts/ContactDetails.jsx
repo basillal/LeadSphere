@@ -250,7 +250,7 @@ const ContactDetails = () => {
         </div>
 
         {/* Tabs */}
-        <div className="max-w-7xl mx-auto mt-8 flex gap-6 overflow-x-auto scrollbar-hide">
+        <div className="max-w-7xl mx-auto mt-6 md:mt-8 flex items-center gap-2 overflow-x-auto scrollbar-hide px-4 md:px-0 pb-2">
           {[
             "overview",
             "lead-info",
@@ -261,10 +261,10 @@ const ContactDetails = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 px-1 text-base font-light capitalize border-b-2 transition-colors whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-full text-sm md:text-base font-semibold capitalize transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                 activeTab === tab
-                  ? "border-black text-black"
-                  : "border-transparent text-black hover:text-black hover:border-gray-300"
+                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                  : "bg-white/80 text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               {tab.replace("-", " ")}
