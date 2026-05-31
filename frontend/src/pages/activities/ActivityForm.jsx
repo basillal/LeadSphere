@@ -19,7 +19,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
       relatedId: "",
       relatedName: "",
       service: "", // New Field
-      activityType: "Call",
+      activityType: "",
       title: "",
       description: "",
       notes: "",
@@ -27,14 +27,14 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
       // Call Details
       callDetails: {
         duration: "",
-        callType: "Outgoing",
-        callStatus: "Completed",
+        callType: "",
+        callStatus: "",
       },
 
       // Meeting Details
       meetingDetails: {
         location: "",
-        meetingType: "In-Person",
+        meetingType: "",
         attendees: [],
         agenda: "",
       },
@@ -45,21 +45,21 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
       endTime: "",
 
       // Status and Priority
-      status: "Scheduled",
-      priority: "Medium",
+      status: "",
+      priority: "",
 
       // Outcome
-      outcome: "None",
+      outcome: "",
       followUpRequired: false,
       followUpDate: "",
       followUpNotes: "",
 
       // Tags and Category
       tags: [],
-      category: "General",
+      category: "",
 
       // User
-      createdBy: "System",
+      createdBy: "",
     };
 
     if (initialData) {
@@ -165,6 +165,13 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
     if (formData.activityType !== "Meeting") {
       delete cleanedData.meetingDetails;
     }
+
+    // Remove empty enum-like fields so backend enums don't receive empty strings
+    if (!cleanedData.status) delete cleanedData.status;
+    if (!cleanedData.priority) delete cleanedData.priority;
+    if (!cleanedData.outcome) delete cleanedData.outcome;
+    if (!cleanedData.category) delete cleanedData.category;
+    if (!cleanedData.createdBy) delete cleanedData.createdBy;
 
     onSubmit(cleanedData);
   };

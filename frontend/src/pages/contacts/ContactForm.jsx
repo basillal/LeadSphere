@@ -50,7 +50,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
       nextFollowUpDate: "",
 
       // Communication Preferences
-      preferredContactMode: "Call",
+      preferredContactMode: "",
       preferredContactTime: "",
       doNotDisturb: false,
       timezone: "",
@@ -61,7 +61,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
 
       // Status
       isActive: true,
-      status: "Active",
+      status: "",
     };
 
     if (initialData) {
@@ -156,6 +156,7 @@ const ContactForm = ({ initialData, onSubmit, onCancel, categories = [] }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
+            uppercaseOnly
             required
             className="md:col-span-3"
           />

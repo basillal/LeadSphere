@@ -1,0 +1,52 @@
+/* Shared surface utilities for the new visual language */
+.app-shell {
+	position: relative;
+	isolation: isolate;
+}
+
+.app-shell::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.85), transparent 24%),
+		radial-gradient(circle at 90% 12%, rgba(203, 213, 225, 0.42), transparent 20%),
+		radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.05), transparent 28%);
+	z-index: -1;
+}
+
+.page-card {
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+	border-radius: 28px;
+	box-shadow: 0 22px 48px -30px rgba(15, 23, 42, 0.45);
+}
+
+.page-card-soft {
+	background: rgba(255, 255, 255, 0.72);
+	border: 1px solid rgba(148, 163, 184, 0.14);
+	border-radius: 24px;
+}
+
+.table-frame {
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(148, 163, 184, 0.16);
+	border-radius: 28px;
+	box-shadow: 0 20px 45px -32px rgba(15, 23, 42, 0.38);
+	overflow: hidden;
+}
+
+.mobile-sheet {
+	background: rgba(255, 255, 255, 0.96);
+	border-radius: 28px 28px 0 0;
+	box-shadow: 0 -18px 45px rgba(15, 23, 42, 0.18);
+}
+
+.mobile-sheet-handle {
+	width: 44px;
+	height: 5px;
+	border-radius: 999px;
+	background: #cbd5e1;
+	margin: 0 auto 0.85rem;
+}

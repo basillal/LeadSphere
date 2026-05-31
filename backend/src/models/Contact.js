@@ -21,7 +21,8 @@ const ContactSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please add a name'],
-        trim: true
+        trim: true,
+        set: v => (typeof v === 'string' ? v.toUpperCase() : v)
     },
     phone: {
         type: String,

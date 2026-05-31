@@ -9,7 +9,8 @@ const LeadSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please add a name'],
-        trim: true
+        trim: true,
+        set: v => (typeof v === 'string' ? v.toUpperCase() : v)
     },
     phone: {
         type: String,
@@ -76,7 +77,7 @@ const LeadSchema = new mongoose.Schema({
     leadTemperature: {
         type: String,
         enum: ['Hot', 'Warm', 'Cold'],
-        default: 'Cold'
+        default: 'Warm'
     },
     isActive: {
         type: Boolean,

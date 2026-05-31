@@ -184,62 +184,77 @@ const FollowUpList = ({
 
   // Custom mobile card render
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex justify-between items-start mb-2">
-        <div className="overflow-hidden flex-1">
-          <p className="font-light text-black truncate text-base uppercase">
-            {row.lead?.name || "Unknown"}
-          </p>
-          <p className="text-base text-black truncate">{row.lead?.phone}</p>
+    <div className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg font-bold text-slate-900 truncate uppercase">{row.lead?.name || "Unknown"}</p>
+            <p className="text-sm text-slate-500 truncate">{row.lead?.phone || "-"}</p>
+          </div>
         </div>
-        <span
-          className={`flex-shrink-0 px-2 py-0.5 text-base font-light rounded-full ${getStatusColor(row.status)}`}
-        >
-          {row.status}
-        </span>
+
+        <div className="flex items-start gap-2">
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(row.status)}`}>{row.status}</span>
+        </div>
       </div>
 
-      <div className="space-y-1 text-base text-black mb-2">
-        <div className="flex items-center">
-          <span className="w-16 font-light flex-shrink-0">Type:</span>
-          <span className="truncate">{row.type}</span>
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
+        <div>
+          <div className="text-xs text-slate-500">Type</div>
+          <div className="mt-0.5 truncate">{row.type}</div>
         </div>
-        <div className="flex items-center">
-          <span className="w-16 font-light flex-shrink-0">Due:</span>
-          <span className="truncate">{formatDate(row.scheduledAt)}</span>
+        <div>
+          <div className="text-xs text-slate-500">Due</div>
+          <div className="mt-0.5 truncate">{formatDate(row.scheduledAt)}</div>
         </div>
-        {row.notes && (
-          <div className="bg-gray-50 p-2 rounded text-base mt-1 break-words">
-            {row.notes}
+        {row.organization && (
+          <div>
+            <div className="text-xs text-slate-500">Org</div>
+            <div className="mt-0.5 truncate">{row.organization.name}</div>
           </div>
         )}
+        <div>
+          <div className="text-xs text-slate-500">Assigned</div>
+          <div className="mt-0.5 truncate">{row.assignedTo?.name || "-"}</div>
+        </div>
       </div>
 
-      <div className="flex justify-end items-center gap-2 border-t border-gray-100 pt-2">
+      {row.notes && <div className="bg-gray-50 p-2 rounded mt-3 text-sm text-slate-700">{row.notes}</div>}
+
+      <div className="mt-3 flex flex-col sm:flex-row sm:justify-end gap-2">
         {row.status === "Pending" && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onStatusChange(row, "Completed");
             }}
-            className="text-base text-green-600 font-light hover:text-green-700"
+            className="px-3 py-1.5 rounded bg-green-100 text-green-700 font-medium hover:bg-green-200"
           >
             Mark Done
           </button>
         )}
-        {actions.map((action, idx) => (
-          <button
-            key={idx}
-            onClick={(e) => {
-              e.stopPropagation();
-              action.onClick(row);
-            }}
-            className={`p-1.5 rounded-lg transition-colors ${action.color}`}
-            title={action.label}
-          >
-            {action.icon}
-          </button>
-        ))}
+
+        <div className="flex gap-2 justify-end">
+          {actions.map((action, idx) => (
+            <button
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                action.onClick(row);
+              }}
+              className={`p-2 rounded-lg transition-colors ${action.color}`}
+              title={action.label}
+            >
+              {action.icon}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

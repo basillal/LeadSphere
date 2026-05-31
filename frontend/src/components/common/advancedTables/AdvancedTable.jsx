@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EmptyTableState from "../EmptyTableState";
 
 /**
  * AdvancedTable - A reusable, feature-rich table component
@@ -49,7 +50,8 @@ const AdvancedTable = ({
   );
   const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsPerPage || 10);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [mobileToolbarOpen, setMobileToolbarOpen] = useState(false);
+  const [mobileToolbarMode, setMobileToolbarMode] = useState("search");
 
   // Sync state with props for external pagination
   React.useEffect(() => {
@@ -69,7 +71,11 @@ const AdvancedTable = ({
   }, []);
 
   React.useEffect(() => {
-    if (!isMobile) setFiltersOpen(false);
+    if (!isMobile) setMobileToolbarOpen(false);
+  }, [isMobile]);
+
+  React.useEffect(() => {
+    if (!isMobile) setMobileToolbarMode("search");
   }, [isMobile]);
 
   // Sorting
@@ -223,12 +229,41 @@ const AdvancedTable = ({
     ),
   };
 
+  const getEmptyStateCopy = () => {
+    const normalized = String(emptyMessage || "").toLowerCase();
+    if (normalized.includes("lead")) {
+      return {
+        title: emptyMessage,
+        description: "Get started by adding your first lead.",
+      };
+    }
+    if (normalized.includes("activity")) {
+      return {
+        title: emptyMessage,
+        description: "Add your first activity to keep the timeline moving.",
+      };
+    }
+    if (normalized.includes("invoice") || normalized.includes("bill")) {
+      return {
+        title: emptyMessage,
+        description: "Create your first record to begin tracking here.",
+      };
+    }
+
+    return {
+      title: emptyMessage,
+      description: "Add a new record to get started.",
+    };
+  };
+
+  const emptyStateCopy = getEmptyStateCopy();
+
   return (
     <div className="w-full">
       {/* Toolbar */}
       {toolbar && (
         <div
-          className={`mb-4 ${selected.length > 0 ? "bg-gray-100 rounded-lg p-4" : ""}`}
+          className={`mb-3 md:mb-4 ${selected.length > 0 ? "bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-200 shadow-sm" : ""}`}
         >
           {selected.length > 0 && selection.enabled ? (
             <div className="flex items-center w-full justify-between">
@@ -243,53 +278,115 @@ const AdvancedTable = ({
               </button>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex flex-col md:flex-row md:flex-wrap gap-2 md:gap-3">
               {/* Search */}
-              {toolbar.search && (
-                <div className="flex-1">
+              {toolbar.search && !isMobile && (
+                <div className="flex-1 min-w-0">
                   <input
                     type="text"
                     placeholder={toolbar.searchPlaceholder || "Search..."}
                     value={toolbar.search.value}
                     onChange={(e) => toolbar.search.onChange(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm"
                   />
                 </div>
               )}
 
-              {/* Filters */}
-              {toolbar.filters && toolbar.filters.length > 0 && isMobile && (
-                <button
-                  type="button"
-                  onClick={() => setFiltersOpen((v) => !v)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
-                >
-                  <span>Filters</span>
-                  <svg
-                    className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
+              {isMobile && toolbar.search && toolbar.filters && toolbar.filters.length > 0 && (
+                <div className="flex items-center gap-2 w-full">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileToolbarMode("search");
+                      setMobileToolbarOpen((v) => !v);
+                    }}
+                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-2xl bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
+                    <span>Search</span>
+                    <svg
+                      className={`h-4 w-4 transition-transform ${mobileToolbarOpen && mobileToolbarMode === "search" ? "rotate-180" : ""}`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileToolbarMode("filters");
+                      setMobileToolbarOpen((v) => !v);
+                    }}
+                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-2xl bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
+                  >
+                    <span>Filters</span>
+                    <svg
+                      className={`h-4 w-4 transition-transform ${mobileToolbarOpen && mobileToolbarMode === "filters" ? "rotate-180" : ""}`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {toolbar.search && isMobile && mobileToolbarOpen && mobileToolbarMode === "search" && (
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-3xl border border-slate-200 bg-white p-2.5 shadow-xl shadow-slate-900/10">
+                  <input
+                    type="text"
+                    placeholder={toolbar.searchPlaceholder || "Search..."}
+                    value={toolbar.search.value}
+                    onChange={(e) => toolbar.search.onChange(e.target.value)}
+                    autoFocus
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm text-sm"
+                  />
+                </div>
+              )}
+
+              {toolbar.filters && toolbar.filters.length > 0 && isMobile && mobileToolbarOpen && mobileToolbarMode === "filters" && (
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-3xl border border-slate-200 bg-white p-2.5 shadow-xl shadow-slate-900/10">
+                  <div className="grid grid-cols-1 gap-2">
+                    {toolbar.filters.map((filter, index) => (
+                      <select
+                        key={index}
+                        value={filter.value}
+                        onChange={(e) => filter.onChange(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm text-sm"
+                      >
+                        {filter.options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {toolbar.filters &&
                 toolbar.filters.length > 0 &&
-                (!isMobile || filtersOpen) &&
+                !isMobile &&
                 toolbar.filters.map((filter, index) => (
                   <select
                     key={index}
                     value={filter.value}
                     onChange={(e) => filter.onChange(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                    className="w-full md:w-auto px-4 py-3 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm"
                   >
                     {filter.options.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -305,9 +402,9 @@ const AdvancedTable = ({
                   <button
                     key={index}
                     onClick={btn.onClick}
-                    className={`px-4 py-2 rounded-lg font-light whitespace-nowrap transition-colors ${
+                    className={`w-full md:w-auto px-4 py-3 rounded-2xl font-semibold whitespace-nowrap transition-colors shadow-sm ${
                       btn.className ||
-                      "bg-white border border-gray-300 text-black hover:bg-gray-50"
+                      "bg-white border border-slate-200 text-slate-900 hover:bg-slate-50"
                     }`}
                   >
                     {btn.label}
@@ -318,7 +415,7 @@ const AdvancedTable = ({
               {toolbar.onCreate && (
                 <button
                   onClick={toolbar.onCreate.onClick}
-                  className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors font-light whitespace-nowrap"
+                  className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-2xl hover:bg-slate-800 transition-colors font-semibold whitespace-nowrap shadow-sm text-sm"
                 >
                   + {toolbar.onCreate.label || "Add"}
                 </button>
@@ -332,9 +429,10 @@ const AdvancedTable = ({
       {isMobile ? (
         <div className="space-y-3">
           {visibleRows.length === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <p className="text-black">{emptyMessage}</p>
-            </div>
+            <EmptyTableState
+              title={emptyStateCopy.title}
+              description={emptyStateCopy.description}
+            />
           ) : (
             visibleRows.map((row) =>
               renderCard ? (
@@ -342,33 +440,82 @@ const AdvancedTable = ({
               ) : (
                 <div
                   key={getRowId(row)}
-                  className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+                  className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
                 >
-                  <div className="space-y-1.5">
-                    {columns.map((col) => (
-                      <div key={col.id} className="text-base">
-                        <span className="font-light text-black">
-                          {col.label}:{" "}
+                  {/* Header: avatar + highlighted name + meta */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex items-center gap-3">
+                      <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-lg font-bold text-slate-900 truncate">
+                          {columns[0]
+                            ? columns[0].render
+                              ? columns[0].render(row)
+                              : row[columns[0].id]
+                            : ""}
+                        </div>
+                        {columns[1] && (
+                          <div className="text-sm text-slate-500 mt-1 truncate">
+                            {columns[1].render ? columns[1].render(row) : row[columns[1].id]}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      {/* Priority badge */}
+                      {row.priority && (
+                          <span
+                            className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                              row.priority === "High"
+                                ? "bg-red-100 text-red-700"
+                                : row.priority === "Medium"
+                                ? "bg-amber-100 text-amber-700"
+                                : "bg-green-100 text-green-700"
+                            }`}
+                          >
+                            {row.priority}
+                          </span>
+                        )}
+
+                      {/* Status badge */}
+                      {row.status && (
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-800">
+                          {row.status}
                         </span>
-                        <span className="text-black">
-                          {col.render ? col.render(row) : row[col.id]}
-                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Details grid */}
+                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
+                    {columns.slice(2).map((col) => (
+                      <div key={col.id} className="min-w-0">
+                        <div className="text-xs text-slate-500">{col.label}</div>
+                        <div className="truncate mt-0.5">
+                          {col.render ? col.render(row) : String(row[col.id] ?? "-")}
+                        </div>
                       </div>
                     ))}
                   </div>
-                  {actions.length > 0 && (
-                    <div className="flex justify-end gap-2 border-t border-gray-100 pt-2 mt-2">
+
+                    {actions.length > 0 && (
+                    <div className="flex justify-end gap-2 border-t border-slate-100 pt-3 mt-3">
                       {actions.map((action, idx) => {
-                        if (action.condition && !action.condition(row))
-                          return null;
-                        return (
+                        if (action.condition && !action.condition(row)) return null;
+                            return (
                           <button
                             key={idx}
                             onClick={(e) => {
                               e.stopPropagation();
                               action.onClick(row);
                             }}
-                            className={`p-1.5 rounded-lg transition-colors ${action.color || "text-black hover:bg-gray-100"}`}
+                            className={`p-2 rounded-lg transition-colors ${action.color || "text-slate-900 hover:bg-slate-100"}`}
                             title={action.label}
                           >
                             {action.icon}
@@ -384,7 +531,7 @@ const AdvancedTable = ({
         </div>
       ) : (
         /* Desktop View - Table */
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden relative min-h-[200px]">
+        <div className="table-frame relative min-h-[200px]">
           {/* Loading Overlay */}
           {loading && (
             <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
@@ -398,7 +545,7 @@ const AdvancedTable = ({
           )}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
                   {selection.enabled && (
                       <th className="px-4 py-2.5 w-10">
@@ -416,7 +563,7 @@ const AdvancedTable = ({
                   {columns.map((column) => (
                     <th
                       key={column.id}
-                      className={`px-4 py-2.5 text-left text-base font-light text-black uppercase tracking-wider ${column.sortable !== false ? "cursor-pointer hover:text-black" : ""} ${column.width || ""}`}
+                      className={`px-4 py-3 text-left text-sm font-semibold text-slate-700 uppercase tracking-[0.16em] ${column.sortable !== false ? "cursor-pointer hover:text-slate-950" : ""} ${column.width || ""}`}
                       onClick={() =>
                         column.sortable !== false &&
                         handleRequestSort(column.id)
@@ -434,7 +581,7 @@ const AdvancedTable = ({
                     </th>
                   ))}
                   {actions.length > 0 && (
-                    <th className="px-4 py-2.5 text-right text-base font-light text-black uppercase tracking-wider">
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-700 uppercase tracking-[0.16em]">
                       Actions
                     </th>
                   )}
@@ -449,9 +596,12 @@ const AdvancedTable = ({
                         (selection.enabled ? 1 : 0) +
                         (actions.length > 0 ? 1 : 0)
                       }
-                      className="px-4 py-8 text-center"
+                      className="px-4 py-10 text-center"
                     >
-                      <p className="text-black">{emptyMessage}</p>
+                      <EmptyTableState
+                        title={emptyStateCopy.title}
+                        description={emptyStateCopy.description}
+                      />
                     </td>
                   </tr>
                 ) : (
@@ -462,7 +612,7 @@ const AdvancedTable = ({
                       <tr
                         key={rowId}
                         onClick={() => (onRowClick ? onRowClick(row) : selection.enabled && handleClick(rowId))}
-                        className={`hover:bg-gray-50 ${selection.enabled ? "cursor-pointer" : ""} transition-colors ${isSelected ? "bg-gray-100" : ""}`}
+                        className={`hover:bg-slate-50 ${selection.enabled ? "cursor-pointer" : ""} transition-colors ${isSelected ? "bg-slate-100" : ""}`}
                       >
                         {selection.enabled && (
                           <td className="px-4 py-2">
@@ -481,7 +631,7 @@ const AdvancedTable = ({
                         {columns.map((column) => (
                           <td
                             key={column.id}
-                            className={`px-4 py-2 text-base ${column.className || "text-black"}`}
+                            className={`px-4 py-3 text-sm ${column.className || "text-slate-900"}`}
                           >
                             {column.render
                               ? column.render(row)
@@ -489,7 +639,7 @@ const AdvancedTable = ({
                           </td>
                         ))}
                         {actions.length > 0 && (
-                          <td className="px-4 py-2 text-right">
+                          <td className="px-4 py-3 text-right">
                             <div className="flex justify-end gap-2">
                               {actions.map((action, idx) => {
                                 if (action.condition && !action.condition(row))
@@ -501,7 +651,7 @@ const AdvancedTable = ({
                                       e.stopPropagation();
                                       action.onClick(row);
                                     }}
-                                    className={`p-1.5 rounded-lg transition-colors ${action.color || "text-black hover:bg-gray-100"}`}
+                                    className={`p-2 rounded-xl transition-colors ${action.color || "text-slate-900 hover:bg-slate-100"}`}
                                     title={action.label}
                                   >
                                     {action.icon}

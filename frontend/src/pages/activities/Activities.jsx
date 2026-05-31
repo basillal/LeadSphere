@@ -535,8 +535,8 @@ const Activities = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
+        <h1 className="text-lg sm:text-base font-medium text-black">
           {view === "list"
             ? "Activities"
             : view === "create"
@@ -589,15 +589,15 @@ const Activities = () => {
 
             {/* Tabs */}
             <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-              <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-2xl w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
+                    className={`px-4 py-2.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                       activeTab === tab.id
-                        ? "bg-white text-black shadow-sm"
-                        : "text-black hover:text-black"
+                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                        : "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
                     {tab.label}

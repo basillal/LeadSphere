@@ -250,15 +250,15 @@ const FollowUps = () => {
 
       {/* Tabs */}
       <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-2xl w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-4 py-2.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                 activeTab === tab.id
-                  ? "bg-white text-black shadow-sm"
-                  : "text-black hover:text-black"
+                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                  : "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               {tab.label}
@@ -280,13 +280,13 @@ const FollowUps = () => {
             placeholder="Search by lead name or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent bg-gray-50 text-base"
           />
         </div>
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
-          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
+          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-black hover:bg-gray-100 transition-colors text-base font-light inline-flex items-center justify-between"
         >
           <span>Filters</span>
           <svg

@@ -21,8 +21,11 @@ import ChangePasswordModal from "../auth/ChangePasswordModal";
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: "#000000", // Keep it black as requested
-  color: "#ffffff",
+  backgroundColor: "rgba(255,255,255,0.86)",
+  color: "#0f172a",
+  backdropFilter: "blur(18px)",
+  boxShadow: "0 12px 40px -28px rgba(15, 23, 42, 0.45)",
+  borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
 }));
 
 const Header = ({ handleDrawerToggle }) => {
@@ -108,22 +111,28 @@ const Header = ({ handleDrawerToggle }) => {
     <>
       <Box sx={{ flexGrow: 1 }} className="no-print">
         <AppBar position="fixed">
-          <Toolbar sx={{ minHeight: "30px !important", px: { xs: 0.5, sm: 1 } }}>
+          <Toolbar sx={{ minHeight: "56px !important", px: { xs: 1, sm: 1.5 } }}>
             <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2.25,
+                ml:1.10,
+                bgcolor: "rgba(15, 23, 42, 0.05)",
+                width: 42,
+                height: 42,
+              }}
             >
-              <MenuIcon sx={{ fontSize: 16 }} />
+              <MenuIcon sx={{ fontSize: 22 }} />
             </IconButton>
             <Typography
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: "block", mr: 1, fontSize: "1.4rem" }}
+              sx={{ display: "block", mr: 1, fontSize: "1.15rem", fontWeight: 800, letterSpacing: "-0.03em" }}
             >
               LeadSphere
             </Typography>
@@ -137,18 +146,20 @@ const Header = ({ handleDrawerToggle }) => {
                     onChange={(e) => selectOrganization(e.target.value)}
                     displayEmpty
                     sx={{
-                      color: "white",
+                      color: "#0f172a",
+                      bgcolor: "rgba(255,255,255,0.9)",
+                      borderRadius: 999,
                       ".MuiOutlinedInput-notchedOutline": {
-                        borderColor: "rgba(255, 255, 255, 0.3)",
+                        borderColor: "rgba(148, 163, 184, 0.24)",
                       },
                       "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "rgba(255, 255, 255, 0.7)",
+                        borderColor: "rgba(15, 23, 42, 0.28)",
                       },
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
+                        borderColor: "#0f172a",
                       },
                       ".MuiSvgIcon-root": {
-                        color: "white",
+                        color: "#0f172a",
                       },
                     }}
                     MenuProps={{
@@ -180,11 +191,11 @@ const Header = ({ handleDrawerToggle }) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
                 variant="body2"
-                sx={{ mr: 2, display: { xs: "none", sm: "block" }, fontSize: "1.1rem" }}
+                sx={{ mr: 1.5, display: { xs: "none", sm: "block" }, fontSize: "0.95rem", color: "#0f172a" }}
               >
                 {user?.name}
                 <span
-                  style={{ opacity: 0.7, marginLeft: "5px", fontSize: "0.9rem" }}
+                  style={{ opacity: 0.65, marginLeft: "5px", fontSize: "0.85rem" }}
                 >
                   ({user?.role?.roleName})
                 </span>

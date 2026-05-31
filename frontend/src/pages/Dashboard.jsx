@@ -153,13 +153,13 @@ const Dashboard = () => {
     (data.counts.revenue || 0) - (data.counts.totalExpenses || 0);
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-2">
+    <div className="p-0 md:p-0 w-full max-w-7xl mx-auto">
+      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-base font-light text-black">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900">
             Welcome back, {user?.name?.split(" ")[0]}! 👋
           </h1>
-          <p className="text-black text-base mt-1">
+          <p className="text-slate-600 text-sm md:text-base mt-1">
             Here's what's happening in your business today.
           </p>
         </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
       </div>
 
       {/* Hero Stats Grid - Primary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
         <HeroCard
           title="Total Revenue"
           value={formatCurrency(data.counts.revenue)}
@@ -195,7 +195,7 @@ const Dashboard = () => {
       </div>
 
       {/* Net Profit Section - Full Width Compact Design */}
-      <div className="mb-8 w-full bg-white border border-gray-200 shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
+      <div className="mb-6 w-full bg-white border border-slate-200 shadow-sm p-4 md:p-5 rounded-[28px] relative overflow-hidden transition-all hover:shadow-md">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           <div className="flex items-center gap-2">
             <div
@@ -245,7 +245,7 @@ const Dashboard = () => {
       </div>
 
       {/* Secondary Stats Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3 mb-6">
         <CompactStat
           title="Total Leads"
           value={data.counts.leads}
@@ -287,7 +287,7 @@ const Dashboard = () => {
       {/* Advanced Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Financial Overview - Combined Chart */}
-        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96">
+        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96 flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-light text-black">
               Financial Overview
@@ -302,83 +302,101 @@ const Dashboard = () => {
               <option value="yearly">Yearly</option>
             </select>
           </div>
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data.charts.financialTrend || []}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis
-                dataKey="_id"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 10 }}
-                tickFormatter={(value) => {
-                  if (revenueInterval === "yearly") return value;
-                  const date = new Date(value);
-                  if (revenueInterval === "daily") {
+          <div className="flex-1 min-h-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart
+                data={data.charts.financialTrend || []}
+                margin={{ top: 10, right: 12, left: 0, bottom: 18 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="_id"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={(value) => {
+                    if (revenueInterval === "yearly") return value;
+                    const date = new Date(value);
+                    if (revenueInterval === "daily") {
+                      return date.toLocaleDateString("default", {
+                        day: "numeric",
+                        month: "short",
+                      });
+                    }
+                    return date.toLocaleDateString("default", {
+                      month: "short",
+                      year: "2-digit",
+                    });
+                  }}
+                  interval={revenueInterval === "daily" ? 2 : 0}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) =>
+                    new Intl.NumberFormat("en-IN", {
+                      notation: "compact",
+                      compactDisplay: "short",
+                    }).format(value)
+                  }
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value)}
+                  labelFormatter={(value) => {
+                    const date = new Date(value);
+                    if (revenueInterval === "yearly") return value;
                     return date.toLocaleDateString("default", {
                       day: "numeric",
-                      month: "short",
+                      month: "long",
+                      year: "numeric",
                     });
-                  }
-                  return date.toLocaleDateString("default", {
-                    month: "short",
-                    year: "2-digit",
-                  });
-                }}
-                interval={revenueInterval === "daily" ? 2 : 0}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) =>
-                  new Intl.NumberFormat("en-IN", {
-                    notation: "compact",
-                    compactDisplay: "short",
-                  }).format(value)
-                }
-              />
-              <Tooltip
-                formatter={(value) => formatCurrency(value)}
-                labelFormatter={(value) => {
-                  const date = new Date(value);
-                  if (revenueInterval === "yearly") return value;
-                  return date.toLocaleDateString("default", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  });
-                }}
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "none",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                }}
-              />
-              <Legend iconType="circle" />
-              <Bar
-                dataKey="totalRevenue"
-                name="Revenue"
-                fill="#10B981"
-                radius={[4, 4, 0, 0]}
-                barSize={20}
-              />
-              <Bar
-                dataKey="totalExpenses"
-                name="Expenses"
-                fill="#EF4444"
-                radius={[4, 4, 0, 0]}
-                barSize={20}
-              />
-              <Line
-                type="monotone"
-                dataKey="totalPending"
-                name="Pending"
-                stroke="#EAB308"
-                strokeWidth={3}
-                dot={{ r: 4, fill: "#EAB308" }}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+                  }}
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "none",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
+                />
+                <Bar
+                  dataKey="totalRevenue"
+                  name="Revenue"
+                  fill="#10B981"
+                  radius={[4, 4, 0, 0]}
+                  barSize={20}
+                />
+                <Bar
+                  dataKey="totalExpenses"
+                  name="Expenses"
+                  fill="#EF4444"
+                  radius={[4, 4, 0, 0]}
+                  barSize={20}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="totalPending"
+                  name="Pending"
+                  stroke="#EAB308"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: "#EAB308" }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm">
+            <span className="flex items-center gap-1.5 text-rose-500">
+              <span className="h-3 w-3 rounded-full bg-rose-500" />
+              Expenses
+            </span>
+            <span className="flex items-center gap-1.5 text-amber-500">
+              <span className="h-3 w-3 rounded-full bg-amber-500" />
+              Pending
+            </span>
+            <span className="flex items-center gap-1.5 text-emerald-500">
+              <span className="h-3 w-3 rounded-full bg-emerald-500" />
+              Revenue
+            </span>
+          </div>
         </div>
       </div>
 
@@ -410,7 +428,7 @@ const Dashboard = () => {
                 ))}
               </Pie>
               <Tooltip />
-              <Legend verticalAlign="bottom" height={36} />
+              <Legend verticalAlign="bottom" height={48} wrapperStyle={{ paddingTop: 12 }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -420,8 +438,8 @@ const Dashboard = () => {
           <h3 className="text-base font-light text-black mb-4">
             Top Performing Services
           </h3>
-          <ResponsiveContainer width="100%" height="100%">
-            {data.charts.topServices && data.charts.topServices.length > 0 ? (
+          {data.charts.topServices && data.charts.topServices.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={data.charts.topServices}
                 layout="vertical"
@@ -452,12 +470,12 @@ const Dashboard = () => {
                   barSize={20}
                 />
               </BarChart>
-            ) : (
-              <div className="flex justify-center items-center h-full text-black">
-                No data available
-              </div>
-            )}
-          </ResponsiveContainer>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex justify-center items-center h-40 text-black">
+              No data available
+            </div>
+          )}
         </div>
       </div>
 
