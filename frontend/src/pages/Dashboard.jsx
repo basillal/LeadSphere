@@ -153,13 +153,13 @@ const Dashboard = () => {
     (data.counts.revenue || 0) - (data.counts.totalExpenses || 0);
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-7xl mx-auto">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-2">
+    <div className="p-0 md:p-0 w-full max-w-7xl mx-auto">
+      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-base font-light text-black">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900">
             Welcome back, {user?.name?.split(" ")[0]}! 👋
           </h1>
-          <p className="text-black text-base mt-1">
+          <p className="text-slate-600 text-sm md:text-base mt-1">
             Here's what's happening in your business today.
           </p>
         </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
       </div>
 
       {/* Hero Stats Grid - Primary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
         <HeroCard
           title="Total Revenue"
           value={formatCurrency(data.counts.revenue)}
@@ -195,7 +195,7 @@ const Dashboard = () => {
       </div>
 
       {/* Net Profit Section - Full Width Compact Design */}
-      <div className="mb-8 w-full bg-white border border-gray-200 shadow-sm p-4 rounded-xl relative overflow-hidden transition-all hover:shadow-md">
+      <div className="mb-6 w-full bg-white border border-slate-200 shadow-sm p-4 md:p-5 rounded-[28px] relative overflow-hidden transition-all hover:shadow-md">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
           <div className="flex items-center gap-2">
             <div
@@ -245,7 +245,7 @@ const Dashboard = () => {
       </div>
 
       {/* Secondary Stats Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3 mb-6">
         <CompactStat
           title="Total Leads"
           value={data.counts.leads}

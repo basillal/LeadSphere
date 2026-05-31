@@ -49,6 +49,7 @@ const MainLayout = () => {
         height: "100dvh",
         overflow: "hidden",
       }}
+      className="app-shell"
     >
       <CssBaseline />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
@@ -60,9 +61,13 @@ const MainLayout = () => {
         />
       )}
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-16 md:pt-20 px-3 sm:px-4 md:px-6 pb-6">
-        <Breadcrumbs />
-        <Outlet />
+      <main className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-20 md:pt-24 px-3 sm:px-4 md:px-6 pb-6">
+        <div className="page-shell space-y-4">
+          <Breadcrumbs />
+          <div className="page-card p-3 sm:p-4 md:p-6 lg:p-8">
+            <Outlet />
+          </div>
+        </div>
       </main>
     </Box>
   );

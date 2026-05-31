@@ -50,16 +50,16 @@ const Breadcrumbs = () => {
   const homeAllowed = checkAccess("/");
 
   return (
-    <div className="mb-4 flex items-center text-base text-black print:hidden">
+    <div className="mb-4 flex items-center gap-2 text-sm sm:text-base text-slate-600 print:hidden flex-wrap">
       {homeAllowed ? (
         <Link
           to="/"
-          className="hover:text-black hover:underline transition-colors"
+          className="chip-soft hover:bg-white transition-colors"
         >
           Home
         </Link>
       ) : (
-        <span className="text-black">Home</span>
+        <span className="chip-soft">Home</span>
       )}
 
       {pathnames.map((value, index) => {
@@ -82,15 +82,15 @@ const Breadcrumbs = () => {
 
         return (
           <div key={to} className="flex items-center">
-            <span className="mx-2 text-black">/</span>
+            <span className="mx-1 text-slate-400">/</span>
             {!isClickable ? (
-              <span className="text-black font-light">
+              <span className="text-slate-900 font-semibold">
                 {getBreadcrumbName(value)}
               </span>
             ) : (
               <Link
                 to={to}
-                className="hover:text-black hover:underline transition-colors"
+                className="hover:text-slate-900 transition-colors"
               >
                 {getBreadcrumbName(value)}
               </Link>
