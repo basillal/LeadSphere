@@ -30,7 +30,7 @@ const FollowUpList = ({
       Missed: "bg-red-100 text-red-800",
       Rescheduled: "bg-yellow-100 text-yellow-800",
     };
-    return colors[status] || "bg-gray-100 text-black";
+    return colors[status] || "bg-slate-100 text-black";
   };
 
   // Define columns
@@ -42,7 +42,7 @@ const FollowUpList = ({
       render: (row) => (
         <div className="flex flex-col gap-1">
           <span
-            className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(row.status)}`}
+            className={`px-2 py-1 rounded-full text-base font-medium ${getStatusColor(row.status)}`}
           >
             {row.status}
           </span>
@@ -72,19 +72,19 @@ const FollowUpList = ({
       label: "Lead",
       render: (row) => (
         <div>
-          <div className="font-light text-black text-base uppercase">
+          <div className="font-medium text-black text-base uppercase">
             {row.lead?.name || "Unknown"}
           </div>
           <div className="text-base text-black">
             {row.lead?.organizationName && (
-              <span className="font-light text-black block md:inline md:mr-1">
+              <span className="font-medium text-black block md:inline md:mr-1">
                 {row.lead.organizationName}
               </span>
             )}
             <span className="block md:inline">{row.lead?.phone || ""}</span>
             {row.lead?.category && (
               <span 
-                className="ml-2 text-base font-light text-black uppercase tracking-wider"
+                className="ml-2 text-sm font-medium text-slate-800 uppercase tracking-wider"
               >
                 {typeof row.lead.category === 'object' ? row.lead.category.name : ''}
               </span>
@@ -131,7 +131,7 @@ const FollowUpList = ({
       id: "assignedTo",
       label: "Assigned to",
       render: (row) => (
-        <span className="text-base text-blue-600 font-light">
+        <span className="text-base text-blue-600 font-medium">
           {row.assignedTo?.name || "System"}
         </span>
       ),
@@ -184,7 +184,7 @@ const FollowUpList = ({
 
   // Custom mobile card render
   const renderCard = (row, actions) => (
-    <div className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
+    <div className="bg-white p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
@@ -225,7 +225,7 @@ const FollowUpList = ({
         </div>
       </div>
 
-      {row.notes && <div className="bg-gray-50 p-2 rounded mt-3 text-sm text-slate-700">{row.notes}</div>}
+      {row.notes && <div className="bg-slate-50 p-2 rounded mt-3 text-sm text-slate-700">{row.notes}</div>}
 
       <div className="mt-3 flex flex-col sm:flex-row sm:justify-end gap-2">
         {row.status === "Pending" && (

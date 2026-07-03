@@ -53,7 +53,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Action",
             width: "w-1/4",
             render: (row) => (
-                <span className="font-light text-black">{row.action}</span>
+                <span className="font-medium text-black">{row.action}</span>
             ),
         },
         {
@@ -105,7 +105,7 @@ const UserLogs = ({ user, onBack }) => {
         <div className="w-full">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-base font-light text-black">
+                    <h2 className="text-sm font-medium text-slate-800">
                         Activity Logs: {user?.name}
                     </h2>
                     <p className="text-base text-black">{user?.email}</p>
@@ -138,28 +138,28 @@ const UserLogs = ({ user, onBack }) => {
             >
                 {selectedLog && (
                     <div className="space-y-4">
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 grid grid-cols-2 gap-4">
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-2 gap-4">
                             <div>
-                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Date & Time</h4>
-                                <p className="text-base font-light text-black">{new Date(selectedLog.createdAt).toLocaleString()}</p>
+                                <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Date & Time</h4>
+                                <p className="text-sm font-medium text-slate-800">{new Date(selectedLog.createdAt).toLocaleString()}</p>
                             </div>
                             <div>
-                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Entity</h4>
-                                <p className="text-base font-light text-black">{selectedLog.entity || "-"}</p>
+                                <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Entity</h4>
+                                <p className="text-sm font-medium text-slate-800">{selectedLog.entity || "-"}</p>
                             </div>
                             <div>
-                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Action</h4>
-                                <p className="text-base font-light text-black">{selectedLog.action}</p>
+                                <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Action</h4>
+                                <p className="text-sm font-medium text-slate-800">{selectedLog.action}</p>
                             </div>
                             <div>
-                                <h4 className="text-base font-light text-black uppercase tracking-wider mb-1">Performed By</h4>
-                                <p className="text-base font-light text-black">{user?.name || "-"}</p>
+                                <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Performed By</h4>
+                                <p className="text-sm font-medium text-slate-800">{user?.name || "-"}</p>
                             </div>
                         </div>
 
                         <div>
-                            <h4 className="text-base font-light text-black mb-2">Full Details</h4>
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h4 className="text-sm font-medium text-slate-800 mb-2">Full Details</h4>
+                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                                 <pre className="text-base text-black whitespace-pre-wrap font-sans break-words">
                                     {selectedLog.details || "-"}
                                 </pre>

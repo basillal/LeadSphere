@@ -38,7 +38,7 @@ const CustomRenderExample = () => {
           className={`px-2 py-1 rounded-full text-base ${
             row.status === "Active"
               ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-black"
+              : "bg-slate-100 text-black"
           }`}
         >
           {row.status}
@@ -124,7 +124,7 @@ const SelectionExample = () => {
 const MobileCardExample = () => {
   const renderCard = (row, actions) => (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-3">
-      <h3 className="font-light">{row.name}</h3>
+      <h3 className="font-medium">{row.name}</h3>
       <p className="text-base text-black">{row.email}</p>
       <div className="flex gap-2 mt-2">
         {actions.map((action, idx) => (
@@ -160,7 +160,7 @@ const LeadsTableExample = ({
       label: "Name",
       render: (row) => (
         <div>
-          <div className="font-light text-black">{row.name}</div>
+          <div className="font-medium text-black">{row.name}</div>
           <div className="text-base text-black">{row.email}</div>
         </div>
       ),
@@ -173,7 +173,7 @@ const LeadsTableExample = ({
       label: "Status",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(row.status)}`}
+          className={`px-2 py-1 rounded-full text-base font-medium ${getStatusColor(row.status)}`}
         >
           {row.status}
         </span>

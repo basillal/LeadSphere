@@ -2,11 +2,11 @@ import React from "react";
 
 const ContactStats = ({ stats, mobileMode = false }) => {
   const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
+    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
       <div className="flex items-center gap-1.5 sm:gap-2">
         <div className={`${iconBg} ${iconColor} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>{icon}</div>
         <div className="flex-1 min-w-0">
-          <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5 truncate">{title}</p>
+          <p className="text-[9px] sm:text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-0.5 truncate">{title}</p>
           <p className="text-xs sm:text-sm font-semibold text-black leading-tight">{value}</p>
         </div>
       </div>

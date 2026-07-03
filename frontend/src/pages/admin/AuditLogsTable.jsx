@@ -44,29 +44,29 @@ const AuditLogsTable = ({ rows }) => {
     <TableContainer
       component={Paper}
       elevation={0}
-      className="border border-gray-200 rounded-lg"
+      className="border border-slate-200 rounded-lg"
     >
       <Table
         sx={{ minWidth: 650 }}
         aria-label="audit logs table"
         size="small"
       >
-        <TableHead className="bg-gray-50">
+        <TableHead className="bg-slate-50">
           <TableRow>
-            <TableCell className="font-light text-black">
+            <TableCell className="font-medium text-black">
               Date/Time
             </TableCell>
-            <TableCell className="font-light text-black">User</TableCell>
-            <TableCell className="font-light text-black">
+            <TableCell className="font-medium text-black">User</TableCell>
+            <TableCell className="font-medium text-black">
               Action
             </TableCell>
-            <TableCell className="font-light text-black">
+            <TableCell className="font-medium text-black">
               Entity
             </TableCell>
-            <TableCell className="font-light text-black">
+            <TableCell className="font-medium text-black">
               Organization
             </TableCell>
-            <TableCell className="font-light text-black">Details</TableCell>
+            <TableCell className="font-medium text-black">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,11 +75,11 @@ const AuditLogsTable = ({ rows }) => {
               <TableRow
                 key={row._id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                className="hover:bg-gray-50 transition-colors"
+                className="hover:bg-slate-50 transition-colors"
               >
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="text-base font-light">
+                    <span className="text-base font-medium">
                       {new Date(row.createdAt).toLocaleDateString()}
                     </span>
                     <span className="text-base text-black">
@@ -89,7 +89,7 @@ const AuditLogsTable = ({ rows }) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="text-base font-light">
+                    <span className="text-base font-medium">
                       {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
                     </span>
                     <span className="text-base text-black">
@@ -103,7 +103,7 @@ const AuditLogsTable = ({ rows }) => {
                     color={getActionColor(row.action)}
                     size="small"
                     variant="outlined"
-                    className="font-light"
+                    className="font-medium"
                   />
                 </TableCell>
                 <TableCell>{row.entity}</TableCell>

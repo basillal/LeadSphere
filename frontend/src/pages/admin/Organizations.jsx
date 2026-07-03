@@ -136,7 +136,7 @@ const Organizations = () => {
       label: "Owner",
       render: (row) => (
         <div>
-          <div className="font-light text-black uppercase">
+          <div className="font-medium text-black uppercase">
             {row.owner?.name || "-"}
           </div>
           <div className="text-base text-black">{row.owner?.email || "-"}</div>
@@ -152,7 +152,7 @@ const Organizations = () => {
             e.stopPropagation();
             handleStatusToggle(row);
           }}
-          className={`px-2 py-1 rounded-full text-base font-light cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
+          className={`px-2 py-1 rounded-full text-base font-medium cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
           title="Click to toggle status"
         >
           {row.isActive ? "Active" : "Inactive"}
@@ -235,7 +235,7 @@ const Organizations = () => {
             {/* Left Column */}
             <div className="space-y-4">
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Organization name *
                 </label>
                 <input
@@ -250,7 +250,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Plan
                 </label>
                 <select
@@ -268,7 +268,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Status
                 </label>
                 <select
@@ -287,7 +287,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Description
                 </label>
                 <textarea
@@ -301,7 +301,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Logo (URL)
                 </label>
                 <input
@@ -318,13 +318,13 @@ const Organizations = () => {
 
             {/* Right Column */}
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black border-b pb-1">
+              <h3 className="text-sm font-medium text-slate-800 border-b pb-1">
                 Contact & Address
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Organization email
                   </label>
                   <input
@@ -337,7 +337,7 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Phone
                   </label>
                   <input
@@ -352,7 +352,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Website
                 </label>
                 <input
@@ -366,7 +366,7 @@ const Organizations = () => {
               </div>
 
               <div>
-                <label className="block text-base font-light text-black">
+                <label className="block text-sm font-medium text-slate-800">
                   Street address
                 </label>
                 <input
@@ -384,7 +384,7 @@ const Organizations = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     City
                   </label>
                   <input
@@ -400,7 +400,7 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     State
                   </label>
                   <input
@@ -419,7 +419,7 @@ const Organizations = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Zip code
                   </label>
                   <input
@@ -438,7 +438,7 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Country
                   </label>
                   <input
@@ -462,12 +462,12 @@ const Organizations = () => {
 
           {!currentOrganization && (
             <div className="border-t pt-4">
-              <h3 className="text-base font-light text-black mb-3">
+              <h3 className="text-sm font-medium text-slate-800 mb-3">
                 Owner Account
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Owner name *
                   </label>
                   <input
@@ -481,7 +481,7 @@ const Organizations = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black">
+                  <label className="block text-sm font-medium text-slate-800">
                     Owner email *
                   </label>
                   <input
@@ -502,13 +502,13 @@ const Organizations = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-base font-light text-black hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-slate-800 hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-light text-white bg-black hover:bg-gray-800"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-slate-800"
             >
               Save
             </button>
@@ -525,7 +525,7 @@ const Organizations = () => {
       >
         <div className="space-y-4">
           <div className="p-4 bg-red-50 text-red-800 rounded-md">
-            <p className="text-base font-light">
+            <p className="text-base font-medium">
               Warning: This action is irreversible!
             </p>
             <p className="text-base mt-1">
@@ -536,11 +536,11 @@ const Organizations = () => {
           </div>
 
           <div>
-            <label className="block text-base font-light text-black mb-1">
+            <label className="block text-sm font-medium text-slate-800 mb-1">
               To confirm, type the code below:
             </label>
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-block px-3 py-1 bg-gray-200 text-black font-mono font-light tracking-widest rounded border select-none">
+              <span className="inline-block px-3 py-1 bg-gray-200 text-black font-mono font-medium tracking-widest rounded border select-none">
                 {captchaCode}
               </span>
               <button
@@ -568,7 +568,7 @@ const Organizations = () => {
             <button
               type="button"
               onClick={() => setDeleteModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-base font-light text-black hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-slate-800 hover:bg-slate-50"
             >
               Cancel
             </button>
@@ -576,7 +576,7 @@ const Organizations = () => {
               type="button"
               onClick={handleDeleteConfirm}
               disabled={captchaInput !== captchaCode}
-              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-light text-white 
+              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white 
                       ${captchaInput === captchaCode ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-not-allowed"}`}
             >
               Delete Organization

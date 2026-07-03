@@ -77,7 +77,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   return (
     <aside
       className={`
-                fixed top-0 left-0 md:relative z-40 h-[100dvh] md:h-screen bg-white/95 backdrop-blur-xl border-r border-gray-200 shadow-2xl md:shadow-none transition-all duration-300 ease-in-out
+                fixed top-0 left-0 md:relative z-40 h-[100dvh] md:h-screen bg-white/95 backdrop-blur-xl shadow-sm md:shadow-none transition-all duration-300 ease-in-out
                 ${translateClass}
                 ${widthClass}
                 flex flex-col
@@ -85,14 +85,14 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 no-print
             `}
     >
-      <div className="flex items-center justify-between border-b border-gray-200 px-4" style={{ height: '60px' }}>
+      <div className="flex items-center justify-between border-b border-slate-200 px-4" style={{ height: '60px' }}>
         <div className="md:hidden">
-          <div className="text-xs uppercase tracking-[0.28em] text-slate-500">Menu</div>
+          <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Menu</div>
           <div className="text-sm font-semibold text-slate-900">Navigate</div>
         </div>
         <button
           onClick={handleDrawerClose}
-          className="p-2 rounded-full hover:bg-gray-100 md:hidden"
+          className="p-2 rounded-md text-slate-500 hover:bg-slate-100 md:hidden transition-colors"
           aria-label="Close menu"
         >
           <ChevronLeftIcon />
@@ -114,11 +114,11 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                     }
                   }}
                   className={`
-                                        flex items-center px-4 py-3 mx-2 rounded-2xl transition-all min-h-[48px]
+                                        flex items-center px-3 py-2.5 mx-3 rounded-md transition-all min-h-[40px]
                                         ${
                                           isActive
-                                            ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
-                                            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                                            ? "bg-slate-100 text-slate-900 font-semibold shadow-sm"
+                                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium"
                                         }
                                         ${open ? "justify-start" : "justify-center"}
                                     `}
@@ -126,7 +126,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 >
                   <span className={`${open ? "mr-3" : ""} flex items-center justify-center`}>{item.icon}</span>
                   {open && (
-                    <span className="font-semibold text-sm md:text-base whitespace-nowrap truncate">
+                    <span className="text-sm whitespace-nowrap truncate">
                       {item.label}
                     </span>
                   )}

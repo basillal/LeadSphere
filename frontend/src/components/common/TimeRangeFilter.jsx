@@ -39,7 +39,7 @@ const TimeRangeFilter = ({ value, onChange, className = "" }) => {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`bg-white/90 border border-slate-200 text-slate-900 text-sm md:text-base rounded-2xl focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 block px-4 py-2.5 min-w-[150px] shadow-sm ${className}`}
+      className={`bg-white/90 border border-slate-200 text-slate-900 text-sm md:text-base rounded-md focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 block px-4 py-2.5 min-w-[150px] shadow-sm ${className}`}
     >
       <option value="last_30_days">Last 30 Days</option>
       <option value="today">Today</option>

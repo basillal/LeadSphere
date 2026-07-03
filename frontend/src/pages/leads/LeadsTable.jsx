@@ -34,7 +34,7 @@ const LeadsTable = ({
       case "Lost":
         return "bg-red-50 text-red-700 border border-red-200";
       default:
-        return "bg-gray-100 text-black";
+        return "bg-slate-100 text-black";
     }
   };
 
@@ -46,8 +46,8 @@ const LeadsTable = ({
       width: "w-1/5",
       render: (row) => (
         <div>
-          <div className="font-light text-black uppercase">{row.name}</div>
-          <span className="block text-base text-black">{row.email}</span>
+          <div className="text-sm font-medium text-slate-900">{row.name}</div>
+          <span className="block text-xs text-slate-500">{row.email}</span>
         </div>
       ),
     },
@@ -56,48 +56,48 @@ const LeadsTable = ({
       label: "Organization",
       width: "w-[15%]",
       render: (row) => (
-        <span className="capitalize">{row.organizationName || "-"}</span>
+        <span className="text-sm text-slate-900 capitalize">{row.organizationName || "-"}</span>
       ),
     },
     {
       id: "createdBy",
       label: "Created by",
       width: "w-[12%]",
-      render: (row) => row.createdBy?.name || "System",
+      render: (row) => <span className="text-sm text-slate-900">{row.createdBy?.name || "System"}</span>,
     },
     {
       id: "tenant",
       label: "Organization",
       width: "w-[12%]",
-      render: (row) => row.organization?.name || "-",
+      render: (row) => <span className="text-sm text-slate-900">{row.organization?.name || "-"}</span>,
     },
-    { id: "phone", label: "Phone", width: "w-[15%]" },
-    { id: "source", label: "Source", width: "w-[15%]" },
+    { id: "phone", label: "Phone", width: "w-[15%]", render: (row) => <span className="text-sm text-slate-900">{row.phone || "-"}</span> },
+    { id: "source", label: "Source", width: "w-[15%]", render: (row) => <span className="text-sm text-slate-900">{row.source || "-"}</span> },
     {
       id: "status",
       label: "Status",
       width: "w-[10%]",
       render: (row) => (
         <span
-          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(row.status, row.isConverted)}`}
+          className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(row.status, row.isConverted)}`}
         >
           {row.isConverted ? "Converted" : row.status}
         </span>
       ),
     },
-    { id: "priority", label: "Priority", width: "w-[10%]" },
+    { id: "priority", label: "Priority", width: "w-[10%]", render: (row) => <span className="text-sm text-slate-900">{row.priority || "-"}</span> },
     {
       id: "category",
       label: "Category",
       width: "w-[12%]",
       render: (row) => {
         if (!row.category || typeof row.category !== 'object') {
-          return <span className="text-black text-base">-</span>;
+          return <span className="text-slate-500 text-sm">-</span>;
         }
 
         return (
           <span 
-            className="text-base font-light text-black uppercase tracking-wider"
+            className="text-xs font-medium text-slate-600"
           >
             {row.category.name}
           </span>
@@ -132,7 +132,7 @@ const LeadsTable = ({
       ),
       label: "Preview",
       onClick: onPreview,
-      color: "text-black hover:bg-gray-200",
+      color: "text-slate-400 hover:text-slate-800 hover:bg-slate-100",
     },
 
     {
@@ -153,7 +153,7 @@ const LeadsTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-black hover:bg-gray-200",
+      color: "text-slate-400 hover:text-slate-800 hover:bg-slate-100",
     },
 
     {
@@ -174,7 +174,7 @@ const LeadsTable = ({
       ),
       label: "Delete",
       onClick: (row) => onDelete(row._id),
-      color: "text-red-600 hover:bg-red-100",
+      color: "text-slate-400 hover:text-red-600 hover:bg-red-50",
     },
   ];
 
@@ -239,31 +239,31 @@ const LeadsTable = ({
   // Custom mobile card render (standardized)
   const renderCard = (row, actions) => (
     <div
-      className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
+      className="bg-white p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
       onClick={() => onPreview && onPreview(row)}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-sky-50 text-sky-700 shrink-0">
+          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-100 text-slate-700 shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
             </svg>
           </div>
           <div className="min-w-0">
-            <div className="text-lg font-bold text-sky-700 truncate">{row.name}</div>
+            <div className="text-base font-semibold text-slate-900 truncate">{row.name}</div>
             <div className="text-sm text-slate-500 truncate">{row.category?.name || ""}</div>
           </div>
         </div>
 
         <div className="flex items-start gap-2">
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(row.status, row.isConverted)}`}>{row.isConverted ? "Converted" : row.status}</span>
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${getStatusColor(row.status, row.isConverted)}`}>{row.isConverted ? "Converted" : row.status}</span>
         </div>
       </div>
 
       {row.category && (
         <div className="mt-3">
-          <span className="text-sm font-light text-slate-700 uppercase tracking-wider">{row.category.name}</span>
+          <span className="text-xs font-medium text-slate-600">{row.category.name}</span>
         </div>
       )}
 
@@ -296,7 +296,7 @@ const LeadsTable = ({
                 e.stopPropagation();
                 action.onClick(row);
               }}
-              className={`p-2 rounded-lg transition-colors ${action.color}`}
+              className={`p-2 rounded-md transition-colors ${action.color}`}
               title={action.label}
             >
               {action.icon}

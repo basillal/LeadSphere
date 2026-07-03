@@ -130,34 +130,34 @@ const OrganizationProfile = () => {
   };
 
   if (loading && !formData.name) {
-    return <div className="h-full bg-gray-50" />;
+    return <div className="h-full bg-slate-50" />;
   }
 
   const ViewFieldSmall = ({ label, value }) => (
     <div className="mb-2">
-      <div className="text-base font-light text-black uppercase tracking-wider mb-0.5 leading-none">
+      <div className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-0.5 leading-none">
         {label}
       </div>
-      <div className="text-base font-light text-black truncate min-h-[1.25rem]">
+      <div className="text-sm font-medium text-slate-800 truncate min-h-[1.25rem]">
         {value || "-"}
       </div>
     </div>
   );
 
   const SectionTitle = ({ children }) => (
-    <h3 className="text-base font-light text-black uppercase tracking-wider border-b border-gray-200 pb-1 mb-3">
+    <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
       {children}
     </h3>
   );
 
   return (
-    <div className="md:h-[calc(100vh-4rem)] h-auto p-4 bg-gray-50 flex flex-col md:overflow-hidden overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
+    <div className="md:h-[calc(100vh-4rem)] h-auto p-4 bg-slate-50 flex flex-col md:overflow-hidden overflow-y-auto">
+      <div className="bg-white rounded-md shadow-sm border border-slate-200 flex flex-col md:h-full h-auto md:overflow-hidden overflow-visible">
         {/* Header */}
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 bg-gray-50/50">
+        <div className="px-6 py-4 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 bg-slate-50/50">
           <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="h-12 w-12 md:h-10 md:w-10 rounded-lg border border-gray-200 bg-white flex items-center justify-center p-1.5 shadow-sm shrink-0">
+            <div className="h-12 w-12 md:h-10 md:w-10 rounded-lg border border-slate-200 bg-white flex items-center justify-center p-1.5 shadow-sm shrink-0">
               {formData.settings.logo ? (
                 <img
                   src={formData.settings.logo}
@@ -169,16 +169,16 @@ const OrganizationProfile = () => {
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="text-base font-light text-black leading-tight truncate">
+              <h1 className="text-sm font-medium text-slate-800 leading-tight truncate">
                 {formData.name}
               </h1>
               <div className="flex flex-wrap gap-2 mt-1">
                 <span
-                  className={`text-base font-light px-1.5 py-0.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
+                  className={`text-base font-medium px-1.5 py-0.5 rounded uppercase tracking-wide border ${formData.isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"}`}
                 >
                   {formData.isActive ? "Active" : "Inactive"}
                 </span>
-                <span className="text-base font-light px-1.5 py-0.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
+                <span className="text-base font-medium px-1.5 py-0.5 rounded uppercase tracking-wide border text-purple-700 bg-purple-50 border-purple-200">
                   {formData.plan} Plan
                 </span>
               </div>
@@ -189,7 +189,7 @@ const OrganizationProfile = () => {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-all font-light text-base shadow-sm"
+                className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-50 transition-all font-medium text-base shadow-sm"
               >
                 <EditIcon fontSize="small" className="text-base" />
                 Edit Profile
@@ -199,7 +199,7 @@ const OrganizationProfile = () => {
                 <button
                   onClick={handleCancel}
                   disabled={saving}
-                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-all font-light text-base"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-50 transition-all font-medium text-base"
                 >
                   <CloseIcon fontSize="small" className="text-base" />
                   Cancel
@@ -207,7 +207,7 @@ const OrganizationProfile = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={saving}
-                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all shadow-md font-light text-base"
+                  className="flex-1 md:flex-none justify-center md:justify-start flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-all shadow-md font-medium text-base"
                 >
                   <SaveIcon fontSize="small" className="text-base" />
                   Save
@@ -372,10 +372,10 @@ const OrganizationProfile = () => {
                         value={formData.settings.logo}
                       />
                       <div className="mt-2">
-                        <div className="text-base font-light text-black uppercase tracking-wider mb-1 leading-none">
+                        <div className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1 leading-none">
                           Description
                         </div>
-                        <div className="text-base font-light text-black bg-gray-50 border border-gray-100 rounded-lg p-3 whitespace-pre-wrap min-h-[6rem]">
+                        <div className="text-sm font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-lg p-3 whitespace-pre-wrap min-h-[6rem]">
                           {formData.description || "No description provided."}
                         </div>
                       </div>

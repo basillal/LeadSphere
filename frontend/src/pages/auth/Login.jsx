@@ -42,15 +42,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden px-4">
       {/* Floating Background Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
       <div className="absolute top-[20%] right-[-10%] w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-2000"></div>
       <div className="absolute bottom-[-10%] left-[20%] w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-4000"></div>
 
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-lg p-8 md:p-10 rounded-3xl shadow-2xl border border-white/50 relative z-10 animate-fade-in-up">
+      <div className="max-w-md w-full bg-white/80 backdrop-blur-lg p-8 md:p-10 rounded-md shadow-md border border-white/50 relative z-10 animate-fade-in-up">
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+          <div className="mx-auto w-16 h-16 bg-slate-100 rounded-md flex items-center justify-center shadow-sm mb-4">
             <svg
               className="w-8 h-8 text-black"
               fill="none"
@@ -65,7 +65,7 @@ const Login = () => {
               ></path>
             </svg>
           </div>
-          <h2 className="text-base font-light text-black tracking-tight">
+          <h2 className="text-sm font-medium text-slate-800 tracking-tight">
             LeadSphere
           </h2>
           <p className="mt-2 text-base text-black">
@@ -74,7 +74,7 @@ const Login = () => {
         </div>
 
         {successMessage && (
-          <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-xl shadow-sm animate-fade-in">
+          <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm animate-fade-in">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
@@ -98,7 +98,7 @@ const Login = () => {
         )}
 
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm animate-fade-in">
+          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm animate-fade-in">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
@@ -133,7 +133,7 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-md leading-5 bg-slate-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="name@organization.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -151,7 +151,7 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
+                className="block w-full pl-10 pr-10 py-3 border border-slate-200 rounded-md leading-5 bg-slate-50/50 placeholder-gray-500 text-black focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-base transition-all duration-200 shadow-sm hover:bg-white"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -175,7 +175,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-light rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-gray-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Sign In
             </button>
@@ -184,10 +184,10 @@ const Login = () => {
           <div className="mt-6 text-center">
             <p className="text-base text-black">
               Don't have an account?{" "}
-              {/* <span className="font-light text-black">Contact Admin</span> */}
+              {/* <span className="font-medium text-black">Contact Admin</span> */}
               <Link
                 to="/register"
-                className="font-light text-indigo-600 hover:text-indigo-500"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Register as Organization Admin
               </Link>

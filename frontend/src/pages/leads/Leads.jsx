@@ -23,20 +23,20 @@ const PreviewModal = ({ lead, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-md shadow-md w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
           <div>
-            <h2 className="text-base font-light text-black">{lead.name}</h2>
-            <p className="text-base text-black">
+            <h2 className="text-base font-semibold text-slate-900">{lead.name}</h2>
+            <p className="text-sm font-medium text-slate-500">
               {lead.organizationName || "No Organization"}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
+            className="p-2 hover:bg-slate-200 rounded-full text-slate-900 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -58,20 +58,18 @@ const PreviewModal = ({ lead, onClose }) => {
         {/* Body */}
         <div className="p-6 space-y-6">
           {/* Status Sections */}
-          <div className="flex flex-wrap gap-4">
-            <div className="px-3 py-1 bg-black text-white text-base font-light rounded-full uppercase tracking-wide">
+          <div className="flex flex-wrap gap-3">
+            <div className="px-3 py-1 bg-slate-900 text-white text-xs sm:text-sm font-semibold rounded-md uppercase tracking-wide">
               {lead.status}
             </div>
-            <div className="px-3 py-1 bg-gray-100 text-black text-base font-light rounded-full">
+            <div className="px-3 py-1 bg-slate-100 text-slate-900 text-xs sm:text-sm font-semibold rounded-md">
               {lead.priority} Priority
             </div>
-            <div className="px-3 py-1 bg-gray-100 text-black text-base font-light rounded-full">
+            <div className="px-3 py-1 bg-slate-100 text-slate-900 text-xs sm:text-sm font-semibold rounded-md">
               {lead.leadTemperature}
             </div>
             {lead.category && (
-              <div 
-                className="text-base font-light text-black uppercase tracking-wider"
-              >
+              <div className="px-3 py-1 text-xs sm:text-sm font-semibold text-slate-900 uppercase tracking-wider">
                 {lead.category.name}
               </div>
             )}
@@ -80,30 +78,30 @@ const PreviewModal = ({ lead, onClose }) => {
           {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">
                 Contact Details
               </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+              <div className="space-y-2 text-sm text-slate-700">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Phone:
                   </span>{" "}
                   {lead.phone}
                 </p>
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Email:
                   </span>{" "}
                   {lead.email}
                 </p>
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Alt Phone:
                   </span>{" "}
                   {lead.alternatePhone || "-"}
                 </p>
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Website:
                   </span>{" "}
                   {lead.website || "-"}
@@ -111,24 +109,24 @@ const PreviewModal = ({ lead, onClose }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">
                 Source Info
               </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+              <div className="space-y-2 text-sm text-slate-700">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Source:
                   </span>{" "}
                   {lead.source}
                 </p>
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Campaign:
                   </span>{" "}
                   {lead.campaignName || "-"}
                 </p>
-                <p className="text-black">
-                  <span className="font-light w-24 inline-block text-black">
+                <p>
+                  <span className="font-semibold w-24 inline-block text-slate-900">
                     Referred By:
                   </span>{" "}
                   {lead.referredBy || "-"}
@@ -139,33 +137,33 @@ const PreviewModal = ({ lead, onClose }) => {
 
           {/* Requirements */}
           <div className="space-y-4">
-            <h3 className="text-base font-light text-black uppercase tracking-wider">
+            <h3 className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">
               Business Requirement
             </h3>
-            <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+            <p className="text-slate-700 bg-slate-50 p-4 rounded-md leading-relaxed border border-slate-100 text-sm font-medium">
               {lead.requirement || "No requirements specified."}
             </p>
           </div>
 
           {/* Deal Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-900 rounded-xl text-white">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-900 rounded-md text-white">
             <div>
-              <div className="text-base text-black uppercase">Deal Value</div>
-              <div className="text-base font-light">{lead.dealValue || "-"}</div>
+              <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Deal Value</div>
+              <div className="text-xs sm:text-sm font-semibold">{lead.dealValue || "-"}</div>
             </div>
             <div>
-              <div className="text-base text-black uppercase">Budget</div>
-              <div className="text-base font-light">{lead.budgetRange || "-"}</div>
+              <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Budget</div>
+              <div className="text-xs sm:text-sm font-semibold">{lead.budgetRange || "-"}</div>
             </div>
             <div>
-              <div className="text-base text-black uppercase">Product</div>
-              <div className="text-base font-light">
+              <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Product</div>
+              <div className="text-xs sm:text-sm font-semibold">
                 {lead.interestedProduct || "-"}
               </div>
             </div>
             <div>
-              <div className="text-base text-black uppercase">Closure</div>
-              <div className="text-base font-light">
+              <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Closure</div>
+              <div className="text-xs sm:text-sm font-semibold">
                 {lead.expectedClosureDate
                   ? new Date(lead.expectedClosureDate).toLocaleDateString()
                   : "-"}
@@ -175,10 +173,10 @@ const PreviewModal = ({ lead, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end rounded-b-xl">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
+            className="px-6 py-3 bg-white border border-slate-200 text-slate-900 rounded-md hover:bg-slate-50 font-semibold text-sm transition-all shadow-sm hover:shadow-md cursor-pointer"
           >
             Close Preview
           </button>
@@ -423,7 +421,7 @@ const Leads = () => {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
-        <h1 className="text-lg sm:text-base font-medium text-black">
+        <h1 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-wider">
           {view === "list"
             ? "Leads"
             : view === "create"
@@ -440,7 +438,7 @@ const Leads = () => {
             {view !== "list" && (
               <button
                 onClick={handleCancelForm}
-                className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+                className="p-2 border border-slate-200 rounded-md text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md cursor-pointer"
                 title="Back to List"
               >
                 <svg

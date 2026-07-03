@@ -26,13 +26,13 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-md shadow-md w-full max-w-3xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
           <div>
-            <h2 className="text-base font-light text-black">{referrer.name}</h2>
+            <h2 className="text-sm font-medium text-slate-800">{referrer.name}</h2>
             <p className="text-base text-black">
               {referrer.organizationName || "No Organization"}{" "}
               {referrer.designation && `• ${referrer.designation}`}
@@ -64,24 +64,24 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
           {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Contact Details
               </h3>
               <div className="space-y-2">
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Phone:
                   </span>{" "}
                   {referrer.phone}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Email:
                   </span>{" "}
                   {referrer.email || "-"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Alt Phone:
                   </span>{" "}
                   {referrer.alternatePhone || "-"}
@@ -89,18 +89,18 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Status
               </h3>
               <div className="space-y-2">
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Active:
                   </span>{" "}
                   {referrer.isActive ? "Yes" : "No"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Joined:
                   </span>{" "}
                   {formatDate(referrer.createdAt)}
@@ -112,21 +112,21 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
           {/* Statistics */}
           {stats && (
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Referral Statistics
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-gray-900 rounded-xl text-white">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-slate-900 rounded-md text-white">
                 <div>
                   <div className="text-base text-black uppercase">
                     Total Leads
                   </div>
-                  <div className="text-base font-light">
+                  <div className="text-base font-medium">
                     {stats.totalLeads || 0}
                   </div>
                 </div>
                 <div>
                   <div className="text-base text-black uppercase">Active</div>
-                  <div className="text-base font-light">
+                  <div className="text-base font-medium">
                     {stats.activeLeads || 0}
                   </div>
                 </div>
@@ -134,13 +134,13 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
                   <div className="text-base text-black uppercase">
                     Converted
                   </div>
-                  <div className="text-base font-light">
+                  <div className="text-base font-medium">
                     {stats.convertedLeads || 0}
                   </div>
                 </div>
                 <div>
                   <div className="text-base text-black uppercase">Lost</div>
-                  <div className="text-base font-light">
+                  <div className="text-base font-medium">
                     {stats.lostLeads || 0}
                   </div>
                 </div>
@@ -148,14 +148,14 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
                   <div className="text-base text-black uppercase">
                     Conversion %
                   </div>
-                  <div className="text-base font-light">
+                  <div className="text-base font-medium">
                     {stats.conversionPercentage || 0}%
                   </div>
                 </div>
               </div>
               {stats.lastLeadDate && (
                 <p className="text-base text-black">
-                  <span className="font-light">Last Lead Date:</span>{" "}
+                  <span className="font-medium">Last Lead Date:</span>{" "}
                   {formatDate(stats.lastLeadDate)}
                 </p>
               )}
@@ -165,10 +165,10 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
           {/* Notes */}
           {referrer.notes && (
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Notes
               </h3>
-              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-slate-50 p-4 rounded-lg leading-relaxed border border-slate-200">
                 {referrer.notes}
               </p>
             </div>
@@ -176,10 +176,10 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
+            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-100 font-medium"
           >
             Close Preview
           </button>
@@ -374,7 +374,7 @@ const Referrers = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+        <h1 className="text-sm font-medium text-slate-800">
           {view === "list"
             ? "Referrers"
             : view === "create"
@@ -384,7 +384,7 @@ const Referrers = () => {
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
             title="Back to List"
           >
             <svg

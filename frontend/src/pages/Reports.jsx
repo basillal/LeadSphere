@@ -15,11 +15,11 @@ import {
 } from "recharts";
 
 const Card = ({ title, value, subtext, color = "bg-white" }) => (
-  <div className={`${color} p-4 sm:p-5 rounded-lg shadow-sm border border-gray-100`}>
-    <h3 className="text-black text-base font-light uppercase tracking-wider mb-2">
+  <div className={`${color} p-4 sm:p-5 rounded-lg shadow-sm border border-slate-200`}>
+    <h3 className="text-black text-base font-medium uppercase tracking-wider mb-2">
       {title}
     </h3>
-    <p className="text-base font-light text-black">{value}</p>
+    <p className="text-sm font-medium text-slate-800">{value}</p>
     {subtext && <p className="text-base text-black mt-1">{subtext}</p>}
   </div>
 );
@@ -93,7 +93,7 @@ const Reports = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-50" />;
+    return <div className="min-h-screen bg-slate-50" />;
   }
 
   // Calculate Totals
@@ -112,9 +112,9 @@ const Reports = () => {
     paymentStats.find((s) => s._id === "PAID")?.totalAmount || 0;
 
   return (
-    <div className="w-full p-4 sm:p-6 space-y-6 bg-gray-50 pb-20">
+    <div className="w-full p-4 sm:p-6 space-y-6 bg-slate-50 pb-20">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-base font-light text-black">Financial Reports</h1>
+        <h1 className="text-sm font-medium text-slate-800">Financial Reports</h1>
         <div className="flex gap-2">
           <select
             value={year}
@@ -136,7 +136,7 @@ const Reports = () => {
           </select>
           <button
             onClick={() => (window.location.href = "/billings")}
-            className="px-3 py-1.5 bg-black text-white rounded hover:bg-gray-800 transition-colors text-base font-light"
+            className="px-3 py-1.5 bg-black text-white rounded hover:bg-slate-800 transition-colors text-base font-medium"
           >
             All Transactions
           </button>
@@ -170,9 +170,9 @@ const Reports = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Revenue */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-base font-light text-black">
+            <h2 className="text-sm font-medium text-slate-800">
               {year === "30d" ? "Daily Revenue" : "Monthly Revenue"}
             </h2>
           </div>
@@ -243,20 +243,20 @@ const Reports = () => {
         </div>
 
         {/* Service Performance */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-base font-light text-black mb-4">
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+          <h2 className="text-sm font-medium text-slate-800 mb-4">
             Revenue by Service
           </h2>
           <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
             {serviceRevenue.map((item, idx) => (
               <div key={idx} className="text-base">
-                <div className="flex justify-between font-light mb-1 text-black">
+                <div className="flex justify-between font-medium mb-1 text-black">
                   <span>{item.serviceName}</span>
                   <span>{formatCurrency(item.totalRevenue)}</span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-1.5">
+                <div className="w-full bg-slate-100 rounded-full h-1.5">
                   <div
-                    className="bg-gray-800 h-1.5 rounded-full"
+                    className="bg-slate-800 h-1.5 rounded-full"
                     style={{
                       width: `${(item.totalRevenue / totalRevenue) * 100}%`,
                     }}
@@ -274,12 +274,12 @@ const Reports = () => {
       </div>
 
       {/* Detailed Report Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         <div
-          className="p-4 border-b border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+          className="p-4 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-slate-50"
           onClick={() => setShowDetailedReport(!showDetailedReport)}
         >
-          <h2 className="text-base font-light text-black">
+          <h2 className="text-sm font-medium text-slate-800">
             Detailed Breakdown
           </h2>
           <span className="text-base text-black">
@@ -290,7 +290,7 @@ const Reports = () => {
         {showDetailedReport && (
           <div className="overflow-x-auto">
             <table className="w-full text-base text-left">
-              <thead className="bg-gray-50 text-black font-light">
+              <thead className="bg-slate-50 text-black font-medium">
                 <tr>
                   <th className="px-4 py-2">Period</th>
                   <th className="px-4 py-2 text-right">Invoices</th>
@@ -300,14 +300,14 @@ const Reports = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {[...monthlyStats].reverse().map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 font-light text-black">
+                  <tr key={idx} className="hover:bg-slate-50">
+                    <td className="px-4 py-2 font-medium text-black">
                       {item.label || item.monthName}
                     </td>
                     <td className="px-4 py-2 text-right text-black">
                       {item.count}
                     </td>
-                    <td className="px-4 py-2 text-right font-light text-black">
+                    <td className="px-4 py-2 text-right font-medium text-black">
                       {formatCurrency(item.revenue)}
                     </td>
                     <td className="px-4 py-2 text-right text-black">
@@ -325,13 +325,13 @@ const Reports = () => {
       </div>
 
       {/* Top Clients Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-100">
-          <h2 className="text-base font-light text-black">Top Clients</h2>
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-200">
+          <h2 className="text-sm font-medium text-slate-800">Top Clients</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-base text-left">
-            <thead className="bg-gray-50 text-black font-light h-8">
+            <thead className="bg-slate-50 text-black font-medium h-8">
               <tr>
                 <th className="px-4 py-2">Client</th>
                 <th className="px-4 py-2">Organization</th>
@@ -341,15 +341,15 @@ const Reports = () => {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {contactBilling.slice(0, 5).map((item, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 font-light text-black">
+                <tr key={idx} className="hover:bg-slate-50">
+                  <td className="px-4 py-2 font-medium text-black">
                     {item.contactName}
                   </td>
                   <td className="px-4 py-2 text-black">
                     {item.organizationName || "-"}
                   </td>
                   <td className="px-4 py-2 text-right">{item.invoiceCount}</td>
-                  <td className="px-4 py-2 text-right font-light">
+                  <td className="px-4 py-2 text-right font-medium">
                     {formatCurrency(item.totalSpent)}
                   </td>
                 </tr>

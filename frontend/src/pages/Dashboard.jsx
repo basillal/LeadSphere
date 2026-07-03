@@ -85,26 +85,19 @@ const Dashboard = () => {
 
   const HeroCard = ({ title, value, icon, iconColor, bgColor, isDark }) => (
     <div
-      className={`p-4 rounded-xl ${isDark ? "bg-gradient-to-br from-gray-900 to-black text-white shadow-xl" : "bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100"} transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden`}
+      className={`p-4 rounded-md bg-white border border-slate-200 transition-all hover:border-slate-300 relative overflow-hidden`}
     >
-      {isDark && (
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
-      )}
       <div className="flex items-center gap-3 relative z-10">
         <div
-          className={`p-2 rounded-xl ${bgColor} ${iconColor} flex items-center justify-center`}
+          className={`p-2 rounded-md ${bgColor} ${iconColor} flex items-center justify-center`}
         >
           <span className="text-base">{icon}</span>
         </div>
         <div>
-          <p
-            className={`text-base font-bold tracking-widest uppercase mb-1 ${isDark ? "text-black" : "text-black"}`}
-          >
+          <p className="text-xs font-semibold text-slate-500 mb-1">
             {title}
           </p>
-          <h3
-            className={`text-base font-light tracking-tight ${isDark ? "text-white" : "text-black"}`}
-          >
+          <h3 className="text-xl font-bold text-slate-900">
             {value}
           </h3>
         </div>
@@ -113,15 +106,15 @@ const Dashboard = () => {
   );
 
   const CompactStat = ({ title, value, icon, color }) => (
-    <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors">
-      <div className={`p-2 rounded-lg ${color} bg-opacity-10 text-base`}>
+    <div className="bg-white p-3 rounded-md border border-slate-200 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+      <div className={`p-2 rounded-md ${color} bg-opacity-10 text-base`}>
         {icon}
       </div>
       <div>
-        <p className="text-base text-black font-bold uppercase tracking-wider">
+        <p className="text-xs font-semibold text-slate-500">
           {title}
         </p>
-        <h3 className="text-base font-light text-black">{value}</h3>
+        <h3 className="text-lg font-bold text-slate-900">{value}</h3>
       </div>
     </div>
   );
@@ -138,7 +131,7 @@ const Dashboard = () => {
   if (!data || !data.counts) {
     return (
       <div className="flex justify-center items-center h-screen flex-col">
-        <h2 className="text-base font-light text-black">
+        <h2 className="text-sm font-medium text-slate-800">
           Something went wrong
         </h2>
         <p className="text-black mt-2">
@@ -195,48 +188,48 @@ const Dashboard = () => {
       </div>
 
       {/* Net Profit Section - Full Width Compact Design */}
-      <div className="mb-6 w-full bg-white border border-slate-200 shadow-sm p-4 md:p-5 rounded-[28px] relative overflow-hidden transition-all hover:shadow-md">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-          <div className="flex items-center gap-2">
+      <div className="mb-6 w-full bg-white border border-slate-200 p-4 md:p-5 rounded-md relative overflow-hidden transition-all">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
             <div
-              className={`p-3 rounded-xl ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
+              className={`p-3 rounded-md ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
             >
               <span className="text-base">🏦</span>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h2 className="text-base font-bold tracking-widest uppercase text-black">
+                <h2 className="text-sm font-semibold text-slate-700">
                   Net Profit
                 </h2>
                 <span
-                  className={`px-1.5 py-0.5 rounded text-base font-light border ${netProfit >= 0 ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-red-50 border-red-100 text-red-600"}`}
+                  className={`px-1.5 py-0.5 rounded text-xs font-medium border ${netProfit >= 0 ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-red-50 border-red-200 text-red-700"}`}
                 >
                   {netProfit >= 0 ? "PROFIT" : "LOSS"}
                 </span>
               </div>
               <h3
-                className={`text-base font-light tracking-tight ${netProfit >= 0 ? "text-black" : "text-red-600"}`}
+                className={`text-2xl font-bold tracking-tight ${netProfit >= 0 ? "text-slate-900" : "text-red-600"}`}
               >
                 {formatCurrency(netProfit)}
               </h3>
             </div>
           </div>
 
-          <div className="flex gap-6 text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+          <div className="flex gap-6 text-right bg-slate-50 px-4 py-2 rounded-md border border-slate-200">
             <div>
-              <p className="text-base font-bold uppercase text-black mb-0.5">
+              <p className="text-xs font-semibold text-slate-500 mb-0.5">
                 Revenue
               </p>
-              <p className="font-light text-black">
+              <p className="font-bold text-slate-900">
                 {formatCurrency(data.counts.revenue)}
               </p>
             </div>
-            <div className="w-px bg-gray-200"></div>
+            <div className="w-px bg-slate-200"></div>
             <div>
-              <p className="text-base font-bold uppercase text-black mb-0.5">
+              <p className="text-xs font-semibold text-slate-500 mb-0.5">
                 Expenses
               </p>
-              <p className="font-light text-black">
+              <p className="font-bold text-slate-900">
                 {formatCurrency(data.counts.totalExpenses || 0)}
               </p>
             </div>
@@ -287,15 +280,15 @@ const Dashboard = () => {
       {/* Advanced Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Financial Overview - Combined Chart */}
-        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-96 flex flex-col">
+        <div className="col-span-1 lg:col-span-2 bg-white p-6 rounded-md border border-slate-200 h-96 flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-light text-black">
+            <h3 className="text-sm font-semibold text-slate-700">
               Financial Overview
             </h3>
             <select
               value={revenueInterval}
               onChange={(e) => setRevenueInterval(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-black text-base rounded-lg focus:ring-black focus:border-black block p-1.5"
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-md focus:ring-black focus:border-black block p-1.5"
             >
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
@@ -403,8 +396,8 @@ const Dashboard = () => {
       {/* Secondary Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Leads by Status - Pie Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-base font-light text-black mb-4">
+        <div className="bg-white p-6 rounded-md border border-slate-200 h-80">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">
             Leads Distribution
           </h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -434,8 +427,8 @@ const Dashboard = () => {
         </div>
 
         {/* Top Services */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-base font-light text-black mb-4">
+        <div className="lg:col-span-2 bg-white p-6 rounded-md border border-slate-200 h-80">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">
             Top Performing Services
           </h3>
           {data.charts.topServices && data.charts.topServices.length > 0 ? (
@@ -482,8 +475,8 @@ const Dashboard = () => {
       {/* Lead Sources & Recent Leads Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Leads by Source - Pie Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
-          <h3 className="text-base font-light text-black mb-4">Lead Sources</h3>
+        <div className="bg-white p-6 rounded-md border border-slate-200 h-80">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Lead Sources</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -512,50 +505,50 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Leads List */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
-          <h3 className="text-base font-light text-black mb-4">Recent Leads</h3>
+        <div className="lg:col-span-2 bg-white p-6 rounded-md border border-slate-200 h-80 overflow-hidden flex flex-col">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Recent Leads</h3>
           <div className="overflow-y-auto flex-grow pr-2">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-slate-200">
               <thead>
                 <tr>
-                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Source
                   </th>
-                  <th className="px-3 py-2 text-left text-base font-light text-black uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Date
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-slate-200">
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
                     <tr key={lead._id}>
-                      <td className="px-3 py-2 whitespace-nowrap text-base font-light text-black uppercase">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-slate-900">
                         {lead.name}
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-slate-600">
                         <span
-                          className={`px-2 inline-flex text-base leading-5 font-light rounded-full ${
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-md ${
                             lead.status === "Won"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-emerald-100 text-emerald-800"
                               : lead.status === "New"
                                 ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-black"
+                                : "bg-slate-100 text-slate-800"
                           }`}
                         >
                           {lead.status}
                         </span>
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-slate-600">
                         {lead.source}
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-base text-black">
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-slate-600">
                         {new Date(lead.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
@@ -578,43 +571,43 @@ const Dashboard = () => {
 
       {/* Recent Activities List (Moved to bottom grid) */}
       <div className="grid grid-cols-1 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 overflow-hidden flex flex-col">
-          <h3 className="text-base font-light text-black mb-4">
+        <div className="bg-white p-6 rounded-md border border-slate-200 h-80 overflow-hidden flex flex-col">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">
             Recent Activity
           </h3>
           <div className="overflow-y-auto flex-grow pr-2 space-y-4">
             {data.recentActivities.length === 0 ? (
-              <p className="text-center text-black text-base mt-10">
+              <p className="text-center text-slate-500 text-sm mt-10">
                 No recent activities
               </p>
             ) : (
               data.recentActivities.map((activity) => (
                 <div
                   key={activity._id}
-                  className="flex gap-3 items-start pb-3 border-b border-gray-50 last:border-0"
+                  className="flex gap-3 items-start pb-3 border-b border-slate-100 last:border-0"
                 >
                   <div
-                    className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
+                    className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${
                       activity.status === "Completed"
-                        ? "bg-green-500"
+                        ? "bg-emerald-500"
                         : activity.status === "Scheduled"
                           ? "bg-blue-500"
-                          : "bg-gray-300"
+                          : "bg-slate-300"
                     }`}
                   ></div>
                   <div>
-                    <p className="text-base font-light text-black line-clamp-1 uppercase">
+                    <p className="text-sm font-medium text-slate-900 line-clamp-1">
                       {activity.title}{" "}
-                      <span className="text-black font-normal normal-case">
+                      <span className="text-slate-500 font-normal">
                         ({activity.activityType})
                       </span>
                     </p>
-                    <p className="text-base text-black line-clamp-2">
+                    <p className="text-sm text-slate-600 line-clamp-2">
                       {activity.description
                         ? activity.description
                         : "No details provided"}
                     </p>
-                    <p className="text-base text-black mt-1">
+                    <p className="text-xs text-slate-400 mt-1">
                       {activity.relatedId?.name || "Unknown"} •{" "}
                       {new Date(activity.activityDate).toLocaleDateString()}
                     </p>

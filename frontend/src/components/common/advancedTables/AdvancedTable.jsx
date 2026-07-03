@@ -263,11 +263,11 @@ const AdvancedTable = ({
       {/* Toolbar */}
       {toolbar && (
         <div
-          className={`mb-3 md:mb-4 ${selected.length > 0 ? "bg-white/90 rounded-2xl p-3 md:p-4 border border-slate-200 shadow-sm" : ""}`}
+          className={`mb-3 md:mb-4 ${selected.length > 0 ? "bg-white/90 rounded-md p-3 md:p-4 border border-slate-200 shadow-sm" : ""}`}
         >
           {selected.length > 0 && selection.enabled ? (
             <div className="flex items-center w-full justify-between">
-              <span className="text-base font-light text-black">
+              <span className="text-sm font-medium text-slate-800">
                 {selected.length} selected
               </span>
               <button
@@ -287,7 +287,7 @@ const AdvancedTable = ({
                     placeholder={toolbar.searchPlaceholder || "Search..."}
                     value={toolbar.search.value}
                     onChange={(e) => toolbar.search.onChange(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm"
                   />
                 </div>
               )}
@@ -300,7 +300,7 @@ const AdvancedTable = ({
                       setMobileToolbarMode("search");
                       setMobileToolbarOpen((v) => !v);
                     }}
-                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-2xl bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
+                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-md bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
                   >
                     <span>Search</span>
                     <svg
@@ -324,7 +324,7 @@ const AdvancedTable = ({
                       setMobileToolbarMode("filters");
                       setMobileToolbarOpen((v) => !v);
                     }}
-                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-2xl bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
+                    className="flex-1 min-h-11 px-3 py-2.5 border border-slate-200 rounded-md bg-white text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold inline-flex items-center justify-between shadow-sm"
                   >
                     <span>Filters</span>
                     <svg
@@ -345,27 +345,27 @@ const AdvancedTable = ({
               )}
 
               {toolbar.search && isMobile && mobileToolbarOpen && mobileToolbarMode === "search" && (
-                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-3xl border border-slate-200 bg-white p-2.5 shadow-xl shadow-slate-900/10">
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-md border border-slate-200 bg-white p-2.5 shadow-sm shadow-slate-900/10">
                   <input
                     type="text"
                     placeholder={toolbar.searchPlaceholder || "Search..."}
                     value={toolbar.search.value}
                     onChange={(e) => toolbar.search.onChange(e.target.value)}
                     autoFocus
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm text-sm"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 shadow-sm text-sm"
                   />
                 </div>
               )}
 
               {toolbar.filters && toolbar.filters.length > 0 && isMobile && mobileToolbarOpen && mobileToolbarMode === "filters" && (
-                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-3xl border border-slate-200 bg-white p-2.5 shadow-xl shadow-slate-900/10">
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-md border border-slate-200 bg-white p-2.5 shadow-sm shadow-slate-900/10">
                   <div className="grid grid-cols-1 gap-2">
                     {toolbar.filters.map((filter, index) => (
                       <select
                         key={index}
                         value={filter.value}
                         onChange={(e) => filter.onChange(e.target.value)}
-                        className="w-full px-3 py-2.5 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm text-sm"
+                        className="w-full px-3 py-2.5 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm text-sm"
                       >
                         {filter.options.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -386,7 +386,7 @@ const AdvancedTable = ({
                     key={index}
                     value={filter.value}
                     onChange={(e) => filter.onChange(e.target.value)}
-                    className="w-full md:w-auto px-4 py-3 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm"
+                    className="w-full md:w-auto px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 bg-white shadow-sm"
                   >
                     {filter.options.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -402,7 +402,7 @@ const AdvancedTable = ({
                   <button
                     key={index}
                     onClick={btn.onClick}
-                    className={`w-full md:w-auto px-4 py-3 rounded-2xl font-semibold whitespace-nowrap transition-colors shadow-sm ${
+                    className={`w-full md:w-auto px-4 py-3 rounded-md font-semibold whitespace-nowrap transition-colors shadow-sm ${
                       btn.className ||
                       "bg-white border border-slate-200 text-slate-900 hover:bg-slate-50"
                     }`}
@@ -415,7 +415,7 @@ const AdvancedTable = ({
               {toolbar.onCreate && (
                 <button
                   onClick={toolbar.onCreate.onClick}
-                  className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-2xl hover:bg-slate-800 transition-colors font-semibold whitespace-nowrap shadow-sm text-sm"
+                  className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-md hover:bg-slate-800 transition-colors font-semibold whitespace-nowrap shadow-sm text-sm"
                 >
                   + {toolbar.onCreate.label || "Add"}
                 </button>
@@ -440,7 +440,7 @@ const AdvancedTable = ({
               ) : (
                 <div
                   key={getRowId(row)}
-                  className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
+                  className="bg-white p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
                 >
                   {/* Header: avatar + highlighted name + meta */}
                   <div className="flex items-start justify-between gap-3">
@@ -536,8 +536,8 @@ const AdvancedTable = ({
           {loading && (
             <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
               <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-3"></div>
-                <p className="text-base font-light text-black">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-900 mb-3"></div>
+                <p className="text-sm font-medium text-slate-600">
                   Loading data...
                 </p>
               </div>
@@ -563,7 +563,7 @@ const AdvancedTable = ({
                   {columns.map((column) => (
                     <th
                       key={column.id}
-                      className={`px-4 py-3 text-left text-sm font-semibold text-slate-700 uppercase tracking-[0.16em] ${column.sortable !== false ? "cursor-pointer hover:text-slate-950" : ""} ${column.width || ""}`}
+                      className={`px-4 py-3 text-left text-sm font-semibold text-slate-700 ${column.sortable !== false ? "cursor-pointer hover:text-slate-900" : ""} ${column.width || ""}`}
                       onClick={() =>
                         column.sortable !== false &&
                         handleRequestSort(column.id)
@@ -581,7 +581,7 @@ const AdvancedTable = ({
                     </th>
                   ))}
                   {actions.length > 0 && (
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-700 uppercase tracking-[0.16em]">
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-700">
                       Actions
                     </th>
                   )}
@@ -631,7 +631,7 @@ const AdvancedTable = ({
                         {columns.map((column) => (
                           <td
                             key={column.id}
-                            className={`px-4 py-3 text-sm ${column.className || "text-slate-900"}`}
+                            className={`px-4 py-4 text-sm ${column.className || "text-slate-800"}`}
                           >
                             {column.render
                               ? column.render(row)
@@ -639,8 +639,8 @@ const AdvancedTable = ({
                           </td>
                         ))}
                         {actions.length > 0 && (
-                          <td className="px-4 py-3 text-right">
-                            <div className="flex justify-end gap-2">
+                          <td className="px-4 py-4 text-right">
+                            <div className="flex justify-end gap-1">
                               {actions.map((action, idx) => {
                                 if (action.condition && !action.condition(row))
                                   return null;
@@ -651,7 +651,7 @@ const AdvancedTable = ({
                                       e.stopPropagation();
                                       action.onClick(row);
                                     }}
-                                    className={`p-2 rounded-xl transition-colors ${action.color || "text-slate-900 hover:bg-slate-100"}`}
+                                    className={`p-1.5 rounded-lg transition-colors ${action.color || "text-slate-400 hover:text-slate-800 hover:bg-slate-100"}`}
                                     title={action.label}
                                   >
                                     {action.icon}
@@ -673,23 +673,23 @@ const AdvancedTable = ({
 
       {/* Pagination */}
       {pagination.enabled && (
-        <div className="mt-4 px-4 py-2.5 bg-white border border-gray-200 rounded-lg flex items-center justify-between">
+        <div className="mt-4 px-4 py-2.5 bg-white border border-slate-200 rounded-md flex items-center justify-between shadow-sm">
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-base text-black">
+              <p className="text-sm text-slate-600">
                 Showing{" "}
-                <span className="font-light">{page * rowsPerPage + 1}</span> to{" "}
-                <span className="font-light">
+                <span className="font-semibold text-slate-900">{page * rowsPerPage + 1}</span> to{" "}
+                <span className="font-semibold text-slate-900">
                   {Math.min((page + 1) * rowsPerPage, totalItems)}
                 </span>{" "}
-                of <span className="font-light">{totalItems}</span> results
+                of <span className="font-semibold text-slate-900">{totalItems}</span> results
               </p>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-black"
+                className="px-3 py-1.5 border border-slate-200 rounded-md text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/15"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map(
                   (option) => (
@@ -703,7 +703,7 @@ const AdvancedTable = ({
                 <button
                   onClick={() => handleChangePage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Previous</span>
                   <svg
@@ -720,7 +720,7 @@ const AdvancedTable = ({
                     />
                   </svg>
                 </button>
-                <div className="flex items-center px-4 py-2 text-base text-black border-t border-b border-gray-300 bg-white">
+                <div className="flex items-center px-4 py-2 text-sm font-medium text-slate-700 border-t border-b border-slate-200 bg-white">
                   Page {page + 1} of {totalPages || 1}
                 </div>
                 <button
@@ -728,7 +728,7 @@ const AdvancedTable = ({
                     handleChangePage(Math.min(totalPages - 1, page + 1))
                   }
                   disabled={page >= totalPages - 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-base font-light text-black hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="sr-only">Next</span>
                   <svg
@@ -753,11 +753,11 @@ const AdvancedTable = ({
             <button
               onClick={() => handleChangePage(Math.max(0, page - 1))}
               disabled={page === 0}
-              className="px-3 py-1.5 border border-gray-300 rounded text-base disabled:opacity-50"
+              className="px-3 py-1.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               Prev
             </button>
-            <span className="text-base self-center">
+            <span className="text-sm font-medium text-slate-700 self-center">
               {page + 1} / {totalPages || 1}
             </span>
             <button
@@ -765,7 +765,7 @@ const AdvancedTable = ({
                 handleChangePage(Math.min(totalPages - 1, page + 1))
               }
               disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 border border-gray-300 rounded text-base disabled:opacity-50"
+              className="px-3 py-1.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               Next
             </button>
