@@ -132,7 +132,7 @@ const Header = ({ handleDrawerToggle }) => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: "block", mr: 1, fontSize: "1.15rem", fontWeight: 800, letterSpacing: "-0.03em" }}
+              sx={{ display: "block", mr: 1, fontSize: "1rem", fontWeight: 800, letterSpacing: "-0.03em" }}
             >
               LeadSphere
             </Typography>
@@ -191,11 +191,11 @@ const Header = ({ handleDrawerToggle }) => {
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
                 variant="body2"
-                sx={{ mr: 1.5, display: { xs: "none", sm: "block" }, fontSize: "0.95rem", color: "#0f172a" }}
+                sx={{ mr: 1.5, display: { xs: "none", sm: "block" }, fontSize: "0.8rem", color: "#0f172a" }}
               >
                 {user?.name}
                 <span
-                  style={{ opacity: 0.65, marginLeft: "5px", fontSize: "0.85rem" }}
+                  style={{ opacity: 0.55, marginLeft: "5px", fontSize: "0.75rem" }}
                 >
                   ({user?.role?.roleName})
                 </span>
