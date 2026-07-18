@@ -39,7 +39,30 @@ const TimeRangeFilter = ({ value, onChange, className = "" }) => {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`bg-white/90 border border-slate-200 text-slate-900 text-sm md:text-base rounded-md focus:ring-2 focus:ring-slate-900/15 focus:border-slate-400 block px-4 py-2.5 min-w-[150px] shadow-sm ${className}`}
+      style={{
+        background: "white",
+        border: "1.5px solid #E2E8F0",
+        color: "#0F172A",
+        fontSize: "0.82rem",
+        fontFamily: "'Inter', sans-serif",
+        fontWeight: 500,
+        borderRadius: "8px",
+        padding: "0.45rem 0.875rem",
+        minWidth: "145px",
+        outline: "none",
+        cursor: "pointer",
+        boxShadow: "0 1px 2px rgba(15,23,42,0.04)",
+        transition: "border-color 0.18s ease, box-shadow 0.18s ease",
+      }}
+      onFocus={(e) => {
+        e.target.style.borderColor = "#4F46E5";
+        e.target.style.boxShadow = "0 0 0 3px rgba(79,70,229,0.1)";
+      }}
+      onBlur={(e) => {
+        e.target.style.borderColor = "#E2E8F0";
+        e.target.style.boxShadow = "0 1px 2px rgba(15,23,42,0.04)";
+      }}
+      className={className}
     >
       <option value="last_30_days">Last 30 Days</option>
       <option value="today">Today</option>

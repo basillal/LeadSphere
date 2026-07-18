@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
-
 import Breadcrumbs from "../components/layout/Breadcrumbs";
 
 const MainLayout = () => {
@@ -25,7 +24,6 @@ const MainLayout = () => {
       setOpen(e.matches ? true : false);
     };
 
-    // Initialize once in case window size changed before mount
     setIsDesktop(mq.matches);
     setOpen(mq.matches ? true : false);
 
@@ -33,13 +31,8 @@ const MainLayout = () => {
     return () => mq.removeEventListener?.("change", handleChange);
   }, []);
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const handleDrawerToggle = () => {
-    setOpen(!open);
-  };
+  const handleDrawerClose = () => setOpen(false);
+  const handleDrawerToggle = () => setOpen(!open);
 
   return (
     <Box
@@ -48,23 +41,48 @@ const MainLayout = () => {
         width: "100%",
         height: "100dvh",
         overflow: "hidden",
+        background: "#F8FAFC",
       }}
       className="app-shell"
     >
       <CssBaseline />
+
+      {/* Header */}
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
+
+      {/* Mobile overlay */}
       {!isDesktop && open && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          className="fixed inset-0 z-30 md:hidden"
+          style={{ background: "rgba(15,23,42,0.5)", backdropFilter: "blur(2px)" }}
           onClick={handleDrawerClose}
           aria-hidden="true"
         />
       )}
+
+      {/* Sidebar */}
       <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
-      <main className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full transition-all duration-300 pt-[70px] md:pt-[76px] px-4 sm:px-6 md:px-8 pb-8">
-        <div className="page-shell space-y-5">
+
+      {/* Main Content */}
+      <main
+        className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full custom-scrollbar"
+        style={{
+          paddingTop: "60px",
+          transition: "all 0.3s ease",
+          background: "#F8FAFC",
+        }}
+      >
+        <div
+          className="page-shell"
+          style={{
+            padding: "1.25rem 1.5rem 2rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75rem",
+          }}
+        >
           <Breadcrumbs />
-          <div className="page-card p-4 sm:p-6 md:p-8 lg:p-10">
+          <div className="page-card" style={{ padding: "1.25rem 1.5rem" }}>
             <Outlet />
           </div>
         </div>
