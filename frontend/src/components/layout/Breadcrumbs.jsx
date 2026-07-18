@@ -3,13 +3,14 @@ import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { hasPermission, hasRole } from "../auth/permissionUtils";
 import { menuConfig } from "../auth/menuConfig";
+import HomeIcon from "@mui/icons-material/Home";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const Breadcrumbs = () => {
   const location = useLocation();
   const { user } = useAuth();
   const pathnames = location.pathname.split("/").filter((x) => x);
 
-  // Map for readable names (optional: extend this as needed)
   const breadcrumbNameMap = {
     leads: "Leads",
     dashboard: "Dashboard",
@@ -21,81 +22,114 @@ const Breadcrumbs = () => {
     referrers: "Referrers",
     services: "Services",
     followups: "Follow-ups",
+    "follow-ups": "Follow-ups",
     user: "User",
     organizations: "Organizations",
-    // Add more mappings as your app grows
+    billings: "Billing",
+    expenses: "Expenses",
+    roles: "Roles",
+    users: "Users",
+    "audit-logs": "Audit Logs",
+    "organization-profile": "Organization Profile",
   };
 
-  const getBreadcrumbName = (name) => {
-    // Check map first, then Fallback to capitalizing first letter
-    return (
-      breadcrumbNameMap[name.toLowerCase()] ||
-      name.charAt(0).toUpperCase() + name.slice(1)
-    );
-  };
+  const getBreadcrumbName = (name) =>
+    breadcrumbNameMap[name.toLowerCase()] ||
+    name.charAt(0).toUpperCase() + name.slice(1);
 
   const checkAccess = (path) => {
     const configItem = menuConfig.find((item) => item.path === path);
-    if (!configItem) return true; // Allow access if not explicitly restricted in menuConfig
-
-    if (configItem.permission && !hasPermission(user, configItem.permission)) {
-      return false;
-    }
-    if (configItem.role && !hasRole(user, configItem.role)) {
-      return false;
-    }
+    if (!configItem) return true;
+    if (configItem.permission && !hasPermission(user, configItem.permission)) return false;
+    if (configItem.role && !hasRole(user, configItem.role)) return false;
     return true;
   };
 
   const homeAllowed = checkAccess("/");
 
   return (
-    <div className="mb-4 flex items-center gap-2 text-sm sm:text-base text-slate-600 print:hidden flex-wrap">
+    <div
+      className="print:hidden"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.125rem",
+        marginBottom: "0.75rem",
+        flexWrap: "wrap",
+      }}
+    >
+      {/* Home crumb */}
       {homeAllowed ? (
         <Link
           to="/"
-          className="chip-soft hover:bg-white transition-colors"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "0.3rem",
+            fontSize: "0.78rem", fontWeight: 500, color: "#64748B",
+            textDecoration: "none", padding: "0.25rem 0.5rem",
+            borderRadius: "6px", transition: "all 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#F1F5F9";
+            e.currentTarget.style.color = "#0F172A";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#64748B";
+          }}
         >
+          <HomeIcon style={{ fontSize: 14 }} />
           Home
         </Link>
       ) : (
-        <span className="chip-soft">Home</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "#64748B", padding: "0.25rem 0.5rem" }}>
+          <HomeIcon style={{ fontSize: 14 }} />
+          Home
+        </span>
       )}
 
       {pathnames.map((value, index) => {
-        // Skip 'admin' from being displayed
         if (value === "admin") return null;
 
         let to = `/${pathnames.slice(0, index + 1).join("/")}`;
         const isLast = index === pathnames.length - 1;
 
-        // Custom Overrides
-        if (to === "/print/invoice") {
-          to = "/billings";
-        }
+        if (to === "/print/invoice") to = "/billings";
 
         const isAllowed = checkAccess(to);
-
-        // Check if path is clickable
-        // If it's just "/print", we probably don't want to link anywhere
         const isClickable = to !== "/print" && !isLast && isAllowed;
+        const displayName = getBreadcrumbName(value);
 
         return (
-          <div key={to} className="flex items-center">
-            <span className="mx-1 text-slate-400">/</span>
+          <React.Fragment key={to}>
+            <ChevronRightIcon style={{ fontSize: 14, color: "#CBD5E1", flexShrink: 0 }} />
             {!isClickable ? (
-              <span className="text-slate-900 font-semibold">
-                {getBreadcrumbName(value)}
+              <span style={{
+                fontSize: "0.78rem", fontWeight: 600, color: "#0F172A",
+                padding: "0.25rem 0.5rem",
+              }}>
+                {displayName}
               </span>
             ) : (
               <Link
                 to={to}
-                className="hover:text-slate-900 transition-colors"
+                style={{
+                  fontSize: "0.78rem", fontWeight: 500, color: "#64748B",
+                  textDecoration: "none", padding: "0.25rem 0.5rem",
+                  borderRadius: "6px", transition: "all 0.15s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#F1F5F9";
+                  e.currentTarget.style.color = "#0F172A";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#64748B";
+                }}
               >
-                {getBreadcrumbName(value)}
+                {displayName}
               </Link>
             )}
-          </div>
+          </React.Fragment>
         );
       })}
     </div>

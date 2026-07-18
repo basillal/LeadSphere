@@ -15,10 +15,10 @@ const Toast = ({ open, message, severity, onClose }) => {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg border ${bgClass} z-50 flex items-center gap-3 animate-slide-in`}
+      className={`fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-sm border ${bgClass} z-50 flex items-center gap-3 animate-slide-in`}
     >
       <span>{message}</span>
-      <button onClick={onClose} className="hover:opacity-75 font-light">
+      <button onClick={onClose} className="hover:opacity-75 font-medium">
         &times;
       </button>
     </div>

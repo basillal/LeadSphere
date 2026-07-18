@@ -89,17 +89,17 @@ const ActivitiesTable = ({
       Pending: "bg-yellow-100 text-yellow-800",
       Cancelled: "bg-red-100 text-red-800",
     };
-    return colors[status] || "bg-gray-100 text-black";
+    return colors[status] || "bg-slate-100 text-black";
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      Low: "bg-gray-100 text-black",
+      Low: "bg-slate-100 text-black",
       Medium: "bg-blue-100 text-blue-600",
       High: "bg-orange-100 text-orange-600",
       Urgent: "bg-red-100 text-red-600",
     };
-    return colors[priority] || "bg-gray-100 text-black";
+    return colors[priority] || "bg-slate-100 text-black";
   };
 
   const formatDate = (date) => {
@@ -134,9 +134,9 @@ const ActivitiesTable = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[540px] md:min-h-[620px] flex flex-col">
+    <div className="bg-white rounded-md shadow-sm border border-slate-200 min-h-[540px] md:min-h-[620px] flex flex-col">
       {/* Header with Search and Filters */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-slate-200">
         <div className="flex flex-col md:flex-row gap-3 md:gap-4">
           {/* Search */}
           <div className="flex-1">
@@ -152,7 +152,7 @@ const ActivitiesTable = ({
           <button
             type="button"
             onClick={() => setFiltersOpen((v) => !v)}
-            className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-gray-50 transition-colors text-base font-light inline-flex items-center justify-between"
+            className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-slate-50 transition-colors text-base font-medium inline-flex items-center justify-between"
           >
             <span>Filters</span>
             <svg
@@ -216,7 +216,7 @@ const ActivitiesTable = ({
           {/* Create Button */}
           <button
             onClick={onCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base whitespace-nowrap flex items-center justify-center gap-2"
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-base whitespace-nowrap flex items-center justify-center gap-2"
           >
             <span className="text-base">+</span>
             <span className="hidden md:inline">New Activity</span>
@@ -228,7 +228,7 @@ const ActivitiesTable = ({
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto flex-1">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
               <th className="px-4 py-3 text-left">
                 <input
@@ -241,28 +241,28 @@ const ActivitiesTable = ({
                   className="rounded border-gray-300"
                 />
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Title
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Related To
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Organization
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Priority
               </th>
-              <th className="px-4 py-3 text-left text-base font-light text-black uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -293,7 +293,7 @@ const ActivitiesTable = ({
                 return (
                   <tr
                     key={activity._id}
-                    className={`hover:bg-gray-50 transition-colors ${borderClass}`}
+                    className={`hover:bg-slate-50 transition-colors ${borderClass}`}
                   >
                     <td className="px-4 py-3">
                       <input
@@ -309,7 +309,7 @@ const ActivitiesTable = ({
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-light text-black uppercase">
+                      <div className="font-medium text-black uppercase">
                         {activity.title}
                       </div>
                       {activity.description && (
@@ -320,7 +320,7 @@ const ActivitiesTable = ({
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-base">
-                        <div className="font-light text-black">
+                        <div className="font-medium text-black">
                           {activity.relatedName}
                         </div>
                         <div className="text-black text-base">
@@ -331,7 +331,7 @@ const ActivitiesTable = ({
                     <td className="px-4 py-3">
                       <div className="text-base">
                         <div
-                          className={`font-light ${dateContext === "today" ? "text-blue-600 font-light" : dateContext === "overdue" ? "text-red-600 font-light" : "text-black"}`}
+                          className={`font-medium ${dateContext === "today" ? "text-blue-600 font-medium" : dateContext === "overdue" ? "text-red-600 font-medium" : "text-black"}`}
                         >
                           {getRelativeDate(activity.activityDate)}
                         </div>
@@ -342,7 +342,7 @@ const ActivitiesTable = ({
                         )}
                         {dateContext === "overdue" && (
                           <div className="mt-1">
-                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-base font-light">
+                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-base font-medium">
                               Overdue
                             </span>
                           </div>
@@ -356,14 +356,14 @@ const ActivitiesTable = ({
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
+                        className={`px-2 py-1 rounded-full text-base font-medium ${getStatusColor(activity.status)}`}
                       >
                         {activity.status}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
+                        className={`px-2 py-1 rounded-full text-base font-medium ${getPriorityColor(activity.priority)}`}
                       >
                         {activity.priority}
                       </span>
@@ -469,7 +469,7 @@ const ActivitiesTable = ({
               return (
                 <div
                   key={activity._id}
-                  className={`p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] bg-white ${borderClass}`}
+                  className={`p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] bg-white ${borderClass}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
@@ -530,7 +530,7 @@ const ActivitiesTable = ({
 
       {/* Pagination */}
       {pagination.total > 0 && (
-        <div className="px-4 py-3 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="px-4 py-3 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="text-base text-black">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
@@ -553,14 +553,14 @@ const ActivitiesTable = ({
               <button
                 onClick={() => onPageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-light hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => onPageChange(pagination.page + 1)}
                 disabled={pagination.page >= pagination.pages}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-light hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>

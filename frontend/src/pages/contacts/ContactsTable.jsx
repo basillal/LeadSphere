@@ -23,7 +23,7 @@ const ContactsTable = ({
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-black",
+      Other: "bg-slate-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
@@ -44,7 +44,7 @@ const ContactsTable = ({
       label: "Name",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-light text-black uppercase">
+          <span className="font-medium text-black uppercase">
             {row.name}
           </span>
           {row.designation && (
@@ -80,7 +80,7 @@ const ContactsTable = ({
         
         return (
           <span
-            className="text-base font-light text-black uppercase tracking-wider"
+            className="text-sm font-medium text-slate-800 uppercase tracking-wider"
           >
             {row.category.name}
           </span>
@@ -103,7 +103,7 @@ const ContactsTable = ({
             row.tags.map((tag, index) => (
               <span
                 key={index}
-                className={`px-2 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
+                className={`px-2 py-1 rounded-full text-base font-medium ${getTagColor(tag)}`}
               >
                 {tag}
               </span>
@@ -147,7 +147,7 @@ const ContactsTable = ({
       ),
       label: "View",
       onClick: onView,
-      color: "text-black hover:bg-gray-100",
+      color: "text-black hover:bg-slate-100",
     },
     {
       icon: (
@@ -167,7 +167,7 @@ const ContactsTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-black hover:bg-gray-100",
+      color: "text-black hover:bg-slate-100",
     },
     {
       icon: (
@@ -229,14 +229,14 @@ const ContactsTable = ({
         label: "Convert lead",
         onClick: handleStartConversion,
         className:
-          "bg-white border border-gray-300 text-black hover:bg-gray-50",
+          "bg-white border border-gray-300 text-black hover:bg-slate-50",
       },
     ],
   };
 
   // Custom mobile card (standardized)
   const renderCard = (row, actions) => (
-    <div className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
+    <div className="bg-white p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
       <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
           <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">

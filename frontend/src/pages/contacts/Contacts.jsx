@@ -22,7 +22,7 @@ const PreviewModal = ({ contact, onClose }) => {
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-black",
+      Other: "bg-slate-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
@@ -42,13 +42,13 @@ const PreviewModal = ({ contact, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-md shadow-md w-full max-w-3xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
           <div>
-            <h2 className="text-base font-light text-black">{contact.name}</h2>
+            <h2 className="text-sm font-medium text-slate-800">{contact.name}</h2>
             <p className="text-base text-black">
               {contact.organizationName || "No Organization"}{" "}
               {contact.designation && `• ${contact.designation}`}
@@ -83,7 +83,7 @@ const PreviewModal = ({ contact, onClose }) => {
               {contact.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className={`px-3 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
+                  className={`px-3 py-1 rounded-full text-base font-medium ${getTagColor(tag)}`}
                 >
                   {tag}
                 </span>
@@ -94,30 +94,30 @@ const PreviewModal = ({ contact, onClose }) => {
           {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Contact Details
               </h3>
               <div className="space-y-2">
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Phone:
                   </span>{" "}
                   {contact.phone}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Email:
                   </span>{" "}
                   {contact.email || "-"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Alt Phone:
                   </span>{" "}
                   {contact.alternatePhone || "-"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Website:
                   </span>{" "}
                   {contact.website || "-"}
@@ -125,24 +125,24 @@ const PreviewModal = ({ contact, onClose }) => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Relationship
               </h3>
               <div className="space-y-2">
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Category:
                   </span>{" "}
                   {contact.category?.name || "-"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Industry:
                   </span>{" "}
                   {contact.industry || "-"}
                 </p>
                 <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
+                  <span className="font-medium w-32 inline-block text-black">
                     Organization Size:
                   </span>{" "}
                   {contact.organizationSize || "-"}
@@ -153,21 +153,21 @@ const PreviewModal = ({ contact, onClose }) => {
 
           {/* Interaction History */}
           <div className="space-y-4">
-            <h3 className="text-base font-light text-black uppercase tracking-wider">
+            <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
               Interaction History
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-xl text-white">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-slate-900 rounded-md text-white">
               <div>
                 <div className="text-base text-black uppercase">
                   Last Contact
                 </div>
-                <div className="text-base font-light">
+                <div className="text-base font-medium">
                   {formatDate(contact.lastInteractionDate)}
                 </div>
               </div>
               <div>
                 <div className="text-base text-black uppercase">Via</div>
-                <div className="text-base font-light">
+                <div className="text-base font-medium">
                   {contact.lastInteractionType || "-"}
                 </div>
               </div>
@@ -175,7 +175,7 @@ const PreviewModal = ({ contact, onClose }) => {
                 <div className="text-base text-black uppercase">
                   Next Follow-up
                 </div>
-                <div className="text-base font-light">
+                <div className="text-base font-medium">
                   {formatDate(contact.nextFollowUpDate)}
                 </div>
               </div>
@@ -185,10 +185,10 @@ const PreviewModal = ({ contact, onClose }) => {
           {/* Notes */}
           {contact.notes && (
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Notes
               </h3>
-              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-slate-50 p-4 rounded-lg leading-relaxed border border-slate-200">
                 {contact.notes}
               </p>
             </div>
@@ -199,7 +199,7 @@ const PreviewModal = ({ contact, onClose }) => {
             contact.twitterHandle ||
             contact.facebookProfile) && (
             <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Social Profiles
               </h3>
               <div className="flex gap-3">
@@ -208,7 +208,7 @@ const PreviewModal = ({ contact, onClose }) => {
                     href={contact.linkedInProfile}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-base font-light"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-base font-medium"
                   >
                     LinkedIn
                   </a>
@@ -218,7 +218,7 @@ const PreviewModal = ({ contact, onClose }) => {
                     href={`https://twitter.com/${contact.twitterHandle.replace("@", "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors text-base font-light"
+                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors text-base font-medium"
                   >
                     Twitter
                   </a>
@@ -228,7 +228,7 @@ const PreviewModal = ({ contact, onClose }) => {
                     href={contact.facebookProfile}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors text-base font-light"
+                    className="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors text-base font-medium"
                   >
                     Facebook
                   </a>
@@ -239,10 +239,10 @@ const PreviewModal = ({ contact, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
+            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-100 font-medium"
           >
             Close Preview
           </button>
@@ -296,11 +296,11 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        className="bg-white rounded-md shadow-md w-full max-w-lg max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
-          <h2 className="text-base font-light text-black">
+        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
+          <h2 className="text-sm font-medium text-slate-800">
             Select Lead to Convert
           </h2>
           <button
@@ -324,7 +324,7 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
           </button>
         </div>
 
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-slate-200">
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
               <input
@@ -336,18 +336,18 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
               />
               <button
                 onClick={fetchLeads}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base"
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-base"
               >
                 Search
               </button>
             </div>
             
             <div className="flex items-center gap-2">
-              <label className="text-base font-light text-black uppercase tracking-tight">Filter Category:</label>
+              <label className="text-sm font-medium text-slate-800 uppercase tracking-tight">Filter Category:</label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="flex-1 px-3 py-1.5 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-gray-50"
+                className="flex-1 px-3 py-1.5 text-base border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-slate-50"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -374,17 +374,17 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
               <div
                 key={lead._id}
                 onClick={() => onSelect(lead)}
-                className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex justify-between items-center group"
+                className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors flex justify-between items-center group"
               >
                 <div>
-                  <h3 className="font-light text-black">{lead.name}</h3>
+                  <h3 className="font-medium text-black">{lead.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     <p className="text-base text-black">
                       {lead.organizationName || "-"}
                     </p>
                     {lead.category && (
                       <span 
-                        className={`px-2 py-0.5 rounded-full text-base font-light uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1`}
+                        className={`px-2 py-0.5 rounded-full text-base font-medium uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1`}
                         style={{ 
                           backgroundColor: typeof lead.category === 'object' ? lead.category.color : '',
                           color: (function(hex) {
@@ -403,7 +403,7 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
                     )}
                   </div>
                 </div>
-                <span className="text-base text-black font-light opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-base text-black font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Select →
                 </span>
               </div>
@@ -633,7 +633,7 @@ const Contacts = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+        <h1 className="text-sm font-medium text-slate-800">
           {view === "list"
             ? "Contacts"
             : view === "create"
@@ -643,7 +643,7 @@ const Contacts = () => {
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
             title="Back to List"
           >
             <svg
@@ -670,12 +670,12 @@ const Contacts = () => {
           </StatsWrapper>
 
           <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+            <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                     activeTab === tab.id
                       ? "bg-white text-black shadow-sm"
                       : "text-black hover:text-black"

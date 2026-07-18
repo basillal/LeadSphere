@@ -226,7 +226,7 @@ const FollowUps = () => {
     <div className="w-full max-w-full overflow-x-hidden">
       <div className="flex justify-between items-center mb-4 md:mb-6 gap-2 md:gap-4">
         <div className="min-w-0 flex-1">
-          <h1 className="text-base md:text-base font-light text-black truncate">
+          <h1 className="text-base md:text-sm font-medium text-slate-800 truncate">
             Follow-up management
           </h1>
           <p className="text-black text-base hidden md:block">
@@ -240,7 +240,7 @@ const FollowUps = () => {
           />
           <button
             onClick={handleCreate}
-            className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-gray-800 transition-colors text-base md:text-base font-light whitespace-nowrap flex-shrink-0"
+            className="bg-black text-white px-3 py-2 md:px-4 md:py-2 rounded-lg hover:bg-slate-800 transition-colors text-base md:text-base font-medium whitespace-nowrap flex-shrink-0"
           >
             <span className="hidden sm:inline">+ Schedule new</span>
             <span className="sm:hidden">+ New</span>
@@ -250,14 +250,14 @@ const FollowUps = () => {
 
       {/* Tabs */}
       <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-        <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-2xl w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
+        <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-md w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={`px-4 py-2.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                 activeTab === tab.id
-                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                  ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
                   : "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
@@ -280,13 +280,13 @@ const FollowUps = () => {
             placeholder="Search by lead name or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent bg-gray-50 text-base"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent bg-slate-50 text-base"
           />
         </div>
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
-          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-black hover:bg-gray-100 transition-colors text-base font-light inline-flex items-center justify-between"
+          className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-slate-50 text-black hover:bg-slate-100 transition-colors text-base font-medium inline-flex items-center justify-between"
         >
           <span>Filters</span>
           <svg
@@ -363,13 +363,13 @@ const FollowUps = () => {
         <form onSubmit={handleOutcomeSubmit} className="space-y-4">
           <p className="text-base text-black">
             Please provide a remark/outcome for this follow-up with{" "}
-            <span className="font-light">
+            <span className="font-medium">
               {followUpToUpdate?.lead?.name}
             </span>
             .
           </p>
           <div className="space-y-1">
-            <label className="text-base font-light text-black">
+            <label className="text-sm font-medium text-slate-800">
               Outcome / Remarks <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -384,13 +384,13 @@ const FollowUps = () => {
             <button
               type="button"
               onClick={() => setIsOutcomeModalOpen(false)}
-              className="px-4 py-2 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50"
+              className="px-4 py-2 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white font-light rounded-lg hover:bg-gray-800"
+              className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-slate-800"
             >
               Complete Follow-up
             </button>

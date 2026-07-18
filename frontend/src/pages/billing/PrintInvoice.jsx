@@ -79,7 +79,7 @@ const PrintInvoice = () => {
         }
       `}</style>
 
-      <div className="print-container border border-gray-200 shadow-xl print:shadow-none print:border-none p-12 bg-white min-h-[297mm]">
+      <div className="print-container border border-slate-200 shadow-sm print:shadow-none print:border-none p-12 bg-white min-h-[297mm]">
         {/* Header Section */}
         <div className="flex justify-between items-start mb-12">
           <div className="w-1/2">
@@ -99,7 +99,7 @@ const PrintInvoice = () => {
 
               {/* Fallback Initial if no logo or error */}
               <div
-                className="w-12 h-12 bg-black text-white flex items-center justify-center font-light text-base rounded mb-2"
+                className="w-12 h-12 bg-black text-white flex items-center justify-center font-medium text-base rounded mb-2"
                 style={{
                   display:
                     organization.settings?.logo || organization.logo ? "none" : "flex",
@@ -108,7 +108,7 @@ const PrintInvoice = () => {
                 {organization.name ? organization.name.charAt(0) : "L"}
               </div>
 
-              <h1 className="text-base font-light text-black uppercase">
+              <h1 className="text-sm font-medium text-slate-800 uppercase">
                 {organization.name || "Your Organization Name"}
               </h1>
             </div>
@@ -152,29 +152,29 @@ const PrintInvoice = () => {
           </div>
 
           <div className="text-right w-1/2">
-            <h2 className="text-base font-light text-black uppercase tracking-widest mb-4">
+            <h2 className="text-sm font-medium text-slate-800 uppercase tracking-widest mb-4">
               Invoice
             </h2>
             <div className="inline-block text-left">
               <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-base">
-                <div className="text-black font-light">Invoice No:</div>
-                <div className="font-light text-black">
+                <div className="text-black font-medium">Invoice No:</div>
+                <div className="font-medium text-black">
                   #{invoice.invoiceNumber}
                 </div>
 
-                <div className="text-black font-light">Date:</div>
-                <div className="font-light text-black">
+                <div className="text-black font-medium">Date:</div>
+                <div className="font-medium text-black">
                   {formatDate(invoice.billingDate)}
                 </div>
 
-                <div className="text-black font-light">Due Date:</div>
-                <div className="font-light text-black">
+                <div className="text-black font-medium">Due Date:</div>
+                <div className="font-medium text-black">
                   {invoice.dueDate ? formatDate(invoice.dueDate) : "Immediate"}
                 </div>
 
-                <div className="text-black font-light">Status:</div>
+                <div className="text-black font-medium">Status:</div>
                 <div
-                  className={`font-light uppercase text-base px-2 py-0.5 rounded w-fit ${
+                  className={`font-medium uppercase text-base px-2 py-0.5 rounded w-fit ${
                     invoice.paymentStatus === "PAID"
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"
@@ -188,16 +188,16 @@ const PrintInvoice = () => {
         </div>
 
         {/* Bill To Section */}
-        <div className="mb-10 p-6 bg-gray-50 rounded-lg border border-gray-100">
-          <h3 className="text-base font-light text-black uppercase tracking-wider mb-3">
+        <div className="mb-10 p-6 bg-slate-50 rounded-lg border border-slate-200">
+          <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-3">
             Bill To
           </h3>
-          <div className="text-base font-light text-black mb-1 uppercase">
+          <div className="text-sm font-medium text-slate-800 mb-1 uppercase">
             {contact.name || "Unknown Client"}
           </div>
           <div className="text-base text-black space-y-0.5">
             {contact.organizationName && (
-              <p className="font-light text-black">{contact.organizationName}</p>
+              <p className="font-medium text-black">{contact.organizationName}</p>
             )}
             {contact.email && <p>{contact.email}</p>}
             {contact.phone && <p>{contact.phone}</p>}
@@ -219,7 +219,7 @@ const PrintInvoice = () => {
         <div className="mb-8">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-900 text-white text-base uppercase tracking-wider">
+              <tr className="bg-slate-900 text-white text-base uppercase tracking-wider">
                 <th className="py-3 px-4 text-left rounded-l-lg">
                   Description
                 </th>
@@ -232,15 +232,15 @@ const PrintInvoice = () => {
             </thead>
             <tbody className="text-base text-black">
               {invoice.services.map((item, index) => (
-                <tr key={index} className="border-b border-gray-100">
-                  <td className="py-4 px-4 font-light uppercase">
+                <tr key={index} className="border-b border-slate-200">
+                  <td className="py-4 px-4 font-medium uppercase">
                     {item.serviceName}
                   </td>
                   <td className="py-4 px-4 text-center">{item.quantity}</td>
                   <td className="py-4 px-4 text-right">
                     {formatCurrency(item.unitAmount)}
                   </td>
-                  <td className="py-4 px-4 text-right font-light">
+                  <td className="py-4 px-4 text-right font-medium">
                     {formatCurrency(item.totalAmount)}
                   </td>
                 </tr>
@@ -252,27 +252,27 @@ const PrintInvoice = () => {
         {/* Totals Section */}
         <div className="flex justify-end mb-12">
           <div className="w-1/2 lg:w-1/3 space-y-3">
-            <div className="flex justify-between text-base text-black border-b border-gray-100 pb-2">
+            <div className="flex justify-between text-base text-black border-b border-slate-200 pb-2">
               <span>Subtotal</span>
-              <span className="font-light">
+              <span className="font-medium">
                 {formatCurrency(invoice.subtotal)}
               </span>
             </div>
-            <div className="flex justify-between text-base text-black border-b border-gray-100 pb-2">
+            <div className="flex justify-between text-base text-black border-b border-slate-200 pb-2">
               <span>Tax</span>
-              <span className="font-light">
+              <span className="font-medium">
                 {formatCurrency(invoice.taxTotal)}
               </span>
             </div>
             {invoice.discount > 0 && (
-              <div className="flex justify-between text-base text-green-600 border-b border-gray-100 pb-2">
+              <div className="flex justify-between text-base text-green-600 border-b border-slate-200 pb-2">
                 <span>Discount</span>
-                <span className="font-light">
+                <span className="font-medium">
                   -{formatCurrency(invoice.discount)}
                 </span>
               </div>
             )}
-            <div className="flex justify-between text-base font-light text-black pt-2">
+            <div className="flex justify-between text-sm font-medium text-slate-800 pt-2">
               <span>Grand Total</span>
               <span>{formatCurrency(invoice.grandTotal)}</span>
             </div>
@@ -280,8 +280,8 @@ const PrintInvoice = () => {
         </div>
 
         {/* Footer / Notes & Terms */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <h3 className="text-base font-light text-black mb-2">
+        <div className="mt-8 pt-8 border-t border-slate-200">
+          <h3 className="text-sm font-medium text-slate-800 mb-2">
             Notes & Terms
           </h3>
           <p className="text-base text-black">

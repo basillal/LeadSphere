@@ -7,7 +7,7 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-black",
+      Other: "bg-slate-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
@@ -22,11 +22,11 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-light text-black truncate">
+          <h3 className="text-sm font-medium text-slate-800 truncate">
             {contact.name}
           </h3>
           {contact.organizationName && (
@@ -48,7 +48,7 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
           {contact.tags.map((tag, index) => (
             <span
               key={index}
-              className={`px-2 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
+              className={`px-2 py-1 rounded-full text-base font-medium ${getTagColor(tag)}`}
             >
               {tag}
             </span>
@@ -103,19 +103,19 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
       <div className="flex gap-2">
         <button
           onClick={() => onView(contact)}
-          className="flex-1 px-3 py-2 bg-gray-100 text-black rounded-lg hover:bg-gray-200 transition-colors text-base font-light"
+          className="flex-1 px-3 py-2 bg-slate-100 text-black rounded-lg hover:bg-gray-200 transition-colors text-base font-medium"
         >
           View
         </button>
         <button
           onClick={() => onEdit(contact)}
-          className="flex-1 px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-base font-light"
+          className="flex-1 px-3 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors text-base font-medium"
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(contact._id)}
-          className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-base font-light"
+          className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-base font-medium"
         >
           Delete
         </button>

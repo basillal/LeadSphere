@@ -27,7 +27,7 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <div>
-          <div className="font-light text-black uppercase">{row.name}</div>
+          <div className="font-medium text-black uppercase">{row.name}</div>
         </div>
       ),
     },
@@ -42,7 +42,7 @@ const UsersTable = ({
       label: "Organization",
       width: "w-1/4",
       render: (row) => (
-        <span className="text-base font-light text-black">
+        <span className="text-sm font-medium text-slate-800">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -53,9 +53,9 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded text-base font-light ${row.role?.isSystemRole
+          className={`px-2 py-1 rounded text-base font-medium ${row.role?.isSystemRole
             ? "bg-blue-100 text-blue-800"
-            : "bg-gray-100 text-black"
+            : "bg-slate-100 text-black"
             }`}
         >
           {row.role?.roleName || "No Role"}
@@ -68,7 +68,7 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <span
-          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(
+          className={`px-2 py-0.5 rounded-full text-base font-medium ${getStatusColor(
             row.isActive,
           )}`}
         >
@@ -175,14 +175,14 @@ const UsersTable = ({
   };
 
   const renderCard = (row, actions) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-200">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-light text-black text-base">{row.name}</h3>
+          <h3 className="font-medium text-black text-base">{row.name}</h3>
           <p className="text-base text-black">{row.email}</p>
         </div>
         <span
-          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(
+          className={`px-2 py-0.5 rounded-full text-base font-medium ${getStatusColor(
             row.isActive,
           )}`}
         >
@@ -190,10 +190,10 @@ const UsersTable = ({
         </span>
       </div>
       <div className="text-base text-black mb-2">
-        <span className="font-light">Role:</span>{" "}
+        <span className="font-medium">Role:</span>{" "}
         {row.role?.roleName || "No Role"}
       </div>
-      <div className="flex justify-end gap-2 border-t border-gray-100 pt-2">
+      <div className="flex justify-end gap-2 border-t border-slate-200 pt-2">
         {actions.map((action, idx) => (
           <button
             key={idx}
@@ -201,7 +201,7 @@ const UsersTable = ({
               e.stopPropagation();
               action.onClick(row);
             }}
-            className={`text-base font-light flex items-center gap-1 ${action.color}`}
+            className={`text-base font-medium flex items-center gap-1 ${action.color}`}
             title={action.label}
           >
             {action.icon}
