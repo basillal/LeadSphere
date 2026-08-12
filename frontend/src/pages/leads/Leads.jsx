@@ -239,7 +239,7 @@ const Leads = () => {
       const selectedRange = range || getDateRange(timeRange);
       if (selectedRange.startDate) params.startDate = selectedRange.startDate;
       if (selectedRange.endDate) params.endDate = selectedRange.endDate;
-      
+
       const resp = await leadService.getLeadStats(params);
       setStats(resp.data);
     } catch (err) {
@@ -427,37 +427,37 @@ const Leads = () => {
             : view === "create"
               ? "Create new lead"
               : "Edit lead"}
-          </h1>
-          <div className="flex gap-2">
-            {view === "list" && (
-              <TimeRangeFilter
-                value={timeRange}
-                onChange={setTimeRange}
-              />
-            )}
-            {view !== "list" && (
-              <button
-                onClick={handleCancelForm}
-                className="p-2 border border-slate-200 rounded-md text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md cursor-pointer"
-                title="Back to List"
+        </h1>
+        <div className="flex gap-2">
+          {view === "list" && (
+            <TimeRangeFilter
+              value={timeRange}
+              onChange={setTimeRange}
+            />
+          )}
+          {view !== "list" && (
+            <button
+              onClick={handleCancelForm}
+              className="p-2 border border-slate-200 rounded-md text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md cursor-pointer"
+              title="Back to List"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-              </button>
-            )}
-          </div>
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+          )}
         </div>
+      </div>
 
       {error && (
         <div className="bg-red-50 text-red-800 p-4 rounded-lg mb-4 border border-red-200">
@@ -483,7 +483,7 @@ const Leads = () => {
             pagination={pagination}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
-            // loading={loading}
+          // loading={loading}
           />
         </>
       ) : (
