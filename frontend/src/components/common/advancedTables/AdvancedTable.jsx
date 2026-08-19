@@ -240,14 +240,11 @@ const AdvancedTable = ({
       {/* Toolbar */}
       {toolbar && (
         <div
-          style={{
-            marginBottom: "1rem",
-            background: selected.length > 0 ? "rgba(79, 70, 229, 0.05)" : "transparent",
-            borderRadius: "12px",
-            padding: selected.length > 0 ? "0.75rem 1rem" : "0",
-            border: selected.length > 0 ? "1px solid rgba(79, 70, 229, 0.2)" : "none",
-            transition: "all 0.2s ease",
-          }}
+          className={`mb-4 transition-all duration-200 ease-in-out ${
+            selected.length > 0 
+              ? "bg-indigo-50/50 rounded-xl p-3 border border-indigo-200" 
+              : "bg-transparent p-0 border-none"
+          }`}
         >
           {selected.length > 0 && selection.enabled ? (
             <div className="flex items-center w-full justify-between">
@@ -268,18 +265,9 @@ const AdvancedTable = ({
               <div className="flex flex-col md:flex-row md:flex-wrap gap-2.5 w-full md:w-auto flex-1">
                 {/* Search */}
                 {toolbar.search && !isMobile && (
-                  <div style={{ position: "relative", minWidth: "280px" }}>
+                  <div className="relative min-w-[280px]">
                     <svg
-                      style={{
-                        position: "absolute",
-                        left: "0.875rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        width: "16px",
-                        height: "16px",
-                        color: focusedSearch ? "#4F46E5" : "#94A3B8",
-                        transition: "color 0.15s ease",
-                      }}
+                      className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-150 ${focusedSearch ? "text-indigo-600" : "text-slate-400"}`}
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
@@ -298,20 +286,7 @@ const AdvancedTable = ({
                       onChange={(e) => toolbar.search.onChange(e.target.value)}
                       onFocus={() => setFocusedSearch(true)}
                       onBlur={() => setFocusedSearch(false)}
-                      style={{
-                        width: "100%",
-                        padding: "0.55rem 1rem 0.55rem 2.25rem",
-                        fontSize: "0.82rem",
-                        fontFamily: "'Inter', sans-serif",
-                        fontWeight: 500,
-                        color: "#0F172A",
-                        background: "white",
-                        border: `1.5px solid ${focusedSearch ? "#4F46E5" : "#E2E8F0"}`,
-                        borderRadius: "8px",
-                        outline: "none",
-                        transition: "all 0.18s ease",
-                        boxShadow: focusedSearch ? "0 0 0 3px rgba(79,70,229,0.1)" : "none",
-                      }}
+                      className="w-full pl-9 pr-4 py-2 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg outline-none transition-all duration-150 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 shadow-sm"
                     />
                   </div>
                 )}
@@ -325,27 +300,12 @@ const AdvancedTable = ({
                       key={index}
                       value={filter.value}
                       onChange={(e) => filter.onChange(e.target.value)}
+                      className="appearance-none bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-lg py-2 pl-3.5 pr-8 outline-none cursor-pointer shadow-sm transition-all duration-150 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 hover:bg-slate-50"
                       style={{
-                        background: "white",
-                        border: "1.5px solid #E2E8F0",
-                        color: "#475569",
-                        fontSize: "0.82rem",
-                        fontFamily: "'Inter', sans-serif",
-                        fontWeight: 500,
-                        borderRadius: "8px",
-                        padding: "0.55rem 0.875rem",
-                        outline: "none",
-                        cursor: "pointer",
-                        boxShadow: "0 1px 2px rgba(15,23,42,0.02)",
-                        transition: "border-color 0.18s ease, box-shadow 0.18s ease",
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = "#4F46E5";
-                        e.target.style.boxShadow = "0 0 0 3px rgba(79,70,229,0.1)";
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = "#E2E8F0";
-                        e.target.style.boxShadow = "none";
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "right 0.5rem center",
+                        backgroundSize: "1rem",
                       }}
                     >
                       {filter.options.map((option) => (
@@ -392,29 +352,7 @@ const AdvancedTable = ({
                 {toolbar.onCreate && (
                   <button
                     onClick={toolbar.onCreate.onClick}
-                    style={{
-                      padding: "0.55rem 1.1rem",
-                      borderRadius: "8px",
-                      fontSize: "0.82rem",
-                      fontWeight: 700,
-                      fontFamily: "'Inter', sans-serif",
-                      border: "none",
-                      background: "linear-gradient(135deg, #4F46E5, #6366F1)",
-                      color: "white",
-                      cursor: "pointer",
-                      boxShadow: "0 4px 12px rgba(79,70,229,0.2)",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "linear-gradient(135deg, #4338CA, #4F46E5)";
-                      e.currentTarget.style.boxShadow = "0 6px 16px rgba(79,70,229,0.3)";
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "linear-gradient(135deg, #4F46E5, #6366F1)";
-                      e.currentTarget.style.boxShadow = "0 4px 12px rgba(79,70,229,0.2)";
-                      e.currentTarget.style.transform = "translateY(0)";
-                    }}
+                    className="inline-flex items-center justify-center bg-indigo-600 text-white text-sm font-semibold rounded-lg px-4 py-2 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 transition-colors duration-200"
                   >
                     + {toolbar.onCreate.label || "Add"}
                   </button>
@@ -427,21 +365,21 @@ const AdvancedTable = ({
 
       {/* Desktop View - Table */}
       {!isMobile && (
-        <div className="table-frame relative min-h-[200px]" style={{ background: "white", borderRadius: "12px", border: "1px solid #E2E8F0", overflow: "hidden", boxShadow: "0 4px 20px -2px rgba(15,23,42,0.04)" }}>
+        <div className="table-frame relative min-h-[200px] bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
           {loading && (
             <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[1.5px] flex items-center justify-center">
               <div className="flex flex-col items-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-600 border-t-transparent mb-2"></div>
-                <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "#4F46E5" }}>
+                <p className="text-sm font-semibold text-indigo-600">
                   Updating records...
                 </p>
               </div>
             </div>
           )}
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse" style={{ borderSpacing: 0 }}>
+            <table className="w-full border-collapse">
               <thead>
-                <tr style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
+                <tr className="border-b border-slate-200">
                   {selection.enabled && (
                     <th className="px-4 py-3.5 w-10 text-center">
                       <input
@@ -449,28 +387,20 @@ const AdvancedTable = ({
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSelectAllClick}
                         checked={data.length > 0 && selected.length === data.length}
-                        style={{
-                          borderRadius: "4px",
-                          borderColor: "#CBD5E1",
-                          color: "#4F46E5",
-                          width: "16px",
-                          height: "16px",
-                          cursor: "pointer",
-                        }}
+                        className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-600 cursor-pointer"
                       />
                     </th>
                   )}
                   {columns.map((column) => (
                     <th
                       key={column.id}
-                      className={`px-4 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider ${column.sortable !== false ? "cursor-pointer hover:text-slate-900" : ""} ${column.width || ""}`}
+                      className={`px-4 py-3 text-left text-sm font-semibold text-slate-700 ${column.sortable !== false ? "cursor-pointer hover:text-slate-900" : ""} ${column.width || ""}`}
                       onClick={() => column.sortable !== false && handleRequestSort(column.id)}
                       style={{
-                        fontFamily: "'Outfit', sans-serif",
-                        letterSpacing: "0.05em",
+                        fontFamily: "'Inter', sans-serif",
                       }}
                     >
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         {column.label}
                         {orderBy === column.id &&
                           (order === "asc" ? <Icons.SortAsc /> : <Icons.SortDesc />)}
@@ -479,10 +409,9 @@ const AdvancedTable = ({
                   ))}
                   {actions.length > 0 && (
                     <th
-                      className="px-4 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
+                      className="px-4 py-3 text-right text-sm font-semibold text-slate-700"
                       style={{
-                        fontFamily: "'Outfit', sans-serif",
-                        letterSpacing: "0.05em",
+                        fontFamily: "'Inter', sans-serif",
                       }}
                     >
                       Actions
@@ -511,7 +440,7 @@ const AdvancedTable = ({
                       <tr
                         key={rowId}
                         onClick={() => (onRowClick ? onRowClick(row) : selection.enabled && handleClick(rowId))}
-                        className={`hover:bg-slate-50/70 transition-colors ${isSelected ? "bg-indigo-50/40" : ""}`}
+                        className={`hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 ${isSelected ? "bg-indigo-50/40" : ""}`}
                         style={{ cursor: onRowClick || selection.enabled ? "pointer" : "default" }}
                       >
                         {selection.enabled && (
@@ -520,14 +449,7 @@ const AdvancedTable = ({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => handleClick(rowId)}
-                              style={{
-                                borderRadius: "4px",
-                                borderColor: "#CBD5E1",
-                                color: "#4F46E5",
-                                width: "16px",
-                                height: "16px",
-                                cursor: "pointer",
-                              }}
+                              className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-600 cursor-pointer"
                             />
                           </td>
                         )}
@@ -656,44 +578,22 @@ const AdvancedTable = ({
 
       {/* Pagination */}
       {pagination.enabled && (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "0.65rem 1rem",
-            background: "white",
-            border: "1px solid #E2E8F0",
-            borderRadius: "12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxShadow: "0 1px 3px rgba(15,23,42,0.02)",
-          }}
-        >
+        <div className="mt-4 px-4 py-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-sm">
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p style={{ fontSize: "0.8rem", color: "#64748B", margin: 0, fontFamily: "'Inter', sans-serif" }}>
-                Showing <span style={{ fontWeight: 600, color: "#0F172A" }}>{page * rowsPerPage + 1}</span> to{" "}
-                <span style={{ fontWeight: 600, color: "#0F172A" }}>
+              <p className="text-sm text-slate-500 m-0">
+                Showing <span className="font-semibold text-slate-900">{page * rowsPerPage + 1}</span> to{" "}
+                <span className="font-semibold text-slate-900">
                   {Math.min((page + 1) * rowsPerPage, totalItems)}
                 </span>{" "}
-                of <span style={{ fontWeight: 600, color: "#0F172A" }}>{totalItems}</span> results
+                of <span className="font-semibold text-slate-900">{totalItems}</span> results
               </p>
             </div>
             <div className="flex items-center gap-3">
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                style={{
-                  background: "white",
-                  border: "1px solid #E2E8F0",
-                  borderRadius: "6px",
-                  padding: "0.35rem 0.5rem",
-                  fontSize: "0.78rem",
-                  fontWeight: 500,
-                  color: "#475569",
-                  outline: "none",
-                  cursor: "pointer",
-                }}
+                className="bg-white border border-slate-200 rounded-lg py-1.5 px-2 text-sm font-medium text-slate-600 outline-none cursor-pointer hover:border-slate-300 transition-colors"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map((option) => (
                   <option key={option} value={option}>
@@ -701,54 +601,23 @@ const AdvancedTable = ({
                   </option>
                 ))}
               </select>
-              <div style={{ display: "inline-flex", borderRadius: "8px", border: "1px solid #E2E8F0", overflow: "hidden" }}>
+              <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden shadow-sm">
                 <button
                   onClick={() => handleChangePage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  style={{
-                    padding: "0.4rem 0.6rem",
-                    background: "white",
-                    border: "none",
-                    borderRight: "1px solid #E2E8F0",
-                    color: "#475569",
-                    cursor: page === 0 ? "not-allowed" : "pointer",
-                    opacity: page === 0 ? 0.5 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className={`px-2.5 py-1.5 bg-white border-r border-slate-200 text-slate-600 flex items-center transition-colors ${page === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-slate-50"}`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <div
-                  style={{
-                    padding: "0.4rem 0.75rem",
-                    background: "#F8FAFC",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    color: "#0F172A",
-                    fontFamily: "'Inter', sans-serif",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
+                <div className="px-3 py-1.5 bg-slate-50 text-sm font-semibold text-slate-900 flex items-center">
                   Page {page + 1} of {totalPages || 1}
                 </div>
                 <button
                   onClick={() => handleChangePage(Math.min(totalPages - 1, page + 1))}
                   disabled={page >= totalPages - 1}
-                  style={{
-                    padding: "0.4rem 0.6rem",
-                    background: "white",
-                    border: "none",
-                    borderLeft: "1px solid #E2E8F0",
-                    color: "#475569",
-                    cursor: page >= totalPages - 1 ? "not-allowed" : "pointer",
-                    opacity: page >= totalPages - 1 ? 0.5 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className={`px-2.5 py-1.5 bg-white border-l border-slate-200 text-slate-600 flex items-center transition-colors ${page >= totalPages - 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-slate-50"}`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

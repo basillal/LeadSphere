@@ -58,18 +58,18 @@ const PreviewModal = ({ lead, onClose }) => {
         {/* Body */}
         <div className="p-6 space-y-6">
           {/* Status Sections */}
-          <div className="flex flex-wrap gap-3">
-            <div className="px-3 py-1 bg-slate-900 text-white text-xs sm:text-sm font-semibold rounded-md uppercase tracking-wide">
+          <div className="flex flex-wrap gap-2">
+            <div className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-md ring-1 ring-inset ring-indigo-600/20">
               {lead.status}
             </div>
-            <div className="px-3 py-1 bg-slate-100 text-slate-900 text-xs sm:text-sm font-semibold rounded-md">
+            <div className="px-2.5 py-1 bg-gray-50 text-gray-700 text-xs font-medium rounded-md ring-1 ring-inset ring-gray-600/20">
               {lead.priority} Priority
             </div>
-            <div className="px-3 py-1 bg-slate-100 text-slate-900 text-xs sm:text-sm font-semibold rounded-md">
+            <div className="px-2.5 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-md ring-1 ring-inset ring-orange-600/20">
               {lead.leadTemperature}
             </div>
             {lead.category && (
-              <div className="px-3 py-1 text-xs sm:text-sm font-semibold text-slate-900 uppercase tracking-wider">
+              <div className="px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-md ring-1 ring-inset ring-purple-600/20">
                 {lead.category.name}
               </div>
             )}
@@ -421,12 +421,12 @@ const Leads = () => {
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
-        <h1 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-wider">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           {view === "list"
             ? "Leads"
             : view === "create"
-              ? "Create new lead"
-              : "Edit lead"}
+              ? "Create New Lead"
+              : "Edit Lead"}
         </h1>
         <div className="flex gap-2">
           {view === "list" && (
