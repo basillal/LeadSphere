@@ -5,6 +5,7 @@ import { useData } from "../context/DataContext";
 import Toast from "../components/common/utils/Toast";
 import SectionHeader from "../components/common/sections/SectionHeader";
 import Input from "../components/common/fields/Input";
+import Loader from "../components/common/Loader";
 
 const Settings = () => {
   const { user, selectedOrganization } = useAuth();
@@ -158,8 +159,8 @@ const Settings = () => {
                 )}
 
                 {loading ? (
-                  <div className="py-12 flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                  <div className="py-12 flex justify-center relative min-h-[200px] w-full">
+                    <Loader local />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

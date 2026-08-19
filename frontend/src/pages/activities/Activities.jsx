@@ -57,16 +57,14 @@ const PreviewModal = ({ activity, onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
+      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div
-        className="bg-white rounded-md shadow-md w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div className="flex items-center gap-3">
             <span className="text-base">
               {getActivityTypeIcon(activity.activityType)}
@@ -103,7 +101,7 @@ const PreviewModal = ({ activity, onClose }) => {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Status and Priority */}
           <div className="flex flex-wrap gap-2">
             <span
@@ -574,11 +572,7 @@ const Activities = () => {
         </div>
       </div>
 
-      {/* {loading && view === "list" ? (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : ( */}
+
       <>
         {view === "list" && (
           <>

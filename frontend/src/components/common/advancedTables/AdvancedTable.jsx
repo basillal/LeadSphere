@@ -237,6 +237,15 @@ const AdvancedTable = ({
 
   return (
     <div className="w-full">
+      <style>
+        {`
+          @keyframes table-loader-slide {
+            0% { left: -40%; width: 40%; }
+            50% { left: 20%; width: 80%; }
+            100% { left: 100%; width: 40%; }
+          }
+        `}
+      </style>
       {/* Toolbar */}
       {toolbar && (
         <div
@@ -367,14 +376,19 @@ const AdvancedTable = ({
       {!isMobile && (
         <div className="table-frame relative min-h-[200px] bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[1.5px] flex items-center justify-center">
-              <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-600 border-t-transparent mb-2"></div>
-                <p className="text-sm font-semibold text-indigo-600">
-                  Updating records...
-                </p>
+            <>
+              <div className="absolute top-0 left-0 right-0 z-30">
+                <div className="relative h-[3px] w-full overflow-hidden bg-indigo-50/50">
+                  <div 
+                    className="absolute top-0 h-full bg-indigo-600 rounded-full"
+                    style={{
+                      animation: 'table-loader-slide 1.2s infinite ease-in-out',
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+              <div className="absolute inset-0 z-20 bg-slate-50/20 cursor-wait" />
+            </>
           )}
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -504,7 +518,22 @@ const AdvancedTable = ({
 
       {/* Mobile View - Cards */}
       {isMobile && (
-        <div className="space-y-3">
+        <div className="space-y-3 relative min-h-[100px]">
+          {loading && (
+            <>
+              <div className="absolute -top-1 left-0 right-0 z-30 rounded-t-xl overflow-hidden">
+                <div className="relative h-[3px] w-full overflow-hidden bg-indigo-50/50">
+                  <div 
+                    className="absolute top-0 h-full bg-indigo-600 rounded-full"
+                    style={{
+                      animation: 'table-loader-slide 1.2s infinite ease-in-out',
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="absolute inset-0 z-20 bg-slate-50/20 rounded-xl cursor-wait" />
+            </>
+          )}
           {visibleRows.length === 0 ? (
             <EmptyTableState
               title={emptyStateCopy.title}

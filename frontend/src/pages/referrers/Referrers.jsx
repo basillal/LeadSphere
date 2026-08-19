@@ -21,154 +21,134 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
+      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div
-        className="bg-white rounded-md shadow-md w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
+        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
           <div>
-            <h2 className="text-sm font-medium text-slate-800">{referrer.name}</h2>
-            <p className="text-base text-black">
+            <h2 className="text-lg font-bold text-gray-900">{referrer.name}</h2>
+            <p className="text-sm font-medium text-gray-500 mt-0.5">
               {referrer.organizationName || "No Organization"}{" "}
               {referrer.designation && `• ${referrer.designation}`}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 bg-gray-50/30">
           {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
-                Contact Details
-              </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-medium w-32 inline-block text-black">
-                    Phone:
-                  </span>{" "}
-                  {referrer.phone}
-                </p>
-                <p className="text-black">
-                  <span className="font-medium w-32 inline-block text-black">
-                    Email:
-                  </span>{" "}
-                  {referrer.email || "-"}
-                </p>
-                <p className="text-black">
-                  <span className="font-medium w-32 inline-block text-black">
-                    Alt Phone:
-                  </span>{" "}
-                  {referrer.alternatePhone || "-"}
-                </p>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
+                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Contact Details
+                </h3>
+              </div>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
+                  <p className="font-medium text-gray-900">{referrer.phone || "-"}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
+                  <p className="font-medium text-gray-900">{referrer.email || "-"}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Alt Phone</span>
+                  <p className="font-medium text-gray-900">{referrer.alternatePhone || "-"}</p>
+                </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
-                Status
-              </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-medium w-32 inline-block text-black">
-                    Active:
-                  </span>{" "}
-                  {referrer.isActive ? "Yes" : "No"}
-                </p>
-                <p className="text-black">
-                  <span className="font-medium w-32 inline-block text-black">
-                    Joined:
-                  </span>{" "}
-                  {formatDate(referrer.createdAt)}
-                </p>
+
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-green-50 text-green-600 rounded-lg text-sm">✅</div>
+                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Status
+                </h3>
+              </div>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Active</span>
+                  <p className="font-medium text-gray-900">{referrer.isActive ? "Yes" : "No"}</p>
+                </div>
+                <div>
+                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Joined</span>
+                  <p className="font-medium text-gray-900">{formatDate(referrer.createdAt)}</p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Statistics */}
           {stats && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
-                Referral Statistics
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-slate-900 rounded-md text-white">
+            <div className="bg-slate-900 rounded-xl p-5 text-white shadow-md">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-slate-800 text-white rounded-lg text-sm">📊</div>
+                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Referral Statistics
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div>
-                  <div className="text-base text-black uppercase">
-                    Total Leads
-                  </div>
-                  <div className="text-base font-medium">
-                    {stats.totalLeads || 0}
-                  </div>
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Total Leads</span>
+                  <p className="font-semibold text-sm">{stats.totalLeads || 0}</p>
                 </div>
                 <div>
-                  <div className="text-base text-black uppercase">Active</div>
-                  <div className="text-base font-medium">
-                    {stats.activeLeads || 0}
-                  </div>
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Active</span>
+                  <p className="font-semibold text-sm">{stats.activeLeads || 0}</p>
                 </div>
                 <div>
-                  <div className="text-base text-black uppercase">
-                    Converted
-                  </div>
-                  <div className="text-base font-medium">
-                    {stats.convertedLeads || 0}
-                  </div>
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Converted</span>
+                  <p className="font-semibold text-sm">{stats.convertedLeads || 0}</p>
                 </div>
                 <div>
-                  <div className="text-base text-black uppercase">Lost</div>
-                  <div className="text-base font-medium">
-                    {stats.lostLeads || 0}
-                  </div>
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Lost</span>
+                  <p className="font-semibold text-sm">{stats.lostLeads || 0}</p>
                 </div>
                 <div>
-                  <div className="text-base text-black uppercase">
-                    Conversion %
-                  </div>
-                  <div className="text-base font-medium">
-                    {stats.conversionPercentage || 0}%
-                  </div>
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Conversion %</span>
+                  <p className="font-semibold text-sm">{stats.conversionPercentage || 0}%</p>
                 </div>
               </div>
               {stats.lastLeadDate && (
-                <p className="text-base text-black">
-                  <span className="font-medium">Last Lead Date:</span>{" "}
-                  {formatDate(stats.lastLeadDate)}
-                </p>
+                <div className="mt-4 pt-4 border-t border-slate-800">
+                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Last Lead Date</span>
+                  <p className="font-semibold text-sm">{formatDate(stats.lastLeadDate)}</p>
+                </div>
               )}
             </div>
           )}
 
           {/* Notes */}
           {referrer.notes && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
-                Notes
-              </h3>
-              <p className="text-black bg-slate-50 p-4 rounded-lg leading-relaxed border border-slate-200">
+            <div className="bg-amber-50/50 rounded-xl p-5 border border-amber-100/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm">📝</div>
+                <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wider">
+                  Notes
+                </h3>
+              </div>
+              <p className="text-sm text-amber-800 leading-relaxed font-medium">
                 {referrer.notes}
               </p>
             </div>
@@ -176,10 +156,10 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-100 font-medium"
+            className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold text-sm transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-200"
           >
             Close Preview
           </button>

@@ -5,6 +5,7 @@ import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
+import Loader from "../../components/common/Loader";
 
 const FollowUps = () => {
   const { selectedOrganization } = useAuth();
@@ -479,11 +480,8 @@ const FollowUps = () => {
 
         {/* Cards Grid */}
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="animate-spin text-4xl">⏳</div>
-              <p className="mt-4 text-gray-500">Loading follow-ups...</p>
-            </div>
+          <div className="flex items-center justify-center py-20 relative min-h-[200px] w-full">
+            <Loader local />
           </div>
         ) : filteredFollowUps.length === 0 ? (
           <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
@@ -551,27 +549,30 @@ const FollowUps = () => {
 
                   {/* Expanded Content */}
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-2 border-t border-gray-100">
-                      <div className="space-y-3">
+                    <div className="px-5 pb-5 pt-4 border-t border-gray-100 bg-gray-50/30">
+                      <div className="space-y-4">
                         {/* Lead Details */}
                         {followUp.lead && (
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                              👤 Lead Information
-                            </p>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
+                              <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Lead Information
+                              </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <span className="text-gray-500">📱 Phone:</span>
-                                <p className="font-medium">{followUp.lead.phone || 'N/A'}</p>
+                                <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
+                                <p className="font-medium text-gray-900">{followUp.lead.phone || 'N/A'}</p>
                               </div>
                               <div>
-                                <span className="text-gray-500">✉️ Email:</span>
-                                <p className="font-medium truncate">{followUp.lead.email || 'N/A'}</p>
+                                <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
+                                <p className="font-medium text-gray-900 truncate">{followUp.lead.email || 'N/A'}</p>
                               </div>
                               {followUp.lead.company && (
-                                <div className="col-span-2">
-                                  <span className="text-gray-500">🏢 Company:</span>
-                                  <p className="font-medium">{followUp.lead.company}</p>
+                                <div className="col-span-2 pt-3 border-t border-gray-50">
+                                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Company</span>
+                                  <p className="font-medium text-gray-900">{followUp.lead.company}</p>
                                 </div>
                               )}
                             </div>
@@ -579,18 +580,21 @@ const FollowUps = () => {
                         )}
 
                         {/* Schedule Details */}
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                            📅 Schedule Details
-                          </p>
-                          <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg text-sm">📅</div>
+                            <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                              Schedule Details
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <span className="text-gray-500">Date:</span>
-                              <p className="font-medium">{getShortDate(followUp.scheduledDate)}</p>
+                              <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Date</span>
+                              <p className="font-medium text-gray-900">{getShortDate(followUp.scheduledDate)}</p>
                             </div>
                             <div>
-                              <span className="text-gray-500">Time:</span>
-                              <p className="font-medium">
+                              <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Time</span>
+                              <p className="font-medium text-gray-900">
                                 {followUp.scheduledDate ?
                                   new Date(followUp.scheduledDate).toLocaleTimeString([], {
                                     hour: '2-digit',
@@ -606,21 +610,27 @@ const FollowUps = () => {
 
                         {/* Notes */}
                         {followUp.notes && (
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                              📝 Notes
-                            </p>
-                            <p className="text-sm text-gray-700">{followUp.notes}</p>
+                          <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm">📝</div>
+                              <p className="text-xs font-bold text-amber-900 uppercase tracking-wider">
+                                Notes
+                              </p>
+                            </div>
+                            <p className="text-sm text-amber-800 leading-relaxed">{followUp.notes}</p>
                           </div>
                         )}
 
                         {/* Outcome */}
                         {followUp.outcome && (
-                          <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                            <p className="text-xs font-medium text-green-700 uppercase tracking-wider mb-1">
-                              ✅ Outcome
-                            </p>
-                            <p className="text-sm text-green-800">{followUp.outcome}</p>
+                          <div className="bg-green-50/50 rounded-xl p-4 border border-green-100/50">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="p-1.5 bg-green-100 text-green-700 rounded-lg text-sm">✅</div>
+                              <p className="text-xs font-bold text-green-900 uppercase tracking-wider">
+                                Outcome
+                              </p>
+                            </div>
+                            <p className="text-sm text-green-800 leading-relaxed">{followUp.outcome}</p>
                           </div>
                         )}
 
@@ -753,112 +763,100 @@ const FollowUps = () => {
         )}
       </div>
 
-      {/* Side Panel for Form */}
+      {/* Centered Modal for Form */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity" onClick={() => setIsFormOpen(false)}></div>
-          <div className="absolute inset-y-0 right-0 max-w-full flex">
-            <div className="relative w-screen max-w-md">
-              <div className="h-full flex flex-col bg-white shadow-xl overflow-y-auto">
-                <div className="flex-1">
-                  <div className="px-4 py-6 sm:px-6">
-                    <div className="flex items-start justify-between">
-                      <h2 className="text-lg font-medium text-gray-900">
-                        {currentFollowUp ? 'Edit Follow-up' : 'Schedule New Follow-up'}
-                      </h2>
-                      <button
-                        onClick={() => setIsFormOpen(false)}
-                        className="ml-3 h-7 w-7 rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      >
-                        <span className="sr-only">Close panel</span>
-                        <span className="text-2xl">✕</span>
-                      </button>
-                    </div>
-                  </div>
-                  <div className="px-4 pb-6 sm:px-6">
-                    <FollowUpForm
-                      initialData={currentFollowUp}
-                      onSubmit={handleFormSubmit}
-                      onCancel={() => setIsFormOpen(false)}
-                      isLoading={actionLoading}
-                    />
-                  </div>
-                </div>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setIsFormOpen(false)}></div>
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+              <h2 className="text-xl font-bold text-gray-900">
+                {currentFollowUp ? 'Edit Follow-up' : 'Schedule New Follow-up'}
+              </h2>
+              <button
+                onClick={() => setIsFormOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <span className="sr-only">Close modal</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <FollowUpForm
+                initialData={currentFollowUp}
+                onSubmit={handleFormSubmit}
+                onCancel={() => setIsFormOpen(false)}
+                isLoading={actionLoading}
+              />
             </div>
           </div>
         </div>
       )}
 
-      {/* Side Panel for Outcome */}
+      {/* Centered Modal for Outcome */}
       {isOutcomeOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity" onClick={() => setIsOutcomeOpen(false)}></div>
-          <div className="absolute inset-y-0 right-0 max-w-full flex">
-            <div className="relative w-screen max-w-md">
-              <div className="h-full flex flex-col bg-white shadow-xl overflow-y-auto">
-                <div className="flex-1">
-                  <div className="px-4 py-6 sm:px-6">
-                    <div className="flex items-start justify-between">
-                      <h2 className="text-lg font-medium text-gray-900">
-                        Complete Follow-up
-                      </h2>
-                      <button
-                        onClick={() => setIsOutcomeOpen(false)}
-                        className="ml-3 h-7 w-7 rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      >
-                        <span className="sr-only">Close panel</span>
-                        <span className="text-2xl">✕</span>
-                      </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setIsOutcomeOpen(false)}></div>
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+              <h2 className="text-xl font-bold text-gray-900">
+                Complete Follow-up
+              </h2>
+              <button
+                onClick={() => setIsOutcomeOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <span className="sr-only">Close modal</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <form onSubmit={handleOutcomeSubmit} className="space-y-4">
+                <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                  <p className="text-sm text-blue-800">
+                    Marking follow-up as complete for{' '}
+                    <span className="font-bold text-blue-900">{followUpToUpdate?.lead?.name}</span>
+                  </p>
+                  {followUpToUpdate && (
+                    <div className="mt-2 text-xs text-blue-700 font-medium flex items-center gap-2">
+                      <span className="flex items-center gap-1"><span>📌</span> {followUpToUpdate.type}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1"><span>📅</span> {getShortDate(followUpToUpdate.scheduledDate)}</span>
                     </div>
-                  </div>
-                  <div className="px-4 pb-6 sm:px-6">
-                    <form onSubmit={handleOutcomeSubmit} className="space-y-4">
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                        <p className="text-sm text-blue-800">
-                          Marking follow-up as complete for{' '}
-                          <span className="font-semibold">{followUpToUpdate?.lead?.name}</span>
-                        </p>
-                        {followUpToUpdate && (
-                          <div className="mt-2 text-xs text-blue-600">
-                            <span>Type: {followUpToUpdate.type}</span>
-                            <span className="mx-2">•</span>
-                            <span>Date: {getShortDate(followUpToUpdate.scheduledDate)}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-sm font-medium text-gray-700">
-                          Outcome / Remarks <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[120px] resize-y"
-                          placeholder="What was the result of this interaction?"
-                          value={outcomeRemark}
-                          onChange={(e) => setOutcomeRemark(e.target.value)}
-                        />
-                      </div>
-                      <div className="flex justify-end gap-3 pt-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsOutcomeOpen(false)}
-                          className="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={actionLoading}
-                          className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {actionLoading ? '⏳ Processing...' : '✅ Complete'}
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+                  )}
                 </div>
-              </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Outcome / Remarks <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent min-h-[120px] resize-y bg-gray-50 transition-all"
+                    placeholder="What was the result of this interaction?"
+                    value={outcomeRemark}
+                    onChange={(e) => setOutcomeRemark(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setIsOutcomeOpen(false)}
+                    className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-50 transition-all shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={actionLoading}
+                    className="px-5 py-2.5 bg-black text-white font-semibold text-sm rounded-lg hover:bg-gray-800 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {actionLoading ? '⏳ Processing...' : '✅ Complete'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
