@@ -26,7 +26,7 @@ const StatsWrapper = ({ children, title = "Statistics" }) => {
 
       {/* Full-screen Overlay when Expanded on Mobile/Small Screen */}
       {isExpanded && (
-        <div className="fixed inset-0 z-[9999] md:hidden bg-black/20 backdrop-blur-sm overflow-y-auto flex flex-col justify-end no-print animate-fade-in">
+        <div className="fixed inset-0 z-[9999] md:hidden bg-gray-900/50 backdrop-blur-sm overflow-y-auto flex flex-col justify-end no-print animate-fade-in">
           {/* Header */}
           <div className="mobile-sheet overflow-hidden mx-2 mb-2">
             <div className="mobile-sheet-handle" />

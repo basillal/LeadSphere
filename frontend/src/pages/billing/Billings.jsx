@@ -594,10 +594,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
       {/* Add Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm overflow-hidden md:overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl md:rounded-md rounded-t-2xl shadow-md relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-2xl sticky top-0 z-10">
-              <h2 className="text-sm font-medium text-slate-800">
+        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden md:overflow-y-auto">
+          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setShowContactModal(false)}></div>
+          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <h2 className="text-xl font-bold text-gray-900">
                 Add New Contact
               </h2>
               <button
