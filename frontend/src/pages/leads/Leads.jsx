@@ -143,29 +143,29 @@ const PreviewModal = ({ lead, onClose }) => {
           )}
 
           {/* Deal Stats */}
-          <div className="bg-gray-900 rounded-xl p-5 text-white shadow-sm">
+          <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100/50 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-gray-800 text-gray-300 rounded-lg">💼</div>
-              <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider">
+              <div className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">💼</div>
+              <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wider">
                 Deal Details
               </h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-800 rounded-lg p-3">
-                <span className="text-gray-400 block text-xs mb-1 uppercase font-medium">Deal Value</span>
-                <p className="font-semibold text-sm">{lead.dealValue || "-"}</p>
+              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Deal Value</span>
+                <p className="font-semibold text-sm text-blue-900">{lead.dealValue || "-"}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <span className="text-gray-400 block text-xs mb-1 uppercase font-medium">Budget</span>
-                <p className="font-semibold text-sm">{lead.budgetRange || "-"}</p>
+              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Budget</span>
+                <p className="font-semibold text-sm text-blue-900">{lead.budgetRange || "-"}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <span className="text-gray-400 block text-xs mb-1 uppercase font-medium">Product</span>
-                <p className="font-semibold text-sm">{lead.interestedProduct || "-"}</p>
+              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Product</span>
+                <p className="font-semibold text-sm text-blue-900">{lead.interestedProduct || "-"}</p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <span className="text-gray-400 block text-xs mb-1 uppercase font-medium">Closure</span>
-                <p className="font-semibold text-sm text-blue-400">
+              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
+                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Closure</span>
+                <p className="font-semibold text-sm text-blue-700">
                   {lead.expectedClosureDate
                     ? new Date(lead.expectedClosureDate).toLocaleDateString()
                     : "-"}
@@ -349,22 +349,13 @@ const Leads = () => {
         }));
       }
 
-      // Auto-create follow-up only when a follow-up date is provided and followUpMode is set
-      if (payload.nextFollowUpDate && payload.followUpMode) {
-        try {
-          await followUpService.createFollowUp({
-            lead: createdLead._id || createdLead.id,
-            scheduledAt: payload.nextFollowUpDate,
-            type: payload.followUpMode,
-            notes: payload.followUpRemarks || ""
-          });
-        } catch (err) {
-          console.error("Failed to auto-create follow-up:", err);
-        }
-      }
+      // Auto-create follow-up is handled by backend to prevent duplicates.
       showSnackbar("Lead added successfully", "success");
-      await fetchLeads({ page: 1 });
-      await fetchStats();
+      
+      // Force a full refresh
+      setFilters(prev => ({...prev}));
+      fetchLeads({ page: 1 });
+      fetchStats();
       setView("list");
     } catch (err) {
       console.error("Error creating lead:", err);

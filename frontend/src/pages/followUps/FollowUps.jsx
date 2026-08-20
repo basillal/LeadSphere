@@ -15,7 +15,7 @@ const FollowUps = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [timeRange, setTimeRange] = useState("last_30_days");
+  const [timeRange, setTimeRange] = useState("all_time");
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -237,6 +237,7 @@ const FollowUps = () => {
   };
 
   const toggleExpand = (id) => {
+    if (!id) return;
     setExpandedCard(expandedCard === id ? null : id);
   };
 
@@ -369,7 +370,7 @@ const FollowUps = () => {
               <button
                 onClick={handleCreate}
                 disabled={actionLoading}
-                className="bg-black text-white px-4 py-2.5 rounded-lg hover:bg-gray-800 transition-all duration-200 flex items-center gap-2 font-medium whitespace-nowrap shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-black/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center gap-2 font-medium whitespace-nowrap shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>➕</span>
                 <span className="hidden sm:inline">New Follow-up</span>
@@ -495,7 +496,7 @@ const FollowUps = () => {
             {!searchTerm && !statusFilter && !typeFilter && (
               <button
                 onClick={handleCreate}
-                className="mt-4 px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
               >
                 <span className="mr-2">➕</span>
                 Create Follow-up
@@ -515,7 +516,6 @@ const FollowUps = () => {
                   key={followUp._id}
                   className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden"
                 >
-                  {/* Card Header - Click to expand */}
                   <div
                     className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => toggleExpand(followUp._id)}
@@ -537,7 +537,7 @@ const FollowUps = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <span>📅</span>
-                            <span>{formatDate(followUp.scheduledDate)}</span>
+                            <span>{formatDate(followUp.scheduledAt)}</span>
                           </span>
                         </div>
                       </div>
@@ -590,18 +590,17 @@ const FollowUps = () => {
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Date</span>
-                              <p className="font-medium text-gray-900">{getShortDate(followUp.scheduledDate)}</p>
+                              <p className="font-medium text-gray-900">{getShortDate(followUp.scheduledAt)}</p>
                             </div>
                             <div>
                               <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Time</span>
                               <p className="font-medium text-gray-900">
-                                {followUp.scheduledDate ?
-                                  new Date(followUp.scheduledDate).toLocaleTimeString([], {
+                                {followUp.scheduledAt ?
+                                  new Date(followUp.scheduledAt).toLocaleTimeString([], {
                                     hour: '2-digit',
                                     minute: '2-digit',
                                     hour12: true
-                                  }) :
-                                  'N/A'
+                                  }) : 'N/A'
                                 }
                               </p>
                             </div>
@@ -824,7 +823,7 @@ const FollowUps = () => {
                     <div className="mt-2 text-xs text-blue-700 font-medium flex items-center gap-2">
                       <span className="flex items-center gap-1"><span>📌</span> {followUpToUpdate.type}</span>
                       <span>•</span>
-                      <span className="flex items-center gap-1"><span>📅</span> {getShortDate(followUpToUpdate.scheduledDate)}</span>
+                      <span className="flex items-center gap-1"><span>📅</span> {getShortDate(followUpToUpdate.scheduledAt)}</span>
                     </div>
                   )}
                 </div>
@@ -851,7 +850,7 @@ const FollowUps = () => {
                   <button
                     type="submit"
                     disabled={actionLoading}
-                    className="px-5 py-2.5 bg-black text-white font-semibold text-sm rounded-lg hover:bg-gray-800 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-2.5 bg-indigo-600 text-white font-semibold text-sm rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {actionLoading ? '⏳ Processing...' : '✅ Complete'}
                   </button>

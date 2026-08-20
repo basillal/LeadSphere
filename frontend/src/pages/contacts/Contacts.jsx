@@ -144,23 +144,23 @@ const PreviewModal = ({ contact, onClose }) => {
           </div>
 
           {/* Interaction History */}
-          <div className="bg-gray-900 rounded-xl p-5 text-white shadow-sm">
+          <div className="bg-indigo-50/50 rounded-xl p-5 border border-indigo-100/50 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-gray-800 text-gray-300 rounded-lg">🕒</div>
-              <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider">Interaction History</h3>
+              <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">🕒</div>
+              <h3 className="text-xs font-bold text-indigo-900 uppercase tracking-wider">Interaction History</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-800 rounded-lg p-3">
-                <div className="text-xs text-gray-400 uppercase mb-1 font-medium">Last Contact</div>
-                <div className="text-sm font-semibold">{formatDate(contact.lastInteractionDate)}</div>
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Last Contact</div>
+                <div className="text-sm font-semibold text-indigo-900">{formatDate(contact.lastInteractionDate)}</div>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <div className="text-xs text-gray-400 uppercase mb-1 font-medium">Via</div>
-                <div className="text-sm font-semibold">{contact.lastInteractionType || "-"}</div>
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Via</div>
+                <div className="text-sm font-semibold text-indigo-900">{contact.lastInteractionType || "-"}</div>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <div className="text-xs text-gray-400 uppercase mb-1 font-medium">Next Follow-up</div>
-                <div className="text-sm font-semibold text-blue-400">{formatDate(contact.nextFollowUpDate)}</div>
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Next Follow-up</div>
+                <div className="text-sm font-semibold text-blue-600">{formatDate(contact.nextFollowUpDate)}</div>
               </div>
             </div>
           </div>
@@ -226,7 +226,6 @@ const LeadSelectionView = ({ onCancel, onSelect, categories = [] }) => {
   const [categoryFilter, setCategoryFilter] = useState("");
 
   const fetchLeads = useCallback(async () => {
-    setLoading(true);
     try {
       // Fetch only unconverted leads
       const response = await leadService.getLeads({
@@ -244,8 +243,6 @@ const LeadSelectionView = ({ onCancel, onSelect, categories = [] }) => {
       setLeads(unconverted);
     } catch (error) {
       console.error("Error fetching leads:", error);
-    } finally {
-      setLoading(false);
     }
   }, [search, categoryFilter]);
 
@@ -318,9 +315,7 @@ const LeadSelectionView = ({ onCancel, onSelect, categories = [] }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 relative bg-gray-50/30">
-          {loading ? (
-            <Loader local />
-          ) : leads.length === 0 ? (
+          {leads.length === 0 ? (
             <div className="text-center p-12 bg-gray-50 border border-gray-100 rounded-xl m-4">
               <div className="text-4xl mb-3">📭</div>
               <h3 className="text-lg font-medium text-gray-900">No leads found</h3>
