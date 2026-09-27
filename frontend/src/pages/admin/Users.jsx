@@ -166,7 +166,7 @@ const Users = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+        <h1 className="text-sm font-medium text-slate-800">
           {view === "list"
             ? "Users"
             : view === "create"
@@ -178,7 +178,7 @@ const Users = () => {
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
             title="Back to List"
           >
             <svg
@@ -199,7 +199,7 @@ const Users = () => {
       </div>
 
       {loading ? (
-        <div className="min-h-screen bg-gray-50" />
+        <div className="min-h-screen bg-slate-50" />
       ) : (
         <>
           {view === "list" && (

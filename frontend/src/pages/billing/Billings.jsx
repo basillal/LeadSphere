@@ -159,11 +159,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-8 max-w-5xl mx-auto"
+        className="bg-white rounded-md shadow-sm border border-slate-200 p-4 md:p-8 max-w-5xl mx-auto"
       >
-        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-6 gap-4">
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 md:mb-8 border-b border-slate-200 pb-6 gap-4">
           <div>
-            <h2 className="text-base font-light text-black">
+            <h2 className="text-sm font-medium text-slate-800">
               {initialData ? "Edit Invoice" : "Create New Invoice"}
             </h2>
             <p className="text-black text-base mt-1">
@@ -178,7 +178,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               onClick={() =>
                 window.open(`/print/invoice/${initialData._id}`, "_blank")
               }
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-black hover:bg-gray-200 text-base font-light transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-gray-300 rounded-lg text-black hover:bg-gray-200 text-base font-medium transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -202,16 +202,16 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         {/* Client & Date Section */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-8">
           {/* Left: Client Selection */}
-          <div className="md:col-span-8 bg-gray-50 p-3 md:p-6 rounded-xl border border-gray-100">
+          <div className="md:col-span-8 bg-slate-50 p-3 md:p-6 rounded-md border border-slate-200">
             <div className="flex justify-between items-center mb-4">
-              <label className="block text-base font-light text-black uppercase tracking-wide">
+              <label className="block text-sm font-medium text-slate-800 uppercase tracking-wide">
                 Bill To (Customer)
               </label>
               {!initialData && (
                 <button
                   type="button"
                   onClick={() => setShowContactModal(true)}
-                  className="text-base text-blue-600 hover:text-blue-800 font-light flex items-center gap-1"
+                  className="text-base text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
                 >
                   + Add New Contact
                 </button>
@@ -253,7 +253,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 {contacts.length > 0 &&
                   isContactFocused &&
                   !formData.contactId && (
-                    <ul className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                    <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-sm max-h-60 overflow-y-auto">
                       {contacts.map((c) => (
                         <li
                           key={c._id}
@@ -262,9 +262,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                             setContactSearch(c.name);
                             setContacts([]);
                           }}
-                          className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-base border-b border-gray-100 last:border-0"
+                          className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-base border-b border-slate-200 last:border-0"
                         >
-                          <div className="font-light text-black">
+                          <div className="font-medium text-black">
                             {c.name}
                           </div>
                           <div className="text-black text-base">
@@ -277,7 +277,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   )}
                 {formData.contactId && (
                   <div className="mt-3 flex items-center justify-between bg-green-50 px-4 py-2 rounded-lg border border-green-100">
-                    <span className="text-base text-green-700 font-light flex items-center gap-2">
+                    <span className="text-base text-green-700 font-medium flex items-center gap-2">
                       <svg
                         className="w-4 h-4"
                         fill="currentColor"
@@ -297,7 +297,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                         setFormData({ ...formData, contactId: "" });
                         setContactSearch("");
                       }}
-                      className="text-base text-red-500 hover:text-red-700 font-light underline"
+                      className="text-base text-red-500 hover:text-red-700 font-medium underline"
                     >
                       Change
                     </button>
@@ -305,7 +305,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 )}
               </div>
             ) : (
-              <div className="text-black font-light p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div className="text-black font-medium p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
                 <div className="text-base">{initialData.contact.name}</div>
                 <div className="text-base text-black">
                   {initialData.contact.organizationName}
@@ -317,7 +317,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           {/* Right: Dates */}
           <div className="md:col-span-4 space-y-4">
             <div>
-              <label className="block text-base font-light text-black mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1">
                 Billing Date
               </label>
               <input
@@ -330,7 +330,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               />
             </div>
             <div>
-              <label className="block text-base font-light text-black mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1">
                 Due Date
               </label>
               <input
@@ -346,15 +346,15 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Line Items */}
-        <div className="mb-6 md:mb-8 border border-gray-200 rounded-xl overflow-hidden">
-          <div className="bg-gray-50 px-4 md:px-6 py-3 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-base font-light text-black uppercase tracking-wide">
+        <div className="mb-6 md:mb-8 border border-slate-200 rounded-md overflow-hidden">
+          <div className="bg-slate-50 px-4 md:px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wide">
               Line Items
             </h3>
             <button
               type="button"
               onClick={handleAddItem}
-              className="text-base font-light text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              className="text-base font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1"
             >
               + Add Item
             </button>
@@ -363,17 +363,17 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
           <div className="p-0 overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white border-b border-gray-100 text-base text-black uppercase">
-                  <th className="px-6 py-3 font-light min-w-[200px]">
+                <tr className="bg-white border-b border-slate-200 text-base text-black uppercase">
+                  <th className="px-6 py-3 font-medium min-w-[200px]">
                     Service
                   </th>
-                  <th className="px-4 py-3 font-light w-24 min-w-[100px]">
+                  <th className="px-4 py-3 font-medium w-24 min-w-[100px]">
                     Qty
                   </th>
-                  <th className="px-4 py-3 font-light w-32 min-w-[120px]">
+                  <th className="px-4 py-3 font-medium w-32 min-w-[120px]">
                     Price
                   </th>
-                  <th className="px-4 py-3 font-light w-32 text-right min-w-[120px]">
+                  <th className="px-4 py-3 font-medium w-32 text-right min-w-[120px]">
                     Total
                   </th>
                   <th className="px-4 py-3 w-16"></th>
@@ -393,7 +393,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   formData.services.map((item, index) => (
                     <tr
                       key={index}
-                      className="group hover:bg-gray-50 transition-colors"
+                      className="group hover:bg-slate-50 transition-colors"
                     >
                       <td className="px-6 py-3">
                         <select
@@ -439,7 +439,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base text-right"
                         />
                       </td>
-                      <td className="px-4 py-3 text-right font-light text-black">
+                      <td className="px-4 py-3 text-right font-medium text-black">
                         ₹{(item.quantity * item.unitAmount).toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -472,10 +472,10 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-gray-200 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-slate-200 pt-6">
           <div className="space-y-6">
             <div>
-              <label className="block text-base font-light text-black mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1">
                 Notes
               </label>
               <textarea
@@ -490,7 +490,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-base font-light text-black mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   Status
                 </label>
                 <select
@@ -507,7 +507,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-base font-light text-black mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   Payment Mode
                 </label>
                 <select
@@ -527,19 +527,19 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 md:p-6 space-y-4 border border-gray-100 shadow-sm">
-            <h3 className="font-light text-black border-b border-gray-200 pb-2">
+          <div className="bg-slate-50 rounded-md p-4 md:p-6 space-y-4 border border-slate-200 shadow-sm">
+            <h3 className="font-medium text-black border-b border-slate-200 pb-2">
               Payment Summary
             </h3>
             <div className="flex justify-between text-base">
               <span className="text-black">Subtotal</span>
-              <span className="font-light text-black">
+              <span className="font-medium text-black">
                 ₹{totals.subtotal.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-base">
               <span className="text-black">Tax</span>
-              <span className="font-light text-black">
+              <span className="font-medium text-black">
                 ₹{totals.tax.toFixed(2)}
               </span>
             </div>
@@ -561,22 +561,22 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 />
               </div>
             </div>
-            <div className="border-t border-gray-300 pt-4 flex justify-between items-center bg-gray-100 -mx-6 -mb-6 p-6 rounded-b-xl mt-4">
-              <span className="text-base font-light text-black">
+            <div className="border-t border-gray-300 pt-4 flex justify-between items-center bg-slate-100 -mx-6 -mb-6 p-6 rounded-b-xl mt-4">
+              <span className="text-sm font-medium text-slate-800">
                 Grand Total
               </span>
-              <span className="text-base font-light text-black border-b-4 border-yellow-300">
+              <span className="text-sm font-medium text-slate-800 border-b-4 border-yellow-300">
                 ₹{grandTotal.toFixed(2)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-8 md:mt-10 border-t border-gray-100 pt-6 md:pt-8">
+        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-8 md:mt-10 border-t border-slate-200 pt-6 md:pt-8">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-3 border border-gray-300 rounded-lg text-black hover:bg-gray-50 font-light transition-colors"
+            className="px-6 py-3 border border-gray-300 rounded-lg text-black hover:bg-slate-50 font-medium transition-colors"
           >
             Cancel
           </button>
@@ -584,7 +584,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             <button
               type="submit"
               disabled={!formData.contactId || formData.services.length === 0}
-              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-light shadow-md transition-all transform hover:scale-105"
+              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md transition-all transform hover:scale-105"
             >
               {initialData ? "Update Invoice" : "Generate Invoice"}
             </button>
@@ -594,10 +594,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
       {/* Add Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm overflow-hidden md:overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-2xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl sticky top-0 z-10">
-              <h2 className="text-base font-light text-black">
+        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden md:overflow-y-auto">
+          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setShowContactModal(false)}></div>
+          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <h2 className="text-xl font-bold text-gray-900">
                 Add New Contact
               </h2>
               <button
@@ -778,7 +779,7 @@ const Billings = () => {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-base font-light text-black">
+        <span className="text-sm font-medium text-slate-800">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -798,7 +799,7 @@ const Billings = () => {
       label: "Status",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-base font-light ${row.paymentStatus === "PAID"
+          className={`px-2 py-1 rounded-full text-base font-medium ${row.paymentStatus === "PAID"
               ? "bg-green-100 text-green-800"
               : row.paymentStatus === "PENDING"
                 ? "bg-yellow-100 text-yellow-800"
@@ -814,7 +815,7 @@ const Billings = () => {
   return (
     <div className="w-full p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-base font-light text-black">Billing & Invoices</h1>
+        <h1 className="text-sm font-medium text-slate-800">Billing & Invoices</h1>
         <div className="flex items-center gap-2">
           {view === "list" && (
             <>
@@ -824,7 +825,7 @@ const Billings = () => {
               />
               <button
                 onClick={handleCreate}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light whitespace-nowrap"
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium whitespace-nowrap"
               >
                 + Create Invoice
               </button>

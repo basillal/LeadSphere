@@ -70,6 +70,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
 const leadCategoryRoutes = require('./routes/leadCategoryRoutes');
+const cronRoutes = require('./routes/cronRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -88,6 +89,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
 app.use('/api/lead-categories', leadCategoryRoutes);
+app.use('/api/cron', cronRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

@@ -5,6 +5,7 @@ import { useData } from "../context/DataContext";
 import Toast from "../components/common/utils/Toast";
 import SectionHeader from "../components/common/sections/SectionHeader";
 import Input from "../components/common/fields/Input";
+import Loader from "../components/common/Loader";
 
 const Settings = () => {
   const { user, selectedOrganization } = useAuth();
@@ -91,9 +92,9 @@ const Settings = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`inline-flex md:w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm md:text-base font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+                className={`inline-flex md:w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm md:text-base font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                    ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
                     : "text-slate-600 bg-white/80 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
@@ -106,7 +107,7 @@ const Settings = () => {
 
         {/* Content Area */}
         <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             {activeTab === "categories" && (
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
@@ -117,7 +118,7 @@ const Settings = () => {
                   {!isAdding && (
                     <button
                       onClick={handleAdd}
-                      className="bg-slate-900 text-white px-4 py-2 rounded-2xl text-sm font-semibold hover:bg-slate-800 transition-colors"
+                      className="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-slate-800 transition-colors"
                     >
                       + Add Category
                     </button>
@@ -125,7 +126,7 @@ const Settings = () => {
                 </div>
 
                 {isAdding && (
-                  <div className="mb-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                  <div className="mb-6 p-4 bg-slate-50 rounded-md border-2 border-dashed border-slate-200">
                     <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-end gap-3">
                       <div className="flex-1 w-full">
                         <Input
@@ -141,14 +142,14 @@ const Settings = () => {
                       <div className="flex gap-2">
                         <button
                           type="submit"
-                          className="bg-black text-white px-4 py-2 rounded-lg text-base font-light h-10 transition-transform active:scale-95"
+                          className="bg-black text-white px-4 py-2 rounded-lg text-base font-medium h-10 transition-transform active:scale-95"
                         >
                           Add
                         </button>
                         <button
                           type="button"
                           onClick={handleCancel}
-                          className="bg-white border border-gray-200 px-4 py-2 rounded-lg text-base font-light h-10 hover:bg-gray-100 transition-colors"
+                          className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-base font-medium h-10 hover:bg-slate-100 transition-colors"
                         >
                           Cancel
                         </button>
@@ -158,35 +159,35 @@ const Settings = () => {
                 )}
 
                 {loading ? (
-                  <div className="py-12 flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                  <div className="py-12 flex justify-center relative min-h-[200px] w-full">
+                    <Loader local />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {categories.length === 0 && !isAdding ? (
-                      <div className="col-span-full py-12 text-center text-black border-2 border-dashed border-gray-100 rounded-xl">
+                      <div className="col-span-full py-12 text-center text-black border-2 border-dashed border-slate-200 rounded-md">
                         No categories found. Create your first one to get started.
                       </div>
                     ) : (
                       categories.map((cat) => (
                         <div
                           key={cat._id}
-                          className={`group p-3 bg-white rounded-xl border transition-all duration-200 ${
-                            editingId === cat._id ? "border-black shadow-lg ring-1 ring-black" : "border-gray-100 hover:border-gray-300"
+                          className={`group p-3 bg-white rounded-md border transition-all duration-200 ${
+                            editingId === cat._id ? "border-black shadow-sm ring-1 ring-black" : "border-slate-200 hover:border-gray-300"
                           } relative overflow-hidden`}
                         >
                           {editingId === cat._id ? (
                             <form onSubmit={handleSubmit} className="space-y-3">
                               <input
-                                className="w-full p-2 text-base font-light border-b border-gray-200 focus:outline-none focus:border-black"
+                                className="w-full p-2 text-base font-medium border-b border-slate-200 focus:outline-none focus:border-black"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 autoFocus
                                 required
                               />
                               <div className="flex justify-end gap-1">
-                                <button type="submit" className="text-base font-light bg-black text-white px-3 py-1 rounded">Save</button>
-                                <button type="button" onClick={handleCancel} className="text-base font-light bg-gray-100 px-3 py-1 rounded">Cancel</button>
+                                <button type="submit" className="text-base font-medium bg-black text-white px-3 py-1 rounded">Save</button>
+                                <button type="button" onClick={handleCancel} className="text-base font-medium bg-slate-100 px-3 py-1 rounded">Cancel</button>
                               </div>
 
                             </form>
@@ -196,7 +197,7 @@ const Settings = () => {
                               <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-3">
                                   <span 
-                                    className="text-base font-light uppercase tracking-wider text-black"
+                                    className="text-base font-medium uppercase tracking-wider text-black"
                                   >
                                     {cat.name}
                                   </span>
@@ -204,7 +205,7 @@ const Settings = () => {
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                   <button
                                     onClick={() => handleEdit(cat)}
-                                    className="p-1.5 hover:bg-gray-100 rounded text-black hover:text-black transition-colors"
+                                    className="p-1.5 hover:bg-slate-100 rounded text-black hover:text-black transition-colors"
                                   >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                   </button>
@@ -231,16 +232,16 @@ const Settings = () => {
                 <SectionHeader title="Profile Information" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div>
-                    <p className="text-base font-light text-black uppercase tracking-wider mb-1">Full Name</p>
-                    <p className="text-base font-light text-black">{user?.name}</p>
+                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Full Name</p>
+                    <p className="text-sm font-medium text-slate-800">{user?.name}</p>
                   </div>
                   <div>
-                    <p className="text-base font-light text-black uppercase tracking-wider mb-1">Email Address</p>
-                    <p className="text-base font-light text-black">{user?.email}</p>
+                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Email Address</p>
+                    <p className="text-sm font-medium text-slate-800">{user?.email}</p>
                   </div>
                   <div>
-                    <p className="text-base font-light text-black uppercase tracking-wider mb-1">Role</p>
-                    <span className="inline-block px-3 py-1 bg-black text-white text-base font-light rounded-full">
+                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Role</p>
+                    <span className="inline-block px-3 py-1 bg-black text-white text-base font-medium rounded-full">
                       {user?.role?.roleName}
                     </span>
                   </div>

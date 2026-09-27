@@ -34,17 +34,17 @@ const PreviewModal = ({ activity, onClose }) => {
       Pending: "bg-yellow-100 text-yellow-800",
       Cancelled: "bg-red-100 text-red-800",
     };
-    return colors[status] || "bg-gray-100 text-black";
+    return colors[status] || "bg-slate-100 text-black";
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      Low: "bg-gray-100 text-black",
+      Low: "bg-slate-100 text-black",
       Medium: "bg-blue-100 text-blue-600",
       High: "bg-orange-100 text-orange-600",
       Urgent: "bg-red-100 text-red-600",
     };
-    return colors[priority] || "bg-gray-100 text-black";
+    return colors[priority] || "bg-slate-100 text-black";
   };
 
   const formatDate = (date) => {
@@ -57,22 +57,20 @@ const PreviewModal = ({ activity, onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
+      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div className="flex items-center gap-3">
             <span className="text-base">
               {getActivityTypeIcon(activity.activityType)}
             </span>
             <div>
-              <h2 className="text-base font-light text-black">
+              <h2 className="text-sm font-medium text-slate-800">
                 {activity.title}
               </h2>
               <p className="text-base text-black">
@@ -103,26 +101,26 @@ const PreviewModal = ({ activity, onClose }) => {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Status and Priority */}
           <div className="flex flex-wrap gap-2">
             <span
-              className={`px-3 py-1 rounded-full text-base font-light ${getStatusColor(activity.status)}`}
+              className={`px-3 py-1 rounded-full text-base font-medium ${getStatusColor(activity.status)}`}
             >
               {activity.status}
             </span>
             <span
-              className={`px-3 py-1 rounded-full text-base font-light ${getPriorityColor(activity.priority)}`}
+              className={`px-3 py-1 rounded-full text-base font-medium ${getPriorityColor(activity.priority)}`}
             >
               {activity.priority}
             </span>
             {activity.category && (
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-base font-light">
+              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-base font-medium">
                 {activity.category}
               </span>
             )}
             {activity.outcome && activity.outcome !== "None" && (
-              <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-base font-light">
+              <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-base font-medium">
                 {activity.outcome}
               </span>
             )}
@@ -131,20 +129,20 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Description */}
           {activity.description && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Description
               </h3>
-              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-slate-50 p-4 rounded-lg leading-relaxed border border-slate-200">
                 {activity.description}
               </p>
             </div>
           )}
 
           {/* Date and Time */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-xl text-white">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-900 rounded-md text-white">
             <div>
               <div className="text-base text-black uppercase">Date</div>
-              <div className="text-base font-light">
+              <div className="text-base font-medium">
                 {formatDate(activity.activityDate)}
               </div>
             </div>
@@ -153,13 +151,13 @@ const PreviewModal = ({ activity, onClose }) => {
                 <div className="text-base text-black uppercase">
                   Start Time
                 </div>
-                <div className="text-base font-light">{activity.startTime}</div>
+                <div className="text-base font-medium">{activity.startTime}</div>
               </div>
             )}
             {activity.endTime && (
               <div>
                 <div className="text-base text-black uppercase">End Time</div>
-                <div className="text-base font-light">{activity.endTime}</div>
+                <div className="text-base font-medium">{activity.endTime}</div>
               </div>
             )}
           </div>
@@ -167,13 +165,13 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Call Details */}
           {activity.activityType === "Call" && activity.callDetails && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Call Details
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {activity.callDetails.duration && (
                   <div>
-                    <span className="font-light text-black">
+                    <span className="font-medium text-black">
                       Duration:
                     </span>{" "}
                     {activity.callDetails.duration}
@@ -181,13 +179,13 @@ const PreviewModal = ({ activity, onClose }) => {
                 )}
                 {activity.callDetails.callType && (
                   <div>
-                    <span className="font-light text-black">Type:</span>{" "}
+                    <span className="font-medium text-black">Type:</span>{" "}
                     {activity.callDetails.callType}
                   </div>
                 )}
                 {activity.callDetails.callStatus && (
                   <div>
-                    <span className="font-light text-black">Status:</span>{" "}
+                    <span className="font-medium text-black">Status:</span>{" "}
                     {activity.callDetails.callStatus}
                   </div>
                 )}
@@ -198,13 +196,13 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Meeting Details */}
           {activity.activityType === "Meeting" && activity.meetingDetails && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Meeting Details
               </h3>
               <div className="space-y-2">
                 {activity.meetingDetails.location && (
                   <p>
-                    <span className="font-light text-black">
+                    <span className="font-medium text-black">
                       Location:
                     </span>{" "}
                     {activity.meetingDetails.location}
@@ -212,14 +210,14 @@ const PreviewModal = ({ activity, onClose }) => {
                 )}
                 {activity.meetingDetails.meetingType && (
                   <p>
-                    <span className="font-light text-black">Type:</span>{" "}
+                    <span className="font-medium text-black">Type:</span>{" "}
                     {activity.meetingDetails.meetingType}
                   </p>
                 )}
                 {activity.meetingDetails.agenda && (
                   <div>
-                    <span className="font-light text-black">Agenda:</span>
-                    <p className="mt-1 text-black bg-gray-50 p-3 rounded-lg">
+                    <span className="font-medium text-black">Agenda:</span>
+                    <p className="mt-1 text-black bg-slate-50 p-3 rounded-lg">
                       {activity.meetingDetails.agenda}
                     </p>
                   </div>
@@ -231,10 +229,10 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Notes */}
           {activity.notes && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Notes
               </h3>
-              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
+              <p className="text-black bg-slate-50 p-4 rounded-lg leading-relaxed border border-slate-200">
                 {activity.notes}
               </p>
             </div>
@@ -243,18 +241,18 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Follow-up */}
           {activity.followUpRequired && (
             <div className="space-y-2 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-              <h3 className="text-base font-light text-yellow-800 uppercase tracking-wider">
+              <h3 className="text-base font-medium text-yellow-800 uppercase tracking-wider">
                 Follow-up Required
               </h3>
               {activity.followUpDate && (
                 <p className="text-black">
-                  <span className="font-light">Date:</span>{" "}
+                  <span className="font-medium">Date:</span>{" "}
                   {formatDate(activity.followUpDate)}
                 </p>
               )}
               {activity.followUpNotes && (
                 <p className="text-black">
-                  <span className="font-light">Notes:</span>{" "}
+                  <span className="font-medium">Notes:</span>{" "}
                   {activity.followUpNotes}
                 </p>
               )}
@@ -264,14 +262,14 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Tags */}
           {activity.tags && activity.tags.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {activity.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 text-black rounded-full text-base font-light"
+                    className="px-3 py-1 bg-slate-100 text-black rounded-full text-base font-medium"
                   >
                     {tag}
                   </span>
@@ -283,18 +281,18 @@ const PreviewModal = ({ activity, onClose }) => {
           {/* Attachments */}
           {activity.attachments && activity.attachments.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wider">
                 Attachments
               </h3>
               <div className="space-y-2">
                 {activity.attachments.map((attachment, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                    className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200"
                   >
                     <span className="text-base">📎</span>
                     <div className="flex-1">
-                      <div className="font-light text-black">
+                      <div className="font-medium text-black">
                         {attachment.fileName}
                       </div>
                       <div className="text-base text-black">
@@ -309,10 +307,10 @@ const PreviewModal = ({ activity, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
+            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-100 font-medium"
           >
             Close Preview
           </button>
@@ -553,7 +551,7 @@ const Activities = () => {
           {view !== "list" && (
             <button
               onClick={handleCancelForm}
-              className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+              className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
               title="Back to List"
             >
               <svg
@@ -574,11 +572,7 @@ const Activities = () => {
         </div>
       </div>
 
-      {/* {loading && view === "list" ? (
-        <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : ( */}
+
       <>
         {view === "list" && (
           <>
@@ -589,14 +583,14 @@ const Activities = () => {
 
             {/* Tabs */}
             <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-              <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-2xl w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
+              <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-md w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-2.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                       activeTab === tab.id
-                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                        ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
                         : "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >

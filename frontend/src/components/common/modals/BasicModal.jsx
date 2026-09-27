@@ -23,7 +23,7 @@ const BasicModal = ({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm transition-opacity">
       {/* Backdrop click to close */}
       <div
         className="absolute inset-0"
@@ -33,19 +33,19 @@ const BasicModal = ({
 
       {/* Modal Content */}
       <div
-        className={`relative bg-white rounded-xl shadow-2xl w-full ${maxWidth} flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200`}
+        className={`relative bg-white rounded-md shadow-md w-full ${maxWidth} flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <h3 className="text-base font-light text-black" id="modal-title">
+        <div className="flex items-center justify-between p-5 border-b border-slate-200">
+          <h3 className="text-sm font-medium text-slate-800" id="modal-title">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="text-black hover:text-black hover:bg-gray-100 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="text-black hover:text-black hover:bg-slate-100 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-label="Close modal"
           >
             <svg

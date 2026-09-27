@@ -1,52 +1,222 @@
-/* Shared surface utilities for the new visual language */
+/* ============================================================
+   APP SHELL — Core Layout System
+   ============================================================ */
+
 .app-shell {
-	position: relative;
-	isolation: isolate;
+  position: relative;
+  isolation: isolate;
 }
 
 .app-shell::before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	background:
-		radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.85), transparent 24%),
-		radial-gradient(circle at 90% 12%, rgba(203, 213, 225, 0.42), transparent 20%),
-		radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.05), transparent 28%);
-	z-index: -1;
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: #F8FAFC;
+  z-index: -1;
 }
 
+/* ============================================================
+   PAGE CARDS — Main Content Container
+   ============================================================ */
+
 .page-card {
-	background: rgba(255, 255, 255, 0.9);
-	border: 1px solid rgba(148, 163, 184, 0.18);
-	border-radius: 28px;
-	box-shadow: 0 22px 48px -30px rgba(15, 23, 42, 0.45);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(15,23,42,0.06), 0 1px 2px -1px rgba(15,23,42,0.04);
 }
 
 .page-card-soft {
-	background: rgba(255, 255, 255, 0.72);
-	border: 1px solid rgba(148, 163, 184, 0.14);
-	border-radius: 24px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
 }
+
+/* ============================================================
+   TABLE CONTAINERS
+   ============================================================ */
 
 .table-frame {
-	background: rgba(255, 255, 255, 0.9);
-	border: 1px solid rgba(148, 163, 184, 0.16);
-	border-radius: 28px;
-	box-shadow: 0 20px 45px -32px rgba(15, 23, 42, 0.38);
-	overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(15,23,42,0.06);
+  overflow: hidden;
 }
 
-.mobile-sheet {
-	background: rgba(255, 255, 255, 0.96);
-	border-radius: 28px 28px 0 0;
-	box-shadow: 0 -18px 45px rgba(15, 23, 42, 0.18);
+/* ============================================================
+   SIDEBAR — Deep Navy Premium Design
+   ============================================================ */
+
+.sidebar-logo-text {
+  font-family: "Outfit", sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #FFFFFF 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.mobile-sheet-handle {
-	width: 44px;
-	height: 5px;
-	border-radius: 999px;
-	background: #cbd5e1;
-	margin: 0 auto 0.85rem;
+.sidebar-logo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  margin: 0 0.5rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  transition: all 0.18s ease;
+  position: relative;
+  letter-spacing: -0.01em;
+  min-height: 38px;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+  border-left-color: rgba(99, 102, 241, 0.5);
+}
+
+.sidebar-nav-item.active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #FFFFFF;
+  border-left-color: #818CF8;
+  font-weight: 600;
+}
+
+.sidebar-nav-item.active .sidebar-icon {
+  color: #A5B4FC;
+}
+
+.sidebar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.55);
+  transition: color 0.18s ease;
+}
+
+.sidebar-nav-item:hover .sidebar-icon {
+  color: rgba(255,255,255,0.9);
+}
+
+.sidebar-section-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.3);
+  padding: 0 1.25rem;
+  margin: 0.75rem 0 0.25rem;
+}
+
+/* ============================================================
+   HEADER — Glass Morphism Design
+   ============================================================ */
+
+.header-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.06);
+  border: 1px solid rgba(79, 70, 229, 0.12);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.header-user-chip:hover {
+  background: rgba(79, 70, 229, 0.1);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+.header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4F46E5, #818CF8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DASHBOARD — Hero Stats
+   ============================================================ */
+
+.hero-stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-stat-card::after {
+  content: "";
+  position: absolute;
+  right: -24px;
+  bottom: -24px;
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  opacity: 0.06;
+}
+
+.hero-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -8px rgba(15,23,42,0.14);
+}
+
+.hero-stat-primary { border-top: 3px solid #6366F1; }
+.hero-stat-primary:hover { border-color: #4F46E5; }
+.hero-stat-primary::after { background: #6366F1; }
+
+.hero-stat-success { border-top: 3px solid #10B981; }
+.hero-stat-success:hover { border-color: #059669; }
+.hero-stat-success::after { background: #10B981; }
+
+.hero-stat-warning { border-top: 3px solid #F59E0B; }
+.hero-stat-warning:hover { border-color: #D97706; }
+.hero-stat-warning::after { background: #F59E0B; }
+
+.hero-stat-danger { border-top: 3px solid #EF4444; }
+.hero-stat-danger:hover { border-color: #DC2626; }
+.hero-stat-danger::after { background: #EF4444; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .page-card {
+    border-radius: 8px;
+  }
 }

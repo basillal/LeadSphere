@@ -142,22 +142,22 @@ const ContactDetails = () => {
       Vendor: "bg-purple-100 text-purple-800",
       Partner: "bg-green-100 text-green-800",
       Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-black",
+      Other: "bg-slate-100 text-black",
     };
     return colors[tag] || colors.Other;
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-50" />;
+    return <div className="min-h-screen bg-slate-50" />;
   }
 
   if (!contact) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-base font-light text-black">Contact not found</h2>
+        <h2 className="text-sm font-medium text-slate-800">Contact not found</h2>
         <button
           onClick={() => navigate("/contacts")}
-          className="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+          className="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800"
         >
           Back to Contacts
         </button>
@@ -166,14 +166,14 @@ const ContactDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-slate-50 pb-20">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-10 shadow-sm">
+      <div className="bg-white border-b border-slate-200 px-6 py-6 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-start">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/contacts")}
-              className="p-2 hover:bg-gray-100 rounded-lg text-black transition-colors"
+              className="p-2 hover:bg-slate-100 rounded-lg text-black transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -191,7 +191,7 @@ const ContactDetails = () => {
               </svg>
             </button>
             <div>
-              <h1 className="text-base font-light text-black capitalize">
+              <h1 className="text-sm font-medium text-slate-800 capitalize">
                 {contact.name}
               </h1>
               <div className="flex items-center gap-2 mt-1 text-base text-black">
@@ -225,7 +225,7 @@ const ContactDetails = () => {
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base flex items-center gap-2"
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-base flex items-center gap-2"
               onClick={() => {
                 /* Ideally open edit modal or navigate to edit, keeping it simple for now */
               }}
@@ -263,7 +263,7 @@ const ContactDetails = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2.5 rounded-full text-sm md:text-base font-semibold capitalize transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
                 activeTab === tab
-                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                  ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
                   : "bg-white/80 text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
@@ -278,27 +278,27 @@ const ContactDetails = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Contact Information */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-base font-light text-black mb-4">
+              <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-medium text-slate-800 mb-4">
                   Contact Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Phone
                     </label>
-                    <p className="text-black font-light">{contact.phone}</p>
+                    <p className="text-black font-medium">{contact.phone}</p>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Email
                     </label>
-                    <p className="text-black font-light">
+                    <p className="text-black font-medium">
                       {contact.email || "-"}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Alternate Phone
                     </label>
                     <p className="text-black">
@@ -306,7 +306,7 @@ const ContactDetails = () => {
                     </p>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Website
                     </label>
                     <a
@@ -328,23 +328,23 @@ const ContactDetails = () => {
               </div>
 
               {/* Additional Info */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-base font-light text-black mb-4">
+              <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-medium text-slate-800 mb-4">
                   Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Relationship Type
                     </label>
                     <span
-                      className={`px-2 py-1 rounded text-base font-light bg-gray-100 text-black`}
+                      className={`px-2 py-1 rounded text-base font-medium bg-slate-100 text-black`}
                     >
                       {contact.relationshipType}
                     </span>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Tags
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -352,7 +352,7 @@ const ContactDetails = () => {
                         contact.tags.map((tag, idx) => (
                           <span
                             key={idx}
-                            className={`px-2 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
+                            className={`px-2 py-1 rounded-full text-base font-medium ${getTagColor(tag)}`}
                           >
                             {tag}
                           </span>
@@ -363,13 +363,13 @@ const ContactDetails = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Industry
                     </label>
                     <p className="text-black">{contact.industry || "-"}</p>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Organization Size
                     </label>
                     <p className="text-black">
@@ -385,8 +385,8 @@ const ContactDetails = () => {
                   contact.address.city ||
                   contact.address.state ||
                   contact.address.country) && (
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                    <h2 className="text-base font-light text-black mb-4">
+                  <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                    <h2 className="text-sm font-medium text-slate-800 mb-4">
                       Address
                     </h2>
                     <p className="text-black">
@@ -415,8 +415,8 @@ const ContactDetails = () => {
 
               {/* Attachments */}
               {contact.attachments && contact.attachments.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h2 className="text-base font-light text-black mb-4">
+                <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                  <h2 className="text-sm font-medium text-slate-800 mb-4">
                     Attachments
                   </h2>
                   <ul className="space-y-2">
@@ -455,8 +455,8 @@ const ContactDetails = () => {
 
               {/* Notes */}
               {contact.notes && (
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h2 className="text-base font-light text-black mb-4">
+                <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                  <h2 className="text-sm font-medium text-slate-800 mb-4">
                     Notes
                   </h2>
                   <p className="text-black whitespace-pre-wrap">
@@ -468,16 +468,16 @@ const ContactDetails = () => {
 
             {/* Sidebar Stats */}
             <div className="space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-base font-light text-black mb-4">
+              <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-medium text-slate-800 mb-4">
                   Engagement
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Last Interaction
                     </label>
-                    <p className="text-black font-light">
+                    <p className="text-black font-medium">
                       {formatDate(contact.lastInteractionDate)}
                     </p>
                     <p className="text-base text-black">
@@ -486,11 +486,11 @@ const ContactDetails = () => {
                     </p>
                   </div>
                   <div>
-                    <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                    <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                       Next Follow-up
                     </label>
                     <p
-                      className={`font-light ${new Date(contact.nextFollowUpDate) < new Date() ? "text-red-600" : "text-black"}`}
+                      className={`font-medium ${new Date(contact.nextFollowUpDate) < new Date() ? "text-red-600" : "text-black"}`}
                     >
                       {formatDate(contact.nextFollowUpDate)}
                     </p>
@@ -499,8 +499,8 @@ const ContactDetails = () => {
               </div>
 
               {/* Social Profiles */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-base font-light text-black mb-4">
+              <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+                <h2 className="text-sm font-medium text-slate-800 mb-4">
                   Social Profiles
                 </h2>
                 <div className="space-y-3">
@@ -600,14 +600,14 @@ const ContactDetails = () => {
 
         {/* Lead Info Tab */}
         {activeTab === "lead-info" && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h2 className="text-base font-light text-black mb-6">
+          <div className="bg-white rounded-md border border-slate-200 p-6 shadow-sm">
+            <h2 className="text-sm font-medium text-slate-800 mb-6">
               Original Lead Details
             </h2>
             {lead ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Lead Source
                   </label>
                   <p className="text-black">
@@ -615,21 +615,21 @@ const ContactDetails = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Status
                   </label>
-                  <span className="inline-block px-2 py-1 rounded text-base font-light bg-green-100 text-green-800">
+                  <span className="inline-block px-2 py-1 rounded text-base font-medium bg-green-100 text-green-800">
                     {lead.status}
                   </span>
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Captured At
                   </label>
                   <p className="text-black">{formatDate(lead.createdAt)}</p>
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Converted At
                   </label>
                   <p className="text-black">
@@ -637,7 +637,7 @@ const ContactDetails = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Original Owner
                   </label>
                   <p className="text-black">
@@ -645,7 +645,7 @@ const ContactDetails = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-base font-light text-black uppercase tracking-wider mb-1">
+                  <label className="block text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">
                     Lead Score
                   </label>
                   <p className="text-black">{lead.leadScore || 0}</p>
@@ -663,7 +663,7 @@ const ContactDetails = () => {
         {activeTab === "activities" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-base font-light text-black">
+              <h2 className="text-sm font-medium text-slate-800">
                 Activity History
               </h2>
               {/* Could add filter controls here */}
@@ -674,7 +674,7 @@ const ContactDetails = () => {
                 activities.map((activity) => (
                   <div
                     key={activity._id}
-                    className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                    className="bg-white border border-slate-200 rounded-md p-6 shadow-sm hover:shadow-md transition-shadow"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex gap-4">
@@ -689,7 +689,7 @@ const ContactDetails = () => {
                                               : activity.activityType ===
                                                   "Email"
                                                 ? "bg-yellow-100 text-yellow-600"
-                                                : "bg-gray-100 text-black"
+                                                : "bg-slate-100 text-black"
                                         }`}
                         >
                           {/* Icons based on type */}
@@ -746,7 +746,7 @@ const ContactDetails = () => {
                             )}
                         </div>
                         <div>
-                          <h3 className="font-light text-black">
+                          <h3 className="font-medium text-black">
                             {activity.title}
                           </h3>
                           <p className="text-base text-black mt-1">
@@ -765,14 +765,14 @@ const ContactDetails = () => {
                           </div>
                         </div>
                       </div>
-                      <span className="text-base font-light text-black bg-gray-100 px-2 py-1 rounded">
+                      <span className="text-sm font-medium text-slate-800 bg-slate-100 px-2 py-1 rounded">
                         {activity.relatedTo} Reference
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-black">
+                <div className="bg-white border border-slate-200 rounded-md p-12 text-center text-black">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-12 w-12 mx-auto text-black mb-4"
@@ -798,7 +798,7 @@ const ContactDetails = () => {
         {activeTab === "follow-ups" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-base font-light text-black">
+              <h2 className="text-sm font-medium text-slate-800">
                 Follow Up Schedule
               </h2>
             </div>
@@ -807,27 +807,27 @@ const ContactDetails = () => {
                 followUps.map((item) => (
                   <div
                     key={item._id}
-                    className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex justify-between items-center"
+                    className="bg-white border border-slate-200 rounded-md p-6 shadow-sm flex justify-between items-center"
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`px-2 py-0.5 rounded text-base font-light uppercase 
+                          className={`px-2 py-0.5 rounded text-base font-medium uppercase 
                                         ${
                                           item.status === "Pending"
                                             ? "bg-yellow-100 text-yellow-800"
                                             : item.status === "Completed"
                                               ? "bg-green-100 text-green-800"
-                                              : "bg-gray-100 text-black"
+                                              : "bg-slate-100 text-black"
                                         }`}
                         >
                           {item.status}
                         </span>
-                        <span className="text-base font-light text-black">
+                        <span className="text-sm font-medium text-slate-800">
                           {item.type}
                         </span>
                       </div>
-                      <p className="text-black font-light">
+                      <p className="text-black font-medium">
                         {formatDate(item.scheduledAt)}
                       </p>
                       {item.notes && (
@@ -840,7 +840,7 @@ const ContactDetails = () => {
                   </div>
                 ))
               ) : (
-                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center text-black">
+                <div className="bg-white border border-slate-200 rounded-md p-12 text-center text-black">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-12 w-12 mx-auto text-black mb-4"
@@ -864,14 +864,14 @@ const ContactDetails = () => {
 
         {/* Billings Tab */}
         {activeTab === "billings" && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-base font-light text-black">
+          <div className="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+              <h2 className="text-sm font-medium text-slate-800">
                 Invoices & Billing
               </h2>
               <button
                 onClick={() => navigate("/billings")}
-                className="text-base font-light text-blue-600 hover:underline"
+                className="text-base font-medium text-blue-600 hover:underline"
               >
                 Create New Invoice
               </button>
@@ -879,7 +879,7 @@ const ContactDetails = () => {
             {billings.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-base text-left">
-                  <thead className="bg-gray-50 text-black font-light border-b border-gray-100">
+                  <thead className="bg-slate-50 text-black font-medium border-b border-slate-200">
                     <tr>
                       <th className="px-6 py-3">Invoice #</th>
                       <th className="px-6 py-3">Date</th>
@@ -891,19 +891,19 @@ const ContactDetails = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {billings.map((bill) => (
-                      <tr key={bill._id} className="hover:bg-gray-50">
-                        <td className="px-6 py-3 font-light text-black">
+                      <tr key={bill._id} className="hover:bg-slate-50">
+                        <td className="px-6 py-3 font-medium text-black">
                           {bill.invoiceNumber}
                         </td>
                         <td className="px-6 py-3 text-black">
                           {new Date(bill.billingDate).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-3 font-light">
+                        <td className="px-6 py-3 font-medium">
                           ₹{bill.grandTotal.toFixed(2)}
                         </td>
                         <td className="px-6 py-3">
                           <span
-                            className={`px-2 py-1 rounded-full text-base font-light ${
+                            className={`px-2 py-1 rounded-full text-base font-medium ${
                               bill.paymentStatus === "PAID"
                                 ? "bg-green-100 text-green-800"
                                 : bill.paymentStatus === "PENDING"

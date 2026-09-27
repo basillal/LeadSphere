@@ -11,6 +11,7 @@ import ContactForm from "./ContactForm";
 import ConversionDialog from "../leads/ConversionDialog"; // Importing from leads for reuse, or should move it to common? Keeping it here for now.
 import Toast from "../../components/common/utils/Toast";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
+import Loader from "../../components/common/Loader";
 
 // Preview Modal Component
 const PreviewModal = ({ contact, onClose }) => {
@@ -18,11 +19,11 @@ const PreviewModal = ({ contact, onClose }) => {
 
   const getTagColor = (tag) => {
     const colors = {
-      Client: "bg-blue-100 text-blue-800",
-      Vendor: "bg-purple-100 text-purple-800",
-      Partner: "bg-green-100 text-green-800",
-      Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-gray-100 text-black",
+      Client: "bg-blue-50 text-blue-700 border-blue-200",
+      Vendor: "bg-purple-50 text-purple-700 border-purple-200",
+      Partner: "bg-green-50 text-green-700 border-green-200",
+      Friend: "bg-orange-50 text-orange-700 border-orange-200",
+      Other: "bg-gray-50 text-gray-700 border-gray-200",
     };
     return colors[tag] || colors.Other;
   };
@@ -37,53 +38,47 @@ const PreviewModal = ({ contact, onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div>
-            <h2 className="text-base font-light text-black">{contact.name}</h2>
-            <p className="text-base text-black">
-              {contact.organizationName || "No Organization"}{" "}
-              {contact.designation && `• ${contact.designation}`}
+            <h2 className="text-xl font-bold text-gray-900">{contact.name}</h2>
+            <p className="text-sm font-medium text-gray-500 mt-1">
+              {contact.organizationName || "No Organization"}
+              {contact.designation && <span className="mx-2">•</span>}
+              {contact.designation && <span>{contact.designation}</span>}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Tags */}
           {contact.tags && contact.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {contact.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className={`px-3 py-1 rounded-full text-base font-light ${getTagColor(tag)}`}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTagColor(tag)}`}
                 >
                   {tag}
                 </span>
@@ -91,146 +86,117 @@ const PreviewModal = ({ contact, onClose }) => {
             </div>
           )}
 
-          {/* Contact Info */}
+          {/* Two Column Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
-                Contact Details
-              </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Phone:
-                  </span>{" "}
-                  {contact.phone}
-                </p>
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Email:
-                  </span>{" "}
-                  {contact.email || "-"}
-                </p>
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Alt Phone:
-                  </span>{" "}
-                  {contact.alternatePhone || "-"}
-                </p>
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Website:
-                  </span>{" "}
-                  {contact.website || "-"}
-                </p>
+            {/* Contact Details */}
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">👤</div>
+                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">Contact Details</h3>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                  <span className="text-gray-500 font-medium">Phone</span>
+                  <span className="text-gray-900 font-semibold">{contact.phone || "-"}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                  <span className="text-gray-500 font-medium">Email</span>
+                  <span className="text-gray-900 font-semibold">{contact.email || "-"}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                  <span className="text-gray-500 font-medium">Alt Phone</span>
+                  <span className="text-gray-900 font-semibold">{contact.alternatePhone || "-"}</span>
+                </div>
+                <div className="flex justify-between items-center pb-1">
+                  <span className="text-gray-500 font-medium">Website</span>
+                  {contact.website ? (
+                    <a href={contact.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold truncate max-w-[150px]">
+                      {contact.website}
+                    </a>
+                  ) : (
+                    <span className="text-gray-900 font-semibold">-</span>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
-                Relationship
-              </h3>
-              <div className="space-y-2">
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Category:
-                  </span>{" "}
-                  {contact.category?.name || "-"}
-                </p>
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Industry:
-                  </span>{" "}
-                  {contact.industry || "-"}
-                </p>
-                <p className="text-black">
-                  <span className="font-light w-32 inline-block text-black">
-                    Organization Size:
-                  </span>{" "}
-                  {contact.organizationSize || "-"}
-                </p>
+
+            {/* Relationship */}
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg">🏢</div>
+                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">Relationship</h3>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                  <span className="text-gray-500 font-medium">Category</span>
+                  <span className="text-gray-900 font-semibold">{contact.category?.name || "-"}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                  <span className="text-gray-500 font-medium">Industry</span>
+                  <span className="text-gray-900 font-semibold">{contact.industry || "-"}</span>
+                </div>
+                <div className="flex justify-between items-center pb-1">
+                  <span className="text-gray-500 font-medium">Organization Size</span>
+                  <span className="text-gray-900 font-semibold">{contact.organizationSize || "-"}</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Interaction History */}
-          <div className="space-y-4">
-            <h3 className="text-base font-light text-black uppercase tracking-wider">
-              Interaction History
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-gray-900 rounded-xl text-white">
-              <div>
-                <div className="text-base text-black uppercase">
-                  Last Contact
-                </div>
-                <div className="text-base font-light">
-                  {formatDate(contact.lastInteractionDate)}
-                </div>
+          <div className="bg-indigo-50/50 rounded-xl p-5 border border-indigo-100/50 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">🕒</div>
+              <h3 className="text-xs font-bold text-indigo-900 uppercase tracking-wider">Interaction History</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Last Contact</div>
+                <div className="text-sm font-semibold text-indigo-900">{formatDate(contact.lastInteractionDate)}</div>
               </div>
-              <div>
-                <div className="text-base text-black uppercase">Via</div>
-                <div className="text-base font-light">
-                  {contact.lastInteractionType || "-"}
-                </div>
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Via</div>
+                <div className="text-sm font-semibold text-indigo-900">{contact.lastInteractionType || "-"}</div>
               </div>
-              <div>
-                <div className="text-base text-black uppercase">
-                  Next Follow-up
-                </div>
-                <div className="text-base font-light">
-                  {formatDate(contact.nextFollowUpDate)}
-                </div>
+              <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
+                <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Next Follow-up</div>
+                <div className="text-sm font-semibold text-blue-600">{formatDate(contact.nextFollowUpDate)}</div>
               </div>
             </div>
           </div>
 
           {/* Notes */}
           {contact.notes && (
-            <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
-                Notes
-              </h3>
-              <p className="text-black bg-gray-50 p-4 rounded-lg leading-relaxed border border-gray-100">
-                {contact.notes}
-              </p>
+            <div className="bg-amber-50/50 rounded-xl p-5 border border-amber-100/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg">📝</div>
+                <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wider">Notes</h3>
+              </div>
+              <p className="text-sm text-amber-900/80 leading-relaxed whitespace-pre-wrap">{contact.notes}</p>
             </div>
           )}
 
           {/* Social Profiles */}
-          {(contact.linkedInProfile ||
-            contact.twitterHandle ||
-            contact.facebookProfile) && (
-            <div className="space-y-4">
-              <h3 className="text-base font-light text-black uppercase tracking-wider">
-                Social Profiles
-              </h3>
-              <div className="flex gap-3">
+          {(contact.linkedInProfile || contact.twitterHandle || contact.facebookProfile) && (
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-gray-100 text-gray-600 rounded-lg">🔗</div>
+                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">Social Profiles</h3>
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {contact.linkedInProfile && (
-                  <a
-                    href={contact.linkedInProfile}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-base font-light"
-                  >
-                    LinkedIn
+                  <a href={contact.linkedInProfile} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-[#0077b5] text-white text-sm font-medium rounded-lg hover:bg-[#006396] transition-colors flex items-center gap-2">
+                    <span>in</span> LinkedIn
                   </a>
                 )}
                 {contact.twitterHandle && (
-                  <a
-                    href={`https://twitter.com/${contact.twitterHandle.replace("@", "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors text-base font-light"
-                  >
-                    Twitter
+                  <a href={`https://twitter.com/${contact.twitterHandle.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-[#1DA1F2] text-white text-sm font-medium rounded-lg hover:bg-[#1a91da] transition-colors flex items-center gap-2">
+                    <span>𝕏</span> Twitter
                   </a>
                 )}
                 {contact.facebookProfile && (
-                  <a
-                    href={contact.facebookProfile}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors text-base font-light"
-                  >
-                    Facebook
+                  <a href={contact.facebookProfile} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-[#1877F2] text-white text-sm font-medium rounded-lg hover:bg-[#166fe5] transition-colors flex items-center gap-2">
+                    <span>f</span> Facebook
                   </a>
                 )}
               </div>
@@ -239,12 +205,12 @@ const PreviewModal = ({ contact, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-xl">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-gray-100 font-light"
+            className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
           >
-            Close Preview
+            Close
           </button>
         </div>
       </div>
@@ -252,15 +218,14 @@ const PreviewModal = ({ contact, onClose }) => {
   );
 };
 
-// Lead Selection Modal for Conversion
-const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
+// Lead Selection View for Conversion
+const LeadSelectionView = ({ onCancel, onSelect, categories = [] }) => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
   const fetchLeads = useCallback(async () => {
-    setLoading(true);
     try {
       // Fetch only unconverted leads
       const response = await leadService.getLeads({
@@ -278,8 +243,6 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
       setLeads(unconverted);
     } catch (error) {
       console.error("Error fetching leads:", error);
-    } finally {
-      setLoading(false);
     }
   }, [search, categoryFilter]);
 
@@ -291,40 +254,31 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
   }, [fetchLeads]);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
-          <h2 className="text-base font-light text-black">
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col w-full max-w-4xl mx-auto h-[70vh]">
+      <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-xl">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">
             Select Lead to Convert
           </h2>
-          <button
-            onClick={onClose}
-            className="text-black hover:text-black"
-          >
+          <p className="text-sm text-gray-500 mt-1">Choose a completed lead to convert into a contact.</p>
+        </div>
+        <button
+          onClick={onCancel}
+          className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+        >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
               <input
@@ -332,22 +286,22 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
                 placeholder="Search leads..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
               />
               <button
                 onClick={fetchLeads}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-light text-base"
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm shadow-sm"
               >
                 Search
               </button>
             </div>
             
             <div className="flex items-center gap-2">
-              <label className="text-base font-light text-black uppercase tracking-tight">Filter Category:</label>
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Filter Category:</label>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="flex-1 px-3 py-1.5 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-gray-50"
+                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -360,31 +314,29 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {loading ? (
-            <div className="flex justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-            </div>
-          ) : leads.length === 0 ? (
-            <div className="text-center p-8 text-black">
-              No unconverted leads found.
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 relative bg-gray-50/30">
+          {leads.length === 0 ? (
+            <div className="text-center p-12 bg-gray-50 border border-gray-100 rounded-xl m-4">
+              <div className="text-4xl mb-3">📭</div>
+              <h3 className="text-lg font-medium text-gray-900">No leads found</h3>
+              <p className="text-sm text-gray-500 mt-1">There are no completed leads available for conversion.</p>
             </div>
           ) : (
             leads.map((lead) => (
               <div
                 key={lead._id}
                 onClick={() => onSelect(lead)}
-                className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex justify-between items-center group"
+                className="p-5 border border-gray-200 rounded-xl hover:border-gray-900 hover:shadow-md cursor-pointer transition-all flex justify-between items-center group bg-white mx-2"
               >
                 <div>
-                  <h3 className="font-light text-black">{lead.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-base text-black">
+                  <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
+                  <div className="flex items-center gap-3 mt-2">
+                    <p className="text-sm text-gray-600 font-medium">
                       {lead.organizationName || "-"}
                     </p>
                     {lead.category && (
                       <span 
-                        className={`px-2 py-0.5 rounded-full text-base font-light uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1`}
+                        className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider shadow-sm border border-black/5 inline-flex items-center gap-1.5`}
                         style={{ 
                           backgroundColor: typeof lead.category === 'object' ? lead.category.color : '',
                           color: (function(hex) {
@@ -397,21 +349,20 @@ const LeadSelectionModal = ({ onClose, onSelect, categories = [] }) => {
                           })(typeof lead.category === 'object' ? lead.category.color : '')
                         }}
                       >
-                        <span className="w-1 h-1 rounded-full bg-white/50"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-white/80"></span>
                         {typeof lead.category === 'object' ? lead.category.name : ''}
                       </span>
                     )}
                   </div>
                 </div>
-                <span className="text-base text-black font-light opacity-0 group-hover:opacity-100 transition-opacity">
-                  Select →
+                <span className="text-sm text-white font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 bg-gray-900 px-4 py-2 rounded-lg shadow-sm">
+                  Select Lead →
                 </span>
               </div>
             ))
           )}
         </div>
       </div>
-    </div>
   );
 };
 
@@ -441,7 +392,6 @@ const Contacts = () => {
   const [previewContact, setPreviewContact] = useState(null);
 
   // Conversion States
-  const [showLeadPicker, setShowLeadPicker] = useState(false);
   const [convertingLead, setConvertingLead] = useState(null);
 
   const [snackbar, setSnackbar] = useState({
@@ -463,16 +413,17 @@ const Contacts = () => {
   };
 
   const handleStartConversion = () => {
-    setShowLeadPicker(true);
+    setView("selectLead");
   };
 
   const handleSelectLead = (lead) => {
-    setShowLeadPicker(false);
     setConvertingLead(lead);
+    setView("convertLead");
   };
 
   const handleCancelConversion = () => {
     setConvertingLead(null);
+    setView("list");
   };
 
   const handleConfirmConversion = async (additionalData) => {
@@ -482,9 +433,10 @@ const Contacts = () => {
         additionalData,
       );
       showSnackbar("Lead converted to contact successfully", "success");
+      setConvertingLead(null);
+      setView("list");
       fetchContacts();
       fetchStats();
-      setConvertingLead(null);
     } catch (err) {
       console.error("Error converting lead:", err);
       const errMsg =
@@ -633,18 +585,30 @@ const Contacts = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-base font-light text-black">
+        <h1 className="text-sm font-medium text-slate-800">
           {view === "list"
             ? "Contacts"
             : view === "create"
               ? "Create new contact"
-              : "Edit contact"}
+              : view === "edit"
+                ? "Edit contact"
+                : view === "selectLead"
+                  ? "Convert Lead"
+                  : "Convert to Contact"}
         </h1>
         {view !== "list" && (
           <button
-            onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
-            title="Back to List"
+            onClick={() => {
+              if (view === "convertLead") {
+                setView("selectLead");
+                setConvertingLead(null);
+              } else {
+                handleCancelForm();
+                handleCancelConversion();
+              }
+            }}
+            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
+            title={view === "convertLead" ? "Back to Lead Selection" : "Back to List"}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -670,12 +634,12 @@ const Contacts = () => {
           </StatsWrapper>
 
           <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
+            <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-light transition-colors whitespace-nowrap flex-shrink-0 ${
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                     activeTab === tab.id
                       ? "bg-white text-black shadow-sm"
                       : "text-black hover:text-black"
@@ -705,35 +669,32 @@ const Contacts = () => {
             />
           </div>
         </>
+      ) : view === "selectLead" ? (
+        <LeadSelectionView
+          categories={categories}
+          onCancel={handleCancelConversion}
+          onSelect={handleSelectLead}
+        />
+      ) : view === "convertLead" && convertingLead ? (
+        <div className="max-w-3xl mx-auto mt-4">
+          <ConversionDialog
+            lead={convertingLead}
+            categories={categories}
+            onConfirm={handleConfirmConversion}
+            onCancel={handleCancelConversion}
+            inline={true}
+          />
+        </div>
       ) : (
         <div className="max-w-7xl mx-auto">
           <ContactForm
             key={currentContact ? currentContact._id : "new"}
             initialData={currentContact}
-            categories={categories} // Added Prop
+            categories={categories}
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />
         </div>
-      )}
-
-      {/* Lead Selection Modal */}
-      {showLeadPicker && (
-        <LeadSelectionModal
-          categories={categories} // Pass categories
-          onClose={() => setShowLeadPicker(false)}
-          onSelect={handleSelectLead}
-        />
-      )}
-
-      {/* Conversion Dialog */}
-      {convertingLead && (
-        <ConversionDialog
-          lead={convertingLead}
-          categories={categories} // Pass categories
-          onConfirm={handleConfirmConversion}
-          onCancel={handleCancelConversion}
-        />
       )}
 
       {/* Preview Modal */}

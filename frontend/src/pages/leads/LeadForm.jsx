@@ -123,7 +123,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     if (!cleanedData.followUpMode) delete cleanedData.followUpMode;
     if (!cleanedData.preferredContactMode)
       delete cleanedData.preferredContactMode;
-    if (!cleanedData.nextFollowUpDate) delete cleanedData.nextFollowUpDate;
+    
+    if (cleanedData.nextFollowUpDate) {
+      // Convert the local datetime-local string to UTC ISO string
+      cleanedData.nextFollowUpDate = new Date(cleanedData.nextFollowUpDate).toISOString();
+    } else {
+      delete cleanedData.nextFollowUpDate;
+    }
+
     if (!cleanedData.expectedClosureDate)
       delete cleanedData.expectedClosureDate;
     if (cleanedData.priority === "") delete cleanedData.priority;
@@ -326,7 +333,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             />
             <label
               htmlFor="isActive"
-              className="text-base font-light text-black"
+              className="text-sm font-medium text-slate-800"
             >
               Is active
             </label>
@@ -374,7 +381,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             type="number"
             value={formData.followUpCount}
             disabled
-            className="md:col-span-2 bg-gray-50"
+            className="md:col-span-2 bg-slate-50"
           />
           <div className="md:col-span-6">
             <TextArea
@@ -466,7 +473,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             />
             <label
               htmlFor="doNotDisturb"
-              className="text-base font-light text-black"
+              className="text-sm font-medium text-slate-800"
             >
               Do not disturb (DND)
             </label>
@@ -488,7 +495,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-gray-200 text-black rounded-full text-base font-light flex items-center"
+                className="px-3 py-1 bg-gray-200 text-black rounded-full text-base font-medium flex items-center"
               >
                 {tag}
                 <button
@@ -539,17 +546,17 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Actions */}
-        <div className="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-5">
+        <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-5">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-light rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
           >
             Save Lead
           </button>

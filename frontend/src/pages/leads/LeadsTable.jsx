@@ -1,13 +1,62 @@
 import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 
+const STATUS_STYLES = {
+  New: "bg-blue-50 text-blue-700 ring-blue-600/20",
+  Pending: "bg-amber-50 text-amber-700 ring-amber-600/20",
+  "In Progress": "bg-indigo-50 text-indigo-700 ring-indigo-600/20",
+  "On Hold": "bg-slate-50 text-slate-700 ring-slate-600/20",
+  Completed: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
+  Lost: "bg-rose-50 text-rose-700 ring-rose-600/20",
+  default: "bg-gray-50 text-gray-700 ring-gray-600/20",
+};
+
+const PRIORITY_STYLES = {
+  High: "bg-rose-50 text-rose-700 ring-rose-600/20",
+  Medium: "bg-amber-50 text-amber-700 ring-amber-600/20",
+  Low: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
+  default: "bg-gray-50 text-gray-700 ring-gray-600/20",
+};
+
+const BADGE_BASE_CLASSES =
+  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset";
+
+const getStatusClass = (status, isConverted = false) => {
+  if (isConverted) {
+    return `${BADGE_BASE_CLASSES} bg-emerald-50 text-emerald-700 ring-emerald-600/20`;
+  }
+
+  return `${BADGE_BASE_CLASSES} ${STATUS_STYLES[status] || STATUS_STYLES.default
+    }`;
+};
+
+const getPriorityClass = (priority) => {
+  return `${BADGE_BASE_CLASSES} ${PRIORITY_STYLES[priority] || PRIORITY_STYLES.default
+    }`;
+};
+
+const getInitial = (value) => {
+  if (!value) return "?";
+  return value.charAt(0).toUpperCase();
+};
+
+const formatText = (value, fallback = "-") => {
+  if (!value) return fallback;
+  return value;
+};
+
 const LeadsTable = ({
   rows = [],
   onEdit,
   onDelete,
   onCreate,
   onPreview,
-  filters = { search: "", status: "", source: "" },
+  filters = {
+    search: "",
+    status: "",
+    source: "",
+    category: "",
+  },
   onFilterChange,
   pagination,
   onPageChange,
@@ -15,106 +64,152 @@ const LeadsTable = ({
   loading = false,
   categories = [],
 }) => {
-  // Helper function for status colors
-  const getStatusColor = (status, isConverted) => {
-    if (isConverted) {
-      return "bg-emerald-100 text-emerald-800 border border-emerald-200";
-    }
-    switch (status) {
-      case "New":
-        return "bg-gray-200 text-black";
-      case "Pending":
-        return "bg-yellow-50 text-yellow-700 border border-yellow-200";
-      case "In Progress":
-        return "bg-blue-50 text-blue-700 border border-blue-200";
-      case "On Hold":
-        return "bg-orange-50 text-orange-700 border border-orange-200";
-      case "Completed":
-        return "bg-green-50 text-green-700 border border-green-200";
-      case "Lost":
-        return "bg-red-50 text-red-700 border border-red-200";
-      default:
-        return "bg-gray-100 text-black";
-    }
+  const handleBulkDelete = (selectedIds = []) => {
+    selectedIds.forEach((id) => onDelete?.(id));
   };
 
-  // Column definitions
+  const renderLeadDetails = (row) => (
+    <div className="flex min-w-0 items-center gap-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-sm font-bold text-indigo-600 ring-1 ring-inset ring-indigo-600/10">
+        {getInitial(row.name)}
+      </div>
+
+      <div className="flex min-w-0 flex-col justify-center">
+        <div className="truncate text-sm font-semibold tracking-tight text-gray-900">
+          {formatText(row.name, "-")}
+        </div>
+
+        <div className="mt-0.5 truncate text-xs font-medium text-gray-500">
+          {row.email || "No email"}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSource = (row) => {
+    if (!row.source) {
+      return <span className="text-sm font-medium text-gray-400">-</span>;
+    }
+
+    return (
+      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+        {row.source}
+      </span>
+    );
+  };
+
+  const renderStatus = (row) => (
+    <span className={getStatusClass(row.status, row.isConverted)}>
+      {row.isConverted ? "Converted" : row.status || "-"}
+    </span>
+  );
+
+  const renderPriority = (row) => {
+    if (!row.priority) {
+      return <span className="text-sm font-medium text-gray-400">-</span>;
+    }
+
+    return (
+      <span className={getPriorityClass(row.priority)}>
+        {row.priority}
+      </span>
+    );
+  };
+
+  const renderCategory = (row) => {
+    if (!row.category || typeof row.category !== "object") {
+      return <span className="text-sm font-medium text-gray-400">-</span>;
+    }
+
+    return (
+      <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+        {row.category.name}
+      </span>
+    );
+  };
+
   const columns = [
     {
       id: "name",
-      label: "Name",
+      label: "Lead Details",
       width: "w-1/5",
-      render: (row) => (
-        <div>
-          <div className="font-light text-black uppercase">{row.name}</div>
-          <span className="block text-base text-black">{row.email}</span>
-        </div>
-      ),
+      render: renderLeadDetails,
     },
     {
       id: "organizationName",
       label: "Organization",
       width: "w-[15%]",
       render: (row) => (
-        <span className="capitalize">{row.organizationName || "-"}</span>
+        <span className="text-sm font-medium text-gray-700">
+          {formatText(row.organizationName)}
+        </span>
       ),
     },
     {
       id: "createdBy",
-      label: "Created by",
+      label: "Created By",
       width: "w-[12%]",
-      render: (row) => row.createdBy?.name || "System",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-600">
+          {row.createdBy?.name || "System"}
+        </span>
+      ),
     },
     {
       id: "tenant",
-      label: "Organization",
+      label: "Tenant Organization",
       width: "w-[12%]",
-      render: (row) => row.organization?.name || "-",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-600">
+          {row.organization?.name || "-"}
+        </span>
+      ),
     },
-    { id: "phone", label: "Phone", width: "w-[15%]" },
-    { id: "source", label: "Source", width: "w-[15%]" },
+    {
+      id: "phone",
+      label: "Phone",
+      width: "w-[12%]",
+      render: (row) => (
+        <span className="text-sm font-medium text-gray-700">
+          {formatText(row.phone)}
+        </span>
+      ),
+    },
+    {
+      id: "source",
+      label: "Source",
+      width: "w-[12%]",
+      render: renderSource,
+    },
     {
       id: "status",
       label: "Status",
       width: "w-[10%]",
-      render: (row) => (
-        <span
-          className={`px-2 py-0.5 rounded-full text-base font-light ${getStatusColor(row.status, row.isConverted)}`}
-        >
-          {row.isConverted ? "Converted" : row.status}
-        </span>
-      ),
+      render: renderStatus,
     },
-    { id: "priority", label: "Priority", width: "w-[10%]" },
+    {
+      id: "priority",
+      label: "Priority",
+      width: "w-[10%]",
+      render: renderPriority,
+    },
     {
       id: "category",
       label: "Category",
       width: "w-[12%]",
-      render: (row) => {
-        if (!row.category || typeof row.category !== 'object') {
-          return <span className="text-black text-base">-</span>;
-        }
-
-        return (
-          <span 
-            className="text-base font-light text-black uppercase tracking-wider"
-          >
-            {row.category.name}
-          </span>
-        );
-      }
+      render: renderCategory,
     },
   ];
 
-  // Action buttons
   const actions = [
     {
       icon: (
         <svg
-          className="w-4 h-4"
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -132,16 +227,17 @@ const LeadsTable = ({
       ),
       label: "Preview",
       onClick: onPreview,
-      color: "text-black hover:bg-gray-200",
+      color:
+        "text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600",
     },
-
     {
       icon: (
         <svg
-          className="w-4 h-4"
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -153,16 +249,17 @@ const LeadsTable = ({
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-black hover:bg-gray-200",
+      color:
+        "text-gray-400 transition-colors hover:bg-emerald-50 hover:text-emerald-600",
     },
-
     {
       icon: (
         <svg
-          className="w-4 h-4"
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -173,25 +270,28 @@ const LeadsTable = ({
         </svg>
       ),
       label: "Delete",
-      onClick: (row) => onDelete(row._id),
-      color: "text-red-600 hover:bg-red-100",
+      onClick: (row) => onDelete?.(row._id),
+      color:
+        "text-gray-400 transition-colors hover:bg-rose-50 hover:text-rose-600",
     },
   ];
 
-  // Toolbar configuration
   const toolbar = {
-    title: "Leads",
-    searchPlaceholder: "Search leads...",
+    title: "Leads Management",
+
+    searchPlaceholder: "Search leads by name or email...",
+
     search: {
       value: filters.search,
       onChange: (value) => onFilterChange("search", value),
     },
+
     filters: [
       {
         value: filters.status,
         onChange: (value) => onFilterChange("status", value),
         options: [
-          { value: "", label: "All Status" },
+          { value: "", label: "All Statuses" },
           { value: "New", label: "New" },
           { value: "Pending", label: "Pending" },
           { value: "In Progress", label: "In Progress" },
@@ -200,6 +300,7 @@ const LeadsTable = ({
           { value: "Lost", label: "Lost" },
         ],
       },
+
       {
         value: filters.source,
         onChange: (value) => onFilterChange("source", value),
@@ -213,91 +314,137 @@ const LeadsTable = ({
           { value: "Other", label: "Other" },
         ],
       },
+
       {
         value: filters.category || "",
         onChange: (value) => onFilterChange("category", value),
         options: [
           { value: "", label: "All Categories" },
-          ...((categories || []).map(cat => ({ value: cat._id, label: cat.name })))
+          ...(categories || []).map((category) => ({
+            value: category._id,
+            label: category.name,
+          })),
         ],
       },
     ],
+
     onCreate: {
-      label: "Add lead",
+      label: "Add New Lead",
       onClick: onCreate,
     },
   };
 
-  // Selection configuration
-  const selection = {
-    enabled: true,
-    onBulkDelete: (selectedIds) => {
-      selectedIds.forEach((id) => onDelete(id));
-    },
-  };
-
-  // Custom mobile card render (standardized)
-  const renderCard = (row, actions) => (
+  const renderCard = (row, rowActions) => (
     <div
-      className="bg-white p-4 rounded-2xl shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100"
-      onClick={() => onPreview && onPreview(row)}
+      className="cursor-pointer rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-900/5 transition-shadow duration-200 hover:shadow-md"
+      onClick={() => onPreview?.(row)}
     >
+      {/* Header */}
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-sky-50 text-sky-700 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-500/10">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1"
+              />
             </svg>
           </div>
-          <div className="min-w-0">
-            <div className="text-lg font-bold text-sky-700 truncate">{row.name}</div>
-            <div className="text-sm text-slate-500 truncate">{row.category?.name || ""}</div>
+
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-base font-semibold tracking-tight text-gray-900">
+              {formatText(row.name)}
+            </div>
+
+            <div className="mt-0.5 truncate text-sm font-medium text-gray-500">
+              {row.email || "No email"}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-start gap-2">
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(row.status, row.isConverted)}`}>{row.isConverted ? "Converted" : row.status}</span>
+        <div className="shrink-0">
+          <span className={getStatusClass(row.status, row.isConverted)}>
+            {row.isConverted ? "Converted" : row.status || "-"}
+          </span>
         </div>
       </div>
 
-      {row.category && (
-        <div className="mt-3">
-          <span className="text-sm font-light text-slate-700 uppercase tracking-wider">{row.category.name}</span>
+      {/* Lead Information */}
+      <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <div className="mb-1 text-xs font-medium text-gray-500">Phone</div>
+          <div className="truncate font-medium text-gray-900">
+            {formatText(row.phone)}
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-1 text-xs font-medium text-gray-500">
+            Organization
+          </div>
+          <div className="truncate font-medium text-gray-900">
+            {formatText(row.organizationName)}
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-1 text-xs font-medium text-gray-500">Source</div>
+          <div className="truncate font-medium text-gray-900">
+            {formatText(row.source)}
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-1 text-xs font-medium text-gray-500">
+            Priority
+          </div>
+          <div className="truncate font-medium text-gray-900">
+            {formatText(row.priority)}
+          </div>
+        </div>
+      </div>
+
+      {/* Category */}
+      {row.category?.name && (
+        <div className="mt-4">
+          <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+            {row.category.name}
+          </span>
         </div>
       )}
 
-      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
-        <div>
-          <div className="text-xs text-slate-500">Phone</div>
-          <div className="mt-0.5 truncate">{row.phone || "-"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-500">Email</div>
-          <div className="mt-0.5 truncate">{row.email || "-"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-500">Source</div>
-          <div className="mt-0.5 truncate">{row.source || "-"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-slate-500">Priority</div>
-          <div className="mt-0.5 truncate">{row.priority || "-"}</div>
-        </div>
-      </div>
+      {/* Actions */}
+      <div className="mt-4 flex justify-end gap-1.5 border-t border-gray-100 pt-4">
+        {rowActions.map((action, index) => {
+          if (action.condition && !action.condition(row)) {
+            return null;
+          }
 
-      <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
-        {actions.map((action, idx) => {
-          if (action.condition && !action.condition(row)) return null;
           return (
             <button
-              key={idx}
-              onClick={(e) => {
-                e.stopPropagation();
+              key={`${action.label}-${index}`}
+              type="button"
+              title={action.label}
+              aria-label={action.label}
+              onClick={(event) => {
+                event.stopPropagation();
                 action.onClick(row);
               }}
-              className={`p-2 rounded-lg transition-colors ${action.color}`}
-              title={action.label}
+              className={`rounded-lg p-2 transition-colors duration-200 ${action.color}`}
             >
               {action.icon}
             </button>
@@ -324,14 +471,12 @@ const LeadsTable = ({
         page: pagination?.page || 1,
         rowsPerPage: pagination?.limit || 10,
         total: pagination?.total || 0,
-        onPageChange: onPageChange,
+        onPageChange,
         onRowsPerPageChange: onLimitChange,
       }}
       selection={{
         enabled: true,
-        onBulkDelete: (selectedIds) => {
-          selectedIds.forEach((id) => onDelete(id));
-        },
+        onBulkDelete: handleBulkDelete,
       }}
     />
   );

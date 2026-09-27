@@ -72,9 +72,9 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
   return (
     <div>
       {lead ? (
-        <div className="mb-4 p-3 bg-gray-50 rounded-md border border-gray-100">
+        <div className="mb-4 p-3 bg-slate-50 rounded-md border border-slate-200">
           <p className="text-base text-black">For Lead</p>
-          <p className="font-light">{lead.name}</p>
+          <p className="font-medium">{lead.name}</p>
         </div>
       ) : (
         <div className="mb-4">
@@ -174,13 +174,13 @@ const FollowUpForm = ({ initialData, lead, onSubmit, onCancel }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 bg-white border border-gray-300 text-black font-light rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-black text-white font-light rounded-lg hover:bg-gray-800"
+            className="px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-slate-800"
           >
             Save
           </button>

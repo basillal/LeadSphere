@@ -3,7 +3,7 @@ import React from "react";
 const UserStats = ({ stats }) => {
   const StatCard = ({ title, value, bgColor, textColor, icon }) => (
     <div
-      className={`${bgColor} p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow`}
+      className={`${bgColor} p-5 rounded-md shadow-sm hover:shadow-md transition-shadow`}
     >
       <div className="flex items-center justify-between mb-3">
         <span className="text-black text-base font-bold uppercase tracking-wide">
@@ -11,7 +11,7 @@ const UserStats = ({ stats }) => {
         </span>
         {icon && <div className={`${textColor} opacity-80`}>{icon}</div>}
       </div>
-      <div className={`text-base font-light ${textColor}`}>{value}</div>
+      <div className={`text-base font-medium ${textColor}`}>{value}</div>
     </div>
   );
 

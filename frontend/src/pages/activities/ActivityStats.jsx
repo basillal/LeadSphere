@@ -104,11 +104,11 @@ const ActivityStats = ({ stats, onStatClick, mobileMode = false }) => {
         <div
           key={index}
           onClick={() => stat.filter && onStatClick && onStatClick(stat.filter)}
-          className={`group bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 ${stat.filter ? "cursor-pointer hover:-translate-y-0.5" : ""} ${mobileMode ? "min-w-[160px] flex-shrink-0" : "min-w-[170px] flex-1"}`}
+          className={`group bg-white rounded-md p-3 sm:p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 ${stat.filter ? "cursor-pointer hover:-translate-y-0.5" : ""} ${mobileMode ? "min-w-[160px] flex-shrink-0" : "min-w-[170px] flex-1"}`}
         >
           <div className="flex items-start gap-3">
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ring-1 ${getAccentForIndex(index).badge} ${getAccentForIndex(index).ring}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ring-1 ${getAccentForIndex(index).badge} ${getAccentForIndex(index).ring}`}
             >
               <span className="text-base sm:text-lg">{stat.icon}</span>
             </div>

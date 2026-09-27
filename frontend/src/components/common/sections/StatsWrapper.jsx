@@ -8,14 +8,13 @@ const StatsWrapper = ({ children, title = "Statistics" }) => {
 
   return (
     <>
-      {/* Mobile/Small Screen Collapse/Expand Trigger Button */}
       <div className="md:hidden flex justify-end mb-4 px-2 no-print">
         <button
           onClick={() => setIsExpanded(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-2xl hover:bg-slate-50 active:bg-slate-100 transition-all font-semibold text-sm shadow-sm hover:shadow-md cursor-pointer group"
+          className="flex items-center px-3 py-2.5 rounded-md transition-all min-h-[40px] text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium group cursor-pointer"
         >
-          <span className="text-base group-hover:scale-110 transition-transform duration-200">📊</span>
-          <span>View Overview</span>
+          <span className="mr-3 flex items-center justify-center text-base group-hover:scale-110 transition-transform duration-200">📊</span>
+          <span className="text-sm whitespace-nowrap truncate">View Overview</span>
         </button>
       </div>
 
@@ -27,13 +26,13 @@ const StatsWrapper = ({ children, title = "Statistics" }) => {
 
       {/* Full-screen Overlay when Expanded on Mobile/Small Screen */}
       {isExpanded && (
-        <div className="fixed inset-0 z-[9999] md:hidden bg-black/20 backdrop-blur-sm overflow-y-auto flex flex-col justify-end no-print animate-fade-in">
+        <div className="fixed inset-0 z-[9999] md:hidden bg-gray-900/50 backdrop-blur-sm overflow-y-auto flex flex-col justify-end no-print animate-fade-in">
           {/* Header */}
           <div className="mobile-sheet overflow-hidden mx-2 mb-2">
             <div className="mobile-sheet-handle" />
             <div className="px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-10 border-b border-slate-200">
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-wider">
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 {title}
               </h3>
               <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
@@ -76,7 +75,7 @@ const StatsWrapper = ({ children, title = "Statistics" }) => {
           <div className="bg-white border-t border-slate-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-end">
             <button
               onClick={() => setIsExpanded(false)}
-              className="w-full px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 active:bg-slate-900 transition-all font-semibold text-sm uppercase tracking-wider text-center cursor-pointer"
+              className="w-full px-6 py-3 bg-slate-900 text-white rounded-md hover:bg-slate-800 active:bg-slate-900 transition-all font-semibold text-sm uppercase tracking-wider text-center cursor-pointer"
             >
               Close Overview
             </button>
