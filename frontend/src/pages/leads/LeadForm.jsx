@@ -123,7 +123,14 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
     if (!cleanedData.followUpMode) delete cleanedData.followUpMode;
     if (!cleanedData.preferredContactMode)
       delete cleanedData.preferredContactMode;
-    if (!cleanedData.nextFollowUpDate) delete cleanedData.nextFollowUpDate;
+    
+    if (cleanedData.nextFollowUpDate) {
+      // Convert the local datetime-local string to UTC ISO string
+      cleanedData.nextFollowUpDate = new Date(cleanedData.nextFollowUpDate).toISOString();
+    } else {
+      delete cleanedData.nextFollowUpDate;
+    }
+
     if (!cleanedData.expectedClosureDate)
       delete cleanedData.expectedClosureDate;
     if (cleanedData.priority === "") delete cleanedData.priority;

@@ -352,11 +352,12 @@ const Leads = () => {
       // Auto-create follow-up is handled by backend to prevent duplicates.
       showSnackbar("Lead added successfully", "success");
       
-      // Force a full refresh
-      setFilters(prev => ({...prev}));
-      fetchLeads({ page: 1 });
-      fetchStats();
       setView("list");
+      // Use setTimeout to allow the view transition before fetching, preventing race conditions or UI lag
+      setTimeout(() => {
+        fetchLeads({ page: 1 });
+        fetchStats();
+      }, 0);
     } catch (err) {
       console.error("Error creating lead:", err);
       const errMsg = err.response?.data?.message || "Failed to create lead";

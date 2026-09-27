@@ -35,7 +35,7 @@ const FollowUps = () => {
   const [followUpToUpdate, setFollowUpToUpdate] = useState(null);
   const [outcomeRemark, setOutcomeRemark] = useState("");
   const [currentFollowUp, setCurrentFollowUp] = useState(null);
-  const [expandedCard, setExpandedCard] = useState(null);
+  const [previewFollowUp, setPreviewFollowUp] = useState(null);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -120,6 +120,7 @@ const FollowUps = () => {
   };
 
   const handleEdit = (followUp) => {
+    setPreviewFollowUp(null);
     setCurrentFollowUp(followUp);
     setIsFormOpen(true);
   };
@@ -142,6 +143,7 @@ const FollowUps = () => {
 
   const handleStatusChange = async (followUp, newStatus) => {
     if (newStatus === "Completed") {
+      setPreviewFollowUp(null);
       setFollowUpToUpdate(followUp);
       setOutcomeRemark("");
       setIsOutcomeOpen(true);
@@ -236,9 +238,8 @@ const FollowUps = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const toggleExpand = (id) => {
-    if (!id) return;
-    setExpandedCard(expandedCard === id ? null : id);
+  const handlePreview = (followUp) => {
+    setPreviewFollowUp(followUp);
   };
 
   const getStatusColor = (status) => {
@@ -506,7 +507,6 @@ const FollowUps = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredFollowUps.map((followUp) => {
-              const isExpanded = expandedCard === followUp._id;
               const statusColor = getStatusColor(followUp.status);
               const statusEmoji = getStatusEmoji(followUp.status);
               const typeEmoji = getTypeEmoji(followUp.type);
@@ -518,7 +518,7 @@ const FollowUps = () => {
                 >
                   <div
                     className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => toggleExpand(followUp._id)}
+                    onClick={() => handlePreview(followUp)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
@@ -541,152 +541,8 @@ const FollowUps = () => {
                           </span>
                         </div>
                       </div>
-                      <button className="ml-2 p-1 rounded-lg hover:bg-gray-200 transition-colors flex-shrink-0">
-                        {isExpanded ? <span>▲</span> : <span>▼</span>}
-                      </button>
                     </div>
                   </div>
-
-                  {/* Expanded Content */}
-                  {isExpanded && (
-                    <div className="px-5 pb-5 pt-4 border-t border-gray-100 bg-gray-50/30">
-                      <div className="space-y-4">
-                        {/* Lead Details */}
-                        {followUp.lead && (
-                          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
-                              <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                Lead Information
-                              </p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
-                                <p className="font-medium text-gray-900">{followUp.lead.phone || 'N/A'}</p>
-                              </div>
-                              <div>
-                                <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
-                                <p className="font-medium text-gray-900 truncate">{followUp.lead.email || 'N/A'}</p>
-                              </div>
-                              {followUp.lead.company && (
-                                <div className="col-span-2 pt-3 border-t border-gray-50">
-                                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Company</span>
-                                  <p className="font-medium text-gray-900">{followUp.lead.company}</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Schedule Details */}
-                        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg text-sm">📅</div>
-                            <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                              Schedule Details
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Date</span>
-                              <p className="font-medium text-gray-900">{getShortDate(followUp.scheduledAt)}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Time</span>
-                              <p className="font-medium text-gray-900">
-                                {followUp.scheduledAt ?
-                                  new Date(followUp.scheduledAt).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true
-                                  }) : 'N/A'
-                                }
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Notes */}
-                        {followUp.notes && (
-                          <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm">📝</div>
-                              <p className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                                Notes
-                              </p>
-                            </div>
-                            <p className="text-sm text-amber-800 leading-relaxed">{followUp.notes}</p>
-                          </div>
-                        )}
-
-                        {/* Outcome */}
-                        {followUp.outcome && (
-                          <div className="bg-green-50/50 rounded-xl p-4 border border-green-100/50">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="p-1.5 bg-green-100 text-green-700 rounded-lg text-sm">✅</div>
-                              <p className="text-xs font-bold text-green-900 uppercase tracking-wider">
-                                Outcome
-                              </p>
-                            </div>
-                            <p className="text-sm text-green-800 leading-relaxed">{followUp.outcome}</p>
-                          </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {followUp.status !== 'Completed' && followUp.status !== 'Missed' && (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleStatusChange(followUp, 'Completed');
-                                }}
-                                disabled={actionLoading}
-                                className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <span>✅</span>
-                                Complete
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleStatusChange(followUp, 'Rescheduled');
-                                }}
-                                disabled={actionLoading}
-                                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <span>🔄</span>
-                                Reschedule
-                              </button>
-                            </>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(followUp);
-                            }}
-                            disabled={actionLoading}
-                            className="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span>✏️</span>
-                            Edit
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(followUp._id);
-                            }}
-                            disabled={actionLoading}
-                            className="px-3 py-1.5 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span>🗑️</span>
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -765,7 +621,7 @@ const FollowUps = () => {
       {/* Centered Modal for Form */}
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setIsFormOpen(false)}></div>
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsFormOpen(false)}></div>
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
               <h2 className="text-xl font-bold text-gray-900">
@@ -796,7 +652,7 @@ const FollowUps = () => {
       {/* Centered Modal for Outcome */}
       {isOutcomeOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setIsOutcomeOpen(false)}></div>
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsOutcomeOpen(false)}></div>
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
               <h2 className="text-xl font-bold text-gray-900">
@@ -856,6 +712,170 @@ const FollowUps = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+      
+      {/* Preview Modal */}
+      {previewFollowUp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setPreviewFollowUp(null)}></div>
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <span>📋</span> Follow-up Preview
+              </h2>
+              <button
+                onClick={() => setPreviewFollowUp(null)}
+                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <span className="sr-only">Close modal</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto space-y-6">
+              {/* Lead Details */}
+              {previewFollowUp.lead && (
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
+                    <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Lead Information
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Name</span>
+                      <p className="font-medium text-gray-900">{previewFollowUp.lead.name || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
+                      <p className="font-medium text-gray-900">{previewFollowUp.lead.phone || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
+                      <p className="font-medium text-gray-900 truncate">{previewFollowUp.lead.email || 'N/A'}</p>
+                    </div>
+                    {previewFollowUp.lead.company && (
+                      <div>
+                        <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Company</span>
+                        <p className="font-medium text-gray-900">{previewFollowUp.lead.company}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Schedule Details */}
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg text-sm">📅</div>
+                  <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Schedule Details
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Status</span>
+                    <div className="mt-1">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border inline-flex items-center gap-1 ${getStatusColor(previewFollowUp.status)}`}>
+                        {getStatusEmoji(previewFollowUp.status)} {previewFollowUp.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Type</span>
+                    <div className="mt-1 font-medium text-gray-900">
+                      <span className="inline-flex items-center gap-1">
+                        {getTypeEmoji(previewFollowUp.type)} {previewFollowUp.type || 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Date</span>
+                    <p className="font-medium text-gray-900">{getShortDate(previewFollowUp.scheduledAt)}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Time</span>
+                    <p className="font-medium text-gray-900">
+                      {previewFollowUp.scheduledAt ?
+                        new Date(previewFollowUp.scheduledAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true
+                        }) : 'N/A'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes */}
+              {previewFollowUp.notes && (
+                <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm">📝</div>
+                    <p className="text-xs font-bold text-amber-900 uppercase tracking-wider">
+                      Notes
+                    </p>
+                  </div>
+                  <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">{previewFollowUp.notes}</p>
+                </div>
+              )}
+
+              {/* Outcome */}
+              {previewFollowUp.outcome && (
+                <div className="bg-green-50/50 rounded-xl p-4 border border-green-100/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-green-100 text-green-700 rounded-lg text-sm">✅</div>
+                    <p className="text-xs font-bold text-green-900 uppercase tracking-wider">
+                      Outcome
+                    </p>
+                  </div>
+                  <p className="text-sm text-green-800 leading-relaxed whitespace-pre-wrap">{previewFollowUp.outcome}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Actions Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-3 justify-end rounded-b-2xl">
+              {previewFollowUp.status !== 'Completed' && previewFollowUp.status !== 'Missed' && (
+                <>
+                  <button
+                    onClick={() => handleStatusChange(previewFollowUp, 'Completed')}
+                    disabled={actionLoading}
+                    className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+                  >
+                    <span>✅</span> Complete
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(previewFollowUp, 'Rescheduled')}
+                    disabled={actionLoading}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+                  >
+                    <span>🔄</span> Reschedule
+                  </button>
+                </>
+              )}
+              <button
+                onClick={() => handleEdit(previewFollowUp)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+              >
+                <span>✏️</span> Edit
+              </button>
+              <button
+                onClick={() => handleDelete(previewFollowUp._id)}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-red-50 text-red-700 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+              >
+                <span>🗑️</span> Delete
+              </button>
             </div>
           </div>
         </div>
