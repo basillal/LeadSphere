@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Utility to get ISO date range strings based on a r
+ * Utility to get ISO date range strings 
  */
 export const getDateRange = (range) => {
     const now = new Date();
