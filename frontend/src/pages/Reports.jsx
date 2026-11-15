@@ -341,7 +341,7 @@ const Reports = () => {
         {showDetailedReport && (
           <div className="overflow-x-auto">
             <table className="w-full text-[10.5px] text-left border-collapse">
-              <thead className="bg-gray-50/70 border-b border-gray-100 text-[9px] text-gray-500 uppercase tracking-wider font-semibold">
+              <thead className="bg-white border-b border-gray-100 text-[9px] text-[#8B92A5] uppercase tracking-[0.08em] font-semibold whitespace-nowrap select-none">
                 <tr>
                   <th className="px-4 py-2.5">Period</th>
                   <th className="px-4 py-2.5 text-right">Invoices</th>
@@ -352,16 +352,16 @@ const Reports = () => {
               <tbody className="divide-y divide-gray-100">
                 {[...monthlyStats].reverse().map((item, idx) => (
                   <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-4 py-2.5 font-medium text-gray-900">
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       {item.label || item.monthName}
                     </td>
-                    <td className="px-4 py-2.5 text-right text-gray-600">
+                    <td className="px-4 py-2 text-right text-gray-600 whitespace-nowrap">
                       {item.count}
                     </td>
-                    <td className="px-4 py-2.5 text-right font-semibold text-gray-900">
+                    <td className="px-4 py-2 text-right font-semibold text-gray-900 whitespace-nowrap">
                       {formatCurrency(item.revenue)}
                     </td>
-                    <td className="px-4 py-2.5 text-right text-gray-500">
+                    <td className="px-4 py-2 text-right text-gray-500 whitespace-nowrap">
                       {totalRevenue > 0
                         ? ((item.revenue / totalRevenue) * 100).toFixed(1)
                         : 0}
@@ -383,7 +383,7 @@ const Reports = () => {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[10.5px] text-left border-collapse">
-            <thead className="bg-gray-50/70 border-b border-gray-100 text-[9px] text-gray-500 uppercase tracking-wider font-semibold">
+            <thead className="bg-white border-b border-gray-100 text-[9px] text-[#8B92A5] uppercase tracking-[0.08em] font-semibold whitespace-nowrap select-none">
               <tr>
                 <th className="px-4 py-2.5">Client</th>
                 <th className="px-4 py-2.5">Organization</th>
@@ -394,17 +394,17 @@ const Reports = () => {
             <tbody className="divide-y divide-gray-100">
               {contactBilling.slice(0, 5).map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-4 py-2.5 font-semibold text-gray-900">
+                  <td className="px-4 py-2 font-semibold text-gray-900 whitespace-nowrap">
                     {item.contactName}
                   </td>
-                  <td className="px-4 py-2.5 text-gray-500">
+                  <td className="px-4 py-2 text-gray-500 whitespace-nowrap">
                     {item.organizationName || "-"}
                   </td>
-                  <td className="px-4 py-2.5 text-right text-gray-600 font-medium">
+                  <td className="px-4 py-2 text-right text-gray-600 whitespace-nowrap">
                     {item.invoiceCount}
                   </td>
-                  <td className="px-4 py-2.5 text-right font-bold text-gray-900">
-                    {formatCurrency(item.totalSpent)}
+                  <td className="px-4 py-2 text-right font-semibold text-gray-900 whitespace-nowrap">
+                    {formatCurrency(item.totalSpent || item.totalBilled)}
                   </td>
                 </tr>
               ))}

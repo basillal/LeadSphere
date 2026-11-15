@@ -19,11 +19,11 @@ const ContactsTable = ({
   // Helper functions
   const getTagColor = (tag) => {
     const colors = {
-      Client: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
-      Vendor: "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]",
-      Partner: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
-      Friend: "bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]",
-      Other: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
+      Client: "bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]",
+      Vendor: "bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]",
+      Partner: "bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]",
+      Friend: "bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF]",
+      Other: "bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]",
     };
     return colors[tag] || colors.Other;
   };
@@ -62,59 +62,61 @@ const ContactsTable = ({
       id: "organizationName",
       label: "Prospect Co.",
       render: (row) => (
-        <span className="capitalize">{row.organizationName || "-"}</span>
+        <span className="capitalize text-[10.5px] font-medium text-gray-700 whitespace-nowrap">{row.organizationName || "-"}</span>
       ),
     },
     {
       id: "createdBy",
       label: "Created by",
-      render: (row) => row.createdBy?.name || "System",
+      render: (row) => <span className="text-[10.5px] font-medium text-gray-600 whitespace-nowrap">{row.createdBy?.name || "System"}</span>,
     },
     {
       id: "tenant",
       label: "Organization",
-      render: (row) => row.organization?.name || "-",
+      render: (row) => <span className="text-[10.5px] font-medium text-gray-600 whitespace-nowrap">{row.organization?.name || "-"}</span>,
     },
     {
       id: "category",
       label: "Category",
       render: (row) => {
         if (!row.category || typeof row.category !== 'object') {
-          return <span className="text-black text-base">-</span>;
+          return <span className="text-[10.5px] text-gray-400">-</span>;
         }
         
         return (
-          <span
-            className="text-sm font-medium text-slate-800 uppercase tracking-wider"
-          >
+          <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF] px-2.5 py-0.5 text-[9.5px] font-semibold">
             {row.category.name}
           </span>
         );
       },
     },
-    { id: "phone", label: "Phone" },
+    { 
+      id: "phone", 
+      label: "Phone",
+      render: (row) => <span className="text-[10.5px] font-medium text-gray-700 whitespace-nowrap">{row.phone || "-"}</span>,
+    },
     {
       id: "email",
       label: "Email",
-      render: (row) => row.email || "-",
+      render: (row) => <span className="text-[10.5px] text-gray-600 whitespace-nowrap">{row.email || "-"}</span>,
     },
     {
       id: "tags",
       label: "Tags",
       sortable: false,
       render: (row) => (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           {row.tags && row.tags.length > 0 ? (
             row.tags.map((tag, index) => (
               <span
                 key={index}
-                className={`px-2 py-1 rounded-full text-base font-medium ${getTagColor(tag)}`}
+                className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-[9.5px] font-semibold ${getTagColor(tag)}`}
               >
                 {tag}
               </span>
             ))
           ) : (
-            <span className="text-black text-base">No tags</span>
+            <span className="text-[10.5px] text-gray-400">No tags</span>
           )}
         </div>
       ),
@@ -122,7 +124,7 @@ const ContactsTable = ({
     {
       id: "lastInteractionDate",
       label: "Last interaction",
-      render: (row) => formatDate(row.lastInteractionDate),
+      render: (row) => <span className="text-[10.5px] text-gray-600 whitespace-nowrap">{formatDate(row.lastInteractionDate)}</span>,
     },
   ];
 
@@ -241,46 +243,49 @@ const ContactsTable = ({
 
   // Custom mobile card (standardized)
   const renderCard = (row, actions) => (
-    <div className="bg-white p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] border border-slate-100">
+    <div className="bg-white p-3.5 rounded-[14px] border border-gray-100">
       <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
-            </svg>
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="h-8 w-8 flex items-center justify-center rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[11px] font-bold shrink-0">
+            {row.name ? row.name.charAt(0).toUpperCase() : "C"}
           </div>
           <div className="min-w-0">
-            <div className="text-lg font-bold text-slate-900 truncate">{row.name}</div>
+            <div className="text-[11px] font-semibold text-[#111827] truncate">{row.name}</div>
             {row.designation ? (
-              <div className="text-sm text-slate-500 truncate">{row.designation}</div>
+              <div className="text-[9.5px] text-[#9CA3AF] truncate">{row.designation}</div>
             ) : (
-              <div className="text-sm text-slate-500 truncate">{(row.tags || []).slice(0,2).join(", ") || ""}</div>
+              <div className="text-[9.5px] text-[#9CA3AF] truncate">{(row.tags || []).slice(0, 2).join(", ") || ""}</div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[10.5px] text-gray-600">
         <div>
-          <div className="text-xs text-slate-500">Phone</div>
-          <div className="mt-0.5 truncate">{row.phone || "-"}</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#8B92A5] font-semibold">Phone</div>
+          <div className="mt-0.5 truncate text-[#111827] font-medium">{row.phone || "-"}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Email</div>
-          <div className="mt-0.5 truncate">{row.email || "-"}</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#8B92A5] font-semibold">Email</div>
+          <div className="mt-0.5 truncate text-[#111827] font-medium">{row.email || "-"}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Last contact</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#8B92A5] font-semibold">Last contact</div>
           <div className="mt-0.5 truncate">{formatDate(row.lastInteractionDate)}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">Tags</div>
-          <div className="mt-0.5 truncate">{(row.tags || []).join(", ") || "-"}</div>
+          <div className="text-[9px] uppercase tracking-wider text-[#8B92A5] font-semibold">Category</div>
+          <div className="mt-0.5 truncate">
+            {row.category?.name ? (
+              <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF] px-2 py-0.5 text-[9px] font-semibold">
+                {row.category.name}
+              </span>
+            ) : "-"}
+          </div>
         </div>
       </div>
 
-      <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
+      <div className="mt-3 flex justify-end gap-1 border-t border-gray-100 pt-2.5">
         {actions.map((action, idx) => (
           <button
             key={idx}
@@ -288,7 +293,7 @@ const ContactsTable = ({
               e.stopPropagation();
               action.onClick(row);
             }}
-            className={`p-2 rounded-lg transition-colors ${action.color}`}
+            className="em-icon-btn"
             title={action.label}
           >
             {action.icon}

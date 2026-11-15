@@ -128,13 +128,13 @@ const Organizations = () => {
     {
       id: "name",
       label: "Organization Name",
-      render: (row) => <span className="font-semibold text-gray-900 text-[11px]">{row.name}</span>,
+      render: (row) => <span className="font-semibold text-gray-900 text-[11px] whitespace-nowrap">{row.name}</span>,
     },
     { 
       id: "plan", 
       label: "Plan",
       render: (row) => (
-        <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+        <span className="inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
           {row.plan || "Free"}
         </span>
       ),
@@ -143,11 +143,11 @@ const Organizations = () => {
       id: "owner",
       label: "Owner",
       render: (row) => (
-        <div>
+        <div className="whitespace-nowrap">
           <div className="font-semibold text-gray-800 text-[11px]">
             {row.owner?.name || "-"}
           </div>
-          <div className="text-[10px] text-gray-400">{row.owner?.email || "-"}</div>
+          <div className="text-[9.5px] text-gray-400">{row.owner?.email || "-"}</div>
         </div>
       ),
     },
@@ -160,10 +160,10 @@ const Organizations = () => {
             e.stopPropagation();
             handleStatusToggle(row);
           }}
-          className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border cursor-pointer select-none transition-colors ${
+          className={`inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold border cursor-pointer select-none transition-colors ${
             row.isActive
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
-              : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+              ? "bg-[#DCFCE7] text-[#15803D] border-[#86EFAC] hover:bg-emerald-100"
+              : "bg-[#FEE2E2] text-[#DC2626] border-[#FECACA] hover:bg-rose-100"
           }`}
           title="Click to toggle status"
         >
@@ -177,10 +177,10 @@ const Organizations = () => {
     {
       label: "Edit",
       onClick: handleEdit,
-      color: "text-indigo-600 hover:bg-indigo-100",
+      color: "em-icon-edit",
       icon: (
         <svg
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -188,7 +188,7 @@ const Organizations = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
@@ -197,7 +197,7 @@ const Organizations = () => {
     {
       label: "Delete",
       onClick: handleDeleteClick,
-      color: "text-red-600 hover:bg-red-100",
+      color: "em-icon-delete",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

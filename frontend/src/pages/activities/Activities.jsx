@@ -599,21 +599,19 @@ const Activities = () => {
           </div>
 
             {/* Activities Table */}
-            <div className="pb-20">
-              <ActivitiesTable
-                activities={activities}
-                categories={categories} // Added categories prop
-                onCreate={handleCreate}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onView={handleView}
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                pagination={pagination}
-                onPageChange={handlePageChange}
-                onLimitChange={handleLimitChange}
-              />
-            </div>
+            <ActivitiesTable
+              activities={activities}
+              categories={categories} // Added categories prop
+              onCreate={handleCreate}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleView}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+            />
           </>
         )}
 

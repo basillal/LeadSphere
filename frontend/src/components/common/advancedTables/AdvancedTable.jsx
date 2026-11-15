@@ -286,7 +286,7 @@ const AdvancedTable = ({
             <thead>
               <tr>
                 {selection.enabled && (
-                  <th className="px-5 py-3.5 w-10 text-center border-b border-gray-100 bg-white">
+                  <th className="px-4 py-2.5 w-10 text-center border-b border-gray-100 bg-white whitespace-nowrap select-none">
                     <input
                       type="checkbox"
                       onClick={(e) => e.stopPropagation()}
@@ -299,14 +299,14 @@ const AdvancedTable = ({
                 {columns.map((column) => (
                   <th
                     key={column.id}
-                    className={`px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white ${
+                    className={`whitespace-nowrap px-4 py-2.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white select-none ${
                       column.sortable !== false ? "cursor-pointer hover:text-[#111827]" : ""
                     } ${column.width || ""}`}
                     onClick={() =>
                       column.sortable !== false && handleRequestSort(column.id)
                     }
                   >
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <span>{column.label}</span>
                       {orderBy === column.id &&
                         (order === "asc" ? <Icons.SortAsc /> : <Icons.SortDesc />)}
@@ -314,7 +314,7 @@ const AdvancedTable = ({
                   </th>
                 ))}
                 {actions.length > 0 && (
-                  <th className="px-5 py-3.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                  <th className="whitespace-nowrap px-4 py-2.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white select-none">
                     Actions
                   </th>
                 )}
@@ -358,7 +358,7 @@ const AdvancedTable = ({
                     >
                       {selection.enabled && (
                         <td
-                          className="px-5 py-3 text-center"
+                          className="px-4 py-2 text-center"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <input
@@ -372,7 +372,7 @@ const AdvancedTable = ({
                       {columns.map((column) => (
                         <td
                           key={column.id}
-                          className={`px-5 py-3 text-[10.5px] ${
+                          className={`whitespace-nowrap px-4 py-2 text-[10.5px] ${
                             column.className || "text-[#4B5563]"
                           }`}
                         >
@@ -381,7 +381,7 @@ const AdvancedTable = ({
                       ))}
                       {actions.length > 0 && (
                         <td
-                          className="px-5 py-3 text-right"
+                          className="whitespace-nowrap px-4 py-2 text-right"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <div className="flex items-center justify-end gap-1">
@@ -492,7 +492,7 @@ const AdvancedTable = ({
 
         {/* Mentora Standard Pagination */}
         {pagination.enabled && (
-          <div className="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FAFAFA]/60">
+          <div className="px-4 py-2 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 bg-[#FAFAFA]/60">
             <span className="text-[10px] text-[#64748B]">
               Showing {page * rowsPerPage + 1}–
               {Math.min((page + 1) * rowsPerPage, totalItems)} of {totalItems} records

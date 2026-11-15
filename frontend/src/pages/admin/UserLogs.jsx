@@ -39,9 +39,8 @@ const UserLogs = ({ user, onBack }) => {
         {
             id: "createdAt",
             label: "Date",
-            width: "w-1/4",
             render: (row) => (
-                <span className="text-[10.5px] text-gray-700">
+                <span className="text-[10.5px] text-gray-700 whitespace-nowrap">
                     {new Date(row.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -53,15 +52,13 @@ const UserLogs = ({ user, onBack }) => {
         {
             id: "entity",
             label: "Entity",
-            width: "w-1/4",
-            render: (row) => <span className="text-[10.5px] font-semibold text-gray-800">{row.entity || "-"}</span>,
+            render: (row) => <span className="text-[10.5px] font-semibold text-gray-800 whitespace-nowrap">{row.entity || "-"}</span>,
         },
         {
             id: "action",
             label: "Action",
-            width: "w-1/4",
             render: (row) => (
-                <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                <span className="inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
                     {row.action}
                 </span>
             ),
@@ -69,7 +66,6 @@ const UserLogs = ({ user, onBack }) => {
         {
             id: "details",
             label: "Details",
-            width: "w-1/4",
             render: (row) => (
                 <span className="text-[10.5px] text-gray-600 truncate max-w-xs inline-block font-mono" title={row.details}>
                     {row.details || "-"}
@@ -79,9 +75,8 @@ const UserLogs = ({ user, onBack }) => {
         {
             id: "performedBy",
             label: "Performed By",
-            width: "w-1/4",
             render: (row) => (
-                <span className="text-[10.5px] text-gray-700 font-medium">
+                <span className="text-[10.5px] text-gray-700 font-medium whitespace-nowrap">
                     {user?.name || "-"}
                 </span>
             ),

@@ -682,23 +682,21 @@ const Contacts = () => {
             </div>
           </div>
 
-          <div className="pb-20">
-            <ContactsTable
-              contacts={contacts}
-              categories={categories} // Pass categories
-              onCreate={() => setView("create")}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onView={handleView}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              pagination={pagination}
-              onPageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-              handleStartConversion={handleStartConversion}
-              // loading={loading}
-            />
-          </div>
+          <ContactsTable
+            contacts={contacts}
+            categories={categories} // Pass categories
+            onCreate={() => setView("create")}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onView={handleView}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            handleStartConversion={handleStartConversion}
+            // loading={loading}
+          />
         </>
       ) : view === "selectLead" ? (
         <LeadSelectionView

@@ -257,60 +257,19 @@ const ReferrersTable = ({
         columns={columns}
         actions={actions}
         toolbar={toolbar}
-        pagination={{ enabled: false }} // Using external pagination
+        pagination={{
+          enabled: true,
+          external: true,
+          page: pagination?.page || 1,
+          rowsPerPage: pagination?.limit || 10,
+          total: pagination?.total || 0,
+          onPageChange,
+          onRowsPerPageChange: onLimitChange,
+        }}
         renderCard={renderCard}
         emptyMessage="No referrers found"
         loading={loading}
       />
-
-      {/* External pagination for backend pagination */}
-      {pagination && referrers.length > 0 && (
-        <div className="mt-3 px-4 py-2.5 em-card flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="text-[10px] text-gray-500 font-medium">
-              Showing{" "}
-              <span className="font-bold text-gray-800">
-                {(pagination.page - 1) * pagination.limit + 1}
-              </span>{" "}
-              to{" "}
-              <span className="font-bold text-gray-800">
-                {Math.min(pagination.page * pagination.limit, pagination.total)}
-              </span>{" "}
-              of <span className="font-bold text-gray-800">{pagination.total}</span>{" "}
-              referrers
-            </div>
-            <select
-              value={pagination.limit}
-              onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="h-[30px] px-2.5 border border-gray-200 rounded-[8px] text-[10px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
-            >
-              <option value={10}>10 / page</option>
-              <option value={25}>25 / page</option>
-              <option value={50}>50 / page</option>
-              <option value={100}>100 / page</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => onPageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
-              className="h-[30px] px-3 border border-gray-200 rounded-full text-[10px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <div className="px-2 text-[10px] font-semibold text-gray-500">
-              {pagination.page} / {pagination.pages}
-            </div>
-            <button
-              onClick={() => onPageChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.pages}
-              className="h-[30px] px-3 border border-gray-200 rounded-full text-[10px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

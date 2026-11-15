@@ -294,15 +294,15 @@ const FollowUps = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Completed":
-        return "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]";
+        return "bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]";
       case "Pending":
-        return "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]";
+        return "bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]";
       case "Missed":
         return "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]";
       case "Rescheduled":
-        return "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]";
+        return "bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]";
       default:
-        return "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]";
+        return "bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]";
     }
   };
 
@@ -528,19 +528,19 @@ const FollowUps = () => {
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    <th className="px-4 py-2.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white whitespace-nowrap select-none">
                       Lead / Client
                     </th>
-                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    <th className="px-4 py-2.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white whitespace-nowrap select-none">
                       Type
                     </th>
-                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    <th className="px-4 py-2.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white whitespace-nowrap select-none">
                       Scheduled Time
                     </th>
-                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    <th className="px-4 py-2.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white whitespace-nowrap select-none">
                       Status
                     </th>
-                    <th className="px-5 py-3.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    <th className="px-4 py-2.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white whitespace-nowrap select-none">
                       Actions
                     </th>
                   </tr>
@@ -556,7 +556,7 @@ const FollowUps = () => {
                         onClick={() => setPreviewFollowUp(item)}
                         className="hover:bg-[#FCFCFC] transition-colors cursor-pointer border-t border-gray-100"
                       >
-                        <td className="px-5 py-3">
+                        <td className="px-4 py-2 whitespace-nowrap">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[11px] font-bold flex items-center justify-center flex-shrink-0">
                               {initial}
@@ -572,24 +572,24 @@ const FollowUps = () => {
                           </div>
                         </td>
 
-                        <td className="px-5 py-3">
+                        <td className="px-4 py-2 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9.5px] font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]">
                             {getTypeIcon(item.type)}
                             <span>{item.type || "Call"}</span>
                           </span>
                         </td>
 
-                        <td className="px-5 py-3 text-[10.5px] text-[#374151]">
+                        <td className="px-4 py-2 text-[10.5px] text-[#374151] whitespace-nowrap">
                           {formatDate(item.scheduledAt)}
                         </td>
 
-                        <td className="px-5 py-3">
-                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold ${getStatusBadge(item.status)}`}>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <span className={`inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold ${getStatusBadge(item.status)}`}>
                             {item.status}
                           </span>
                         </td>
 
-                        <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-4 py-2 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1">
                             <button
                               type="button"
@@ -715,7 +715,7 @@ const FollowUps = () => {
 
             {/* Pagination Controls */}
             {pagination.pages > 1 && (
-              <div className="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FAFAFA]/60">
+              <div className="px-4 py-2 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 bg-[#FAFAFA]/60">
                 <span className="text-[10px] text-[#64748B]">
                   Showing {(pagination.page - 1) * pagination.limit + 1}–
                   {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}

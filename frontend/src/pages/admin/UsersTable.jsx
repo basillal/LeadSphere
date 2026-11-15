@@ -18,10 +18,10 @@ const UsersTable = ({
   const getStatusBadge = (isActive) => {
     return (
       <span
-        className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+        className={`inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold border ${
           isActive
-            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-            : "bg-rose-50 text-rose-700 border-rose-200"
+            ? "bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]"
+            : "bg-[#FEE2E2] text-[#DC2626] border-[#FECACA]"
         }`}
       >
         {isActive ? "Active" : "Inactive"}
@@ -34,23 +34,20 @@ const UsersTable = ({
     {
       id: "name",
       label: "Name",
-      width: "w-1/4",
       render: (row) => (
-        <span className="font-semibold text-gray-900 text-[11px]">{row.name}</span>
+        <span className="font-semibold text-gray-900 text-[11px] whitespace-nowrap">{row.name}</span>
       ),
     },
     {
       id: "email",
       label: "Email",
-      width: "w-1/4",
-      render: (row) => <span className="text-gray-600 text-[10.5px]">{row.email}</span>,
+      render: (row) => <span className="text-gray-600 text-[10.5px] whitespace-nowrap">{row.email}</span>,
     },
     {
       id: "organization",
       label: "Organization",
-      width: "w-1/4",
       render: (row) => (
-        <span className="text-[10.5px] text-gray-600">
+        <span className="text-[10.5px] text-gray-600 whitespace-nowrap">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -58,13 +55,12 @@ const UsersTable = ({
     {
       id: "role",
       label: "Role",
-      width: "w-1/4",
       render: (row) => (
         <span
-          className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+          className={`inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold border ${
             row.role?.isSystemRole
-              ? "bg-blue-50 text-blue-700 border-blue-200"
-              : "bg-gray-100 text-gray-700 border-gray-200"
+              ? "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]"
+              : "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]"
           }`}
         >
           {row.role?.roleName || "No Role"}
@@ -74,7 +70,6 @@ const UsersTable = ({
     {
       id: "status",
       label: "Status",
-      width: "w-1/4",
       render: (row) => getStatusBadge(row.isActive),
     },
   ];

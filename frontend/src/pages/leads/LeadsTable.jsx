@@ -2,28 +2,29 @@ import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 
 const STATUS_STYLES = {
-  New: "bg-[#F1F5F9] text-[#334155] border border-[#E2E8F0]",
-  Pending: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
-  "In Progress": "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]",
-  "On Hold": "bg-[#FFF7ED] text-[#EA580C] border border-[#FFEDD5]",
-  Completed: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
+  New: "bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1]",
+  Pending: "bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]",
+  "In Progress": "bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]",
+  "On Hold": "bg-[#FFEDD5] text-[#C2410C] border border-[#FED7AA]",
+  Completed: "bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]",
+  Converted: "bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]",
   Lost: "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]",
   default: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
 };
 
 const PRIORITY_STYLES = {
   High: "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]",
-  Medium: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
-  Low: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
+  Medium: "bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]",
+  Low: "bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]",
   default: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
 };
 
 const BADGE_BASE_CLASSES =
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-[9.5px] font-semibold";
+  "inline-flex items-center justify-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-[9.5px] font-semibold";
 
 const getStatusClass = (status, isConverted = false) => {
   if (isConverted) {
-    return `${BADGE_BASE_CLASSES} bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]`;
+    return `${BADGE_BASE_CLASSES} bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]`;
   }
 
   return `${BADGE_BASE_CLASSES} ${STATUS_STYLES[status] || STATUS_STYLES.default}`;
@@ -86,11 +87,11 @@ const LeadsTable = ({
 
   const renderSource = (row) => {
     if (!row.source) {
-      return <span className="text-[10px] text-gray-400">-</span>;
+      return <span className="text-[10.5px] text-gray-400">-</span>;
     }
 
     return (
-      <span className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-[9.5px] font-medium text-[#475569]">
+      <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2.5 py-0.5 text-[9.5px] font-medium text-[#475569]">
         {row.source}
       </span>
     );
@@ -104,7 +105,7 @@ const LeadsTable = ({
 
   const renderPriority = (row) => {
     if (!row.priority) {
-      return <span className="text-sm font-medium text-gray-400">-</span>;
+      return <span className="text-[10.5px] text-gray-400">-</span>;
     }
 
     return (
@@ -116,11 +117,11 @@ const LeadsTable = ({
 
   const renderCategory = (row) => {
     if (!row.category || typeof row.category !== "object") {
-      return <span className="text-sm font-medium text-gray-400">-</span>;
+      return <span className="text-[10.5px] text-gray-400">-</span>;
     }
 
     return (
-      <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+      <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF] px-2.5 py-0.5 text-[9.5px] font-semibold">
         {row.category.name}
       </span>
     );
@@ -130,15 +131,13 @@ const LeadsTable = ({
     {
       id: "name",
       label: "Lead Details",
-      width: "w-1/5",
       render: renderLeadDetails,
     },
     {
       id: "organizationName",
       label: "Organization",
-      width: "w-[15%]",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-[10.5px] font-medium text-gray-700 whitespace-nowrap">
           {formatText(row.organizationName)}
         </span>
       ),
@@ -146,9 +145,8 @@ const LeadsTable = ({
     {
       id: "createdBy",
       label: "Created By",
-      width: "w-[12%]",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-600">
+        <span className="text-[10.5px] font-medium text-gray-600 whitespace-nowrap">
           {row.createdBy?.name || "System"}
         </span>
       ),
@@ -156,9 +154,8 @@ const LeadsTable = ({
     {
       id: "tenant",
       label: "Tenant Organization",
-      width: "w-[12%]",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-600">
+        <span className="text-[10.5px] font-medium text-gray-600 whitespace-nowrap">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -166,9 +163,8 @@ const LeadsTable = ({
     {
       id: "phone",
       label: "Phone",
-      width: "w-[12%]",
       render: (row) => (
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-[10.5px] font-medium text-gray-700 whitespace-nowrap">
           {formatText(row.phone)}
         </span>
       ),
@@ -176,25 +172,21 @@ const LeadsTable = ({
     {
       id: "source",
       label: "Source",
-      width: "w-[12%]",
       render: renderSource,
     },
     {
       id: "status",
       label: "Status",
-      width: "w-[10%]",
       render: renderStatus,
     },
     {
       id: "priority",
       label: "Priority",
-      width: "w-[10%]",
       render: renderPriority,
     },
     {
       id: "category",
       label: "Category",
-      width: "w-[12%]",
       render: renderCategory,
     },
   ];
@@ -416,7 +408,7 @@ const LeadsTable = ({
       {/* Category */}
       {row.category?.name && (
         <div className="mt-4">
-          <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+          <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF] px-2.5 py-0.5 text-[9.5px] font-semibold">
             {row.category.name}
           </span>
         </div>

@@ -142,7 +142,7 @@ const ActivitiesTable = ({
   };
 
   return (
-    <div className="em-card p-0 flex flex-col overflow-hidden min-h-[500px]">
+    <div className="em-card p-0 flex flex-col overflow-hidden">
       {/* Header with Search and Filters */}
       <div className="p-3.5 border-b border-gray-100 bg-white">
         <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between">
@@ -253,8 +253,8 @@ const ActivitiesTable = ({
       <div className="hidden md:block overflow-x-auto flex-1">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/70">
-              <th className="w-10 px-4 py-2.5">
+            <tr className="border-b border-gray-100 bg-white">
+              <th className="w-10 px-4 py-2.5 whitespace-nowrap select-none">
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
@@ -262,31 +262,31 @@ const ActivitiesTable = ({
                     selectedActivities.length === activities.length &&
                     activities.length > 0
                   }
-                  className="rounded border-gray-300 text-[var(--primary)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  className="w-3.5 h-3.5 accent-[var(--primary)] rounded cursor-pointer"
                 />
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Type
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Title
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Related To
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Date & Time
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Organization
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Status
               </th>
-              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Priority
               </th>
-              <th className="px-4 py-2.5 text-right text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-right text-[9px] font-semibold text-[#8B92A5] tracking-[0.08em] uppercase whitespace-nowrap select-none">
                 Actions
               </th>
             </tr>
@@ -317,32 +317,32 @@ const ActivitiesTable = ({
                 return (
                   <tr
                     key={activity._id}
-                    className={`hover:bg-gray-50/80 transition-colors ${borderClass}`}
+                    className={`hover:bg-[#FCFCFC] transition-colors border-t border-gray-100 ${borderClass}`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       <input
                         type="checkbox"
                         checked={selectedActivities.includes(activity._id)}
                         onChange={() => handleSelectActivity(activity._id)}
-                        className="rounded border-gray-300 text-[var(--primary)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                        className="w-3.5 h-3.5 accent-[var(--primary)] rounded cursor-pointer"
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       <span className="text-[13px]" title={activity.activityType}>
                         {getActivityTypeIcon(activity.activityType)}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       <div className="text-[11px] font-semibold text-gray-900 line-clamp-1">
                         {activity.title}
                       </div>
                       {activity.description && (
-                        <div className="text-[10px] text-gray-400 truncate max-w-xs">
+                        <div className="text-[9.5px] text-gray-400 truncate max-w-xs">
                           {activity.description}
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       <div className="text-[11px] font-medium text-gray-800">
                         {activity.relatedName || "-"}
                       </div>
@@ -350,7 +350,7 @@ const ActivitiesTable = ({
                         {activity.relatedTo}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       <div
                         className={`text-[10.5px] font-medium ${
                           dateContext === "today"
@@ -369,22 +369,22 @@ const ActivitiesTable = ({
                       )}
                       {dateContext === "overdue" && (
                         <div className="mt-0.5">
-                          <span className="px-1.5 py-0.2 rounded text-[8.5px] font-bold bg-rose-100 text-rose-700 uppercase">
+                          <span className="inline-flex px-1.5 py-0.2 rounded text-[8.5px] font-bold bg-[#FEE2E2] text-[#DC2626] uppercase">
                             Overdue
                           </span>
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-[10.5px] text-gray-600">
+                    <td className="px-4 py-2 text-[10.5px] text-gray-600 whitespace-nowrap">
                       {activity.organization?.name || "-"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       {getStatusBadge(activity.status)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2 whitespace-nowrap">
                       {getPriorityBadge(activity.priority)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-2 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => onView(activity)}
@@ -562,7 +562,7 @@ const ActivitiesTable = ({
 
       {/* Pagination */}
       {pagination.total > 0 && (
-        <div className="px-4 py-2.5 border-t border-gray-100 bg-white flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="px-4 py-2 border-t border-gray-100 bg-[#FAFAFA]/60 flex flex-col md:flex-row items-center justify-between gap-2.5">
           <div className="text-[10px] text-gray-500 font-medium">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}

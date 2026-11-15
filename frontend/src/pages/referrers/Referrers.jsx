@@ -407,22 +407,20 @@ const Referrers = () => {
           </StatsWrapper>
 
           {/* Referrers Table */}
-          <div className="pb-20">
-            <ReferrersTable
-              referrers={referrers}
-              onCreate={handleCreate}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onView={handleView}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              pagination={pagination}
-              onPageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-              referrerStats={referrerStats}
-              // loading={loading}
-            />
-          </div>
+          <ReferrersTable
+            referrers={referrers}
+            onCreate={handleCreate}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onView={handleView}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            referrerStats={referrerStats}
+            // loading={loading}
+          />
         </>
       ) : (
         <div className="max-w-7xl mx-auto">

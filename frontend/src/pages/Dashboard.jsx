@@ -359,36 +359,36 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Recent Leads */}
         <ChartCard title="Recent Inquiries">
-          <div className="overflow-y-auto max-h-64">
+          <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-[10.5px]">
               <thead>
-                <tr className="border-b border-gray-100 text-[9px] text-gray-400 uppercase tracking-wider font-semibold">
-                  <th className="py-2 px-2.5">Name</th>
-                  <th className="py-2 px-2.5">Status</th>
-                  <th className="py-2 px-2.5">Source</th>
-                  <th className="py-2 px-2.5 text-right">Date</th>
+                <tr className="border-b border-gray-100 text-[9px] text-[#8B92A5] uppercase tracking-[0.08em] font-semibold whitespace-nowrap select-none">
+                  <th className="py-2.5 px-3">Name</th>
+                  <th className="py-2.5 px-3">Status</th>
+                  <th className="py-2.5 px-3">Source</th>
+                  <th className="py-2.5 px-3 text-right">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
                     <tr key={lead._id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="py-2 px-2.5 font-semibold text-gray-900">{lead.name}</td>
-                      <td className="py-2 px-2.5">
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[8.5px] font-bold border ${
-                          lead.status === "Won"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      <td className="py-2 px-3 font-semibold text-gray-900 whitespace-nowrap">{lead.name}</td>
+                      <td className="py-2 px-3 whitespace-nowrap">
+                        <span className={`inline-flex items-center justify-center whitespace-nowrap px-2 py-0.5 rounded-full text-[8.5px] font-semibold border ${
+                          lead.status === "Won" || lead.status === "Converted"
+                            ? "bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]"
                             : lead.status === "New"
-                              ? "bg-blue-50 text-blue-700 border-blue-200"
+                              ? "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]"
                               : lead.status === "Lost"
-                                ? "bg-rose-50 text-rose-700 border-rose-200"
-                                : "bg-gray-100 text-gray-700 border-gray-200"
+                                ? "bg-[#FEE2E2] text-[#DC2626] border-[#FECACA]"
+                                : "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]"
                         }`}>
                           {lead.status}
                         </span>
                       </td>
-                      <td className="py-2 px-2.5 text-gray-500">{lead.source}</td>
-                      <td className="py-2 px-2.5 text-right text-gray-400 whitespace-nowrap">
+                      <td className="py-2 px-3 text-gray-500 whitespace-nowrap">{lead.source}</td>
+                      <td className="py-2 px-3 text-right text-gray-400 whitespace-nowrap">
                         {new Date(lead.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </td>
                     </tr>

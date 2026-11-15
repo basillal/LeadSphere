@@ -14,14 +14,13 @@ const RolesTable = ({
     {
       id: "roleName",
       label: "Role Name",
-      width: "w-1/4",
       render: (row) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 whitespace-nowrap">
           <span className="font-semibold text-gray-900 text-[11px]">
             {row.roleName}
           </span>
           {row.isSystemRole && (
-            <span className="text-[8.5px] uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.2 rounded-full font-bold">
+            <span className="inline-flex items-center justify-center whitespace-nowrap text-[8.5px] uppercase tracking-wider bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] px-1.5 py-0.5 rounded-full font-bold">
               System
             </span>
           )}
@@ -31,9 +30,8 @@ const RolesTable = ({
     {
       id: "organization",
       label: "Organization",
-      width: "w-1/4",
       render: (row) => (
-        <span className="text-[10.5px] text-gray-600">
+        <span className="text-[10.5px] text-gray-600 whitespace-nowrap">
           {row.organization?.name || "System/All"}
         </span>
       ),
@@ -41,15 +39,13 @@ const RolesTable = ({
     {
       id: "description",
       label: "Description",
-      width: "w-1/2",
-      render: (row) => <span className="text-[10.5px] text-gray-500">{row.description || "-"}</span>,
+      render: (row) => <span className="text-[10.5px] text-gray-500 max-w-md truncate">{row.description || "-"}</span>,
     },
     {
       id: "permissions",
       label: "Permissions",
-      width: "w-1/4",
       render: (row) => (
-        <span className="inline-flex px-2 py-0.5 bg-gray-100 text-gray-700 border border-gray-200 rounded-full text-[9.5px] font-semibold">
+        <span className="inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0] rounded-full text-[9.5px] font-semibold">
           {row.permissions?.length || 0} permissions
         </span>
       ),
@@ -61,7 +57,7 @@ const RolesTable = ({
     {
       icon: (
         <svg
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -69,19 +65,19 @@ const RolesTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-black hover:bg-gray-200",
+      color: "em-icon-edit",
     },
     {
       icon: (
         <svg
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -89,7 +85,7 @@ const RolesTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
@@ -97,7 +93,7 @@ const RolesTable = ({
       label: "Delete",
       onClick: (row) => onDelete(row._id),
       condition: (row) => !row.isSystemRole,
-      color: "text-red-600 hover:bg-red-100",
+      color: "em-icon-delete",
     },
   ];
 

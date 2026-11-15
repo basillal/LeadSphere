@@ -16,7 +16,7 @@ const AuditLogs = () => {
   const { loading } = useLoading();
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 20,
+    limit: 10,
     total: 0,
     pages: 1,
   });
@@ -165,7 +165,7 @@ const AuditLogs = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="em-card p-4 rounded-[20px] bg-white border border-gray-100 mb-2">
+      <div className="em-card p-3 rounded-[16px] bg-white border border-gray-100 mb-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div className="flex items-center gap-1.5 text-gray-700">
             <svg
@@ -293,16 +293,15 @@ const AuditLogs = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden">
+      <div className="em-card overflow-hidden">
         <AdvancedTable
               data={filteredLogs}
               columns={[
                 {
                   id: "createdAt",
                   label: "Date / Time",
-                  width: "w-1/5",
                   render: (row) => (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col whitespace-nowrap">
                       <span className="text-[11px] font-semibold text-gray-900">
                         {new Date(row.createdAt).toLocaleDateString("en-US", {
                           month: "short",
@@ -310,7 +309,7 @@ const AuditLogs = () => {
                           year: "numeric",
                         })}
                       </span>
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[9.5px] text-gray-400">
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </span>
                     </div>
@@ -319,13 +318,12 @@ const AuditLogs = () => {
                 {
                   id: "user",
                   label: "User",
-                  width: "w-1/5",
                   render: (row) => (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col whitespace-nowrap">
                       <span className="text-[11px] font-semibold text-gray-900">
                         {row.user?.name || "SYSTEM"}
                       </span>
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[9.5px] text-gray-400">
                         {formatEmailOrIp(row)}
                       </span>
                     </div>
@@ -334,9 +332,8 @@ const AuditLogs = () => {
                 {
                   id: "action",
                   label: "Action",
-                  width: "w-1/6",
                   render: (row) => (
-                    <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                    <span className="inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
                       {row.action}
                     </span>
                   ),
@@ -344,9 +341,8 @@ const AuditLogs = () => {
                 {
                   id: "entity",
                   label: "Entity",
-                  width: "w-1/6",
                   render: (row) => (
-                    <span className="text-[10.5px] text-gray-700 font-medium">
+                    <span className="text-[10.5px] text-gray-700 font-medium whitespace-nowrap">
                       {row.entity || "-"}
                     </span>
                   ),
@@ -354,9 +350,8 @@ const AuditLogs = () => {
                 {
                   id: "organization",
                   label: "Organization",
-                  width: "w-1/6",
                   render: (row) => (
-                    <span className="text-[10.5px] text-gray-500">
+                    <span className="text-[10.5px] text-gray-500 whitespace-nowrap">
                       {row.organization?.name ||
                         (row.organization
                           ? "Org ID: " + row.organization
@@ -367,7 +362,6 @@ const AuditLogs = () => {
                 {
                   id: "details",
                   label: "Details",
-                  width: "w-1/3",
                   render: (row) => (
                     <span
                       className="text-[10.5px] text-gray-600 truncate max-w-xs block font-mono"
