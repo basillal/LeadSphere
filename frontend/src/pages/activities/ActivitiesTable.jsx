@@ -82,24 +82,40 @@ const ActivitiesTable = ({
     return icons[type] || "📋";
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      Completed: "bg-green-100 text-green-800",
-      Scheduled: "bg-blue-100 text-blue-800",
-      Pending: "bg-yellow-100 text-yellow-800",
-      Cancelled: "bg-red-100 text-red-800",
+  const getStatusBadge = (status) => {
+    const map = {
+      Completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      Scheduled: "bg-blue-50 text-blue-700 border-blue-200",
+      Pending: "bg-amber-50 text-amber-700 border-amber-200",
+      Cancelled: "bg-rose-50 text-rose-700 border-rose-200",
     };
-    return colors[status] || "bg-slate-100 text-black";
+    return (
+      <span
+        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+          map[status] || "bg-gray-100 text-gray-700 border-gray-200"
+        }`}
+      >
+        {status}
+      </span>
+    );
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      Low: "bg-slate-100 text-black",
-      Medium: "bg-blue-100 text-blue-600",
-      High: "bg-orange-100 text-orange-600",
-      Urgent: "bg-red-100 text-red-600",
+  const getPriorityBadge = (priority) => {
+    const map = {
+      Low: "bg-gray-100 text-gray-700 border-gray-200",
+      Medium: "bg-blue-50 text-blue-700 border-blue-200",
+      High: "bg-orange-50 text-orange-700 border-orange-200",
+      Urgent: "bg-rose-50 text-rose-700 border-rose-200",
     };
-    return colors[priority] || "bg-slate-100 text-black";
+    return (
+      <span
+        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+          map[priority] || "bg-gray-100 text-gray-700 border-gray-200"
+        }`}
+      >
+        {priority}
+      </span>
+    );
   };
 
   const formatDate = (date) => {
@@ -108,14 +124,6 @@ const ActivitiesTable = ({
       month: "short",
       day: "numeric",
       year: "numeric",
-    });
-  };
-
-  const formatTime = (date) => {
-    if (!date) return "";
-    return new Date(date).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
     });
   };
 
@@ -134,103 +142,119 @@ const ActivitiesTable = ({
   };
 
   return (
-    <div className="bg-white rounded-md shadow-sm border border-slate-200 min-h-[540px] md:min-h-[620px] flex flex-col">
+    <div className="em-card p-0 flex flex-col overflow-hidden min-h-[500px]">
       {/* Header with Search and Filters */}
-      <div className="p-4 border-b border-slate-200">
-        <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+      <div className="p-3.5 border-b border-gray-100 bg-white">
+        <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between">
           {/* Search */}
-          <div className="flex-1">
+          <div className="relative flex-1 max-w-md">
+            <svg
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
             <input
               type="text"
               placeholder="Search activities..."
               value={filters.search || ""}
               onChange={(e) => onFilterChange("search", e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base"
+              className="search-bar w-full h-[34px] pl-9 pr-3 rounded-full text-[11px] font-medium bg-white border border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-gray-900 transition-all placeholder:text-gray-400"
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => setFiltersOpen((v) => !v)}
-            className="md:hidden px-4 py-2 border border-gray-300 rounded-lg bg-white text-black hover:bg-slate-50 transition-colors text-base font-medium inline-flex items-center justify-between"
-          >
-            <span>Filters</span>
-            <svg
-              className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((v) => !v)}
+              className="md:hidden em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5"
             >
-              <path
-                fillRule="evenodd"
-                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+              <span>Filters</span>
+              <svg
+                className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
 
-          {/* Activity Type Filter */}
-          <select
-            value={filters.activityType || ""}
-            onChange={(e) => onFilterChange("activityType", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white`}
-          >
-            <option value="">All Types</option>
-            <option value="Call">📞 Call</option>
-            <option value="Meeting">🤝 Meeting</option>
-            <option value="Email">✉️ Email</option>
-            <option value="WhatsApp">💬 WhatsApp</option>
-            <option value="Note">📝 Note</option>
-            <option value="Task">✅ Task</option>
-            <option value="Other">📋 Other</option>
-          </select>
+            {/* Activity Type Filter */}
+            <select
+              value={filters.activityType || ""}
+              onChange={(e) => onFilterChange("activityType", e.target.value)}
+              className={`${filtersOpen ? "block" : "hidden"} md:block h-[34px] px-3 text-[11px] font-medium border border-[#D1D5DB] rounded-[10px] bg-white focus:outline-none focus:ring-1 focus:ring-gray-900`}
+            >
+              <option value="">All Types</option>
+              <option value="Call">📞 Call</option>
+              <option value="Meeting">🤝 Meeting</option>
+              <option value="Email">✉️ Email</option>
+              <option value="WhatsApp">💬 WhatsApp</option>
+              <option value="Note">📝 Note</option>
+              <option value="Task">✅ Task</option>
+              <option value="Other">📋 Other</option>
+            </select>
 
-          {/* Status Filter */}
-          <select
-            value={filters.status || ""}
-            onChange={(e) => onFilterChange("status", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white`}
-          >
-            <option value="">All Status</option>
-            <option value="Completed">Completed</option>
-            <option value="Scheduled">Scheduled</option>
-            <option value="Pending">Pending</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
+            {/* Status Filter */}
+            <select
+              value={filters.status || ""}
+              onChange={(e) => onFilterChange("status", e.target.value)}
+              className={`${filtersOpen ? "block" : "hidden"} md:block h-[34px] px-3 text-[11px] font-medium border border-[#D1D5DB] rounded-[10px] bg-white focus:outline-none focus:ring-1 focus:ring-gray-900`}
+            >
+              <option value="">All Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Pending">Pending</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
 
-          {/* Category Filter */}
-          <select
-            value={filters.category || ""}
-            onChange={(e) => onFilterChange("category", e.target.value)}
-            className={`${filtersOpen ? "block" : "hidden"} md:block px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-base bg-white min-w-[120px]`}
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+            {/* Category Filter */}
+            <select
+              value={filters.category || ""}
+              onChange={(e) => onFilterChange("category", e.target.value)}
+              className={`${filtersOpen ? "block" : "hidden"} md:block h-[34px] px-3 text-[11px] font-medium border border-[#D1D5DB] rounded-[10px] bg-white focus:outline-none focus:ring-1 focus:ring-gray-900 min-w-[120px]`}
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Create Button */}
-          <button
-            onClick={onCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-base whitespace-nowrap flex items-center justify-center gap-2"
-          >
-            <span className="text-base">+</span>
-            <span className="hidden md:inline">New Activity</span>
-            <span className="md:hidden">Create</span>
-          </button>
+            {/* Create Button */}
+            <button
+              onClick={onCreate}
+              className="em-add h-[34px] px-4 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="hidden md:inline">New Activity</span>
+              <span className="md:hidden">Create</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto flex-1">
-        <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th className="px-4 py-3 text-left">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-gray-100 bg-gray-50/70">
+              <th className="w-10 px-4 py-2.5">
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
@@ -238,39 +262,39 @@ const ActivitiesTable = ({
                     selectedActivities.length === activities.length &&
                     activities.length > 0
                   }
-                  className="rounded border-gray-300"
+                  className="rounded border-gray-300 text-[var(--primary)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
                 />
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Title
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Related To
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
-                Date
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
+                Date & Time
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Organization
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Priority
               </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-800 uppercase tracking-wider">
+              <th className="px-4 py-2.5 text-right text-[9px] font-semibold text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-100 bg-white">
             {activities.length === 0 ? (
               <tr>
-                <td colSpan="8" className="px-0 py-0 text-black">
+                <td colSpan="9" className="px-4 py-12 text-center">
                   <EmptyTableState
                     title="No activities found"
                     description="Create your first activity to start tracking meetings, calls, and follow-ups."
@@ -285,99 +309,91 @@ const ActivitiesTable = ({
                 );
                 const borderClass =
                   dateContext === "today"
-                    ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+                    ? "border-l-4 border-l-blue-500 bg-blue-50/20"
                     : dateContext === "overdue"
-                      ? "border-l-4 border-l-red-500 bg-red-50/30"
+                      ? "border-l-4 border-l-rose-500 bg-rose-50/20"
                       : "";
 
                 return (
                   <tr
                     key={activity._id}
-                    className={`hover:bg-slate-50 transition-colors ${borderClass}`}
+                    className={`hover:bg-gray-50/80 transition-colors ${borderClass}`}
                   >
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={selectedActivities.includes(activity._id)}
                         onChange={() => handleSelectActivity(activity._id)}
-                        className="rounded border-gray-300"
+                        className="rounded border-gray-300 text-[var(--primary)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-base">
+                      <span className="text-[13px]" title={activity.activityType}>
                         {getActivityTypeIcon(activity.activityType)}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-black uppercase">
+                      <div className="text-[11px] font-semibold text-gray-900 line-clamp-1">
                         {activity.title}
                       </div>
                       {activity.description && (
-                        <div className="text-base text-black truncate max-w-xs">
+                        <div className="text-[10px] text-gray-400 truncate max-w-xs">
                           {activity.description}
                         </div>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-base">
-                        <div className="font-medium text-black">
-                          {activity.relatedName}
-                        </div>
-                        <div className="text-black text-base">
-                          {activity.relatedTo}
-                        </div>
+                      <div className="text-[11px] font-medium text-gray-800">
+                        {activity.relatedName || "-"}
+                      </div>
+                      <div className="text-[9.5px] text-gray-400">
+                        {activity.relatedTo}
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-base">
-                        <div
-                          className={`font-medium ${dateContext === "today" ? "text-blue-600 font-medium" : dateContext === "overdue" ? "text-red-600 font-medium" : "text-black"}`}
-                        >
-                          {getRelativeDate(activity.activityDate)}
-                        </div>
-                        {activity.startTime && (
-                          <div className="text-base text-black">
-                            {activity.startTime}
-                          </div>
-                        )}
-                        {dateContext === "overdue" && (
-                          <div className="mt-1">
-                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-base font-medium">
-                              Overdue
-                            </span>
-                          </div>
-                        )}
+                      <div
+                        className={`text-[10.5px] font-medium ${
+                          dateContext === "today"
+                            ? "text-blue-600 font-semibold"
+                            : dateContext === "overdue"
+                              ? "text-rose-600 font-semibold"
+                              : "text-gray-700"
+                        }`}
+                      >
+                        {getRelativeDate(activity.activityDate)}
                       </div>
+                      {activity.startTime && (
+                        <div className="text-[9.5px] text-gray-400">
+                          {activity.startTime}
+                        </div>
+                      )}
+                      {dateContext === "overdue" && (
+                        <div className="mt-0.5">
+                          <span className="px-1.5 py-0.2 rounded text-[8.5px] font-bold bg-rose-100 text-rose-700 uppercase">
+                            Overdue
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-[10.5px] text-gray-600">
+                      {activity.organization?.name || "-"}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-base text-black">
-                        {activity.organization?.name || "-"}
-                      </span>
+                      {getStatusBadge(activity.status)}
                     </td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-base font-medium ${getStatusColor(activity.status)}`}
-                      >
-                        {activity.status}
-                      </span>
+                      {getPriorityBadge(activity.priority)}
                     </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-base font-medium ${getPriorityColor(activity.priority)}`}
-                      >
-                        {activity.priority}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => onView(activity)}
-                          className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="em-icon-btn em-icon-view"
                           title="View"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -398,12 +414,12 @@ const ActivitiesTable = ({
                         </button>
                         <button
                           onClick={() => onEdit(activity)}
-                          className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+                          className="em-icon-btn em-icon-edit"
                           title="Edit"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -418,12 +434,12 @@ const ActivitiesTable = ({
                         </button>
                         <button
                           onClick={() => onDelete(activity._id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="em-icon-btn em-icon-delete"
                           title="Delete"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -447,7 +463,7 @@ const ActivitiesTable = ({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden divide-y divide-gray-200 flex-1">
+      <div className="md:hidden divide-y divide-gray-100 flex-1 bg-white">
         {activities.length === 0 ? (
           <EmptyTableState
             title="No activities found"
@@ -461,77 +477,93 @@ const ActivitiesTable = ({
             );
             const borderClass =
               dateContext === "today"
-                ? "border-l-4 border-l-blue-500 bg-blue-50/30"
+                ? "border-l-4 border-l-blue-500 bg-blue-50/20"
                 : dateContext === "overdue"
-                  ? "border-l-4 border-l-red-500 bg-red-50/30"
+                  ? "border-l-4 border-l-rose-500 bg-rose-50/20"
                   : "";
 
-              return (
-                <div
-                  key={activity._id}
-                  className={`p-4 rounded-md shadow-[0_14px_50px_-12px_rgba(2,6,23,0.12)] bg-white ${borderClass}`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 flex items-center justify-center rounded-md bg-slate-50 text-slate-700 shrink-0">
-                        <span className="text-base">{getActivityTypeIcon(activity.activityType)}</span>
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-lg font-bold text-slate-900 truncate">{activity.title}</div>
-                        <div className="text-sm text-slate-500 truncate">{activity.relatedName} • {activity.relatedTo}</div>
-                      </div>
+            return (
+              <div
+                key={activity._id}
+                className={`p-3.5 ${borderClass}`}
+              >
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="h-8 w-8 flex items-center justify-center rounded-[8px] bg-gray-100 text-gray-700 shrink-0 text-[13px]">
+                      {getActivityTypeIcon(activity.activityType)}
                     </div>
-
-                    <div className="flex items-start gap-2">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColor(activity.status)}`}>{activity.status}</span>
+                    <div className="min-w-0">
+                      <div className="text-[12px] font-semibold text-gray-900 truncate">
+                        {activity.title}
+                      </div>
+                      <div className="text-[10px] text-gray-400 truncate">
+                        {activity.relatedName} • {activity.relatedTo}
+                      </div>
                     </div>
                   </div>
 
-                  {activity.description && (
-                    <p className="text-sm text-slate-700 mb-2 line-clamp-2 mt-3">{activity.description}</p>
-                  )}
-
-                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-slate-700">
-                    <div>
-                      <div className="text-xs text-slate-500">Priority</div>
-                      <div className="mt-0.5 truncate">{activity.priority}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-500">When</div>
-                      <div className="mt-0.5 truncate">{getRelativeDate(activity.activityDate)}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={() => onView(activity)}
-                      className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-sm font-medium hover:bg-blue-100 transition-colors"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => onEdit(activity)}
-                      className="flex-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-md text-sm font-medium hover:bg-green-100 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(activity._id)}
-                      className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-md text-sm font-medium hover:bg-red-100 transition-colors"
-                    >
-                      Delete
-                    </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {getStatusBadge(activity.status)}
                   </div>
                 </div>
-              );
+
+                {activity.description && (
+                  <p className="text-[10.5px] text-gray-600 line-clamp-2 mt-2">
+                    {activity.description}
+                  </p>
+                )}
+
+                <div className="mt-2.5 grid grid-cols-2 gap-2 text-[10px] text-gray-600">
+                  <div>
+                    <span className="text-gray-400">Priority: </span>
+                    <span className="font-medium text-gray-800">{activity.priority}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">When: </span>
+                    <span className="font-medium text-gray-800">{getRelativeDate(activity.activityDate)}</span>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex items-center justify-end gap-1.5 border-t border-gray-100 pt-2.5">
+                  <button
+                    onClick={() => onView(activity)}
+                    className="em-icon-btn em-icon-view"
+                    title="View"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onEdit(activity)}
+                    className="em-icon-btn em-icon-edit"
+                    title="Edit"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onDelete(activity._id)}
+                    className="em-icon-btn em-icon-delete"
+                    title="Delete"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            );
           })
         )}
       </div>
 
       {/* Pagination */}
       {pagination.total > 0 && (
-        <div className="px-4 py-3 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="text-base text-black">
+        <div className="px-4 py-2.5 border-t border-gray-100 bg-white flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="text-[10px] text-gray-500 font-medium">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
             {pagination.total} activities
@@ -541,26 +573,26 @@ const ActivitiesTable = ({
             <select
               value={pagination.limit}
               onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-black focus:border-transparent"
+              className="h-[30px] px-2.5 border border-gray-200 rounded-[8px] text-[10px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
             >
-              <option value={10}>10 per page</option>
-              <option value={25}>25 per page</option>
-              <option value={50}>50 per page</option>
-              <option value={100}>100 per page</option>
+              <option value={10}>10 / page</option>
+              <option value={25}>25 / page</option>
+              <option value={50}>50 / page</option>
+              <option value={100}>100 / page</option>
             </select>
 
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => onPageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="h-[30px] px-3 border border-gray-200 rounded-full text-[10px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => onPageChange(pagination.page + 1)}
                 disabled={pagination.page >= pagination.pages}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-base font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="h-[30px] px-3 border border-gray-200 rounded-full text-[10px] font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>

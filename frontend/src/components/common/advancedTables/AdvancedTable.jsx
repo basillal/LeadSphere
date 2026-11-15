@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import EmptyTableState from "../EmptyTableState";
 
 /**
- * AdvancedTable - A reusable, feature-rich table component
+ * AdvancedTable - Mentora UI Design System standard table
  */
 const AdvancedTable = ({
   data = [],
@@ -26,12 +26,12 @@ const AdvancedTable = ({
   const [orderBy, setOrderBy] = useState("");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(
-    pagination.external && pagination.page ? pagination.page - 1 : 0,
+    pagination.external && pagination.page ? pagination.page - 1 : 0
   );
   const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsPerPage || 10);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [mobileToolbarOpen, setMobileToolbarOpen] = useState(false);
-  const [mobileToolbarMode, setMobileToolbarMode] = useState("search");
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
 
   // Sync state with props for external pagination
   React.useEffect(() => {
@@ -45,18 +45,10 @@ const AdvancedTable = ({
 
   // Mobile detection
   React.useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  React.useEffect(() => {
-    if (!isMobile) setMobileToolbarOpen(false);
-  }, [isMobile]);
-
-  React.useEffect(() => {
-    if (!isMobile) setMobileToolbarMode("search");
-  }, [isMobile]);
 
   // Sorting
   const handleRequestSort = (property) => {
@@ -95,12 +87,12 @@ const AdvancedTable = ({
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === -1) {
+    } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
     setSelected(newSelected);
@@ -154,168 +146,95 @@ const AdvancedTable = ({
     pagination.external && pagination.total !== undefined
       ? pagination.total
       : data.length;
-  const totalPages = Math.ceil(totalItems / rowsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
 
   // Icons
   const Icons = {
     SortAsc: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="m5 12 7-7 7 7" />
-        <path d="M12 19V5" />
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m5 12 7-7 7 7M12 19V5" />
       </svg>
     ),
     SortDesc: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="m19 12-7 7-7-7" />
-        <path d="M12 5v14" />
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19 12-7 7-7-7M12 5v14" />
       </svg>
     ),
     Delete: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <polyline points="3 6 5 6 21 6" />
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-        <line x1="10" y1="11" x2="10" y2="17" />
-        <line x1="14" y1="11" x2="14" y2="17" />
       </svg>
     ),
   };
 
   const getEmptyStateCopy = () => {
-    const normalized = String(emptyMessage || "").toLowerCase();
-    if (normalized.includes("lead")) {
-      return {
-        title: emptyMessage,
-        description: "Get started by adding your first lead.",
-      };
-    }
-    if (normalized.includes("activity")) {
-      return {
-        title: emptyMessage,
-        description: "Add your first activity to keep the timeline moving.",
-      };
-    }
-    if (normalized.includes("invoice") || normalized.includes("bill")) {
-      return {
-        title: emptyMessage,
-        description: "Create your first record to begin tracking here.",
-      };
-    }
-
+    if (typeof emptyMessage === "object") return emptyMessage;
     return {
       title: emptyMessage,
-      description: "Add a new record to get started.",
+      description: "No records to display at this time.",
     };
   };
 
   const emptyStateCopy = getEmptyStateCopy();
 
-  const [focusedSearch, setFocusedSearch] = useState(false);
-
   return (
-    <div className="w-full">
-      <style>
-        {`
-          @keyframes table-loader-slide {
-            0% { left: -40%; width: 40%; }
-            50% { left: 20%; width: 80%; }
-            100% { left: 100%; width: 40%; }
-          }
-        `}
-      </style>
+    <div className="w-full font-inter">
       {/* Toolbar */}
       {toolbar && (
-        <div
-          className={`mb-4 transition-all duration-200 ease-in-out ${
-            selected.length > 0 
-              ? "bg-indigo-50/50 rounded-xl p-3 border border-indigo-200" 
-              : "bg-transparent p-0 border-none"
-          }`}
-        >
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           {selected.length > 0 && selection.enabled ? (
-            <div className="flex items-center w-full justify-between">
-              <span className="text-sm font-semibold text-indigo-900">
+            <div className="flex items-center w-full justify-between p-2.5 bg-[#FFF1EB] border border-[var(--primary)]/20 rounded-[14px]">
+              <span className="text-[11px] font-semibold text-[var(--primary)]">
                 {selected.length} row{selected.length > 1 ? "s" : ""} selected
               </span>
               <button
+                type="button"
                 onClick={handleDeleteSelected}
-                className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors flex items-center justify-center gap-1.5 text-xs font-bold"
-                style={{ border: "1px solid rgba(220, 38, 38, 0.2)" }}
+                className="em-btn-clear text-[#DC2626] hover:bg-[#FEE2E2] hover:border-[#DC2626]/30"
               >
                 <Icons.Delete />
                 <span>Delete Selected</span>
               </button>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row md:flex-wrap gap-2.5 items-center justify-between">
-              <div className="flex flex-col md:flex-row md:flex-wrap gap-2.5 w-full md:w-auto flex-1">
-                {/* Search */}
-                {toolbar.search && !isMobile && (
-                  <div className="relative min-w-[280px]">
+            <>
+              {/* Search on left */}
+              {toolbar.search ? (
+                <div className="search-bar">
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      placeholder={toolbar.searchPlaceholder || "Search..."}
+                      value={toolbar.search.value || ""}
+                      onChange={(e) => toolbar.search.onChange(e.target.value)}
+                      className="w-full h-[34px] pl-9 pr-3 text-[11px] text-[#111827] bg-white border border-[#E2E8F0] rounded-full outline-none focus:border-gray-400 placeholder:text-[#9CA3AF]"
+                    />
                     <svg
-                      className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-150 ${focusedSearch ? "text-indigo-600" : "text-slate-400"}`}
+                      className="absolute left-3 top-2.5 w-3.5 h-3.5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       viewBox="0 0 24 24"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" strokeLinecap="round" />
                     </svg>
-                    <input
-                      type="text"
-                      placeholder={toolbar.searchPlaceholder || "Search..."}
-                      value={toolbar.search.value}
-                      onChange={(e) => toolbar.search.onChange(e.target.value)}
-                      onFocus={() => setFocusedSearch(true)}
-                      onBlur={() => setFocusedSearch(false)}
-                      className="w-full pl-9 pr-4 py-2 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg outline-none transition-all duration-150 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 shadow-sm"
-                    />
                   </div>
-                )}
+                </div>
+              ) : (
+                <div />
+              )}
 
-                {/* Filters */}
+              {/* Filters and Actions on right */}
+              <div className="flex items-center gap-2.5 ml-auto sm:ml-0 flex-wrap">
                 {toolbar.filters &&
-                  toolbar.filters.length > 0 &&
-                  !isMobile &&
                   toolbar.filters.map((filter, index) => (
                     <select
                       key={index}
                       value={filter.value}
                       onChange={(e) => filter.onChange(e.target.value)}
-                      className="appearance-none bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-lg py-2 pl-3.5 pr-8 outline-none cursor-pointer shadow-sm transition-all duration-150 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/10 hover:bg-slate-50"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                        backgroundRepeat: "no-repeat",
-                        backgroundPosition: "right 0.5rem center",
-                        backgroundSize: "1rem",
-                      }}
+                      className="h-[34px] px-3.5 text-[11px] font-medium text-[#111827] bg-white border border-[#E2E8F0] rounded-full outline-none hover:border-gray-400 transition-colors"
                     >
                       {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -324,35 +243,14 @@ const AdvancedTable = ({
                       ))}
                     </select>
                   ))}
-              </div>
 
-              {/* Action Buttons & Create */}
-              <div className="flex gap-2 w-full md:w-auto justify-end">
                 {toolbar.extraButtons &&
                   toolbar.extraButtons.map((btn, index) => (
                     <button
                       key={index}
+                      type="button"
                       onClick={btn.onClick}
-                      style={{
-                        padding: "0.55rem 1rem",
-                        borderRadius: "8px",
-                        fontSize: "0.82rem",
-                        fontWeight: 600,
-                        fontFamily: "'Inter', sans-serif",
-                        border: "1.5px solid #E2E8F0",
-                        background: "white",
-                        color: "#334155",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#F8FAFC";
-                        e.currentTarget.style.borderColor = "#CBD5E1";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "white";
-                        e.currentTarget.style.borderColor = "#E2E8F0";
-                      }}
+                      className="em-btn-clear"
                     >
                       {btn.label}
                     </button>
@@ -360,185 +258,168 @@ const AdvancedTable = ({
 
                 {toolbar.onCreate && (
                   <button
+                    type="button"
                     onClick={toolbar.onCreate.onClick}
-                    className="inline-flex items-center justify-center bg-indigo-600 text-white text-sm font-semibold rounded-lg px-4 py-2 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 transition-colors duration-200"
+                    className="em-add"
                   >
-                    + {toolbar.onCreate.label || "Add"}
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    <span>{toolbar.onCreate.label || "Add New"}</span>
                   </button>
                 )}
               </div>
-            </div>
+            </>
           )}
         </div>
       )}
 
-      {/* Desktop View - Table */}
-      {!isMobile && (
-        <div className="table-frame relative min-h-[200px] bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          {loading && (
-            <>
-              <div className="absolute top-0 left-0 right-0 z-30">
-                <div className="relative h-[3px] w-full overflow-hidden bg-indigo-50/50">
-                  <div 
-                    className="absolute top-0 h-full bg-indigo-600 rounded-full"
-                    style={{
-                      animation: 'table-loader-slide 1.2s infinite ease-in-out',
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="absolute inset-0 z-20 bg-slate-50/20 cursor-wait" />
-            </>
-          )}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200">
-                  {selection.enabled && (
-                    <th className="px-4 py-3.5 w-10 text-center">
-                      <input
-                        type="checkbox"
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={handleSelectAllClick}
-                        checked={data.length > 0 && selected.length === data.length}
-                        className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-600 cursor-pointer"
-                      />
-                    </th>
-                  )}
-                  {columns.map((column) => (
-                    <th
-                      key={column.id}
-                      className={`px-4 py-3 text-left text-sm font-semibold text-slate-700 ${column.sortable !== false ? "cursor-pointer hover:text-slate-900" : ""} ${column.width || ""}`}
-                      onClick={() => column.sortable !== false && handleRequestSort(column.id)}
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        {column.label}
-                        {orderBy === column.id &&
-                          (order === "asc" ? <Icons.SortAsc /> : <Icons.SortDesc />)}
-                      </div>
-                    </th>
-                  ))}
-                  {actions.length > 0 && (
-                    <th
-                      className="px-4 py-3 text-right text-sm font-semibold text-slate-700"
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      Actions
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {visibleRows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={columns.length + (selection.enabled ? 1 : 0) + (actions.length > 0 ? 1 : 0)}
-                      className="px-4 py-12 text-center"
-                    >
-                      <EmptyTableState
-                        title={emptyStateCopy.title}
-                        description={emptyStateCopy.description}
-                      />
-                    </td>
-                  </tr>
-                ) : (
-                  visibleRows.map((row, rIdx) => {
-                    const rowId = getRowId(row);
-                    const isSelected = selected.includes(rowId);
-                    return (
-                      <tr
-                        key={rowId}
-                        onClick={() => (onRowClick ? onRowClick(row) : selection.enabled && handleClick(rowId))}
-                        className={`hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 ${isSelected ? "bg-indigo-50/40" : ""}`}
-                        style={{ cursor: onRowClick || selection.enabled ? "pointer" : "default" }}
-                      >
-                        {selection.enabled && (
-                          <td className="px-4 py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => handleClick(rowId)}
-                              className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-600 cursor-pointer"
-                            />
-                          </td>
-                        )}
-                        {columns.map((column) => (
-                          <td
-                            key={column.id}
-                            className={`px-4 py-3.5 text-sm ${column.className || "text-slate-700"}`}
-                            style={{
-                              fontFamily: "'Inter', sans-serif",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            {column.render ? column.render(row) : row[column.id]}
-                          </td>
-                        ))}
-                        {actions.length > 0 && (
-                          <td className="px-4 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-end gap-1">
-                              {actions.map((action, idx) => {
-                                if (action.condition && !action.condition(row)) return null;
-                                return (
-                                  <button
-                                    key={idx}
-                                    onClick={() => action.onClick(row)}
-                                    className={`p-1.5 rounded-md transition-colors ${action.color || "text-slate-400 hover:text-slate-800 hover:bg-slate-100"}`}
-                                    title={action.label}
-                                    style={{
-                                      border: "none",
-                                      background: "transparent",
-                                      cursor: "pointer",
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                    }}
-                                  >
-                                    {action.icon}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })
+      {/* Main Container Card */}
+      <div className="em-card relative">
+        {loading && (
+          <div className="absolute top-0 left-0 right-0 z-30 h-1 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent animate-pulse" />
+        )}
+
+        {/* Desktop Table View */}
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                {selection.enabled && (
+                  <th className="px-5 py-3.5 w-10 text-center border-b border-gray-100 bg-white">
+                    <input
+                      type="checkbox"
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSelectAllClick}
+                      checked={data.length > 0 && selected.length === data.length}
+                      className="w-3.5 h-3.5 accent-[var(--primary)] rounded cursor-pointer"
+                    />
+                  </th>
                 )}
-              </tbody>
-            </table>
-          </div>
+                {columns.map((column) => (
+                  <th
+                    key={column.id}
+                    className={`px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white ${
+                      column.sortable !== false ? "cursor-pointer hover:text-[#111827]" : ""
+                    } ${column.width || ""}`}
+                    onClick={() =>
+                      column.sortable !== false && handleRequestSort(column.id)
+                    }
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span>{column.label}</span>
+                      {orderBy === column.id &&
+                        (order === "asc" ? <Icons.SortAsc /> : <Icons.SortDesc />)}
+                    </div>
+                  </th>
+                ))}
+                {actions.length > 0 && (
+                  <th className="px-5 py-3.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                    Actions
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {visibleRows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={
+                      columns.length +
+                      (selection.enabled ? 1 : 0) +
+                      (actions.length > 0 ? 1 : 0)
+                    }
+                    className="px-5 py-12 text-center"
+                  >
+                    <EmptyTableState
+                      title={emptyStateCopy.title}
+                      description={emptyStateCopy.description}
+                    />
+                  </td>
+                </tr>
+              ) : (
+                visibleRows.map((row) => {
+                  const rowId = getRowId(row);
+                  const isSelected = selected.includes(rowId);
+                  return (
+                    <tr
+                      key={rowId}
+                      onClick={() =>
+                        onRowClick
+                          ? onRowClick(row)
+                          : selection.enabled && handleClick(rowId)
+                      }
+                      className={`hover:bg-[#FCFCFC] transition-colors border-t border-gray-100 ${
+                        isSelected ? "bg-[#FFF1EB]/30" : ""
+                      }`}
+                      style={{
+                        cursor: onRowClick || selection.enabled ? "pointer" : "default",
+                      }}
+                    >
+                      {selection.enabled && (
+                        <td
+                          className="px-5 py-3 text-center"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleClick(rowId)}
+                            className="w-3.5 h-3.5 accent-[var(--primary)] rounded cursor-pointer"
+                          />
+                        </td>
+                      )}
+                      {columns.map((column) => (
+                        <td
+                          key={column.id}
+                          className={`px-5 py-3 text-[10.5px] ${
+                            column.className || "text-[#4B5563]"
+                          }`}
+                        >
+                          {column.render ? column.render(row) : row[column.id]}
+                        </td>
+                      ))}
+                      {actions.length > 0 && (
+                        <td
+                          className="px-5 py-3 text-right"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center justify-end gap-1">
+                            {actions.map((action, idx) => {
+                              if (action.condition && !action.condition(row))
+                                return null;
+                              return (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() => action.onClick(row)}
+                                  className="em-icon-btn"
+                                  title={action.label}
+                                >
+                                  {action.icon}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
 
-      {/* Mobile View - Cards */}
-      {isMobile && (
-        <div className="space-y-3 relative min-h-[100px]">
-          {loading && (
-            <>
-              <div className="absolute -top-1 left-0 right-0 z-30 rounded-t-xl overflow-hidden">
-                <div className="relative h-[3px] w-full overflow-hidden bg-indigo-50/50">
-                  <div 
-                    className="absolute top-0 h-full bg-indigo-600 rounded-full"
-                    style={{
-                      animation: 'table-loader-slide 1.2s infinite ease-in-out',
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="absolute inset-0 z-20 bg-slate-50/20 rounded-xl cursor-wait" />
-            </>
-          )}
+        {/* Mobile View - Cards Transformation */}
+        <div className="block sm:hidden divide-y divide-gray-100">
           {visibleRows.length === 0 ? (
-            <EmptyTableState
-              title={emptyStateCopy.title}
-              description={emptyStateCopy.description}
-            />
+            <div className="p-6 text-center">
+              <EmptyTableState
+                title={emptyStateCopy.title}
+                description={emptyStateCopy.description}
+              />
+            </div>
           ) : (
             visibleRows.map((row) =>
               renderCard ? (
@@ -546,35 +427,35 @@ const AdvancedTable = ({
               ) : (
                 <div
                   key={getRowId(row)}
-                  className="bg-white p-4 rounded-xl border border-slate-200"
-                  style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}
+                  onClick={() => onRowClick && onRowClick(row)}
+                  className="p-3.5 hover:bg-[#FCFCFC] transition-colors cursor-pointer"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 20v-1a4 4 0 014-4h4a4 4 0 014 4v1" />
-                        </svg>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-semibold text-[#111827] truncate">
+                        {columns[0]
+                          ? columns[0].render
+                            ? columns[0].render(row)
+                            : row[columns[0].id]
+                          : ""}
                       </div>
-                      <div className="min-w-0">
-                        <div className="text-base font-bold text-slate-900 truncate">
-                          {columns[0] ? (columns[0].render ? columns[0].render(row) : row[columns[0].id]) : ""}
+                      {columns[1] && (
+                        <div className="text-[9.5px] text-[#8B92A5] mt-0.5 truncate">
+                          {columns[1].render
+                            ? columns[1].render(row)
+                            : row[columns[1].id]}
                         </div>
-                        {columns[1] && (
-                          <div className="text-xs text-slate-500 mt-0.5 truncate">
-                            {columns[1].render ? columns[1].render(row) : row[columns[1].id]}
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-slate-600">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-[#64748B] pt-1">
                     {columns.slice(2).map((col) => (
                       <div key={col.id} className="min-w-0">
-                        <div className="text-slate-400 font-medium">{col.label}</div>
-                        <div className="truncate mt-0.5 font-semibold text-slate-800">
+                        <span className="text-[#9CA3AF] block text-[9px] uppercase tracking-wider">
+                          {col.label}
+                        </span>
+                        <div className="truncate font-medium text-[#111827]">
                           {col.render ? col.render(row) : String(row[col.id] ?? "-")}
                         </div>
                       </div>
@@ -582,14 +463,19 @@ const AdvancedTable = ({
                   </div>
 
                   {actions.length > 0 && (
-                    <div className="flex justify-end gap-2 border-t border-slate-100 pt-2.5 mt-3">
+                    <div
+                      className="flex justify-end gap-1.5 border-t border-gray-100 pt-2 mt-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {actions.map((action, idx) => {
-                        if (action.condition && !action.condition(row)) return null;
+                        if (action.condition && !action.condition(row))
+                          return null;
                         return (
                           <button
                             key={idx}
+                            type="button"
                             onClick={() => action.onClick(row)}
-                            className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500"
+                            className="em-icon-btn"
                             title={action.label}
                           >
                             {action.icon}
@@ -599,64 +485,57 @@ const AdvancedTable = ({
                     </div>
                   )}
                 </div>
-              ),
+              )
             )
           )}
         </div>
-      )}
 
-      {/* Pagination */}
-      {pagination.enabled && (
-        <div className="mt-4 px-4 py-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between shadow-sm">
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-slate-500 m-0">
-                Showing <span className="font-semibold text-slate-900">{page * rowsPerPage + 1}</span> to{" "}
-                <span className="font-semibold text-slate-900">
-                  {Math.min((page + 1) * rowsPerPage, totalItems)}
-                </span>{" "}
-                of <span className="font-semibold text-slate-900">{totalItems}</span> results
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
+        {/* Mentora Standard Pagination */}
+        {pagination.enabled && (
+          <div className="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FAFAFA]/60">
+            <span className="text-[10px] text-[#64748B]">
+              Showing {page * rowsPerPage + 1}–
+              {Math.min((page + 1) * rowsPerPage, totalItems)} of {totalItems} records
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handleChangePage(Math.max(0, page - 1))}
+                disabled={page === 0}
+                className="h-[30px] px-2.5 text-[10.5px] font-medium rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Prev
+              </button>
+
+              <span className="text-[10px] font-semibold text-[#111827] px-2">
+                Page {page + 1} of {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => handleChangePage(Math.min(totalPages - 1, page + 1))}
+                disabled={page >= totalPages - 1}
+                className="h-[30px] px-2.5 text-[10.5px] font-medium rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+
               <select
                 value={rowsPerPage}
                 onChange={handleChangeRowsPerPage}
-                className="bg-white border border-slate-200 rounded-lg py-1.5 px-2 text-sm font-medium text-slate-600 outline-none cursor-pointer hover:border-slate-300 transition-colors"
+                className="h-[30px] px-2 text-[10.5px] rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] outline-none ml-2 cursor-pointer"
               >
                 {(pagination.rowsPerPageOptions || [5, 10, 25, 50]).map((option) => (
                   <option key={option} value={option}>
-                    {option} per page
+                    {option} / page
                   </option>
                 ))}
               </select>
-              <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-                <button
-                  onClick={() => handleChangePage(Math.max(0, page - 1))}
-                  disabled={page === 0}
-                  className={`px-2.5 py-1.5 bg-white border-r border-slate-200 text-slate-600 flex items-center transition-colors ${page === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-slate-50"}`}
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <div className="px-3 py-1.5 bg-slate-50 text-sm font-semibold text-slate-900 flex items-center">
-                  Page {page + 1} of {totalPages || 1}
-                </div>
-                <button
-                  onClick={() => handleChangePage(Math.min(totalPages - 1, page + 1))}
-                  disabled={page >= totalPages - 1}
-                  className={`px-2.5 py-1.5 bg-white border-l border-slate-200 text-slate-600 flex items-center transition-colors ${page >= totalPages - 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-slate-50"}`}
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

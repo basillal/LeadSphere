@@ -185,7 +185,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
   ];
 
   return (
-    <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
+    <div className="mx-auto bg-white p-3 md:p-4 rounded-[20px] border border-gray-100">
       <form onSubmit={handleSubmit}>
         {/* 1. Basic Activity Information */}
         <SectionHeader
@@ -488,16 +488,16 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
 
           <div>
             <Label>Tags</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
               {availableTags.map((tag) => (
                 <button
                   key={tag}
                   type="button"
                   onClick={() => handleTagToggle(tag)}
-                  className={`px-4 py-2 rounded-lg font-medium text-base transition-colors ${
+                  className={`h-[28px] px-3 rounded-full text-[10.5px] font-medium border transition-colors ${
                     formData.tags.includes(tag)
-                      ? "bg-black text-white"
-                      : "bg-slate-100 text-black hover:bg-gray-200"
+                      ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm"
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   {tag}
@@ -505,7 +505,7 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
               ))}
             </div>
             {formData.tags.length > 0 && (
-              <p className="text-base text-black mt-2">
+              <p className="text-[10px] text-gray-500 mt-1.5 font-medium">
                 Selected: {formData.tags.join(", ")}
               </p>
             )}
@@ -513,17 +513,17 @@ const ActivityForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Actions */}
-        <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-5">
+        <div className="mt-6 flex justify-end items-center gap-2.5 border-t border-gray-100 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="em-btn-clear h-[34px] px-5 text-[11px] font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="em-add h-[34px] px-5 text-[11px] font-medium"
           >
             Save Activity
           </button>

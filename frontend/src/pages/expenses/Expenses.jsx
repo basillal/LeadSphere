@@ -9,7 +9,6 @@ import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRange
 const Expenses = () => {
   const { selectedOrganization } = useAuth();
   const [expenses, setExpenses] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExpense, setCurrentExpense] = useState(null);
   const [timeRange, setTimeRange] = useState("last_30_days");
@@ -23,7 +22,6 @@ const Expenses = () => {
   });
 
   const fetchExpenses = async () => {
-    // setLoading(true);
     try {
       const params = {};
       const range = getDateRange(timeRange);
@@ -35,8 +33,6 @@ const Expenses = () => {
     } catch (error) {
       console.error("Error fetching expenses:", error);
       Toast("Failed to fetch expenses", "error");
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -45,7 +41,7 @@ const Expenses = () => {
   }, [selectedOrganization, timeRange]);
 
   const handleRangeChange = (range) => {
-    // Already handled by effects
+    // Handled by effect
   };
 
   const handleCreate = () => {
@@ -113,8 +109,10 @@ const Expenses = () => {
       label: "Title",
       render: (row) => (
         <div>
-          <div className="font-medium text-black">{row.title}</div>
-          <div className="text-base text-black">{row.description}</div>
+          <div className="font-semibold text-gray-900 text-[11px]">{row.title}</div>
+          {row.description && (
+            <div className="text-[10px] text-gray-400 line-clamp-1">{row.description}</div>
+          )}
         </div>
       ),
     },
@@ -122,7 +120,7 @@ const Expenses = () => {
       id: "category",
       label: "Category",
       render: (row) => (
-        <span className="px-2 py-1 bg-slate-100 text-black text-base rounded-full">
+        <span className="inline-flex px-2 py-0.5 bg-gray-100 text-gray-700 text-[9.5px] font-semibold rounded-full border border-gray-200">
           {row.category}
         </span>
       ),
@@ -131,7 +129,7 @@ const Expenses = () => {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-sm font-medium text-slate-800">
+        <span className="text-[10.5px] text-gray-600">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -139,13 +137,21 @@ const Expenses = () => {
     {
       id: "expenseDate",
       label: "Date",
-      render: (row) => new Date(row.expenseDate).toLocaleDateString(),
+      render: (row) => (
+        <span className="text-[10.5px] text-gray-700">
+          {new Date(row.expenseDate).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      ),
     },
     {
       id: "amount",
       label: "Amount",
       render: (row) => (
-        <span className="font-medium text-red-600">
+        <span className="font-bold text-rose-600 text-[11px]">
           {new Intl.NumberFormat("en-IN", {
             style: "currency",
             currency: "INR",
@@ -156,7 +162,11 @@ const Expenses = () => {
     {
       id: "createdBy",
       label: "Added By",
-      render: (row) => row.createdBy?.name || "-",
+      render: (row) => (
+        <span className="text-[10.5px] text-gray-500">
+          {row.createdBy?.name || "-"}
+        </span>
+      ),
     },
   ];
 
@@ -164,25 +174,24 @@ const Expenses = () => {
     {
       label: "Edit",
       onClick: handleEdit,
-      color: "text-blue-600 hover:bg-blue-50",
     },
     {
       label: "Delete",
       onClick: (row) => handleDelete(row._id),
-      color: "text-red-600 hover:bg-red-50",
     },
   ];
 
   return (
-    <div className="w-full p-6 bg-slate-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
+    <div className="w-full flex flex-col gap-2">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2 px-1">
         <div>
-          <h1 className="text-sm font-medium text-slate-800">Expenses</h1>
-          <p className="text-base text-black">
-            Track and manage organization expenses
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">Expenses</h1>
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            Track operational spending, vendor receipts, and category expenses.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <TimeRangeFilter
             value={timeRange}
             onChange={setTimeRange}
@@ -190,21 +199,23 @@ const Expenses = () => {
           />
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2"
+            className="em-add h-[34px] px-4 inline-flex items-center gap-1.5"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
               <path
-                fillRule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                clipRule="evenodd"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M12 4v16m8-8H4"
               />
             </svg>
-            Add Expense
+            <span>Add Expense</span>
           </button>
         </div>
       </div>
@@ -213,7 +224,6 @@ const Expenses = () => {
         data={expenses}
         columns={columns}
         actions={actions}
-        // isLoading={loading}
         emptyMessage="No expenses found."
         pagination={{ enabled: true, pageSize: 10 }}
       />
@@ -223,15 +233,16 @@ const Expenses = () => {
         onClose={() => setIsModalOpen(false)}
         title={currentExpense ? "Edit Expense" : "New Expense"}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="block text-sm font-medium text-slate-800">
+            <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
               Title *
             </label>
             <input
               type="text"
               required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              className="w-full h-[34px] px-3 text-[11px] font-medium text-gray-900 bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
+              placeholder="e.g. Office supplies, Cloud hosting..."
               value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
@@ -239,17 +250,18 @@ const Expenses = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-800">
-                Amount *
+              <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+                Amount (₹) *
               </label>
               <input
                 type="number"
                 required
                 min="0"
                 step="0.01"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                placeholder="0.00"
+                className="w-full h-[34px] px-3 text-[11px] font-medium text-gray-900 bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
                 value={formData.amount}
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
@@ -257,13 +269,13 @@ const Expenses = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-800">
+              <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
                 Date *
               </label>
               <input
                 type="date"
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                className="w-full h-[34px] px-3 text-[11px] font-medium text-gray-900 bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
                 value={formData.expenseDate}
                 onChange={(e) =>
                   setFormData({ ...formData, expenseDate: e.target.value })
@@ -273,12 +285,12 @@ const Expenses = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-800">
+            <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
               Category *
             </label>
             <select
               required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white"
+              className="w-full h-[34px] px-3 text-[11px] font-medium text-gray-900 bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
               value={formData.category}
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
@@ -296,12 +308,13 @@ const Expenses = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-800">
+            <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
               Description
             </label>
             <textarea
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+              className="w-full p-2.5 text-[11px] font-medium text-gray-900 bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
               rows="3"
+              placeholder="Additional expense notes..."
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
@@ -309,17 +322,17 @@ const Expenses = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t mt-6">
+          <div className="flex justify-end items-center gap-2 pt-3 border-t border-gray-100 mt-4">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-slate-800 hover:bg-slate-50"
+              className="em-btn-clear h-[34px] px-4 text-[11px] font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-slate-800"
+              className="em-add h-[34px] px-5 text-[11px] font-medium"
             >
               Save Expense
             </button>

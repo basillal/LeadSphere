@@ -14,35 +14,35 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
   const formatDate = (date) => {
     if (!date) return "-";
     return new Date(date).toLocaleDateString("en-US", {
-      month: "long",
+      month: "short",
       day: "numeric",
       year: "numeric",
     });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
-      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
       <div
-        className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[85dvh] overflow-y-auto z-10 border border-gray-100 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+        <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{referrer.name}</h2>
-            <p className="text-sm font-medium text-gray-500 mt-0.5">
+            <h2 className="text-[14px] font-semibold text-gray-900">{referrer.name}</h2>
+            <p className="text-[10.5px] text-gray-400 mt-0.5">
               {referrer.organizationName || "No Organization"}{" "}
               {referrer.designation && `• ${referrer.designation}`}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-700 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -53,46 +53,52 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6 bg-gray-50/30">
+        <div className="p-5 space-y-4">
           {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-gray-50/70 rounded-[16px] p-4 border border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[12px]">👤</span>
+                <h3 className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">
                   Contact Details
                 </h3>
               </div>
-              <div className="space-y-4 text-sm">
+              <div className="space-y-2.5 text-[11px]">
                 <div>
-                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
+                  <span className="text-gray-400 block text-[9.5px]">Phone</span>
                   <p className="font-medium text-gray-900">{referrer.phone || "-"}</p>
                 </div>
                 <div>
-                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
+                  <span className="text-gray-400 block text-[9.5px]">Email</span>
                   <p className="font-medium text-gray-900">{referrer.email || "-"}</p>
                 </div>
                 <div>
-                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Alt Phone</span>
+                  <span className="text-gray-400 block text-[9.5px]">Alt Phone</span>
                   <p className="font-medium text-gray-900">{referrer.alternatePhone || "-"}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-green-50 text-green-600 rounded-lg text-sm">✅</div>
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+            <div className="bg-gray-50/70 rounded-[16px] p-4 border border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[12px]">✅</span>
+                <h3 className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">
                   Status
                 </h3>
               </div>
-              <div className="space-y-4 text-sm">
+              <div className="space-y-2.5 text-[11px]">
                 <div>
-                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Active</span>
-                  <p className="font-medium text-gray-900">{referrer.isActive ? "Yes" : "No"}</p>
+                  <span className="text-gray-400 block text-[9.5px]">Active Status</span>
+                  <p className="font-medium text-gray-900">
+                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-semibold ${
+                      referrer.isActive ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {referrer.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </p>
                 </div>
                 <div>
-                  <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Joined</span>
+                  <span className="text-gray-400 block text-[9.5px]">Joined</span>
                   <p className="font-medium text-gray-900">{formatDate(referrer.createdAt)}</p>
                 </div>
               </div>
@@ -101,39 +107,39 @@ const PreviewModal = ({ referrer, stats, onClose }) => {
 
           {/* Statistics */}
           {stats && (
-            <div className="bg-slate-900 rounded-xl p-5 text-white shadow-md">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-slate-800 text-white rounded-lg text-sm">📊</div>
-                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <div className="bg-gray-900 rounded-[16px] p-4 text-white">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[12px]">📊</span>
+                <h3 className="text-[10px] font-semibold text-gray-300 uppercase tracking-wider">
                   Referral Statistics
                 </h3>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 <div>
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Total Leads</span>
-                  <p className="font-semibold text-sm">{stats.totalLeads || 0}</p>
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Total Leads</span>
+                  <p className="font-bold text-[14px] text-white">{stats.totalLeads || 0}</p>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Active</span>
-                  <p className="font-semibold text-sm">{stats.activeLeads || 0}</p>
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Active</span>
+                  <p className="font-bold text-[14px] text-white">{stats.activeLeads || 0}</p>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Converted</span>
-                  <p className="font-semibold text-sm">{stats.convertedLeads || 0}</p>
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Converted</span>
+                  <p className="font-bold text-[14px] text-emerald-400">{stats.convertedLeads || 0}</p>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Lost</span>
-                  <p className="font-semibold text-sm">{stats.lostLeads || 0}</p>
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Lost</span>
+                  <p className="font-bold text-[14px] text-rose-400">{stats.lostLeads || 0}</p>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Conversion %</span>
-                  <p className="font-semibold text-sm">{stats.conversionPercentage || 0}%</p>
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Conversion %</span>
+                  <p className="font-bold text-[14px] text-amber-300">{stats.conversionPercentage || 0}%</p>
                 </div>
               </div>
               {stats.lastLeadDate && (
-                <div className="mt-4 pt-4 border-t border-slate-800">
-                  <span className="text-slate-400 block text-xs mb-1 uppercase tracking-wide">Last Lead Date</span>
-                  <p className="font-semibold text-sm">{formatDate(stats.lastLeadDate)}</p>
+                <div className="mt-3 pt-3 border-t border-gray-800 text-[10px]">
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wide">Last Lead Date</span>
+                  <p className="font-semibold text-white">{formatDate(stats.lastLeadDate)}</p>
                 </div>
               )}
             </div>
@@ -352,25 +358,33 @@ const Referrers = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-sm font-medium text-slate-800">
-          {view === "list"
-            ? "Referrers"
-            : view === "create"
-              ? "Create new referrer"
-              : "Edit referrer"}
-        </h1>
+    <div className="w-full flex flex-col gap-2">
+      {/* Page Header */}
+      <div className="flex items-center justify-between gap-3 mb-2 px-1">
+        <div>
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+            {view === "list"
+              ? "Referrers"
+              : view === "create"
+                ? "Create New Referrer"
+                : "Edit Referrer"}
+          </h1>
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            {view === "list"
+              ? "Manage referral partners, performance metrics, and payouts."
+              : "Enter referrer contact details, commission agreement, and notes."}
+          </p>
+        </div>
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
+            className="em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5"
             title="Back to List"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -380,6 +394,7 @@ const Referrers = () => {
             >
               <path d="m15 18-6-6 6-6" />
             </svg>
+            <span>Back to list</span>
           </button>
         )}
       </div>

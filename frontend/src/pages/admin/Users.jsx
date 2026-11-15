@@ -164,27 +164,34 @@ const Users = () => {
   );
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-sm font-medium text-slate-800">
-          {view === "list"
-            ? "Users"
-            : view === "create"
-              ? "Create New User"
-              : view === "logs"
-                ? "User Logs"
-                : "Edit User"}
-        </h1>
+    <div className="w-full flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-3 mb-2 px-1">
+        <div>
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+            {view === "list"
+              ? "Users Management"
+              : view === "create"
+                ? "Create New User"
+                : view === "logs"
+                  ? "User Logs"
+                  : "Edit User"}
+          </h1>
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            {view === "list"
+              ? "Manage system accounts, access privileges, and security credentials."
+              : "Set user profile information, role assignment, and organization scope."}
+          </p>
+        </div>
         {view !== "list" && (
           <button
             onClick={handleCancelForm}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
+            className="em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5"
             title="Back to List"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -194,6 +201,7 @@ const Users = () => {
             >
               <path d="m15 18-6-6 6-6" />
             </svg>
+            <span>Back to list</span>
           </button>
         )}
       </div>

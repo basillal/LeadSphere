@@ -15,12 +15,10 @@ const Input = ({
   const handleChange = (e) => {
     let v = e.target.value;
     if (uppercaseOnly) {
-      // convert to uppercase and strip disallowed characters (allow spaces, hyphen, apostrophe)
       v = v.toUpperCase().replace(/[^A-Z\s\-']/g, "");
     }
 
     if (onChange) {
-      // Send a simple, stable event-like object expected by parent handlers
       onChange({
         target: {
           name: e.target.name,
@@ -38,9 +36,9 @@ const Input = ({
       <input
         type={type}
         name={name}
-        value={value}
+        value={value ?? ""}
         onChange={handleChange}
-        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
+        className="w-full h-[34px] px-3 text-[11px] font-medium text-[#111827] bg-white border border-[#D1D5DB] rounded-[10px] outline-none placeholder:text-[#9CA3AF] transition-all"
         required={required}
         {...props}
       />

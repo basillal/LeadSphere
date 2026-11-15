@@ -19,11 +19,11 @@ const ContactsTable = ({
   // Helper functions
   const getTagColor = (tag) => {
     const colors = {
-      Client: "bg-blue-100 text-blue-800",
-      Vendor: "bg-purple-100 text-purple-800",
-      Partner: "bg-green-100 text-green-800",
-      Friend: "bg-orange-100 text-orange-800",
-      Other: "bg-slate-100 text-black",
+      Client: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
+      Vendor: "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]",
+      Partner: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
+      Friend: "bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]",
+      Other: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
     };
     return colors[tag] || colors.Other;
   };
@@ -41,15 +41,20 @@ const ContactsTable = ({
   const columns = [
     {
       id: "name",
-      label: "Name",
+      label: "Contact",
       render: (row) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-black uppercase">
-            {row.name}
-          </span>
-          {row.designation && (
-            <span className="text-base text-black">{row.designation}</span>
-          )}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+            {row.name ? row.name.charAt(0).toUpperCase() : "C"}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[11px] font-semibold text-[#111827] truncate">
+              {row.name}
+            </span>
+            <span className="text-[9.5px] text-[#9CA3AF] truncate">
+              {row.designation || row.organizationName || "Contact"}
+            </span>
+          </div>
         </div>
       ),
     },
@@ -147,12 +152,12 @@ const ContactsTable = ({
       ),
       label: "View",
       onClick: onView,
-      color: "text-black hover:bg-slate-100",
+      color: "em-icon-view",
     },
     {
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-3.5 h-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -160,19 +165,19 @@ const ContactsTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
       ),
       label: "Edit",
       onClick: onEdit,
-      color: "text-black hover:bg-slate-100",
+      color: "em-icon-edit",
     },
     {
       icon: (
         <svg
-          className="w-5 h-5"
+          className="w-3.5 h-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -180,14 +185,14 @@ const ContactsTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
       ),
       label: "Delete",
       onClick: (row) => onDelete(row._id),
-      color: "text-red-600 hover:bg-red-50",
+      color: "em-icon-delete",
     },
   ];
 

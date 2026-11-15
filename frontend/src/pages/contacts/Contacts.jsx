@@ -38,40 +38,41 @@ const PreviewModal = ({ contact, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm font-inter">
+      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <div
-        className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-white border border-gray-100 rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[85vh] max-h-[85dvh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{contact.name}</h2>
-            <p className="text-sm font-medium text-gray-500 mt-1">
+            <h2 className="text-[14px] font-semibold text-gray-900 m-0">{contact.name}</h2>
+            <p className="text-[10px] text-gray-500 m-0 mt-0.5">
               {contact.organizationName || "No Organization"}
-              {contact.designation && <span className="mx-2">•</span>}
+              {contact.designation && <span className="mx-1.5">•</span>}
               {contact.designation && <span>{contact.designation}</span>}
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="w-3.5 h-3.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth="2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4" style={{ scrollbarWidth: "none" }}>
           {/* Tags */}
           {contact.tags && contact.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -205,12 +206,13 @@ const PreviewModal = ({ contact, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-xl">
+        <div className="px-6 py-3.5 bg-gray-50/50 border-t border-gray-100 flex justify-end">
           <button
+            type="button"
             onClick={onClose}
-            className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            className="em-btn-clear"
           >
-            Close
+            Close Preview
           </button>
         </div>
       </div>
@@ -583,71 +585,100 @@ const Contacts = () => {
   ];
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6 px-2">
-        <h1 className="text-sm font-medium text-slate-800">
-          {view === "list"
-            ? "Contacts"
-            : view === "create"
-              ? "Create new contact"
-              : view === "edit"
-                ? "Edit contact"
-                : view === "selectLead"
-                  ? "Convert Lead"
-                  : "Convert to Contact"}
-        </h1>
-        {view !== "list" && (
-          <button
-            onClick={() => {
-              if (view === "convertLead") {
-                setView("selectLead");
-                setConvertingLead(null);
-              } else {
-                handleCancelForm();
-                handleCancelConversion();
-              }
-            }}
-            className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
-            title={view === "convertLead" ? "Back to Lead Selection" : "Back to List"}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-        )}
+    <div className="w-full font-inter">
+      {/* Header Block & Spacing Hierarchy */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-[13px] font-semibold text-gray-900 m-0">
+              {view === "list"
+                ? "Contact Directory"
+                : view === "create"
+                  ? "Create New Contact"
+                  : view === "edit"
+                    ? "Edit Contact Details"
+                    : view === "selectLead"
+                      ? "Convert Lead to Contact"
+                      : "Convert to Contact"}
+            </h1>
+            <p className="text-[10.5px] text-gray-500 m-0 mt-0.5">
+              {view === "list"
+                ? "Manage customer accounts, vendor stakeholders, and communication records."
+                : "Manage profile details, company affiliations, and contact tags."}
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            {view === "list" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setView("selectLead")}
+                  className="em-btn-clear"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  <span>Convert Lead</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView("create")}
+                  className="em-add"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+                  </svg>
+                  <span>New Contact</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  if (view === "convertLead") {
+                    setView("selectLead");
+                    setConvertingLead(null);
+                  } else {
+                    handleCancelForm();
+                    handleCancelConversion();
+                  }
+                }}
+                className="em-btn-clear"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" />
+                </svg>
+                <span>{view === "convertLead" ? "Back to Leads" : "Back to List"}</span>
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {view === "list" ? (
         <>
-          <StatsWrapper title="Contacts Overview">
-            <ContactStats stats={stats} />
-          </StatsWrapper>
+          <ContactStats stats={stats} />
 
-          <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-            <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg w-full md:w-fit overflow-x-auto scrollbar-hide">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md text-base md:text-base font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                    activeTab === tab.id
-                      ? "bg-white text-black shadow-sm"
-                      : "text-black hover:text-black"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+          {/* Quick Filter Tabs */}
+          <div className="mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+            <div className="flex items-center gap-1.5 min-w-max">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`inline-flex items-center gap-2 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
+                      isActive
+                        ? "bg-[#111827] text-white shadow-sm"
+                        : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

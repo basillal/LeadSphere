@@ -17,138 +17,68 @@ import dashboardService from "../services/dashboardService";
 import { useAuth } from "../components/auth/AuthProvider";
 import TimeRangeFilter, { getDateRange } from "../components/common/TimeRangeFilter";
 
-/* ─────────────────────────────────────────────────────────────
-   COLORS — Premium palette
-───────────────────────────────────────────────────────────── */
-const CHART_COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4"];
+const CHART_COLORS = ["#F54900", "#10B981", "#3B82F6", "#F59E0B", "#8B5CF6", "#06B6D4"];
 
-/* ─────────────────────────────────────────────────────────────
-   HERO STAT CARD
-───────────────────────────────────────────────────────────── */
-const HeroCard = ({ title, value, icon, variant = "primary", subtitle }) => {
-  const variantStyles = {
-    primary: { iconBox: "icon-box-primary", borderClass: "hero-stat-primary" },
-    success: { iconBox: "icon-box-success", borderClass: "hero-stat-success" },
-    warning: { iconBox: "icon-box-warning", borderClass: "hero-stat-warning" },
-    danger:  { iconBox: "icon-box-danger",  borderClass: "hero-stat-danger" },
-    cyan:    { iconBox: "icon-box-cyan",     borderClass: "" },
-    purple:  { iconBox: "icon-box-purple",   borderClass: "" },
-  };
-  const { iconBox, borderClass } = variantStyles[variant] || variantStyles.primary;
-
-  return (
-    <div className={`hero-stat-card ${borderClass}`}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-        <div className={`icon-box ${iconBox}`} style={{ fontSize: "1.2rem" }}>
-          {icon}
-        </div>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0, marginBottom: "0.2rem" }}>
-            {title}
-          </p>
-          <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0F172A", margin: 0, fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
-            {value}
-          </h3>
-          {subtitle && (
-            <p style={{ fontSize: "0.72rem", color: "#94A3B8", margin: "0.25rem 0 0" }}>{subtitle}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ─────────────────────────────────────────────────────────────
-   COMPACT STAT CARD
-───────────────────────────────────────────────────────────── */
-const CompactStat = ({ title, value, icon, iconClass = "icon-box-primary" }) => (
-  <div
-    style={{
-      background: "#FFFFFF",
-      border: "1px solid #E2E8F0",
-      borderRadius: "12px",
-      padding: "0.875rem 1rem",
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-      transition: "box-shadow 0.18s ease, transform 0.18s ease",
-      cursor: "default",
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.boxShadow = "0 4px 16px -4px rgba(79,70,229,0.12)";
-      e.currentTarget.style.transform = "translateY(-1px)";
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.boxShadow = "none";
-      e.currentTarget.style.transform = "translateY(0)";
-    }}
-  >
-    <div className={`icon-box ${iconClass}`} style={{ fontSize: "1rem", width: 38, height: 38, borderRadius: "9px" }}>
+const HeroCard = ({ title, value, icon, iconBg, iconColor, valueColor = "text-gray-900" }) => (
+  <div className="bg-white p-4 rounded-[20px] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all flex items-center gap-3.5">
+    <div className={`w-10 h-10 rounded-[12px] ${iconBg} ${iconColor} flex items-center justify-center text-[16px] shrink-0`}>
       {icon}
     </div>
-    <div>
-      <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+    <div className="min-w-0 flex-1">
+      <p className="text-[9.5px] font-semibold text-gray-400 uppercase tracking-wider truncate mb-0.5">
         {title}
       </p>
-      <p style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", margin: "0.1rem 0 0", fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.02em" }}>
+      <h3 className={`text-[20px] font-bold tracking-tight leading-none ${valueColor}`}>
+        {value}
+      </h3>
+    </div>
+  </div>
+);
+
+const CompactStat = ({ title, value, icon, iconBg, iconColor }) => (
+  <div className="bg-white p-3 rounded-[16px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all flex items-center gap-2.5">
+    <div className={`w-7 h-7 rounded-[8px] ${iconBg} ${iconColor} flex items-center justify-center text-[12px] shrink-0`}>
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider truncate">
+        {title}
+      </p>
+      <p className="text-[14px] font-bold text-gray-900 leading-tight mt-0.5">
         {value}
       </p>
     </div>
   </div>
 );
 
-/* ─────────────────────────────────────────────────────────────
-   CHART CARD WRAPPER
-───────────────────────────────────────────────────────────── */
-const ChartCard = ({ title, children, action, style = {} }) => (
-  <div
-    style={{
-      background: "#FFFFFF",
-      border: "1px solid #E2E8F0",
-      borderRadius: "14px",
-      boxShadow: "0 1px 4px rgba(15,23,42,0.05)",
-      ...style,
-    }}
-  >
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 1.25rem", borderBottom: "1px solid #F1F5F9" }}>
-      <h4 style={{ margin: 0, fontSize: "0.9rem", fontWeight: 700, color: "#0F172A", fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.02em" }}>
+const ChartCard = ({ title, children, action }) => (
+  <div className="em-card p-4 rounded-[20px] bg-white border border-gray-100 flex flex-col">
+    <div className="flex justify-between items-center pb-3 mb-3 border-b border-gray-100">
+      <h4 className="text-[12px] font-semibold text-gray-900">
         {title}
       </h4>
       {action}
     </div>
-    <div style={{ padding: "1rem 1.25rem 1.25rem" }}>{children}</div>
+    <div className="flex-1">{children}</div>
   </div>
 );
 
-/* ─────────────────────────────────────────────────────────────
-   CUSTOM TOOLTIP
-───────────────────────────────────────────────────────────── */
 const CustomTooltip = ({ active, payload, label, formatFn }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{
-      background: "rgba(255,255,255,0.98)",
-      border: "1px solid #E2E8F0",
-      borderRadius: "10px",
-      padding: "0.625rem 0.875rem",
-      boxShadow: "0 8px 24px -4px rgba(15,23,42,0.14)",
-      fontSize: "0.8rem",
-    }}>
-      <p style={{ margin: "0 0 0.375rem", fontWeight: 600, color: "#0F172A", fontSize: "0.78rem" }}>{label}</p>
+    <div className="bg-white border border-gray-200 rounded-[12px] p-2.5 shadow-lg text-[11px]">
+      <p className="font-semibold text-gray-900 mb-1 text-[11px]">{label}</p>
       {payload.map((p) => (
-        <div key={p.dataKey} style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0.2rem 0" }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: p.color, flexShrink: 0 }} />
-          <span style={{ color: "#475569" }}>{p.name}:</span>
-          <span style={{ fontWeight: 700, color: "#0F172A" }}>{formatFn ? formatFn(p.value) : p.value}</span>
+        <div key={p.dataKey} className="flex items-center gap-2 my-0.5">
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+          <span className="text-gray-500">{p.name}:</span>
+          <span className="font-bold text-gray-900">{formatFn ? formatFn(p.value) : p.value}</span>
         </div>
       ))}
     </div>
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   MAIN DASHBOARD
-───────────────────────────────────────────────────────────── */
 const Dashboard = () => {
   const { user, selectedOrganization } = useAuth();
   const [data, setData] = useState({
@@ -181,10 +111,10 @@ const Dashboard = () => {
 
   if (!data || !data.counts) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh", flexDirection: "column", gap: "1rem" }}>
-        <div style={{ fontSize: "2rem" }}>⚠️</div>
-        <h2 style={{ color: "#0F172A", fontFamily: "'Outfit', sans-serif" }}>Something went wrong</h2>
-        <p style={{ color: "#64748B" }}>Failed to load dashboard statistics.</p>
+      <div className="min-h-[400px] flex flex-col items-center justify-center gap-2 text-center">
+        <span className="text-2xl">⚠️</span>
+        <h2 className="text-[13px] font-semibold text-gray-900">Failed to load statistics</h2>
+        <p className="text-[11px] text-gray-400">Please try refreshing or check your connection.</p>
       </div>
     );
   }
@@ -192,187 +122,187 @@ const Dashboard = () => {
   const netProfit = (data.counts.revenue || 0) - (data.counts.totalExpenses || 0);
 
   return (
-    <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto" }}>
-      {/* ── Page Header ── */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", marginBottom: "1.5rem" }}>
+    <div className="w-full flex flex-col gap-3">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-1 px-1">
         <div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: "#0F172A", margin: 0, letterSpacing: "-0.03em" }}>
-            Welcome back, {user?.name?.split(" ")[0]}! 👋
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+            Welcome back, {user?.name?.split(" ")[0]} 👋
           </h1>
-          <p style={{ fontSize: "0.85rem", color: "#64748B", margin: "0.25rem 0 0" }}>
-            Here's what's happening in your business today.
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            Real-time business performance, pipeline progress, and key activity metrics.
           </p>
         </div>
         <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
       </div>
 
-      {/* ── Hero Stats (3 columns) ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1rem" }}>
-        <HeroCard title="Total Revenue"  value={formatCurrency(data.counts.revenue)} icon="💰" variant="success" />
-        <HeroCard title="Pending Amount" value={formatCurrency(data.counts.pendingRevenue || 0)} icon="⏳" variant="warning" />
-        <HeroCard title="Total Expenses" value={formatCurrency(data.counts.totalExpenses || 0)} icon="💸" variant="danger" />
+      {/* Hero Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <HeroCard
+          title="Total Revenue"
+          value={formatCurrency(data.counts.revenue)}
+          icon="💰"
+          iconBg="bg-emerald-50"
+          iconColor="text-emerald-600"
+          valueColor="text-emerald-700"
+        />
+        <HeroCard
+          title="Pending Amount"
+          value={formatCurrency(data.counts.pendingRevenue || 0)}
+          icon="⏳"
+          iconBg="bg-amber-50"
+          iconColor="text-amber-600"
+          valueColor="text-amber-700"
+        />
+        <HeroCard
+          title="Total Expenses"
+          value={formatCurrency(data.counts.totalExpenses || 0)}
+          icon="💸"
+          iconBg="bg-rose-50"
+          iconColor="text-rose-600"
+          valueColor="text-rose-700"
+        />
       </div>
 
-      {/* ── Net Profit Banner ── */}
+      {/* Net Profit Banner */}
       <div
-        style={{
-          background: netProfit >= 0
-            ? "linear-gradient(135deg, rgba(16,185,129,0.06), rgba(52,211,153,0.04))"
-            : "linear-gradient(135deg, rgba(239,68,68,0.06), rgba(248,113,113,0.04))",
-          border: `1px solid ${netProfit >= 0 ? "rgba(16,185,129,0.2)" : "rgba(239,68,68,0.2)"}`,
-          borderRadius: "14px",
-          padding: "1.125rem 1.5rem",
-          marginBottom: "1rem",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "1rem",
-        }}
+        className={`p-3.5 sm:p-4 rounded-[20px] border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 ${
+          netProfit >= 0
+            ? "bg-emerald-50/50 border-emerald-200"
+            : "bg-rose-50/50 border-rose-200"
+        }`}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="flex items-center gap-3">
           <div
-            className={`icon-box ${netProfit >= 0 ? "icon-box-success" : "icon-box-danger"}`}
-            style={{ width: 48, height: 48, borderRadius: "12px", fontSize: "1.25rem" }}
+            className={`w-10 h-10 rounded-[12px] flex items-center justify-center text-[18px] shrink-0 ${
+              netProfit >= 0 ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+            }`}
           >
             🏦
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.125rem" }}>
-              <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                Net Profit
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-[9.5px] font-bold text-gray-500 uppercase tracking-wider">
+                Net Operating Margin
               </span>
-              <span className={`badge ${netProfit >= 0 ? "badge-success" : "badge-danger"}`}>
+              <span
+                className={`inline-flex px-2 py-0.2 rounded-full text-[9px] font-bold border ${
+                  netProfit >= 0
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : "bg-rose-100 text-rose-800 border-rose-300"
+                }`}
+              >
                 {netProfit >= 0 ? "PROFIT" : "LOSS"}
               </span>
             </div>
             <h3
-              style={{
-                fontSize: "1.75rem", fontWeight: 900, margin: 0,
-                fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.04em",
-                color: netProfit >= 0 ? "#065F46" : "#991B1B",
-              }}
+              className={`text-[20px] font-black tracking-tight leading-none ${
+                netProfit >= 0 ? "text-emerald-800" : "text-rose-800"
+              }`}
             >
               {formatCurrency(Math.abs(netProfit))}
             </h3>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "1.5rem", background: "rgba(255,255,255,0.7)", borderRadius: "10px", padding: "0.75rem 1.25rem", border: "1px solid rgba(226,232,240,0.8)" }}>
-          <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Revenue</p>
-            <p style={{ fontWeight: 700, color: "#059669", margin: "0.125rem 0 0", fontSize: "0.95rem" }}>{formatCurrency(data.counts.revenue)}</p>
+        <div className="flex items-center gap-4 bg-white/80 rounded-[12px] px-3.5 py-2 border border-gray-200/70 self-stretch sm:self-auto justify-between sm:justify-end">
+          <div className="text-right">
+            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Revenue</p>
+            <p className="font-bold text-emerald-600 text-[12px] leading-tight">{formatCurrency(data.counts.revenue)}</p>
           </div>
-          <div style={{ width: "1px", background: "#E2E8F0" }} />
-          <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: "0.68rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Expenses</p>
-            <p style={{ fontWeight: 700, color: "#DC2626", margin: "0.125rem 0 0", fontSize: "0.95rem" }}>{formatCurrency(data.counts.totalExpenses || 0)}</p>
+          <div className="w-[1px] h-6 bg-gray-200" />
+          <div className="text-right">
+            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Expenses</p>
+            <p className="font-bold text-rose-600 text-[12px] leading-tight">{formatCurrency(data.counts.totalExpenses || 0)}</p>
           </div>
         </div>
       </div>
 
-      {/* ── Compact Stats Strip (6 columns) ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1.25rem" }}>
-        <CompactStat title="Total Leads"   value={data.counts.leads}                      icon="👥" iconClass="icon-box-primary" />
-        <CompactStat title="Services"      value={data.counts.services}                    icon="⚡" iconClass="icon-box-purple" />
-        <CompactStat title="Invoices"      value={data.counts.invoices || 0}               icon="🧾" iconClass="icon-box-teal" />
-        <CompactStat title="Users"         value={data.counts.users || 0}                  icon="👤" iconClass="icon-box-pink" />
-        <CompactStat title="Conversion"    value={`${data.counts.conversionRate || 0}%`}   icon="📈" iconClass="icon-box-indigo" />
-        <CompactStat title="Pending Tasks" value={data.counts.pendingActivities}           icon="📅" iconClass="icon-box-orange" />
+      {/* Compact Stats Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <CompactStat title="Total Leads" value={data.counts.leads} icon="👥" iconBg="bg-blue-50" iconColor="text-blue-600" />
+        <CompactStat title="Services" value={data.counts.services} icon="⚡" iconBg="bg-purple-50" iconColor="text-purple-600" />
+        <CompactStat title="Invoices" value={data.counts.invoices || 0} icon="🧾" iconBg="bg-teal-50" iconColor="text-teal-600" />
+        <CompactStat title="Users" value={data.counts.users || 0} icon="👤" iconBg="bg-rose-50" iconColor="text-rose-600" />
+        <CompactStat title="Conversion" value={`${data.counts.conversionRate || 0}%`} icon="📈" iconBg="bg-orange-50" iconColor="text-[var(--primary)]" />
+        <CompactStat title="Pending Tasks" value={data.counts.pendingActivities} icon="📅" iconBg="bg-amber-50" iconColor="text-amber-600" />
       </div>
 
-      {/* ── Financial Chart ── */}
-      <div style={{ marginBottom: "1.25rem" }}>
-        <ChartCard
-          title="Financial Overview"
-          action={
-            <select
-              value={revenueInterval}
-              onChange={(e) => setRevenueInterval(e.target.value)}
-              style={{
-                background: "#F8FAFC", border: "1px solid #E2E8F0", color: "#475569",
-                fontSize: "0.78rem", fontWeight: 600, borderRadius: "8px", padding: "0.35rem 0.75rem",
-                cursor: "pointer", outline: "none",
-              }}
-            >
-              <option value="daily">Daily</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-          }
-        >
-          <div style={{ height: "300px" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={data.charts.financialTrend || []} margin={{ top: 8, right: 8, left: 0, bottom: 20 }}>
-                <defs>
-                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10B981" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity={0.5} />
-                  </linearGradient>
-                  <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#EF4444" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#EF4444" stopOpacity={0.5} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis
-                  dataKey="_id"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: "#94A3B8", fontFamily: "'Inter', sans-serif" }}
-                  tickFormatter={(value) => {
-                    if (revenueInterval === "yearly") return value;
-                    const date = new Date(value);
-                    return revenueInterval === "daily"
-                      ? date.toLocaleDateString("default", { day: "numeric", month: "short" })
-                      : date.toLocaleDateString("default", { month: "short", year: "2-digit" });
-                  }}
-                  interval={revenueInterval === "daily" ? 2 : 0}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: "#94A3B8", fontFamily: "'Inter', sans-serif" }}
-                  tickFormatter={(v) => new Intl.NumberFormat("en-IN", { notation: "compact", compactDisplay: "short" }).format(v)}
-                />
-                <Tooltip
-                  content={<CustomTooltip formatFn={formatCurrency} />}
-                  labelFormatter={(v) => {
-                    if (revenueInterval === "yearly") return v;
-                    return new Date(v).toLocaleDateString("default", { day: "numeric", month: "long", year: "numeric" });
-                  }}
-                />
-                <Bar dataKey="totalRevenue"  name="Revenue"  fill="url(#revGrad)" radius={[5,5,0,0]} barSize={18} />
-                <Bar dataKey="totalExpenses" name="Expenses" fill="url(#expGrad)" radius={[5,5,0,0]} barSize={18} />
-                <Line type="monotone" dataKey="totalPending" name="Pending" stroke="#F59E0B" strokeWidth={2.5} dot={{ r: 3.5, fill: "#F59E0B", strokeWidth: 2, stroke: "white" }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+      {/* Financial Chart */}
+      <ChartCard
+        title="Financial Overview"
+        action={
+          <select
+            value={revenueInterval}
+            onChange={(e) => setRevenueInterval(e.target.value)}
+            className="h-[28px] px-2.5 border border-gray-200 rounded-[8px] text-[10px] font-semibold bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-900"
+          >
+            <option value="daily">Daily</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        }
+      >
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={data.charts.financialTrend || []} margin={{ top: 8, right: 8, left: -10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+              <XAxis
+                dataKey="_id"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 9.5, fill: "#9CA3AF" }}
+                tickFormatter={(value) => {
+                  if (revenueInterval === "yearly") return value;
+                  const date = new Date(value);
+                  return revenueInterval === "daily"
+                    ? date.toLocaleDateString("default", { day: "numeric", month: "short" })
+                    : date.toLocaleDateString("default", { month: "short", year: "2-digit" });
+                }}
+                interval={revenueInterval === "daily" ? 2 : 0}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 9.5, fill: "#9CA3AF" }}
+                tickFormatter={(v) => new Intl.NumberFormat("en-IN", { notation: "compact", compactDisplay: "short" }).format(v)}
+              />
+              <Tooltip
+                content={<CustomTooltip formatFn={formatCurrency} />}
+                labelFormatter={(v) => {
+                  if (revenueInterval === "yearly") return v;
+                  return new Date(v).toLocaleDateString("default", { day: "numeric", month: "long", year: "numeric" });
+                }}
+              />
+              <Bar dataKey="totalRevenue" name="Revenue" fill="#10B981" radius={[4, 4, 0, 0]} barSize={16} />
+              <Bar dataKey="totalExpenses" name="Expenses" fill="#F43F5E" radius={[4, 4, 0, 0]} barSize={16} />
+              <Line type="monotone" dataKey="totalPending" name="Pending" stroke="#F54900" strokeWidth={2.5} dot={{ r: 3, fill: "#F54900" }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
 
-          {/* Legend */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
-            {[{ label: "Revenue", color: "#10B981" }, { label: "Expenses", color: "#EF4444" }, { label: "Pending", color: "#F59E0B" }].map((l) => (
-              <span key={l.label} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.75rem", color: "#64748B", fontWeight: 500 }}>
-                <span style={{ width: 10, height: 10, borderRadius: "3px", background: l.color, display: "inline-block" }} />
-                {l.label}
-              </span>
-            ))}
-          </div>
-        </ChartCard>
-      </div>
+        <div className="flex justify-center items-center gap-4 mt-2">
+          {[{ label: "Revenue", color: "#10B981" }, { label: "Expenses", color: "#F43F5E" }, { label: "Pending", color: "#F54900" }].map((l) => (
+            <span key={l.label} className="inline-flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
+              <span className="w-2.5 h-2.5 rounded-[3px] inline-block" style={{ background: l.color }} />
+              {l.label}
+            </span>
+          ))}
+        </div>
+      </ChartCard>
 
-      {/* ── Secondary Charts ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginBottom: "1.25rem" }}>
-        {/* Leads by Status */}
-        <ChartCard title="Lead Distribution">
-          <div style={{ height: "240px" }}>
+      {/* Secondary Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Lead Distribution */}
+        <ChartCard title="Lead Stage Distribution">
+          <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data.charts.leadsByStatus}
                   cx="50%" cy="50%"
-                  innerRadius={60} outerRadius={85}
-                  paddingAngle={4}
+                  innerRadius={50} outerRadius={75}
+                  paddingAngle={3}
                   dataKey="count" nameKey="_id"
                 >
                   {data.charts.leadsByStatus.map((entry, index) => (
@@ -382,80 +312,91 @@ const Dashboard = () => {
                 <Tooltip content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   return (
-                    <div style={{ background: "white", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "0.5rem 0.875rem", boxShadow: "0 8px 24px -4px rgba(15,23,42,0.14)", fontSize: "0.8rem" }}>
-                      <p style={{ fontWeight: 700, color: "#0F172A", margin: 0 }}>{payload[0].name}</p>
-                      <p style={{ color: "#64748B", margin: "0.2rem 0 0" }}>Count: <strong style={{ color: payload[0].color }}>{payload[0].value}</strong></p>
+                    <div className="bg-white border border-gray-200 rounded-[10px] p-2 shadow-md text-[11px]">
+                      <p className="font-semibold text-gray-900">{payload[0].name}</p>
+                      <p className="text-gray-500">Count: <strong>{payload[0].value}</strong></p>
                     </div>
                   );
                 }} />
-                <Legend wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px" }} />
+                <Legend wrapperStyle={{ fontSize: "10px", paddingTop: "6px" }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </ChartCard>
 
         {/* Lead Sources */}
-        <ChartCard title="Lead Sources">
-          <div style={{ height: "240px" }}>
+        <ChartCard title="Lead Acquisition Channels">
+          <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data.charts.leadsBySource}
                   cx="50%" cy="50%"
-                  outerRadius={85}
+                  outerRadius={75}
                   dataKey="count" nameKey="_id"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
                 >
                   {data.charts.leadsBySource?.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+                  return (
+                    <div className="bg-white border border-gray-200 rounded-[10px] p-2 shadow-md text-[11px]">
+                      <p className="font-semibold text-gray-900">{payload[0].name}</p>
+                      <p className="text-gray-500">Count: <strong>{payload[0].value}</strong></p>
+                    </div>
+                  );
+                }} />
+                <Legend wrapperStyle={{ fontSize: "10px", paddingTop: "6px" }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </ChartCard>
       </div>
 
-      {/* ── Bottom Grid — Recent Leads & Activities ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem" }}>
-        {/* Recent Leads Table */}
-        <ChartCard title="Recent Leads">
-          <div style={{ overflowY: "auto", maxHeight: "280px" }} className="custom-scrollbar">
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      {/* Bottom Grid: Recent Leads & Activities */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Recent Leads */}
+        <ChartCard title="Recent Inquiries">
+          <div className="overflow-y-auto max-h-64">
+            <table className="w-full text-left border-collapse text-[10.5px]">
               <thead>
-                <tr>
-                  {["Name", "Status", "Source", "Date"].map((h) => (
-                    <th key={h} className="table-header-cell" style={{ padding: "0.5rem 0.75rem", textAlign: "left" }}>{h}</th>
-                  ))}
+                <tr className="border-b border-gray-100 text-[9px] text-gray-400 uppercase tracking-wider font-semibold">
+                  <th className="py-2 px-2.5">Name</th>
+                  <th className="py-2 px-2.5">Status</th>
+                  <th className="py-2 px-2.5">Source</th>
+                  <th className="py-2 px-2.5 text-right">Date</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-50">
                 {data.recentLeads && data.recentLeads.length > 0 ? (
                   data.recentLeads.map((lead) => (
-                    <tr key={lead._id} className="table-row">
-                      <td className="table-body-cell" style={{ fontWeight: 600, fontSize: "0.82rem" }}>{lead.name}</td>
-                      <td className="table-body-cell">
-                        <span className={`badge ${
-                          lead.status === "Won" ? "badge-success"
-                            : lead.status === "New" ? "badge-primary"
-                            : lead.status === "Lost" ? "badge-danger"
-                            : "badge-slate"
+                    <tr key={lead._id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="py-2 px-2.5 font-semibold text-gray-900">{lead.name}</td>
+                      <td className="py-2 px-2.5">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[8.5px] font-bold border ${
+                          lead.status === "Won"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : lead.status === "New"
+                              ? "bg-blue-50 text-blue-700 border-blue-200"
+                              : lead.status === "Lost"
+                                ? "bg-rose-50 text-rose-700 border-rose-200"
+                                : "bg-gray-100 text-gray-700 border-gray-200"
                         }`}>
                           {lead.status}
                         </span>
                       </td>
-                      <td className="table-body-cell" style={{ color: "#64748B", fontSize: "0.8rem" }}>{lead.source}</td>
-                      <td className="table-body-cell" style={{ color: "#94A3B8", fontSize: "0.78rem", whiteSpace: "nowrap" }}>
-                        {new Date(lead.createdAt).toLocaleDateString("default", { day: "numeric", month: "short" })}
+                      <td className="py-2 px-2.5 text-gray-500">{lead.source}</td>
+                      <td className="py-2 px-2.5 text-right text-gray-400 whitespace-nowrap">
+                        {new Date(lead.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "2rem 0", color: "#94A3B8", fontSize: "0.84rem" }}>
-                      No recent leads
+                    <td colSpan="4" className="text-center py-6 text-gray-400 text-[10.5px]">
+                      No recent leads found.
                     </td>
                   </tr>
                 )}
@@ -465,39 +406,39 @@ const Dashboard = () => {
         </ChartCard>
 
         {/* Recent Activity */}
-        <ChartCard title="Recent Activity">
-          <div style={{ overflowY: "auto", maxHeight: "280px", display: "flex", flexDirection: "column", gap: "0.5rem" }} className="custom-scrollbar">
+        <ChartCard title="Recent Client Activities">
+          <div className="overflow-y-auto max-h-64 flex flex-col gap-1.5 divide-y divide-gray-50">
             {data.recentActivities.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "2rem 0", color: "#94A3B8", fontSize: "0.84rem" }}>
-                No recent activities
+              <div className="text-center py-6 text-gray-400 text-[10.5px]">
+                No recent activities recorded.
               </div>
             ) : (
               data.recentActivities.map((activity) => (
                 <div
                   key={activity._id}
-                  style={{
-                    display: "flex", gap: "0.75rem", padding: "0.625rem 0.5rem",
-                    borderRadius: "8px", transition: "background 0.15s",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "#F8FAFC"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  className="flex items-start gap-2.5 py-2 px-1 hover:bg-gray-50/50 rounded-[8px] transition-colors"
                 >
-                  <div style={{
-                    marginTop: "4px", width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                    background: activity.status === "Completed" ? "#10B981"
-                      : activity.status === "Scheduled" ? "#4F46E5"
-                      : "#CBD5E1",
-                  }} />
-                  <div style={{ minWidth: 0 }}>
-                    <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "#0F172A", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div
+                    className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
+                      activity.status === "Completed"
+                        ? "bg-emerald-500"
+                        : activity.status === "Scheduled"
+                          ? "bg-[var(--primary)]"
+                          : "bg-gray-300"
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-semibold text-gray-900 truncate">
                       {activity.title}{" "}
-                      <span style={{ color: "#94A3B8", fontWeight: 400 }}>({activity.activityType})</span>
+                      <span className="text-gray-400 font-normal text-[10px]">({activity.activityType})</span>
                     </p>
-                    <p style={{ fontSize: "0.78rem", color: "#64748B", margin: "0.2rem 0 0", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                      {activity.description || "No details provided"}
-                    </p>
-                    <p style={{ fontSize: "0.71rem", color: "#CBD5E1", margin: "0.25rem 0 0" }}>
-                      {activity.relatedId?.name || "Unknown"} • {new Date(activity.activityDate).toLocaleDateString()}
+                    {activity.description && (
+                      <p className="text-[10px] text-gray-500 line-clamp-1 mt-0.5">
+                        {activity.description}
+                      </p>
+                    )}
+                    <p className="text-[9.5px] text-gray-400 mt-1">
+                      {activity.relatedId?.name || "Client"} • {new Date(activity.activityDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </p>
                   </div>
                 </div>

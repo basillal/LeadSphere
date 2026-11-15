@@ -1,148 +1,81 @@
 import React from "react";
 
 const ContactStats = ({ stats, mobileMode = false }) => {
-  const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-1.5 sm:p-2 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all hover:border-gray-300">
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        <div className={`${iconBg} ${iconColor} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>{icon}</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[9px] sm:text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-0.5 truncate">{title}</p>
-          <p className="text-xs sm:text-sm font-semibold text-black leading-tight">{value}</p>
-        </div>
-      </div>
-    </div>
-  );
+  const cards = [
+    {
+      title: "Total Contacts",
+      value: stats?.total || 0,
+      iconBg: "bg-[#FFF1EB]",
+      iconColor: "text-[var(--primary)]",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+    },
+    {
+      title: "Clients",
+      value: stats?.clients || 0,
+      iconBg: "bg-[#DCFCE7]",
+      iconColor: "text-[#16A34A]",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      title: "Vendors",
+      value: stats?.vendors || 0,
+      iconBg: "bg-[#EFF6FF]",
+      iconColor: "text-[#2563EB]",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      ),
+    },
+    {
+      title: "Partners",
+      value: stats?.partners || 0,
+      iconBg: "bg-[#FEF3C7]",
+      iconColor: "text-[#D97706]",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-4" : "hidden md:grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6"}>
-      <StatCard
-        title="Total Contacts"
-        value={stats.total || 0}
-        iconBg="bg-purple-100"
-        iconColor="text-purple-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Clients"
-        value={stats.clients || 0}
-        iconBg="bg-blue-100"
-        iconColor="text-blue-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Vendors"
-        value={stats.vendors || 0}
-        iconBg="bg-teal-100"
-        iconColor="text-teal-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Partners"
-        value={stats.partners || 0}
-        iconBg="bg-green-100"
-        iconColor="text-green-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Recent (7d)"
-        value={stats.recentInteractions || 0}
-        iconBg="bg-orange-100"
-        iconColor="text-orange-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Last Interaction"
-        value={
-          stats.lastInteractionDays ? `${stats.lastInteractionDays}d ago` : "-"
-        }
-        iconBg="bg-pink-100"
-        iconColor="text-pink-600"
-        icon={
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
-        }
-      />
+    <div
+      className={
+        mobileMode
+          ? "grid grid-cols-2 gap-2.5 mb-4"
+          : "grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5"
+      }
+    >
+      {cards.map((card, idx) => (
+        <div
+          key={idx}
+          className="bg-white border border-[#F0F0F0] rounded-[20px] p-3.5 sm:p-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-all flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5]">
+              {card.title}
+            </span>
+            <div className={`w-8 h-8 rounded-full ${card.iconBg} ${card.iconColor} flex items-center justify-center flex-shrink-0`}>
+              {card.icon}
+            </div>
+          </div>
+          <div>
+            <div className="text-[18px] sm:text-[20px] font-bold text-[#111827] leading-none">
+              {card.value}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

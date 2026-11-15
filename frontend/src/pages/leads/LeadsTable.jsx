@@ -2,37 +2,35 @@ import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 
 const STATUS_STYLES = {
-  New: "bg-blue-50 text-blue-700 ring-blue-600/20",
-  Pending: "bg-amber-50 text-amber-700 ring-amber-600/20",
-  "In Progress": "bg-indigo-50 text-indigo-700 ring-indigo-600/20",
-  "On Hold": "bg-slate-50 text-slate-700 ring-slate-600/20",
-  Completed: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  Lost: "bg-rose-50 text-rose-700 ring-rose-600/20",
-  default: "bg-gray-50 text-gray-700 ring-gray-600/20",
+  New: "bg-[#F1F5F9] text-[#334155] border border-[#E2E8F0]",
+  Pending: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
+  "In Progress": "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]",
+  "On Hold": "bg-[#FFF7ED] text-[#EA580C] border border-[#FFEDD5]",
+  Completed: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
+  Lost: "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]",
+  default: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
 };
 
 const PRIORITY_STYLES = {
-  High: "bg-rose-50 text-rose-700 ring-rose-600/20",
-  Medium: "bg-amber-50 text-amber-700 ring-amber-600/20",
-  Low: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  default: "bg-gray-50 text-gray-700 ring-gray-600/20",
+  High: "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]",
+  Medium: "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]",
+  Low: "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]",
+  default: "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]",
 };
 
 const BADGE_BASE_CLASSES =
-  "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset";
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-[9.5px] font-semibold";
 
 const getStatusClass = (status, isConverted = false) => {
   if (isConverted) {
-    return `${BADGE_BASE_CLASSES} bg-emerald-50 text-emerald-700 ring-emerald-600/20`;
+    return `${BADGE_BASE_CLASSES} bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]`;
   }
 
-  return `${BADGE_BASE_CLASSES} ${STATUS_STYLES[status] || STATUS_STYLES.default
-    }`;
+  return `${BADGE_BASE_CLASSES} ${STATUS_STYLES[status] || STATUS_STYLES.default}`;
 };
 
 const getPriorityClass = (priority) => {
-  return `${BADGE_BASE_CLASSES} ${PRIORITY_STYLES[priority] || PRIORITY_STYLES.default
-    }`;
+  return `${BADGE_BASE_CLASSES} ${PRIORITY_STYLES[priority] || PRIORITY_STYLES.default}`;
 };
 
 const getInitial = (value) => {
@@ -69,18 +67,18 @@ const LeadsTable = ({
   };
 
   const renderLeadDetails = (row) => (
-    <div className="flex min-w-0 items-center gap-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-sm font-bold text-indigo-600 ring-1 ring-inset ring-indigo-600/10">
+    <div className="flex min-w-0 items-center gap-2.5">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FFF1EB] text-[11px] font-bold text-[var(--primary)]">
         {getInitial(row.name)}
       </div>
 
       <div className="flex min-w-0 flex-col justify-center">
-        <div className="truncate text-sm font-semibold tracking-tight text-gray-900">
+        <div className="truncate text-[11px] font-semibold text-[#111827]">
           {formatText(row.name, "-")}
         </div>
 
-        <div className="mt-0.5 truncate text-xs font-medium text-gray-500">
-          {row.email || "No email"}
+        <div className="truncate text-[9.5px] text-[#9CA3AF]">
+          {row.email || row.phone || "No contact info"}
         </div>
       </div>
     </div>
@@ -88,11 +86,11 @@ const LeadsTable = ({
 
   const renderSource = (row) => {
     if (!row.source) {
-      return <span className="text-sm font-medium text-gray-400">-</span>;
+      return <span className="text-[10px] text-gray-400">-</span>;
     }
 
     return (
-      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+      <span className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-[9.5px] font-medium text-[#475569]">
         {row.source}
       </span>
     );
@@ -227,13 +225,12 @@ const LeadsTable = ({
       ),
       label: "Preview",
       onClick: onPreview,
-      color:
-        "text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600",
+      color: "em-icon-view",
     },
     {
       icon: (
         <svg
-          className="h-4 w-4"
+          className="h-3.5 w-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -242,20 +239,19 @@ const LeadsTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
       ),
       label: "Edit",
       onClick: onEdit,
-      color:
-        "text-gray-400 transition-colors hover:bg-emerald-50 hover:text-emerald-600",
+      color: "em-icon-edit",
     },
     {
       icon: (
         <svg
-          className="h-4 w-4"
+          className="h-3.5 w-3.5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -264,15 +260,14 @@ const LeadsTable = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={1.8}
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
       ),
       label: "Delete",
       onClick: (row) => onDelete?.(row._id),
-      color:
-        "text-gray-400 transition-colors hover:bg-rose-50 hover:text-rose-600",
+      color: "em-icon-delete",
     },
   ];
 

@@ -21,7 +21,7 @@ const Settings = () => {
   };
 
   useEffect(() => {
-    // Categories are now handled by DataContext automatically
+    // Categories are handled by DataContext
   }, [selectedOrganization]);
 
   const handleAdd = () => {
@@ -78,78 +78,86 @@ const Settings = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8">
-      <div className="mb-8">
-        <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Settings</h1>
-        <p className="text-slate-600 mt-1 text-sm md:text-base">Manage your application preferences and configurations.</p>
+    <div className="w-full flex flex-col gap-3">
+      {/* Header */}
+      <div className="px-1 mb-1">
+        <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+          System Settings
+        </h1>
+        <p className="text-[10.5px] text-gray-400 mt-0.5">
+          Manage system configurations, taxonomy classifications, and profile preferences.
+        </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-4 items-start">
         {/* Sidebar Tabs */}
-        <div className="w-full md:w-64 flex-shrink-0">
-          <div className="md:space-y-1 flex md:flex-col gap-2 overflow-x-auto scrollbar-hide pb-1 md:pb-0">
+        <div className="w-full md:w-56 flex-shrink-0">
+          <div className="flex md:flex-col gap-1.5 overflow-x-auto pb-1 md:pb-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`inline-flex md:w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm md:text-base font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-full text-[11px] font-medium transition-all whitespace-nowrap w-full text-left ${
                   activeTab === tab.id
-                    ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
-                    : "text-slate-600 bg-white/80 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-[#FFF1EB] text-[var(--primary)] font-semibold border border-[#FFD8C7] shadow-sm"
+                    : "text-gray-600 bg-white border border-gray-200 hover:bg-gray-50"
                 }`}
               >
-                <span className="text-base">{tab.icon}</span>
-                {tab.label}
+                <span className="text-[12px]">{tab.icon}</span>
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
+        <div className="flex-1 min-w-0 w-full">
+          <div className="em-card p-5 bg-white rounded-[24px] border border-gray-100">
             {activeTab === "categories" && (
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
+              <div>
+                <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
                   <div>
-                    <h2 className="text-base font-semibold text-slate-900">Lead Categories</h2>
-                    <p className="text-sm md:text-base text-slate-600">Classify your leads for better organization.</p>
+                    <h2 className="text-[13px] font-semibold text-gray-900">Lead Categories</h2>
+                    <p className="text-[10.5px] text-gray-400">Classify incoming leads across target business segments.</p>
                   </div>
                   {!isAdding && (
                     <button
                       onClick={handleAdd}
-                      className="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-slate-800 transition-colors"
+                      className="em-add h-[34px] px-3.5 inline-flex items-center gap-1.5 text-[11px]"
                     >
-                      + Add Category
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Add Category</span>
                     </button>
                   )}
                 </div>
 
                 {isAdding && (
-                  <div className="mb-6 p-4 bg-slate-50 rounded-md border-2 border-dashed border-slate-200">
-                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-end gap-3">
+                  <div className="mb-4 p-3.5 bg-gray-50/70 rounded-[16px] border border-dashed border-gray-200">
+                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-end gap-2.5">
                       <div className="flex-1 w-full">
                         <Input
                           label="New Category Name"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="Category name"
+                          placeholder="e.g. Enterprise, Healthcare, Retail..."
                           required
                           autoFocus
                         />
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2">
                         <button
                           type="submit"
-                          className="bg-black text-white px-4 py-2 rounded-lg text-base font-medium h-10 transition-transform active:scale-95"
+                          className="em-add h-[34px] px-4 text-[11px] font-medium"
                         >
                           Add
                         </button>
                         <button
                           type="button"
                           onClick={handleCancel}
-                          className="bg-white border border-slate-200 px-4 py-2 rounded-lg text-base font-medium h-10 hover:bg-slate-100 transition-colors"
+                          className="em-btn-clear h-[34px] px-4 text-[11px] font-medium"
                         >
                           Cancel
                         </button>
@@ -159,65 +167,72 @@ const Settings = () => {
                 )}
 
                 {loading ? (
-                  <div className="py-12 flex justify-center relative min-h-[200px] w-full">
+                  <div className="py-10 flex justify-center relative min-h-[160px] w-full">
                     <Loader local />
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                     {categories.length === 0 && !isAdding ? (
-                      <div className="col-span-full py-12 text-center text-black border-2 border-dashed border-slate-200 rounded-md">
-                        No categories found. Create your first one to get started.
+                      <div className="col-span-full py-10 text-center text-gray-400 border border-dashed border-gray-200 rounded-[16px] text-[11px]">
+                        No categories found. Create your first category to get started.
                       </div>
                     ) : (
                       categories.map((cat) => (
                         <div
                           key={cat._id}
-                          className={`group p-3 bg-white rounded-md border transition-all duration-200 ${
-                            editingId === cat._id ? "border-black shadow-sm ring-1 ring-black" : "border-slate-200 hover:border-gray-300"
-                          } relative overflow-hidden`}
+                          className={`group p-3 bg-white rounded-[14px] border transition-all ${
+                            editingId === cat._id
+                              ? "border-[var(--primary)] shadow-sm"
+                              : "border-gray-100 hover:border-gray-200"
+                          }`}
                         >
                           {editingId === cat._id ? (
-                            <form onSubmit={handleSubmit} className="space-y-3">
+                            <form onSubmit={handleSubmit} className="space-y-2">
                               <input
-                                className="w-full p-2 text-base font-medium border-b border-slate-200 focus:outline-none focus:border-black"
+                                className="w-full h-[32px] px-2.5 text-[11px] font-medium border border-gray-200 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-gray-900"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 autoFocus
                                 required
                               />
-                              <div className="flex justify-end gap-1">
-                                <button type="submit" className="text-base font-medium bg-black text-white px-3 py-1 rounded">Save</button>
-                                <button type="button" onClick={handleCancel} className="text-base font-medium bg-slate-100 px-3 py-1 rounded">Cancel</button>
+                              <div className="flex justify-end gap-1.5">
+                                <button
+                                  type="submit"
+                                  className="em-add h-[28px] px-3 text-[10px]"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleCancel}
+                                  className="em-btn-clear h-[28px] px-2.5 text-[10px]"
+                                >
+                                  Cancel
+                                </button>
                               </div>
-
                             </form>
                           ) : (
-                            <>
-
-                              <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                  <span 
-                                    className="text-base font-medium uppercase tracking-wider text-black"
-                                  >
-                                    {cat.name}
-                                  </span>
-                                </div>
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button
-                                    onClick={() => handleEdit(cat)}
-                                    className="p-1.5 hover:bg-slate-100 rounded text-black hover:text-black transition-colors"
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                  </button>
-                                  <button
-                                    onClick={() => handleDelete(cat._id)}
-                                    className="p-1.5 hover:bg-red-50 rounded text-black hover:text-red-500 transition-colors"
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                  </button>
-                                </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-[11px] font-semibold text-gray-800">
+                                {cat.name}
+                              </span>
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => handleEdit(cat)}
+                                  className="em-icon-btn em-icon-edit"
+                                  title="Edit"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(cat._id)}
+                                  className="em-icon-btn em-icon-delete"
+                                  title="Delete"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                </button>
                               </div>
-                            </>
+                            </div>
                           )}
                         </div>
                       ))
@@ -228,21 +243,21 @@ const Settings = () => {
             )}
 
             {activeTab === "profile" && (
-              <div className="p-6">
-                <SectionHeader title="Profile Information" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                  <div>
-                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Full Name</p>
-                    <p className="text-sm font-medium text-slate-800">{user?.name}</p>
+              <div>
+                <SectionHeader title="Profile Information" subtitle="Your personal LeadSphere account details" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  <div className="p-3 bg-gray-50/70 rounded-[12px] border border-gray-100">
+                    <p className="text-[9.5px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Full Name</p>
+                    <p className="text-[12px] font-semibold text-gray-900">{user?.name || "-"}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Email Address</p>
-                    <p className="text-sm font-medium text-slate-800">{user?.email}</p>
+                  <div className="p-3 bg-gray-50/70 rounded-[12px] border border-gray-100">
+                    <p className="text-[9.5px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email Address</p>
+                    <p className="text-[12px] font-semibold text-gray-900">{user?.email || "-"}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Role</p>
-                    <span className="inline-block px-3 py-1 bg-black text-white text-base font-medium rounded-full">
-                      {user?.role?.roleName}
+                  <div className="p-3 bg-gray-50/70 rounded-[12px] border border-gray-100">
+                    <p className="text-[9.5px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Role</p>
+                    <span className="inline-block px-2.5 py-0.5 bg-[var(--primary)] text-white text-[10px] font-semibold rounded-full mt-0.5">
+                      {user?.role?.roleName || "User"}
                     </span>
                   </div>
                 </div>
@@ -251,8 +266,6 @@ const Settings = () => {
           </div>
         </div>
       </div>
-
-      {/* Inline Management Replaced Modal */}
 
       <Toast
         open={toast.open}
@@ -265,4 +278,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

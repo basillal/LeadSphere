@@ -18,168 +18,160 @@ const PreviewModal = ({ lead, onClose }) => {
   if (!lead) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm font-inter">
+      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <div
-        className="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-white border border-gray-100 rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[85vh] max-h-[85dvh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{lead.name}</h2>
-            <p className="text-sm font-medium text-gray-500 mt-1">
+            <h2 className="text-[14px] font-semibold text-gray-900 m-0">{lead.name}</h2>
+            <p className="text-[10px] text-gray-500 m-0 mt-0.5">
               {lead.organizationName || "No Organization"}
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="w-3.5 h-3.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth="2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4" style={{ scrollbarWidth: "none" }}>
           {/* Status Sections */}
           <div className="flex flex-wrap gap-2">
-            <div className="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full border border-indigo-200">
+            <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#FFF1EB] text-[var(--primary)] border border-[var(--primary)]/20">
               {lead.status}
-            </div>
-            <div className="px-3 py-1 bg-gray-50 text-gray-700 text-xs font-semibold rounded-full border border-gray-200">
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]">
               {lead.priority} Priority
-            </div>
-            <div className="px-3 py-1 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
-              {lead.leadTemperature}
-            </div>
+            </span>
+            {lead.leadTemperature && (
+              <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
+                {lead.leadTemperature}
+              </span>
+            )}
             {lead.category && (
-              <div className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-200">
-                {lead.category.name}
-              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]">
+                {typeof lead.category === "object" ? lead.category.name : lead.category}
+              </span>
             )}
           </div>
 
           {/* Contact Info & Source Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">👤</div>
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Contact Details
-                </h3>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                  <span className="text-gray-500 font-medium">Phone</span>
-                  <span className="text-gray-900 font-semibold">{lead.phone || "-"}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-[#F8FAFC] rounded-[16px] p-4 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#8B92A5] block mb-2">
+                Contact Details
+              </span>
+              <div className="space-y-2 text-[10.5px]">
+                <div className="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                  <span className="text-[#64748B]">Phone</span>
+                  <span className="text-[#111827] font-medium">{lead.phone || "-"}</span>
                 </div>
-                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                  <span className="text-gray-500 font-medium">Email</span>
-                  <span className="text-gray-900 font-semibold">{lead.email || "-"}</span>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                  <span className="text-[#64748B]">Email</span>
+                  <span className="text-[#111827] font-medium">{lead.email || "-"}</span>
                 </div>
-                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                  <span className="text-gray-500 font-medium">Alt Phone</span>
-                  <span className="text-gray-900 font-semibold">{lead.alternatePhone || "-"}</span>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                  <span className="text-[#64748B]">Alt Phone</span>
+                  <span className="text-[#111827] font-medium">{lead.alternatePhone || "-"}</span>
                 </div>
-                <div className="flex justify-between items-center pb-1">
-                  <span className="text-gray-500 font-medium">Website</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#64748B]">Website</span>
                   {lead.website ? (
-                    <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold truncate max-w-[150px]">
+                    <a
+                      href={lead.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--primary)] hover:underline font-medium truncate max-w-[160px]"
+                    >
                       {lead.website}
                     </a>
                   ) : (
-                    <span className="text-gray-900 font-semibold">-</span>
+                    <span className="text-[#111827] font-medium">-</span>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-green-50 text-green-600 rounded-lg">🌍</div>
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Source Info
-                </h3>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                  <span className="text-gray-500 font-medium">Source</span>
-                  <span className="text-gray-900 font-semibold">{lead.source || "-"}</span>
+            <div className="bg-[#F8FAFC] rounded-[16px] p-4 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#8B92A5] block mb-2">
+                Source &amp; Referral
+              </span>
+              <div className="space-y-2 text-[10.5px]">
+                <div className="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                  <span className="text-[#64748B]">Source</span>
+                  <span className="text-[#111827] font-medium">{lead.source || "Direct"}</span>
                 </div>
-                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                  <span className="text-gray-500 font-medium">Campaign</span>
-                  <span className="text-gray-900 font-semibold">{lead.campaignName || "-"}</span>
+                <div className="flex justify-between items-center border-b border-gray-100 pb-1.5">
+                  <span className="text-[#64748B]">Campaign</span>
+                  <span className="text-[#111827] font-medium">{lead.campaignName || "-"}</span>
                 </div>
-                <div className="flex justify-between items-center pb-1">
-                  <span className="text-gray-500 font-medium">Referred By</span>
-                  <span className="text-gray-900 font-semibold">{lead.referredBy || "-"}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#64748B]">Referred By</span>
+                  <span className="text-[#111827] font-medium">{lead.referredBy || "-"}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Requirements */}
+          {/* Business Requirement */}
           {lead.requirement && (
-            <div className="bg-amber-50/50 rounded-xl p-5 border border-amber-100/50">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg">📝</div>
-                <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                  Business Requirement
-                </h3>
-              </div>
-              <p className="text-sm text-amber-900/80 leading-relaxed font-medium whitespace-pre-wrap">
+            <div className="bg-[#FFFBEB] rounded-[16px] p-4 border border-[#FDE68A]">
+              <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#B45309] block mb-1">
+                Business Requirement
+              </span>
+              <p className="text-[10.5px] text-[#92400E] leading-relaxed m-0 whitespace-pre-wrap">
                 {lead.requirement}
               </p>
             </div>
           )}
 
           {/* Deal Stats */}
-          <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100/50 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-blue-100 text-blue-700 rounded-lg">💼</div>
-              <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wider">
-                Deal Details
-              </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="bg-white rounded-[12px] p-3 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-wider text-[#8B92A5] block mb-0.5">Deal Value</span>
+              <p className="font-semibold text-[11px] text-[#111827] m-0">{lead.dealValue || "-"}</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
-                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Deal Value</span>
-                <p className="font-semibold text-sm text-blue-900">{lead.dealValue || "-"}</p>
-              </div>
-              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
-                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Budget</span>
-                <p className="font-semibold text-sm text-blue-900">{lead.budgetRange || "-"}</p>
-              </div>
-              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
-                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Product</span>
-                <p className="font-semibold text-sm text-blue-900">{lead.interestedProduct || "-"}</p>
-              </div>
-              <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-sm">
-                <span className="text-blue-500 block text-xs mb-1 uppercase font-medium">Closure</span>
-                <p className="font-semibold text-sm text-blue-700">
-                  {lead.expectedClosureDate
-                    ? new Date(lead.expectedClosureDate).toLocaleDateString()
-                    : "-"}
-                </p>
-              </div>
+            <div className="bg-white rounded-[12px] p-3 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-wider text-[#8B92A5] block mb-0.5">Budget</span>
+              <p className="font-semibold text-[11px] text-[#111827] m-0">{lead.budgetRange || "-"}</p>
+            </div>
+            <div className="bg-white rounded-[12px] p-3 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-wider text-[#8B92A5] block mb-0.5">Product</span>
+              <p className="font-semibold text-[11px] text-[#111827] m-0">{lead.interestedProduct || "-"}</p>
+            </div>
+            <div className="bg-white rounded-[12px] p-3 border border-[#E2E8F0]">
+              <span className="text-[9px] uppercase tracking-wider text-[#8B92A5] block mb-0.5">Closure</span>
+              <p className="font-semibold text-[11px] text-[#111827] m-0">
+                {lead.expectedClosureDate
+                  ? new Date(lead.expectedClosureDate).toLocaleDateString()
+                  : "-"}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-2xl">
+        <div className="px-6 py-3.5 bg-gray-50/50 border-t border-gray-100 flex justify-end">
           <button
+            type="button"
             onClick={onClose}
-            className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="em-btn-clear"
           >
             Close Preview
           </button>
@@ -414,43 +406,52 @@ const Leads = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-          {view === "list"
-            ? "Leads"
-            : view === "create"
-              ? "Create New Lead"
-              : "Edit Lead"}
-        </h1>
-        <div className="flex gap-2">
-          {view === "list" && (
-            <TimeRangeFilter
-              value={timeRange}
-              onChange={setTimeRange}
-            />
-          )}
-          {view !== "list" && (
-            <button
-              onClick={handleCancelForm}
-              className="p-2 border border-slate-200 rounded-md text-slate-900 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md cursor-pointer"
-              title="Back to List"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+    <div className="w-full font-inter">
+      {/* Header Block & Spacing Hierarchy */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-[13px] font-semibold text-gray-900 m-0">
+              {view === "list"
+                ? "Lead Management"
+                : view === "create"
+                  ? "Create New Lead"
+                  : "Edit Lead Details"}
+            </h1>
+            <p className="text-[10.5px] text-gray-500 m-0 mt-0.5">
+              {view === "list"
+                ? "Track and manage sales opportunities, source channels, and conversions."
+                : "Enter prospect contact information, requirement details, and assigned rep."}
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            {view === "list" ? (
+              <>
+                <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
+                <button
+                  type="button"
+                  onClick={handleShowCreate}
+                  className="em-add"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+                  </svg>
+                  <span>New Lead</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCancelForm}
+                className="em-btn-clear"
               >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-          )}
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" />
+                </svg>
+                <span>Back to List</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

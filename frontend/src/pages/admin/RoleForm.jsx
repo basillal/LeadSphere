@@ -71,14 +71,14 @@ const RoleForm = ({
   };
 
   return (
-    <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
+    <div className="mx-auto bg-white p-4 md:p-6 rounded-[20px] border border-gray-100">
       <form onSubmit={handleSubmit}>
         <SectionHeader
           title="Role Details"
           subtitle="Define role name and access permissions"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
           <Input
             label="Role Name"
             name="roleName"
@@ -99,7 +99,7 @@ const RoleForm = ({
         </div>
 
         {isSuperAdmin && (
-          <div className="flex items-center space-x-2 mb-6">
+          <div className="flex items-center space-x-2 mb-5 py-1">
             <input
               type="checkbox"
               id="accessibleByOrganizationAdmin"
@@ -111,11 +111,11 @@ const RoleForm = ({
                   accessibleByOrganizationAdmin: e.target.checked,
                 }))
               }
-              className="h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
+              className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-0 focus:ring-offset-0 cursor-pointer"
             />
             <label
               htmlFor="accessibleByOrganizationAdmin"
-              className="text-base text-black"
+              className="text-[11px] font-medium text-gray-700 cursor-pointer select-none"
             >
               Allow Organization Admins to access this role (System/Global Roles)
             </label>
@@ -127,7 +127,7 @@ const RoleForm = ({
           subtitle="Select access levels for this role"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {Object.keys(groupedPermissions)
             .filter((key) => isSuperAdmin || key !== "AUDITLOG")
             .map((resource) => {
@@ -140,23 +140,23 @@ const RoleForm = ({
               return (
                 <div
                   key={resource}
-                  className="border border-slate-200 rounded-lg p-4 bg-slate-50"
+                  className="border border-gray-100 rounded-[16px] p-3.5 bg-gray-50/70"
                 >
-                  <div className="flex justify-between items-center mb-3 border-b border-slate-200 pb-2">
-                    <h3 className="font-medium text-black">{resource}</h3>
+                  <div className="flex justify-between items-center mb-2.5 border-b border-gray-200/60 pb-2">
+                    <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider">{resource}</h3>
                     <button
                       type="button"
                       onClick={() => handleResourceToggle(permissionIds)}
-                      className={`text-base font-medium px-2 py-1 rounded transition-colors ${
+                      className={`text-[9.5px] font-semibold px-2 py-0.5 rounded-full transition-colors ${
                         allSelected
-                          ? "bg-black text-white"
-                          : "bg-gray-200 text-black hover:bg-gray-300"
+                          ? "bg-[var(--primary)] text-white shadow-sm"
+                          : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
                       }`}
                     >
                       {allSelected ? "Unselect All" : "Select All"}
                     </button>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {resourcePermissions.map((perm) => (
                       <div
                         key={perm._id}
@@ -167,16 +167,16 @@ const RoleForm = ({
                           id={perm._id}
                           checked={formData.permissions.includes(perm._id)}
                           onChange={() => handlePermissionChange(perm._id)}
-                          className="mt-1 h-4 w-4 text-black rounded border-gray-300 focus:ring-black"
+                          className="mt-0.5 h-3.5 w-3.5 text-[var(--primary)] rounded border-gray-300 focus:ring-0 focus:ring-offset-0 cursor-pointer"
                         />
                         <label
                           htmlFor={perm._id}
-                          className="text-base text-black cursor-pointer select-none"
+                          className="text-[10.5px] text-gray-700 cursor-pointer select-none leading-tight"
                         >
-                          <span className="font-medium text-black block">
+                          <span className="font-semibold text-gray-900 block">
                             {perm.permissionName}
                           </span>
-                          <span className="text-black text-base">
+                          <span className="text-gray-400 text-[9.5px]">
                             {perm.description}
                           </span>
                         </label>
@@ -188,17 +188,17 @@ const RoleForm = ({
             })}
         </div>
 
-        <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-5">
+        <div className="mt-6 flex justify-end items-center gap-2.5 border-t border-gray-100 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="em-btn-clear h-[34px] px-5 text-[11px] font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="em-add h-[34px] px-5 text-[11px] font-medium"
           >
             Save Role
           </button>

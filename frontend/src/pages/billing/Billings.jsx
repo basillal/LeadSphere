@@ -7,7 +7,7 @@ import leadCategoryService from "../../services/leadCategoryService";
 import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
-import ContactForm from "../contacts/ContactForm"; // Import ContactForm
+import ContactForm from "../contacts/ContactForm";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 
 const BillingForm = ({ initialData, onSubmit, onCancel }) => {
@@ -26,24 +26,22 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   });
 
   const [contactSearch, setContactSearch] = useState("");
-  const [showContactModal, setShowContactModal] = useState(false); // State for modal
-  const [isContactFocused, setIsContactFocused] = useState(false); // State for dropdown visibility
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [isContactFocused, setIsContactFocused] = useState(false);
 
   useEffect(() => {
-    // Services are handled globally by DataContext
     const loadData = async () => {
       try {
-        // If editing, populate form
         if (initialData) {
           setFormData({
             ...initialData,
-            contactId: initialData.contact._id || initialData.contact,
+            contactId: initialData.contact?._id || initialData.contact,
             billingDate: initialData.billingDate.split("T")[0],
             dueDate: initialData.dueDate
               ? initialData.dueDate.split("T")[0]
               : "",
-            services: initialData.services.map((s) => ({
-              serviceId: s.serviceId._id || s.serviceId, // handle population
+            services: (initialData.services || []).map((s) => ({
+              serviceId: s.serviceId?._id || s.serviceId,
               serviceName: s.serviceName,
               quantity: s.quantity,
               unitAmount: s.unitAmount,
@@ -51,6 +49,9 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               totalAmount: s.totalAmount,
             })),
           });
+          if (initialData.contact?.name) {
+            setContactSearch(initialData.contact.name);
+          }
         }
       } catch (err) {
         console.error("Error loading form data", err);
@@ -59,20 +60,23 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
     loadData();
   }, [initialData]);
 
-  // Search Contacts
   useEffect(() => {
     const searchContacts = async () => {
-      const res = await contactService.getContacts({
-        search: contactSearch, // Supports Name, Phone, Email, Organization
-        limit: 10,
-      });
-      setContacts(res.data);
+      if (!contactSearch.trim()) return;
+      try {
+        const res = await contactService.getContacts({
+          search: contactSearch,
+          limit: 10,
+        });
+        setContacts(res.data || []);
+      } catch (e) {
+        console.error(e);
+      }
     };
     const timer = setTimeout(searchContacts, 300);
     return () => clearTimeout(timer);
   }, [contactSearch]);
 
-  // Form Logic
   const handleAddItem = () => {
     setFormData((prev) => ({
       ...prev,
@@ -108,23 +112,20 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
       serviceName: service.serviceName,
       unitAmount: service.baseAmount,
       taxAmount: (service.baseAmount * (service.taxPercentage || 0)) / 100,
-      // Recalculate will handle total
     };
     setFormData({ ...formData, services: newServices });
   };
 
-  // Recalculate totals whenever services change
   const totals = formData.services.reduce(
     (acc, item) => {
       const lineTotal = item.quantity * item.unitAmount;
       const itemTax = item.taxAmount * item.quantity;
-
       return {
         subtotal: acc.subtotal + lineTotal,
         tax: acc.tax + itemTax,
       };
     },
-    { subtotal: 0, tax: 0 },
+    { subtotal: 0, tax: 0 }
   );
 
   const grandTotal = totals.subtotal + totals.tax - (formData.discount || 0);
@@ -135,7 +136,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
       ...formData,
       services: formData.services.map((s) => ({
         ...s,
-        taxAmount: s.taxAmount * s.quantity, // Send total tax for line
+        taxAmount: s.taxAmount * s.quantity,
         totalAmount: s.unitAmount * s.quantity + s.taxAmount * s.quantity,
       })),
     };
@@ -143,33 +144,27 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   };
 
   const handleContactSuccess = async (newContact) => {
-    // When a new contact is created:
-    // 1. Close modal
     setShowContactModal(false);
-    // 2. Clear contacts list
     setContacts([]);
-    // 3. Set the form data to use this new contact
-    // Note: newContact might need to be fetched fully? usually create returns it.
-    // Let's assume newContact is the full contact object.
     setFormData((prev) => ({ ...prev, contactId: newContact._id }));
-    setContactSearch(newContact.name); // Set search text to name so it looks selected
+    setContactSearch(newContact.name);
   };
 
   return (
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-md shadow-sm border border-slate-200 p-4 md:p-8 max-w-5xl mx-auto"
+        className="em-card p-4 md:p-6 bg-white rounded-[24px] border border-gray-100 max-w-5xl mx-auto flex flex-col gap-5"
       >
-        <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 md:mb-8 border-b border-slate-200 pb-6 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-4 border-b border-gray-100 gap-3">
           <div>
-            <h2 className="text-sm font-medium text-slate-800">
+            <h2 className="text-[14px] font-semibold text-gray-900 tracking-tight">
               {initialData ? "Edit Invoice" : "Create New Invoice"}
             </h2>
-            <p className="text-black text-base mt-1">
+            <p className="text-[10.5px] text-gray-400 mt-0.5">
               {initialData
-                ? "Modify invoice details below"
-                : "Fill in the details to generate a new invoice"}
+                ? "Modify invoice details, items, or payment terms."
+                : "Fill in client, line items, and billing details to generate an invoice."}
             </p>
           </div>
           {initialData && (
@@ -178,11 +173,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
               onClick={() =>
                 window.open(`/print/invoice/${initialData._id}`, "_blank")
               }
-              className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-gray-300 rounded-lg text-black hover:bg-gray-200 text-base font-medium transition-colors"
+              className="em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5 self-start sm:self-auto"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
+                className="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -194,24 +189,24 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
                 />
               </svg>
-              Print Invoice
+              <span>Print Invoice</span>
             </button>
           )}
         </div>
 
         {/* Client & Date Section */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Left: Client Selection */}
-          <div className="md:col-span-8 bg-slate-50 p-3 md:p-6 rounded-md border border-slate-200">
-            <div className="flex justify-between items-center mb-4">
-              <label className="block text-sm font-medium text-slate-800 uppercase tracking-wide">
-                Bill To (Customer)
+          <div className="md:col-span-8 bg-gray-50/70 p-4 rounded-[16px] border border-gray-100">
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                Bill To (Client) *
               </label>
               {!initialData && (
                 <button
                   type="button"
                   onClick={() => setShowContactModal(true)}
-                  className="text-base text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                  className="text-[10.5px] text-[var(--primary)] hover:underline font-semibold flex items-center gap-1"
                 >
                   + Add New Contact
                 </button>
@@ -220,74 +215,50 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 
             {!initialData ? (
               <div className="relative">
-                <div className="flex gap-2">
-                  <div className="relative flex-grow">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <svg
-                        className="w-4 h-4 text-black"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        ></path>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Search Client by Name or Phone..."
-                      value={contactSearch}
-                      onChange={(e) => setContactSearch(e.target.value)}
-                      onFocus={() => setIsContactFocused(true)}
-                      onBlur={() => setTimeout(() => setIsContactFocused(false), 200)}
-                      className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black transition-all text-base"
-                    />
-                  </div>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search Client by Name or Phone..."
+                    value={contactSearch}
+                    onChange={(e) => setContactSearch(e.target.value)}
+                    onFocus={() => setIsContactFocused(true)}
+                    onBlur={() => setTimeout(() => setIsContactFocused(false), 200)}
+                    className="w-full h-[34px] pl-9 pr-3 text-[11px] font-medium bg-white border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900"
+                  />
                 </div>
 
-                {contacts.length > 0 &&
-                  isContactFocused &&
-                  !formData.contactId && (
-                    <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-sm max-h-60 overflow-y-auto">
-                      {contacts.map((c) => (
-                        <li
-                          key={c._id}
-                          onClick={() => {
-                            setFormData({ ...formData, contactId: c._id });
-                            setContactSearch(c.name);
-                            setContacts([]);
-                          }}
-                          className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-base border-b border-slate-200 last:border-0"
-                        >
-                          <div className="font-medium text-black">
-                            {c.name}
-                          </div>
-                          <div className="text-black text-base">
-                            {c.organizationName ? `${c.organizationName} • ` : ""}{" "}
-                            {c.email || c.phone}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                {formData.contactId && (
-                  <div className="mt-3 flex items-center justify-between bg-green-50 px-4 py-2 rounded-lg border border-green-100">
-                    <span className="text-base text-green-700 font-medium flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+                {contacts.length > 0 && isContactFocused && !formData.contactId && (
+                  <ul className="absolute z-20 w-full bg-white border border-gray-200 mt-1 rounded-[12px] shadow-lg max-h-56 overflow-y-auto divide-y divide-gray-50">
+                    {contacts.map((c) => (
+                      <li
+                        key={c._id}
+                        onClick={() => {
+                          setFormData({ ...formData, contactId: c._id });
+                          setContactSearch(c.name);
+                          setContacts([]);
+                        }}
+                        className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-[11px]"
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        ></path>
+                        <div className="font-semibold text-gray-900">{c.name}</div>
+                        <div className="text-[10px] text-gray-400">
+                          {c.organizationName ? `${c.organizationName} • ` : ""}
+                          {c.email || c.phone}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {formData.contactId && (
+                  <div className="mt-2.5 flex items-center justify-between bg-emerald-50 px-3 py-2 rounded-[10px] border border-emerald-100">
+                    <span className="text-[11px] text-emerald-800 font-medium flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                       Selected: {contactSearch}
                     </span>
@@ -297,7 +268,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                         setFormData({ ...formData, contactId: "" });
                         setContactSearch("");
                       }}
-                      className="text-base text-red-500 hover:text-red-700 font-medium underline"
+                      className="text-[10px] text-rose-600 hover:underline font-semibold"
                     >
                       Change
                     </button>
@@ -305,20 +276,18 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 )}
               </div>
             ) : (
-              <div className="text-black font-medium p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-                <div className="text-base">{initialData.contact.name}</div>
-                <div className="text-base text-black">
-                  {initialData.contact.organizationName}
-                </div>
+              <div className="p-3 bg-white border border-gray-200 rounded-[10px]">
+                <div className="text-[11px] font-semibold text-gray-900">{initialData.contact?.name}</div>
+                <div className="text-[10px] text-gray-400">{initialData.contact?.organizationName}</div>
               </div>
             )}
           </div>
 
           {/* Right: Dates */}
-          <div className="md:col-span-4 space-y-4">
+          <div className="md:col-span-4 space-y-3">
             <div>
-              <label className="block text-sm font-medium text-slate-800 mb-1">
-                Billing Date
+              <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+                Billing Date *
               </label>
               <input
                 type="date"
@@ -326,11 +295,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, billingDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-800 mb-1">
+              <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
                 Due Date
               </label>
               <input
@@ -339,69 +308,53 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, dueDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
               />
             </div>
           </div>
         </div>
 
         {/* Line Items */}
-        <div className="mb-6 md:mb-8 border border-slate-200 rounded-md overflow-hidden">
-          <div className="bg-slate-50 px-4 md:px-6 py-3 border-b border-slate-200 flex justify-between items-center">
-            <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wide">
+        <div className="border border-gray-100 rounded-[16px] overflow-hidden">
+          <div className="bg-gray-50/70 px-4 py-2.5 border-b border-gray-100 flex justify-between items-center">
+            <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
               Line Items
             </h3>
             <button
               type="button"
               onClick={handleAddItem}
-              className="text-base font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              className="text-[10.5px] font-semibold text-[var(--primary)] hover:underline flex items-center gap-1"
             >
               + Add Item
             </button>
           </div>
 
-          <div className="p-0 overflow-x-auto">
+          <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white border-b border-slate-200 text-base text-black uppercase">
-                  <th className="px-6 py-3 font-medium min-w-[200px]">
-                    Service
-                  </th>
-                  <th className="px-4 py-3 font-medium w-24 min-w-[100px]">
-                    Qty
-                  </th>
-                  <th className="px-4 py-3 font-medium w-32 min-w-[120px]">
-                    Price
-                  </th>
-                  <th className="px-4 py-3 font-medium w-32 text-right min-w-[120px]">
-                    Total
-                  </th>
-                  <th className="px-4 py-3 w-16"></th>
+                <tr className="bg-white border-b border-gray-100 text-[9px] text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 font-semibold min-w-[200px]">Service</th>
+                  <th className="px-3 py-2 font-semibold w-24 min-w-[80px]">Qty</th>
+                  <th className="px-3 py-2 font-semibold w-32 min-w-[100px]">Price (₹)</th>
+                  <th className="px-3 py-2 font-semibold w-32 text-right min-w-[100px]">Total (₹)</th>
+                  <th className="px-3 py-2 w-12"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 bg-white">
                 {formData.services.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="5"
-                      className="px-6 py-8 text-center text-black text-base"
-                    >
-                      No items added yet. Click "+ Add Item" to start.
+                    <td colSpan="5" className="px-4 py-6 text-center text-gray-400 text-[11px]">
+                      No items added yet. Click "+ Add Item" to specify invoice line items.
                     </td>
                   </tr>
                 ) : (
                   formData.services.map((item, index) => (
-                    <tr
-                      key={index}
-                      className="group hover:bg-slate-50 transition-colors"
-                    >
-                      <td className="px-6 py-3">
+                    <tr key={index} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-4 py-2.5">
                         <select
                           value={item.serviceId}
-                          onChange={(e) =>
-                            handleServiceChange(index, e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base focus:ring-black focus:border-black"
+                          onChange={(e) => handleServiceChange(index, e.target.value)}
+                          className="w-full h-[32px] px-2.5 border border-[#D1D5DB] rounded-[8px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
                         >
                           <option value="">Select Service</option>
                           {services.map((s) => (
@@ -411,55 +364,44 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                           ))}
                         </select>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-2.5">
                         <input
                           type="number"
                           min="1"
                           value={item.quantity}
                           onChange={(e) => {
                             const newServices = [...formData.services];
-                            newServices[index].quantity =
-                              parseInt(e.target.value) || 1;
+                            newServices[index].quantity = parseInt(e.target.value) || 1;
                             setFormData({ ...formData, services: newServices });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base text-center"
+                          className="w-full h-[32px] px-2 border border-[#D1D5DB] rounded-[8px] text-[11px] font-medium text-center focus:outline-none focus:ring-1 focus:ring-gray-900"
                         />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-2.5">
                         <input
                           type="number"
                           min="0"
                           value={item.unitAmount}
                           onChange={(e) => {
                             const newServices = [...formData.services];
-                            newServices[index].unitAmount =
-                              parseFloat(e.target.value) || 0;
+                            newServices[index].unitAmount = parseFloat(e.target.value) || 0;
                             setFormData({ ...formData, services: newServices });
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base text-right"
+                          className="w-full h-[32px] px-2 border border-[#D1D5DB] rounded-[8px] text-[11px] font-medium text-right focus:outline-none focus:ring-1 focus:ring-gray-900"
                         />
                       </td>
-                      <td className="px-4 py-3 text-right font-medium text-black">
+                      <td className="px-3 py-2.5 text-right font-semibold text-gray-900 text-[11px]">
                         ₹{(item.quantity * item.unitAmount).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-2.5 text-center">
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(index)}
-                          className="text-black hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                          className="em-icon-btn em-icon-delete"
                           title="Remove Item"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clipRule="evenodd"
-                            />
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
                       </td>
@@ -472,11 +414,11 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 border-t border-slate-200 pt-6">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-slate-800 mb-1">
-                Notes
+              <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+                Notes & Terms
               </label>
               <textarea
                 value={formData.notes}
@@ -484,21 +426,21 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   setFormData({ ...formData, notes: e.target.value })
                 }
                 rows="3"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
-                placeholder="Terms and conditions or additional notes..."
-              ></textarea>
+                className="w-full p-2.5 text-[11px] font-medium border border-[#D1D5DB] rounded-[10px] focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"
+                placeholder="Payment instructions, bank details, or terms..."
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  Status
+                <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+                  Payment Status
                 </label>
                 <select
                   value={formData.paymentStatus}
                   onChange={(e) =>
                     setFormData({ ...formData, paymentStatus: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
                 >
                   <option value="PENDING">Pending</option>
                   <option value="PAID">Paid</option>
@@ -507,7 +449,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
+                <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
                   Payment Mode
                 </label>
                 <select
@@ -515,7 +457,7 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, paymentMode: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
                 >
                   <option value="BANK">Bank Transfer</option>
                   <option value="CASH">Cash</option>
@@ -527,26 +469,25 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
             </div>
           </div>
 
-          <div className="bg-slate-50 rounded-md p-4 md:p-6 space-y-4 border border-slate-200 shadow-sm">
-            <h3 className="font-medium text-black border-b border-slate-200 pb-2">
+          <div className="bg-gray-50/80 rounded-[16px] p-4 space-y-2.5 border border-gray-100 flex flex-col justify-between">
+            <h3 className="font-semibold text-gray-800 text-[11px] border-b border-gray-200 pb-2">
               Payment Summary
             </h3>
-            <div className="flex justify-between text-base">
-              <span className="text-black">Subtotal</span>
-              <span className="font-medium text-black">
-                ₹{totals.subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between text-base">
-              <span className="text-black">Tax</span>
-              <span className="font-medium text-black">
-                ₹{totals.tax.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between text-base items-center">
-              <span className="text-black">Discount</span>
-              <div className="flex items-center gap-2">
-                <span className="text-black">-</span>
+            <div className="space-y-1.5 text-[11px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Subtotal</span>
+                <span className="font-semibold text-gray-800">
+                  ₹{totals.subtotal.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Tax</span>
+                <span className="font-semibold text-gray-800">
+                  ₹{totals.tax.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500">Discount (₹)</span>
                 <input
                   type="number"
                   min="0"
@@ -557,85 +498,65 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
                       discount: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-24 px-2 py-1 text-right border border-gray-300 rounded bg-white focus:ring-black focus:border-black"
+                  className="w-24 h-[28px] px-2 text-right border border-[#D1D5DB] rounded-[6px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
                 />
               </div>
             </div>
-            <div className="border-t border-gray-300 pt-4 flex justify-between items-center bg-slate-100 -mx-6 -mb-6 p-6 rounded-b-xl mt-4">
-              <span className="text-sm font-medium text-slate-800">
+            <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
+              <span className="text-[12px] font-bold text-gray-900">
                 Grand Total
               </span>
-              <span className="text-sm font-medium text-slate-800 border-b-4 border-yellow-300">
+              <span className="text-[16px] font-bold text-[var(--primary)]">
                 ₹{grandTotal.toFixed(2)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse md:flex-row justify-between gap-3 mt-8 md:mt-10 border-t border-slate-200 pt-6 md:pt-8">
+        <div className="flex justify-end items-center gap-2.5 border-t border-gray-100 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-3 border border-gray-300 rounded-lg text-black hover:bg-slate-50 font-medium transition-colors"
+            className="em-btn-clear h-[34px] px-5 text-[11px] font-medium"
           >
             Cancel
           </button>
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={!formData.contactId || formData.services.length === 0}
-              className="px-8 py-3 bg-black text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md transition-all transform hover:scale-105"
-            >
-              {initialData ? "Update Invoice" : "Generate Invoice"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={!formData.contactId || formData.services.length === 0}
+            className="em-add h-[34px] px-6 text-[11px] font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {initialData ? "Update Invoice" : "Generate Invoice"}
+          </button>
         </div>
       </form>
 
       {/* Add Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden md:overflow-y-auto">
-          <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={() => setShowContactModal(false)}></div>
-          <div className="bg-white w-full max-w-4xl md:rounded-2xl rounded-t-2xl shadow-xl relative flex flex-col h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-              <h2 className="text-xl font-bold text-gray-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setShowContactModal(false)} />
+          <div className="relative bg-white rounded-[24px] shadow-2xl w-full max-w-4xl max-h-[88dvh] overflow-y-auto z-10 border border-gray-100 flex flex-col">
+            <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <h2 className="text-[14px] font-semibold text-gray-900">
                 Add New Contact
               </h2>
               <button
                 onClick={() => setShowContactModal(false)}
-                className="text-black hover:text-black p-2 rounded-full hover:bg-gray-200 transition-colors"
+                className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-700 transition-colors"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="p-4">
               <ContactForm
                 onCancel={() => setShowContactModal(false)}
                 onSubmit={(data) => {
-                  // We need to actually call the API here to create contact
                   contactService
                     .createContact(data)
                     .then((res) => {
                       handleContactSuccess(res.data);
-                      Toast({
-                        message: "Contact created successfully",
-                        severity: "success",
-                      }); // Assuming simple Toast usage, but we might need to trigger the parent's toast
-                      // Actually we are inside Billings, and we don't have direct access to setBillingSnackbar easily without prop drilling.
-                      // Let's just rely on visual feedback (modal close + select) for now, or assume handleContactSuccess works.
                     })
                     .catch((err) => {
                       console.error(err);
@@ -654,7 +575,6 @@ const BillingForm = ({ initialData, onSubmit, onCancel }) => {
 const Billings = () => {
   const { selectedOrganization } = useAuth();
   const [billings, setBillings] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list");
   const [currentBilling, setCurrentBilling] = useState(null);
   const [snackbar, setSnackbar] = useState({
@@ -666,12 +586,11 @@ const Billings = () => {
   const [filters, setFilters] = useState({
     search: "",
     paymentStatus: "",
-    category: "", // Category filter
+    category: "",
   });
   const [timeRange, setTimeRange] = useState("last_30_days");
 
   const fetchBillings = async () => {
-    // setLoading(true);
     try {
       const params = {};
       const range = getDateRange(timeRange);
@@ -682,7 +601,7 @@ const Billings = () => {
       if (filters.paymentStatus) params.paymentStatus = filters.paymentStatus;
       
       const res = await billingService.getBillings(params);
-      setBillings(res.data);
+      setBillings(res.data || []);
     } catch (err) {
       console.error(err);
       setSnackbar({
@@ -690,8 +609,6 @@ const Billings = () => {
         message: "Failed to load invoices",
         severity: "error",
       });
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -730,7 +647,6 @@ const Billings = () => {
           severity: "success",
         });
 
-        // Auto-print newly created invoice
         if (res.data && res.data._id) {
           window.open(`/print/invoice/${res.data._id}`, "_blank");
         }
@@ -768,18 +684,29 @@ const Billings = () => {
   };
 
   const columns = [
-    { id: "invoiceNumber", label: "Invoice #" },
+    { 
+      id: "invoiceNumber", 
+      label: "Invoice #",
+      render: (row) => (
+        <span className="font-semibold text-gray-900 text-[11px]">
+          {row.invoiceNumber || "-"}
+        </span>
+      )
+    },
     {
       id: "contact",
       label: "Client",
-      render: (row) =>
-        row.contact?.name ? row.contact.name.toUpperCase() : "UNKNOWN",
+      render: (row) => (
+        <span className="font-semibold text-gray-800 text-[11px]">
+          {row.contact?.name || "UNKNOWN"}
+        </span>
+      ),
     },
     {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-sm font-medium text-slate-800">
+        <span className="text-[10.5px] text-gray-600">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -787,37 +714,64 @@ const Billings = () => {
     {
       id: "billingDate",
       label: "Date",
-      render: (row) => new Date(row.billingDate).toLocaleDateString(),
+      render: (row) => (
+        <span className="text-[10.5px] text-gray-700">
+          {new Date(row.billingDate).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      ),
     },
     {
       id: "grandTotal",
       label: "Amount",
-      render: (row) => `₹${(row.grandTotal || 0).toFixed(2)}`,
+      render: (row) => (
+        <span className="font-bold text-gray-900 text-[11px]">
+          ₹{(row.grandTotal || 0).toFixed(2)}
+        </span>
+      ),
     },
     {
       id: "paymentStatus",
       label: "Status",
-      render: (row) => (
-        <span
-          className={`px-2 py-1 rounded-full text-base font-medium ${row.paymentStatus === "PAID"
-              ? "bg-green-100 text-green-800"
-              : row.paymentStatus === "PENDING"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
+      render: (row) => {
+        const map = {
+          PAID: "bg-emerald-50 text-emerald-700 border-emerald-200",
+          PENDING: "bg-amber-50 text-amber-700 border-amber-200",
+          PARTIAL: "bg-blue-50 text-blue-700 border-blue-200",
+          OVERDUE: "bg-rose-50 text-rose-700 border-rose-200",
+        };
+        return (
+          <span
+            className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+              map[row.paymentStatus] || "bg-gray-100 text-gray-700 border-gray-200"
             }`}
-        >
-          {row.paymentStatus}
-        </span>
-      ),
+          >
+            {row.paymentStatus}
+          </span>
+        );
+      },
     },
   ];
 
   return (
-    <div className="w-full p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-sm font-medium text-slate-800">Billing & Invoices</h1>
-        <div className="flex items-center gap-2">
-          {view === "list" && (
+    <div className="w-full flex flex-col gap-2">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2 px-1">
+        <div>
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+            {view === "list" ? "Billing & Invoices" : view === "create" ? "Create Invoice" : "Edit Invoice"}
+          </h1>
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            {view === "list"
+              ? "Generate client billing statements, log payments, and print invoices."
+              : "Specify client, line items, taxes, and payment conditions."}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          {view === "list" ? (
             <>
               <TimeRangeFilter
                 value={timeRange}
@@ -825,11 +779,24 @@ const Billings = () => {
               />
               <button
                 onClick={handleCreate}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium whitespace-nowrap"
+                className="em-add h-[34px] px-4 inline-flex items-center gap-1.5 whitespace-nowrap"
               >
-                + Create Invoice
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Create Invoice</span>
               </button>
             </>
+          ) : (
+            <button
+              onClick={() => setView("list")}
+              className="em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 18-6-6 6-6" />
+              </svg>
+              <span>Back to list</span>
+            </button>
           )}
         </div>
       </div>
@@ -842,16 +809,6 @@ const Billings = () => {
             {
               label: "Edit",
               onClick: handleEdit,
-              icon: (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-              ),
             },
             {
               label: "Print",
@@ -860,14 +817,16 @@ const Billings = () => {
               icon: (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+                  className="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
                   <path
-                    fillRule="evenodd"
-                    d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 3V5H7v2h6zm-8 7v-3h10v3H5z"
-                    clipRule="evenodd"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
                   />
                 </svg>
               ),
@@ -875,55 +834,39 @@ const Billings = () => {
             {
               label: "Delete",
               onClick: (row) => handleDelete(row._id),
-              color: "text-red-500 hover:bg-red-50",
-              icon: (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              ),
             },
           ]}
-          // loading={loading}
           toolbar={{
             search: {
               value: filters.search,
-              onChange: (v) => setFilters(prev => ({ ...prev, search: v })),
+              onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
             },
             filters: [
               {
                 value: filters.paymentStatus,
-                onChange: (v) => setFilters(prev => ({ ...prev, paymentStatus: v })),
+                onChange: (v) => setFilters((prev) => ({ ...prev, paymentStatus: v })),
                 options: [
                   { value: "", label: "Payment status" },
                   { value: "PAID", label: "Paid" },
                   { value: "PENDING", label: "Pending" },
                   { value: "PARTIAL", label: "Partial" },
                   { value: "OVERDUE", label: "Overdue" },
-                ]
+                ],
               },
               {
                 value: filters.category,
-                onChange: (v) => setFilters(prev => ({ ...prev, category: v })),
+                onChange: (v) => setFilters((prev) => ({ ...prev, category: v })),
                 options: [
                   { value: "", label: "All Categories" },
-                  ...categories.map(cat => ({ value: cat._id, label: cat.name }))
-                ]
-              }
-            ]
+                  ...categories.map((cat) => ({ value: cat._id, label: cat.name })),
+                ],
+              },
+            ],
           }}
           emptyMessage="No invoices found."
         />
       ) : (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto w-full">
           <BillingForm
             initialData={currentBilling}
             onSubmit={handleSubmit}

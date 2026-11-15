@@ -166,91 +166,35 @@ const ContactDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-6 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-start">
-          <div className="flex items-center gap-4">
+    <div className="w-full font-inter">
+      {/* Header Block & Spacing Hierarchy */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={() => navigate("/contacts")}
-              className="p-2 hover:bg-slate-100 rounded-lg text-black transition-colors"
+              className="em-btn-clear"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" />
               </svg>
+              <span>Back</span>
             </button>
             <div>
-              <h1 className="text-sm font-medium text-slate-800 capitalize">
+              <h1 className="text-[13px] font-semibold text-gray-900 m-0 capitalize">
                 {contact.name}
               </h1>
-              <div className="flex items-center gap-2 mt-1 text-base text-black">
-                {contact.organizationName && (
-                  <span className="flex items-center gap-1 capitalize">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
-                    </svg>
-                    {contact.organizationName}
-                  </span>
-                )}
-                {contact.designation && (
-                  <>
-                    <span>•</span>
-                    <span>{contact.designation}</span>
-                  </>
-                )}
-              </div>
+              <p className="text-[10.5px] text-gray-500 m-0 mt-0.5 flex items-center gap-1.5">
+                {contact.organizationName && <span>{contact.organizationName}</span>}
+                {contact.designation && <span>• {contact.designation}</span>}
+              </p>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-base flex items-center gap-2"
-              onClick={() => {
-                /* Ideally open edit modal or navigate to edit, keeping it simple for now */
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
-              Edit
-            </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="max-w-7xl mx-auto mt-6 md:mt-8 flex items-center gap-2 overflow-x-auto scrollbar-hide px-4 md:px-0 pb-2">
+        <div className="mt-4 flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
           {[
             "overview",
             "lead-info",
@@ -260,14 +204,15 @@ const ContactDetails = () => {
           ].map((tab) => (
             <button
               key={tab}
+              type="button"
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 rounded-full text-sm md:text-base font-semibold capitalize transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
+              className={`inline-flex items-center gap-1.5 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
                 activeTab === tab
-                  ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
-                  : "bg-white/80 text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                  ? "bg-[#111827] text-white shadow-sm"
+                  : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
               }`}
             >
-              {tab.replace("-", " ")}
+              {tab.replace("-", " ").toUpperCase()}
             </button>
           ))}
         </div>

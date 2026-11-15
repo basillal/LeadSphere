@@ -3,8 +3,6 @@ import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { hasPermission, hasRole } from "../auth/permissionUtils";
 import { menuConfig } from "../auth/menuConfig";
-import HomeIcon from "@mui/icons-material/Home";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const Breadcrumbs = () => {
   const location = useLocation();
@@ -48,43 +46,16 @@ const Breadcrumbs = () => {
   const homeAllowed = checkAccess("/");
 
   return (
-    <div
-      className="print:hidden"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.125rem",
-        marginBottom: "0.75rem",
-        flexWrap: "wrap",
-      }}
-    >
-      {/* Home crumb */}
+    <nav className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-1 flex-wrap print:hidden font-inter">
       {homeAllowed ? (
         <Link
           to="/"
-          style={{
-            display: "inline-flex", alignItems: "center", gap: "0.3rem",
-            fontSize: "0.78rem", fontWeight: 500, color: "#64748B",
-            textDecoration: "none", padding: "0.25rem 0.5rem",
-            borderRadius: "6px", transition: "all 0.15s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#F1F5F9";
-            e.currentTarget.style.color = "#0F172A";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#64748B";
-          }}
+          className="text-gray-400 hover:text-gray-900 transition-colors inline-flex items-center gap-1"
         >
-          <HomeIcon style={{ fontSize: 14 }} />
-          Home
+          <span>Home</span>
         </Link>
       ) : (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: "#64748B", padding: "0.25rem 0.5rem" }}>
-          <HomeIcon style={{ fontSize: 14 }} />
-          Home
-        </span>
+        <span className="text-gray-400">Home</span>
       )}
 
       {pathnames.map((value, index) => {
@@ -101,30 +72,15 @@ const Breadcrumbs = () => {
 
         return (
           <React.Fragment key={to}>
-            <ChevronRightIcon style={{ fontSize: 14, color: "#CBD5E1", flexShrink: 0 }} />
+            <span className="text-gray-300">/</span>
             {!isClickable ? (
-              <span style={{
-                fontSize: "0.78rem", fontWeight: 600, color: "#0F172A",
-                padding: "0.25rem 0.5rem",
-              }}>
+              <span className="text-gray-700 font-medium">
                 {displayName}
               </span>
             ) : (
               <Link
                 to={to}
-                style={{
-                  fontSize: "0.78rem", fontWeight: 500, color: "#64748B",
-                  textDecoration: "none", padding: "0.25rem 0.5rem",
-                  borderRadius: "6px", transition: "all 0.15s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#F1F5F9";
-                  e.currentTarget.style.color = "#0F172A";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "#64748B";
-                }}
+                className="text-gray-400 hover:text-gray-900 transition-colors"
               >
                 {displayName}
               </Link>
@@ -132,7 +88,7 @@ const Breadcrumbs = () => {
           </React.Fragment>
         );
       })}
-    </div>
+    </nav>
   );
 };
 

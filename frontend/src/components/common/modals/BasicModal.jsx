@@ -5,10 +5,10 @@ const BasicModal = ({
   isOpen,
   onClose,
   title,
+  subtitle,
   children,
   maxWidth = "max-w-md",
 }) => {
-  // Prevent scrolling on body when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -23,54 +23,59 @@ const BasicModal = ({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm transition-opacity font-inter">
       {/* Backdrop click to close */}
       <div
         className="absolute inset-0"
         onClick={onClose}
         aria-hidden="true"
-      ></div>
+      />
 
       {/* Modal Content */}
       <div
-        className={`relative bg-white rounded-md shadow-md w-full ${maxWidth} flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200`}
+        className={`relative bg-white border border-gray-100 rounded-[24px] shadow-2xl w-full ${maxWidth} flex flex-col max-h-[85vh] max-h-[85dvh] overflow-hidden animate-in fade-in zoom-in-95 duration-200`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-200">
-          <h3 className="text-sm font-medium text-slate-800" id="modal-title">
-            {title}
-          </h3>
+        <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-gray-100 bg-white">
+          <div>
+            <h3 className="text-[14px] font-semibold text-gray-900 m-0" id="modal-title">
+              {title}
+            </h3>
+            {subtitle && (
+              <p className="text-[10px] text-gray-500 m-0 mt-0.5">{subtitle}</p>
+            )}
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-black hover:text-black hover:bg-slate-100 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             aria-label="Close modal"
           >
             <svg
-              className="w-5 h-5"
+              className="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              viewBox="0 0 24 24"
+              strokeWidth="2"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Body (Scrollable) */}
-        <div className="p-4 md:p-6 overflow-y-auto custom-scrollbar">
+        {/* Body */}
+        <div
+          className="flex-1 px-6 py-4 overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           {children}
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 };
 

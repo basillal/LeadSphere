@@ -16,12 +16,12 @@ const RolesTable = ({
       label: "Role Name",
       width: "w-1/4",
       render: (row) => (
-        <div>
-          <div className="font-medium text-black uppercase">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-gray-900 text-[11px]">
             {row.roleName}
-          </div>
+          </span>
           {row.isSystemRole && (
-            <span className="text-base uppercase tracking-wide bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-medium">
+            <span className="text-[8.5px] uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.2 rounded-full font-bold">
               System
             </span>
           )}
@@ -33,7 +33,7 @@ const RolesTable = ({
       label: "Organization",
       width: "w-1/4",
       render: (row) => (
-        <span className="text-sm font-medium text-slate-800">
+        <span className="text-[10.5px] text-gray-600">
           {row.organization?.name || "System/All"}
         </span>
       ),
@@ -42,14 +42,14 @@ const RolesTable = ({
       id: "description",
       label: "Description",
       width: "w-1/2",
-      render: (row) => <span className="text-black">{row.description}</span>,
+      render: (row) => <span className="text-[10.5px] text-gray-500">{row.description || "-"}</span>,
     },
     {
       id: "permissions",
       label: "Permissions",
       width: "w-1/4",
       render: (row) => (
-        <span className="px-2 py-1 bg-slate-100 text-black rounded text-base">
+        <span className="inline-flex px-2 py-0.5 bg-gray-100 text-gray-700 border border-gray-200 rounded-full text-[9.5px] font-semibold">
           {row.permissions?.length || 0} permissions
         </span>
       ),

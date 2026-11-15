@@ -103,16 +103,21 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow-sm border border-slate-200"
+      className="em-card p-4 md:p-6 bg-white rounded-[24px] border border-gray-100 max-w-3xl mx-auto flex flex-col gap-4"
     >
-      <h2 className="text-base font-medium mb-6">
-        {initialData ? "Edit service" : "Create new service"}
-      </h2>
+      <div className="pb-3 border-b border-gray-100">
+        <h2 className="text-[14px] font-semibold text-gray-900 tracking-tight">
+          {initialData ? "Edit Service" : "Create New Service"}
+        </h2>
+        <p className="text-[10.5px] text-gray-400 mt-0.5">
+          Configure service name, pricing, industry specifications, and taxation.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         <div>
-          <label className="block text-sm font-medium text-slate-800 mb-1">
-            Service name *
+          <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+            Service Name *
           </label>
           <input
             type="text"
@@ -120,13 +125,13 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             value={formData.serviceName}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+            className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-800 mb-1">
-            Service code *
+          <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+            Service Code *
           </label>
           <input
             type="text"
@@ -135,19 +140,19 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
             onChange={handleChange}
             required
             placeholder="e.g. SRV-001"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black uppercase"
+            className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900 uppercase"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-800 mb-1">
-            Industry type *
+          <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+            Industry Type *
           </label>
           <select
             name="industryType"
             value={formData.industryType}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+            className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
           >
             {[
               "Education",
@@ -164,10 +169,10 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2.5">
           <div>
-            <label className="block text-sm font-medium text-slate-800 mb-1">
-              Base amount *
+            <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
+              Base Amount (₹) *
             </label>
             <input
               type="number"
@@ -176,11 +181,11 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
               onChange={handleChange}
               required
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+              className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-800 mb-1">
+            <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
               Tax (%)
             </label>
             <input
@@ -189,33 +194,33 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
               value={formData.taxPercentage}
               onChange={handleChange}
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+              className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
             />
           </div>
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-800 mb-1">
+          <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
             Description
           </label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            rows="3"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
-          ></textarea>
+            rows="2"
+            className="w-full p-2.5 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
+          />
         </div>
 
         {/* Dynamic Industry Fields */}
-        <div className="md:col-span-2 border-t border-slate-200 pt-4 mt-2">
-          <h3 className="text-sm font-medium text-slate-800 mb-3 uppercase tracking-wider">
-            {formData.industryType} Specific details
+        <div className="md:col-span-2 border-t border-gray-100 pt-3 mt-1">
+          <h3 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+            {formData.industryType} Specific Details
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {getIndustryFields().map((field) => (
               <div key={field}>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
+                <label className="block text-[10px] font-medium text-[#4A5565] mb-1">
                   {field}
                 </label>
                 <input
@@ -224,46 +229,45 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
                   onChange={(e) =>
                     handleCustomFieldChange(field, e.target.value)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black focus:border-black"
+                  className="w-full h-[34px] px-3 border border-[#D1D5DB] rounded-[10px] text-[11px] font-medium bg-white focus:outline-none focus:ring-1 focus:ring-gray-900"
                 />
               </div>
             ))}
-            {/* Allow adding more? Keeping it simple for now based on requirements */}
           </div>
         </div>
 
-        <div className="md:col-span-2 flex items-center gap-2">
+        <div className="md:col-span-2 flex items-center gap-2 pt-1">
           <input
             type="checkbox"
             id="isActive"
             name="isActive"
             checked={formData.isActive}
             onChange={handleChange}
-            className="rounded border-gray-300 text-black focus:ring-black h-4 w-4"
+            className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-0 focus:ring-offset-0 cursor-pointer"
           />
           <label
             htmlFor="isActive"
-            className="text-sm font-medium text-slate-800"
+            className="text-[11px] font-medium text-gray-700 cursor-pointer select-none"
           >
-            Active service
+            Active Service
           </label>
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 mt-8">
+      <div className="flex justify-end items-center gap-2.5 border-t border-gray-100 pt-4 mt-2">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50"
+          className="em-btn-clear h-[34px] px-5 text-[11px] font-medium"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 disabled:opacity-50"
+          className="em-add h-[34px] px-6 text-[11px] font-medium disabled:opacity-40"
         >
-          {loading ? "Saving..." : "Save service"}
+          {loading ? "Saving..." : "Save Service"}
         </button>
       </div>
     </form>
@@ -273,8 +277,7 @@ const ServiceForm = ({ initialData, onSubmit, onCancel }) => {
 const Services = () => {
   const { selectedOrganization } = useAuth();
   const [services, setServices] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("list"); // list, create, edit
+  const [view, setView] = useState("list");
   const [currentService, setCurrentService] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -283,15 +286,12 @@ const Services = () => {
   });
 
   const fetchServices = async () => {
-    // setLoading(true); // Global loader used
     try {
       const response = await serviceService.getServices();
-      setServices(response.data);
+      setServices(response.data || []);
     } catch (error) {
       console.error("Error fetching services:", error);
       showSnackbar("Failed to fetch services", "error");
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -342,21 +342,21 @@ const Services = () => {
       setView("list");
       fetchServices();
     } catch (error) {
-      const msg = error.response?.data?.message || "Operation failed";
-      showSnackbar(msg, "error");
+      console.error(error);
+      showSnackbar("Operation failed", "error");
     }
   };
 
   const columns = [
     {
       id: "serviceName",
-      label: "Service name",
+      label: "Service Name",
       render: (row) => (
         <div>
-          <div className="font-medium text-black uppercase">
+          <div className="font-semibold text-gray-900 text-[11px]">
             {row.serviceName}
           </div>
-          <div className="text-base font-mono text-black">
+          <div className="text-[10px] font-mono text-gray-400">
             {row.serviceCode}
           </div>
         </div>
@@ -366,7 +366,7 @@ const Services = () => {
       id: "industryType",
       label: "Industry",
       render: (row) => (
-        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-base font-medium whitespace-nowrap">
+        <span className="inline-flex px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-[9.5px] font-semibold whitespace-nowrap">
           {row.industryType}
         </span>
       ),
@@ -375,16 +375,16 @@ const Services = () => {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-sm font-medium text-slate-800">
+        <span className="text-[10.5px] text-gray-600">
           {row.organization?.name || "-"}
         </span>
       ),
     },
     {
       id: "baseAmount",
-      label: "Base amount",
+      label: "Base Amount",
       render: (row) => (
-        <span className="font-medium">
+        <span className="font-semibold text-gray-900 text-[11px]">
           ₹{parseInt(row.baseAmount).toLocaleString()}
         </span>
       ),
@@ -392,14 +392,22 @@ const Services = () => {
     {
       id: "taxPercentage",
       label: "Tax",
-      render: (row) => (row.taxPercentage ? `${row.taxPercentage}%` : "-"),
+      render: (row) => (
+        <span className="text-[10.5px] text-gray-600">
+          {row.taxPercentage ? `${row.taxPercentage}%` : "-"}
+        </span>
+      ),
     },
     {
       id: "isActive",
       label: "Status",
       render: (row) => (
         <span
-          className={`text-base px-2 py-1 rounded-full font-medium ${row.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-black"}`}
+          className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+            row.isActive
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+              : "bg-gray-100 text-gray-700 border-gray-200"
+          }`}
         >
           {row.isActive ? "Active" : "Inactive"}
         </span>
@@ -416,7 +424,7 @@ const Services = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
         >
           <path
             strokeLinecap="round"
@@ -436,7 +444,7 @@ const Services = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
         >
           <path
             strokeLinecap="round"
@@ -447,54 +455,56 @@ const Services = () => {
       ),
       label: "Delete",
       onClick: (row) => handleDelete(row._id),
-      color: "text-red-500 hover:bg-red-50",
     },
   ];
 
   const renderCard = (service, actions) => (
-    <div className="bg-white rounded-md shadow-sm border border-slate-200 hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+    <div className="bg-white rounded-[16px] border border-gray-100 hover:border-gray-200 transition-all flex flex-col p-4">
       {/* Card Header */}
-      <div className="p-5 border-b border-slate-200 flex justify-between items-start">
-        <div>
+      <div className="flex justify-between items-start gap-2 mb-2">
+        <div className="min-w-0">
           <h3
-            className="text-sm font-medium text-slate-800 uppercase truncate pr-2"
+            className="text-[12px] font-semibold text-gray-900 truncate"
             title={service.serviceName}
           >
             {service.serviceName}
           </h3>
-          <p className="text-base font-mono text-black mt-1">
+          <p className="text-[10px] font-mono text-gray-400 mt-0.5">
             {service.serviceCode}
           </p>
         </div>
-        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-base font-medium whitespace-nowrap">
+        <span className="inline-flex px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-[9px] font-semibold whitespace-nowrap shrink-0">
           {service.industryType}
         </span>
       </div>
 
       {/* Card Body */}
-      <div className="p-5 flex-grow">
-        <div className="mb-4">
-          <span className="text-sm font-medium text-slate-800">
+      <div className="flex-grow my-2">
+        <div className="mb-2">
+          <span className="text-[13px] font-bold text-gray-900">
             ₹{parseInt(service.baseAmount).toLocaleString()}
           </span>
-          <span className="text-black text-base ml-1">+ Tax</span>
+          <span className="text-gray-400 text-[10px] ml-1">+ Tax</span>
         </div>
 
         {service.description && (
-          <p className="text-black text-base line-clamp-3 mb-4">
+          <p className="text-gray-600 text-[10.5px] line-clamp-2 mb-2">
             {service.description}
           </p>
         )}
 
-        {/* Tags or Extra Info */}
-        <div className="flex flex-wrap gap-2 mt-auto">
+        <div className="flex flex-wrap gap-1.5 mt-auto">
           <span
-            className={`text-base px-2 py-1 rounded-full font-medium ${service.isActive ? "bg-green-100 text-green-700" : "bg-slate-100 text-black"}`}
+            className={`text-[9px] px-2 py-0.5 rounded-full font-semibold border ${
+              service.isActive
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-gray-100 text-gray-700 border-gray-200"
+            }`}
           >
             {service.isActive ? "Active" : "Inactive"}
           </span>
           {service.taxPercentage > 0 && (
-            <span className="text-base px-2 py-1 bg-slate-100 text-black rounded-full">
+            <span className="text-[9px] px-2 py-0.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full font-medium">
               Tax: {service.taxPercentage}%
             </span>
           )}
@@ -502,21 +512,15 @@ const Services = () => {
       </div>
 
       {/* Card Footer Actions */}
-      <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+      <div className="border-t border-gray-100 pt-2.5 flex justify-end gap-1.5">
         {actions.map((action, idx) => (
           <button
             key={idx}
             onClick={() => action.onClick(service)}
-            className={`text-base font-medium flex items-center gap-1 ${action.color || "text-black hover:text-black"}`}
+            className="em-icon-btn"
+            title={action.label}
           >
             {action.icon}
-            {/* For cards, maybe we want text labels too? Existing design had text. Let's keep icons + text or just text as per existing design? 
-                       Existing used text buttons "Edit" "Delete". 
-                       The actions array uses icons. I'll stick to rendering the action label for consistency with previous card design if preferred, 
-                       but mapping generic actions is better for reusability. 
-                       Let's make it look like the previous card footer buttons. 
-                     */}
-            {action.label}
           </button>
         ))}
       </div>
@@ -524,17 +528,35 @@ const Services = () => {
   );
 
   return (
-    <div className="w-full p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-sm font-medium text-slate-800">
-          Services management
-        </h1>
-        {view === "list" && (
+    <div className="w-full flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-3 mb-2 px-1">
+        <div>
+          <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
+            Services Management
+          </h1>
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            Configure industry-specific product packages, service tiers, and pricing.
+          </p>
+        </div>
+        {view === "list" ? (
           <button
             onClick={handleCreate}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-slate-800 transition-colors font-medium"
+            className="em-add h-[34px] px-4 inline-flex items-center gap-1.5 whitespace-nowrap"
           >
-            + Add service
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Add Service</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setView("list")}
+            className="em-btn-clear h-[34px] px-3.5 inline-flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 18-6-6 6-6" />
+            </svg>
+            <span>Back to list</span>
           </button>
         )}
       </div>
@@ -545,12 +567,11 @@ const Services = () => {
           columns={columns}
           actions={actions}
           renderCard={renderCard}
-          // loading={loading}
           emptyMessage="No services found. Create your first service to get started."
-          pagination={{ enabled: true, rowsPerPage: 12 }} // 12 fits grid nicely
+          pagination={{ enabled: true, pageSize: 12 }}
         />
       ) : (
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto w-full">
           <ServiceForm
             initialData={currentService}
             onSubmit={handleSubmit}

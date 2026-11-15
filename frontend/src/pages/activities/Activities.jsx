@@ -57,45 +57,37 @@ const PreviewModal = ({ activity, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
-      <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm font-inter">
+      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <div
-        className="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-white border border-gray-100 rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[85vh] max-h-[85dvh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
           <div className="flex items-center gap-3">
-            <span className="text-base">
-              {getActivityTypeIcon(activity.activityType)}
-            </span>
             <div>
-              <h2 className="text-sm font-medium text-slate-800">
+              <h2 className="text-[14px] font-semibold text-gray-900 m-0">
                 {activity.title}
               </h2>
-              <p className="text-base text-black">
-                {activity.activityType} • {activity.relatedName} (
-                {activity.relatedTo})
+              <p className="text-[10px] text-gray-500 m-0 mt-0.5">
+                {activity.activityType} • {activity.relatedName} ({activity.relatedTo})
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-gray-200 rounded-full text-black transition-colors"
+            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="w-3.5 h-3.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth="2"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -307,10 +299,11 @@ const PreviewModal = ({ activity, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <div className="px-6 py-3.5 bg-gray-50/50 border-t border-gray-100 flex justify-end">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 text-black rounded-lg hover:bg-slate-100 font-medium"
+            className="em-btn-clear"
           >
             Close Preview
           </button>
@@ -525,80 +518,85 @@ const Activities = () => {
 
   const tabs = [
     { id: "all", label: "All Activities" },
-    { id: "Call", label: "📞 Calls" },
-    { id: "Meeting", label: "🤝 Meetings" },
-    { id: "Email", label: "✉️ Emails" },
-    { id: "Note", label: "📝 Notes" },
+    { id: "Call", label: "Calls" },
+    { id: "Meeting", label: "Meetings" },
+    { id: "Email", label: "Emails" },
+    { id: "Note", label: "Notes" },
   ];
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 px-2 gap-3">
-        <h1 className="text-lg sm:text-base font-medium text-black">
-          {view === "list"
-            ? "Activities"
-            : view === "create"
-              ? "Create New Activity"
-              : "Edit Activity"}
-        </h1>
-        <div className="flex items-center gap-2">
-          {view === "list" && (
-            <TimeRangeFilter
-              value={timeRange}
-              onChange={setTimeRange}
-            />
-          )}
-          {view !== "list" && (
-            <button
-              onClick={handleCancelForm}
-              className="p-2 border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors"
-              title="Back to List"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+    <div className="w-full font-inter">
+      {/* Header Block & Spacing Hierarchy */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-[13px] font-semibold text-gray-900 m-0">
+              {view === "list"
+                ? "Activity Log"
+                : view === "create"
+                  ? "Schedule Activity"
+                  : "Edit Activity Details"}
+            </h1>
+            <p className="text-[10.5px] text-gray-500 m-0 mt-0.5">
+              {view === "list"
+                ? "Track sales calls, team meetings, notes, and task progress across contacts and leads."
+                : "Schedule customer touchpoints, agenda items, and assigned deadlines."}
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            {view === "list" ? (
+              <>
+                <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
+                <button
+                  type="button"
+                  onClick={() => setView("create")}
+                  className="em-add"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+                  </svg>
+                  <span>New Activity</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCancelForm}
+                className="em-btn-clear"
               >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-          )}
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6" />
+                </svg>
+                <span>Back to List</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
+      {view === "list" && (
+        <>
+          <ActivityStats stats={stats} onStatClick={handleStatClick} />
 
-      <>
-        {view === "list" && (
-          <>
-            {/* Stats */}
-            <StatsWrapper title="Activities Overview">
-              <ActivityStats stats={stats} onStatClick={handleStatClick} />
-            </StatsWrapper>
-
-            {/* Tabs */}
-            <div className="mb-4 md:mb-6 -mx-4 md:mx-0 px-4 md:px-0">
-              <div className="flex items-center gap-2 bg-white/85 border border-slate-200 p-2 rounded-md w-full md:w-fit overflow-x-auto scrollbar-hide shadow-sm">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-2.5 md:px-5 md:py-2.5 rounded-full text-sm md:text-base font-semibold transition-all whitespace-nowrap flex-shrink-0 min-w-fit ${
-                      activeTab === tab.id
-                        ? "bg-slate-900 text-white shadow-sm shadow-slate-900/10"
-                        : "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+          {/* Quick Filter Tabs */}
+          <div className="mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+            <div className="flex items-center gap-1.5 min-w-max">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`inline-flex items-center gap-2 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
+                    activeTab === tab.id
+                      ? "bg-[#111827] text-white shadow-sm"
+                      : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
+          </div>
 
             {/* Activities Table */}
             <div className="pb-20">
@@ -629,7 +627,6 @@ const Activities = () => {
             />
           </div>
         )}
-      </>
 
       {/* Preview Modal */}
       <PreviewModal

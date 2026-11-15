@@ -40,20 +40,30 @@ const UserLogs = ({ user, onBack }) => {
             id: "createdAt",
             label: "Date",
             width: "w-1/4",
-            render: (row) => new Date(row.createdAt).toLocaleString(),
+            render: (row) => (
+                <span className="text-[10.5px] text-gray-700">
+                    {new Date(row.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                    })} {new Date(row.createdAt).toLocaleTimeString()}
+                </span>
+            ),
         },
         {
             id: "entity",
             label: "Entity",
             width: "w-1/4",
-            render: (row) => row.entity || "-",
+            render: (row) => <span className="text-[10.5px] font-semibold text-gray-800">{row.entity || "-"}</span>,
         },
         {
             id: "action",
             label: "Action",
             width: "w-1/4",
             render: (row) => (
-                <span className="font-medium text-black">{row.action}</span>
+                <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                    {row.action}
+                </span>
             ),
         },
         {
@@ -61,7 +71,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Details",
             width: "w-1/4",
             render: (row) => (
-                <span className="text-base text-black truncate max-w-xs inline-block" title={row.details}>
+                <span className="text-[10.5px] text-gray-600 truncate max-w-xs inline-block font-mono" title={row.details}>
                     {row.details || "-"}
                 </span>
             ),
@@ -71,7 +81,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Performed By",
             width: "w-1/4",
             render: (row) => (
-                <span className="text-base text-black">
+                <span className="text-[10.5px] text-gray-700 font-medium">
                     {user?.name || "-"}
                 </span>
             ),
@@ -102,13 +112,13 @@ const UserLogs = ({ user, onBack }) => {
     ];
 
     return (
-        <div className="w-full">
-            <div className="flex justify-between items-center mb-6">
+        <div className="w-full flex flex-col gap-2">
+            <div className="flex justify-between items-center mb-2 px-1">
                 <div>
-                    <h2 className="text-sm font-medium text-slate-800">
+                    <h2 className="text-[13px] font-semibold text-gray-900 tracking-tight">
                         Activity Logs: {user?.name}
                     </h2>
-                    <p className="text-base text-black">{user?.email}</p>
+                    <p className="text-[10.5px] text-gray-400 mt-0.5">{user?.email}</p>
                 </div>
             </div>
             <AdvancedTable

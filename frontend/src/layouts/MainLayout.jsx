@@ -69,22 +69,12 @@ const MainLayout = () => {
         style={{
           paddingTop: "60px",
           transition: "all 0.3s ease",
-          background: "#F8FAFC",
+          background: "#F4F7FE",
         }}
       >
-        <div
-          className="page-shell"
-          style={{
-            padding: "1.25rem 1.5rem 2rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-          }}
-        >
+        <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 pt-3 pb-8 font-inter flex flex-col gap-2">
           <Breadcrumbs />
-          <div className="page-card" style={{ padding: "1.25rem 1.5rem" }}>
-            <Outlet />
-          </div>
+          <Outlet />
         </div>
       </main>
     </Box>

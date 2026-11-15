@@ -127,19 +127,27 @@ const Organizations = () => {
   const columns = [
     {
       id: "name",
-      label: "Organization name",
-      render: (row) => <span className="uppercase">{row.name}</span>,
+      label: "Organization Name",
+      render: (row) => <span className="font-semibold text-gray-900 text-[11px]">{row.name}</span>,
     },
-    { id: "plan", label: "Plan" },
+    { 
+      id: "plan", 
+      label: "Plan",
+      render: (row) => (
+        <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+          {row.plan || "Free"}
+        </span>
+      ),
+    },
     {
       id: "owner",
       label: "Owner",
       render: (row) => (
         <div>
-          <div className="font-medium text-black uppercase">
+          <div className="font-semibold text-gray-800 text-[11px]">
             {row.owner?.name || "-"}
           </div>
-          <div className="text-base text-black">{row.owner?.email || "-"}</div>
+          <div className="text-[10px] text-gray-400">{row.owner?.email || "-"}</div>
         </div>
       ),
     },
@@ -152,7 +160,11 @@ const Organizations = () => {
             e.stopPropagation();
             handleStatusToggle(row);
           }}
-          className={`px-2 py-1 rounded-full text-base font-medium cursor-pointer select-none transition-colors ${row.isActive ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"}`}
+          className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border cursor-pointer select-none transition-colors ${
+            row.isActive
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+              : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+          }`}
           title="Click to toggle status"
         >
           {row.isActive ? "Active" : "Inactive"}

@@ -41,7 +41,7 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
+    <div className="mx-auto bg-white p-3 md:p-4 rounded-[20px] border border-gray-100">
       <form onSubmit={handleSubmit}>
         {/* 1. Basic Referrer Information */}
         <SectionHeader
@@ -113,37 +113,37 @@ const ReferrerForm = ({ initialData, onSubmit, onCancel }) => {
 
         {/* 3. Status */}
         <SectionHeader title="3. Referrer Status" />
-        <div className="grid grid-cols-1 gap-4">
-          <div className="flex items-center space-x-2 py-2">
+        <div className="grid grid-cols-1 gap-3">
+          <div className="flex items-center space-x-2 py-1">
             <input
               type="checkbox"
               id="isActive"
               name="isActive"
               checked={formData.isActive}
               onChange={handleChange}
-              className="h-5 w-5 text-black rounded border-gray-300 focus:ring-black"
+              className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-0 focus:ring-offset-0 cursor-pointer"
             />
             <label
               htmlFor="isActive"
-              className="text-sm font-medium text-slate-800"
+              className="text-[11px] font-medium text-gray-700 cursor-pointer select-none"
             >
-              Is active
+              Is Active
             </label>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-5">
+        <div className="mt-6 flex justify-end items-center gap-2.5 border-t border-gray-100 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="em-btn-clear h-[34px] px-5 text-[11px] font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="em-add h-[34px] px-5 text-[11px] font-medium"
           >
             Save Referrer
           </button>

@@ -4,8 +4,6 @@ import followUpService from "../../services/followUpService";
 import FollowUpForm from "./FollowUpForm";
 import FollowUpStats from "./FollowUpStats";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
-import StatsWrapper from "../../components/common/sections/StatsWrapper";
-import Loader from "../../components/common/Loader";
 
 const FollowUps = () => {
   const { selectedOrganization } = useAuth();
@@ -14,7 +12,6 @@ const FollowUps = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [timeRange, setTimeRange] = useState("all_time");
   const [pagination, setPagination] = useState({
     page: 1,
@@ -47,7 +44,6 @@ const FollowUps = () => {
         limit: pagination.limit,
       };
 
-      // Fix: Properly handle tab-based filters
       if (activeTab === "today") {
         params.range = "today";
       } else if (activeTab === "upcoming") {
@@ -57,13 +53,11 @@ const FollowUps = () => {
       } else if (activeTab === "completed") {
         params.status = "Completed";
       }
-      // "all" tab - don't add any filters
 
       const range = getDateRange(timeRange);
       if (range.startDate) params.startDate = range.startDate;
       if (range.endDate) params.endDate = range.endDate;
 
-      // Add organization filter
       if (selectedOrganization) {
         params.organization = selectedOrganization;
       }
@@ -130,6 +124,9 @@ const FollowUps = () => {
       setActionLoading(true);
       try {
         await followUpService.deleteFollowUp(id);
+        if (previewFollowUp?._id === id) {
+          setPreviewFollowUp(null);
+        }
         await fetchFollowUps();
         await fetchStats();
       } catch (error) {
@@ -155,6 +152,9 @@ const FollowUps = () => {
       await followUpService.updateFollowUp(followUp._id, { status: newStatus });
       await fetchFollowUps();
       await fetchStats();
+      if (previewFollowUp?._id === followUp._id) {
+        setPreviewFollowUp((prev) => (prev ? { ...prev, status: newStatus } : null));
+      }
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Failed to update status. Please try again.");
@@ -174,7 +174,7 @@ const FollowUps = () => {
     try {
       await followUpService.updateFollowUp(followUpToUpdate._id, {
         status: "Completed",
-        outcome: outcomeRemark,
+        outcome: outcomeRemark.trim(),
       });
       setIsOutcomeOpen(false);
       setFollowUpToUpdate(null);
@@ -182,7 +182,7 @@ const FollowUps = () => {
       await fetchFollowUps();
       await fetchStats();
     } catch (error) {
-      console.error("Error updating status with outcome:", error);
+      console.error("Error completing follow-up:", error);
       alert("Failed to complete follow-up. Please try again.");
     } finally {
       setActionLoading(false);
@@ -202,22 +202,23 @@ const FollowUps = () => {
         await followUpService.createFollowUp(payload);
       }
       setIsFormOpen(false);
+      setCurrentFollowUp(null);
       await fetchFollowUps();
       await fetchStats();
     } catch (error) {
       console.error("Error saving follow-up:", error);
-      alert("Failed to save follow-up. Please check if Lead field is valid.");
+      alert("Failed to save follow-up. Please check that all required fields are valid.");
     } finally {
       setActionLoading(false);
     }
   };
 
   const tabs = [
-    { id: "all", label: "All Records", count: stats.total || 0, emoji: "📊" },
-    { id: "today", label: "Today's Actions", count: stats.today || 0, emoji: "📅" },
-    { id: "upcoming", label: "Upcoming", count: stats.upcoming || 0, emoji: "⏰" },
-    { id: "missed", label: "Missed/Overdue", count: stats.missed || 0, emoji: "⚠️" },
-    { id: "completed", label: "Completed", count: stats.completed || 0, emoji: "✅" },
+    { id: "all", label: "All Records", count: stats.total || 0 },
+    { id: "today", label: "Today's Actions", count: stats.today || 0 },
+    { id: "upcoming", label: "Upcoming", count: stats.upcoming || 0 },
+    { id: "missed", label: "Missed / Overdue", count: stats.missed || 0 },
+    { id: "completed", label: "Completed", count: stats.completed || 0 },
   ];
 
   const handlePageChange = (newPage) => {
@@ -225,12 +226,12 @@ const FollowUps = () => {
   };
 
   const handleLimitChange = (newLimit) => {
-    setPagination({
+    setPagination((prev) => ({
+      ...prev,
       page: 1,
       limit: newLimit,
-      total: pagination.total,
-      pages: Math.ceil(pagination.total / newLimit),
-    });
+      pages: Math.max(1, Math.ceil(prev.total / newLimit)),
+    }));
   };
 
   const handleTabChange = (tabId) => {
@@ -238,50 +239,11 @@ const FollowUps = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handlePreview = (followUp) => {
-    setPreviewFollowUp(followUp);
-  };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      'Pending': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-      'Completed': 'bg-green-50 text-green-700 border-green-200',
-      'Missed': 'bg-red-50 text-red-700 border-red-200',
-      'Rescheduled': 'bg-blue-50 text-blue-700 border-blue-200'
-    };
-    return colors[status] || 'bg-gray-50 text-gray-700 border-gray-200';
-  };
-
-  const getStatusEmoji = (status) => {
-    const emojis = {
-      'Pending': '⏳',
-      'Completed': '✅',
-      'Missed': '❌',
-      'Rescheduled': '🔄'
-    };
-    return emojis[status] || '📌';
-  };
-
-  const getTypeEmoji = (type) => {
-    const emojis = {
-      'Call': '📞',
-      'Email': '✉️',
-      'Meeting': '👥',
-      'Task': '📋'
-    };
-    return emojis[type] || '📌';
-  };
-
-  // FIX: Proper date formatting
   const formatDate = (dateString) => {
-    if (!dateString) return 'Date not set';
-
+    if (!dateString) return "Date not set";
     try {
       const date = new Date(dateString);
-      // Check if date is valid
-      if (isNaN(date.getTime())) {
-        return 'Invalid date';
-      }
+      if (isNaN(date.getTime())) return "Invalid date";
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -291,55 +253,100 @@ const FollowUps = () => {
       const diffTime = targetDate - today;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      let dayLabel = '';
+      let dayLabel = "";
       if (diffDays < 0) {
         dayLabel = `${Math.abs(diffDays)}d overdue`;
       } else if (diffDays === 0) {
-        dayLabel = 'Today';
+        dayLabel = "Today";
       } else if (diffDays === 1) {
-        dayLabel = 'Tomorrow';
+        dayLabel = "Tomorrow";
       } else {
-        dayLabel = `${diffDays}d`;
+        dayLabel = `${diffDays}d away`;
       }
 
-      // Format time
       const timeStr = date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
       });
 
       return `${dayLabel} at ${timeStr}`;
-    } catch (error) {
-      return 'Invalid date';
+    } catch {
+      return "Invalid date";
     }
   };
 
   const getShortDate = (dateString) => {
-    if (!dateString) return 'No date';
-
+    if (!dateString) return "No date";
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return 'Invalid date';
-      }
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+      if (isNaN(date.getTime())) return "Invalid date";
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
       });
-    } catch (error) {
-      return 'Invalid date';
+    } catch {
+      return "Invalid date";
     }
   };
 
-  // Filter follow-ups
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Completed":
+        return "bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]";
+      case "Pending":
+        return "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]";
+      case "Missed":
+        return "bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]";
+      case "Rescheduled":
+        return "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]";
+      default:
+        return "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]";
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    switch (type) {
+      case "Call":
+        return (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+        );
+      case "Email":
+        return (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        );
+      case "Meeting":
+        return (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        );
+      case "WhatsApp":
+        return (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+        );
+    }
+  };
+
   const filteredFollowUps = followUps.filter((followUp) => {
     const matchesSearch =
       !searchTerm ||
-      (followUp.lead?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (followUp.lead?.phone || '').includes(searchTerm) ||
-      (followUp.lead?.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (followUp.lead?.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (followUp.lead?.phone || "").includes(searchTerm) ||
+      (followUp.lead?.email || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = !statusFilter || followUp.status === statusFilter;
     const matchesType = !typeFilter || followUp.type === typeFilter;
@@ -347,297 +354,460 @@ const FollowUps = () => {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  // Get current tab label for header
-  const currentTab = tabs.find(tab => tab.id === activeTab);
-  const tabLabel = currentTab ? currentTab.label : 'Follow-ups';
-
   return (
-    <div className="w-full max-w-full bg-gray-50 min-h-screen">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="px-4 md:px-6 py-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <span>📋</span>
-                {tabLabel}
-              </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Track and manage your customer interactions
-              </p>
-            </div>
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
-              <button
-                onClick={handleCreate}
-                disabled={actionLoading}
-                className="bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center gap-2 font-medium whitespace-nowrap shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span>➕</span>
-                <span className="hidden sm:inline">New Follow-up</span>
-                <span className="sm:hidden">New</span>
-              </button>
-            </div>
+    <main className="w-full max-w-[1400px] mx-auto relative px-0 sm:px-2 pt-0 pb-6 font-inter">
+      {/* Header Block & Spacing Hierarchy */}
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-[13px] font-semibold text-gray-900 m-0">
+              Follow-up Management
+            </h1>
+            <p className="text-[10.5px] text-gray-500 m-0 mt-0.5">
+              Track and resolve client schedules, communication tasks, and outcome notes.
+            </p>
           </div>
-        </div>
-
-        {/* Quick Stats Tabs */}
-        <div className="px-4 md:px-6 pb-3 overflow-x-auto">
-          <div className="flex gap-2 min-w-max">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap ${isActive
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                >
-                  <span>{tab.emoji}</span>
-                  <span className="text-sm font-medium">{tab.label}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'
-                    }`}>
-                    {tab.count}
-                  </span>
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+            <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
+            <button
+              type="button"
+              onClick={handleCreate}
+              disabled={actionLoading}
+              className="em-add"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+              </svg>
+              <span>New Follow-up</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="px-4 md:px-6 py-4">
-        {/* Stats Overview */}
-        <div className="mb-6">
-          <StatsWrapper title="Overview">
-            <FollowUpStats stats={stats} />
-          </StatsWrapper>
+      {/* Stats Cards Section */}
+      <FollowUpStats stats={stats} />
+
+      {/* Quick Filter Tabs */}
+      <div className="mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+        <div className="flex items-center gap-1.5 min-w-max">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabChange(tab.id)}
+                className={`inline-flex items-center gap-2 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
+                  isActive
+                    ? "bg-[#111827] text-white shadow-sm"
+                    : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span
+                  className={`text-[9px] font-semibold px-1.5 py-0.2 rounded-full ${
+                    isActive
+                      ? "bg-white/20 text-white"
+                      : "bg-[#F1F5F9] text-[#64748B]"
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Page Toolbar */}
+      <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+        {/* Search on left */}
+        <div className="search-bar">
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Search by client name, phone, or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-[34px] pl-9 pr-3 text-[11px] text-gray-900 bg-white border border-gray-200 rounded-full outline-none focus:border-gray-400 placeholder:text-[#9CA3AF]"
+            />
+            <svg
+              className="absolute left-3 top-2.5 w-3.5 h-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" strokeWidth="1.8" />
+              <path d="m21 21-4.3-4.3" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span>🔍</span>
-              </div>
-              <input
-                type="text"
-                placeholder="Search by lead name, phone, or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-gray-50 text-sm transition-all duration-200"
-              />
-            </div>
+        {/* Filters and Actions on right */}
+        <div className="flex items-center gap-2 ml-auto sm:ml-0 flex-wrap">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-[34px] px-3 text-[11px] font-medium text-[#111827] bg-white border border-[#E2E8F0] rounded-full outline-none hover:border-gray-400 transition-colors"
+          >
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Missed">Missed</option>
+            <option value="Rescheduled">Rescheduled</option>
+          </select>
+
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="h-[34px] px-3 text-[11px] font-medium text-[#111827] bg-white border border-[#E2E8F0] rounded-full outline-none hover:border-gray-400 transition-colors"
+          >
+            <option value="">All Types</option>
+            <option value="Call">Call</option>
+            <option value="Email">Email</option>
+            <option value="Meeting">Meeting</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Task">Task</option>
+          </select>
+
+          {(searchTerm || statusFilter || typeFilter) && (
             <button
               type="button"
-              onClick={() => setFiltersOpen((v) => !v)}
-              className="md:hidden px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-between gap-2"
+              onClick={() => {
+                setSearchTerm("");
+                setStatusFilter("");
+                setTypeFilter("");
+              }}
+              className="em-btn-clear"
             >
-              <span>🔽</span>
-              <span>Filters</span>
-              {filtersOpen ? <span>▲</span> : <span>▼</span>}
+              <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Reset</span>
             </button>
-            <div className={`${filtersOpen ? 'flex flex-col' : 'hidden'} md:flex md:flex-row gap-3`}>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-gray-50 text-sm min-w-[140px]"
-              >
-                <option value="">All Statuses</option>
-                <option value="Pending">⏳ Pending</option>
-                <option value="Completed">✅ Completed</option>
-                <option value="Missed">❌ Missed</option>
-                <option value="Rescheduled">🔄 Rescheduled</option>
-              </select>
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-gray-50 text-sm min-w-[140px]"
-              >
-                <option value="">All Types</option>
-                <option value="Call">📞 Call</option>
-                <option value="Email">✉️ Email</option>
-                <option value="Meeting">👥 Meeting</option>
-                <option value="Task">📋 Task</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <p className="text-sm text-gray-500">
-            Showing {filteredFollowUps.length} of {pagination.total} follow-ups
-          </p>
-          {filteredFollowUps.length > 0 && (
-            <span className="text-sm text-gray-400">
-              Page {pagination.page} of {pagination.pages}
-            </span>
           )}
         </div>
+      </div>
 
-        {/* Cards Grid */}
+      {/* Main Table / Card Content */}
+      <div className="em-card">
         {loading ? (
-          <div className="flex items-center justify-center py-20 relative min-h-[200px] w-full">
-            <Loader local />
+          <div className="p-6 space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="sk h-10 w-full rounded-[10px]" />
+            ))}
           </div>
         ) : filteredFollowUps.length === 0 ? (
-          <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
-            <div className="text-6xl mb-4">📭</div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">No follow-ups found</h3>
-            <p className="text-gray-500">
+          <div className="py-14 px-4 flex flex-col items-center justify-center text-center">
+            <div className="w-14 h-14 rounded-full bg-[#E2E8F0]/60 flex items-center justify-center text-[#94A3B8] mb-3.5">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="text-[14px] font-semibold text-[#111827] m-0 mb-1">
+              No follow-ups found
+            </h3>
+            <p className="text-[11px] text-[#64748B] max-w-xs m-0 mb-4">
               {searchTerm || statusFilter || typeFilter
-                ? 'Try adjusting your filters to see more results'
-                : 'Schedule your first follow-up to get started'}
+                ? "Try adjusting your search criteria or resetting filters to find matching records."
+                : "Schedule your first client follow-up to begin tracking interactions."}
             </p>
             {!searchTerm && !statusFilter && !typeFilter && (
-              <button
-                onClick={handleCreate}
-                className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
-              >
-                <span className="mr-2">➕</span>
-                Create Follow-up
+              <button type="button" onClick={handleCreate} className="em-add">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+                </svg>
+                <span>New Follow-up</span>
               </button>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredFollowUps.map((followUp) => {
-              const statusColor = getStatusColor(followUp.status);
-              const statusEmoji = getStatusEmoji(followUp.status);
-              const typeEmoji = getTypeEmoji(followUp.type);
+          <>
+            {/* Desktop Table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                      Lead / Client
+                    </th>
+                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                      Type
+                    </th>
+                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                      Scheduled Time
+                    </th>
+                    <th className="px-5 py-3.5 text-left text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                      Status
+                    </th>
+                    <th className="px-5 py-3.5 text-right text-[9px] font-semibold tracking-[0.08em] uppercase text-[#8B92A5] border-b border-gray-100 bg-white">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredFollowUps.map((item) => {
+                    const leadName = item.lead?.name || "Unassigned Lead";
+                    const initial = leadName.charAt(0).toUpperCase();
 
-              return (
-                <div
-                  key={followUp._id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden"
-                >
+                    return (
+                      <tr
+                        key={item._id}
+                        onClick={() => setPreviewFollowUp(item)}
+                        className="hover:bg-[#FCFCFC] transition-colors cursor-pointer border-t border-gray-100"
+                      >
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                              {initial}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[11px] font-semibold text-[#111827] truncate">
+                                {leadName}
+                              </span>
+                              <span className="text-[9.5px] text-[#8B92A5] truncate">
+                                {item.lead?.company || item.lead?.phone || item.lead?.email || "No contact info"}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-3">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9.5px] font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]">
+                            {getTypeIcon(item.type)}
+                            <span>{item.type || "Call"}</span>
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-3 text-[10.5px] text-[#374151]">
+                          {formatDate(item.scheduledAt)}
+                        </td>
+
+                        <td className="px-5 py-3">
+                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold ${getStatusBadge(item.status)}`}>
+                            {item.status}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setPreviewFollowUp(item)}
+                              className="em-icon-btn em-icon-view"
+                              title="View Details"
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+
+                            {item.status !== "Completed" && (
+                              <button
+                                type="button"
+                                onClick={() => handleStatusChange(item, "Completed")}
+                                className="em-icon-btn text-[#16A34A] hover:bg-[#DCFCE7]"
+                                title="Mark as Completed"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(item)}
+                              className="em-icon-btn em-icon-edit"
+                              title="Edit Follow-up"
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                              </svg>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(item._id)}
+                              className="em-icon-btn em-icon-delete"
+                              title="Delete"
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card-List Transformation */}
+            <div className="block sm:hidden divide-y divide-gray-100">
+              {filteredFollowUps.map((item) => {
+                const leadName = item.lead?.name || "Unassigned Lead";
+                const initial = leadName.charAt(0).toUpperCase();
+
+                return (
                   <div
-                    className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => handlePreview(followUp)}
+                    key={item._id}
+                    onClick={() => setPreviewFollowUp(item)}
+                    className="p-3.5 hover:bg-[#FCFCFC] transition-colors cursor-pointer"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h3 className="text-base font-semibold text-gray-900 truncate">
-                            {followUp.lead?.name || 'Unknown Lead'}
-                          </h3>
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColor}`}>
-                            {statusEmoji} {followUp.status}
-                          </span>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                          {initial}
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <span>{typeEmoji}</span>
-                            <span>{followUp.type || 'N/A'}</span>
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <span>📅</span>
-                            <span>{formatDate(followUp.scheduledAt)}</span>
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-[#111827] m-0">
+                            {leadName}
+                          </h4>
+                          <span className="text-[9.5px] text-[#8B92A5]">
+                            {item.lead?.company || item.lead?.phone || "No contact"}
                           </span>
                         </div>
                       </div>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold ${getStatusBadge(item.status)}`}>
+                        {item.status}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-[#64748B] pt-1">
+                      <span className="flex items-center gap-1">
+                        {getTypeIcon(item.type)}
+                        <span>{item.type}</span>
+                        <span>•</span>
+                        <span>{formatDate(item.scheduledAt)}</span>
+                      </span>
+
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(item)}
+                          className="em-icon-btn em-icon-edit"
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(item._id)}
+                          className="em-icon-btn em-icon-delete"
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
 
-        {/* Pagination */}
-        {pagination.pages > 1 && (
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-xl px-4 py-3 shadow-sm border border-gray-100">
-            <div className="text-sm text-gray-600">
-              Showing {((pagination.page - 1) * pagination.limit) + 1} -{' '}
-              {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
-              results
-            </div>
-            <div className="flex items-center gap-2 flex-wrap justify-center">
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1 || loading}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                ◀ Prev
-              </button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-                  let pageNum;
-                  if (pagination.pages <= 5) {
-                    pageNum = i + 1;
-                  } else if (pagination.page <= 3) {
-                    pageNum = i + 1;
-                  } else if (pagination.page >= pagination.pages - 2) {
-                    pageNum = pagination.pages - 4 + i;
-                  } else {
-                    pageNum = pagination.page - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      disabled={loading}
-                      className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${pagination.page === pageNum
-                          ? 'bg-gray-900 text-white'
-                          : 'hover:bg-gray-100 text-gray-600'
+            {/* Pagination Controls */}
+            {pagination.pages > 1 && (
+              <div className="px-5 py-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FAFAFA]/60">
+                <span className="text-[10px] text-[#64748B]">
+                  Showing {(pagination.page - 1) * pagination.limit + 1}–
+                  {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
+                  {pagination.total} records
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1 || loading}
+                    className="h-[30px] px-2.5 text-[10.5px] font-medium rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: Math.min(5, pagination.pages) }, (_, idx) => {
+                    let pageNum;
+                    if (pagination.pages <= 5) pageNum = idx + 1;
+                    else if (pagination.page <= 3) pageNum = idx + 1;
+                    else if (pagination.page >= pagination.pages - 2)
+                      pageNum = pagination.pages - 4 + idx;
+                    else pageNum = pagination.page - 2 + idx;
+
+                    return (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={loading}
+                        className={`w-[30px] h-[30px] rounded-lg text-[10.5px] font-medium transition-colors ${
+                          pagination.page === pageNum
+                            ? "bg-[#111827] text-white"
+                            : "bg-white border border-[#E2E8F0] text-[#4B5563] hover:bg-[#F8FAFC]"
                         }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === pagination.pages || loading}
+                    className="h-[30px] px-2.5 text-[10.5px] font-medium rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] hover:bg-[#F8FAFC] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+
+                  <select
+                    value={pagination.limit}
+                    onChange={(e) => handleLimitChange(Number(e.target.value))}
+                    disabled={loading}
+                    className="h-[30px] px-2 text-[10.5px] rounded-lg border border-[#E2E8F0] bg-white text-[#4B5563] outline-none ml-2"
+                  >
+                    <option value={10}>10 / page</option>
+                    <option value={25}>25 / page</option>
+                    <option value={50}>50 / page</option>
+                  </select>
+                </div>
               </div>
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.pages || loading}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Next ▶
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Show</span>
-              <select
-                value={pagination.limit}
-                onChange={(e) => handleLimitChange(Number(e.target.value))}
-                disabled={loading}
-                className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Centered Modal for Form */}
+      {/* Modal Dialog: Schedule / Edit Follow-up */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsFormOpen(false)}></div>
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
-              <h2 className="text-xl font-bold text-gray-900">
-                {currentFollowUp ? 'Edit Follow-up' : 'Schedule New Follow-up'}
-              </h2>
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="flex flex-col w-full max-w-[540px] max-h-[85vh] max-h-[85dvh] bg-white border border-gray-100 rounded-[24px] shadow-2xl overflow-hidden">
+            <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-[14px] font-semibold text-gray-900 m-0">
+                  {currentFollowUp ? "Edit Follow-up" : "Schedule New Follow-up"}
+                </h2>
+                <p className="text-[10px] text-gray-500 m-0 mt-0.5">
+                  Plan client communications, agenda items, and assigned deadlines.
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="sr-only">Close modal</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto">
+
+            <div className="flex-1 px-6 py-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
               <FollowUpForm
                 initialData={currentFollowUp}
                 onSubmit={handleFormSubmit}
@@ -649,238 +819,229 @@ const FollowUps = () => {
         </div>
       )}
 
-      {/* Centered Modal for Outcome */}
+      {/* Modal Dialog: Complete Follow-up / Outcome */}
       {isOutcomeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsOutcomeOpen(false)}></div>
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
-              <h2 className="text-xl font-bold text-gray-900">
-                Complete Follow-up
-              </h2>
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="flex flex-col w-full max-w-[480px] max-h-[85vh] max-h-[85dvh] bg-white border border-gray-100 rounded-[24px] shadow-2xl overflow-hidden">
+            <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-[14px] font-semibold text-gray-900 m-0">
+                  Record Outcome
+                </h2>
+                <p className="text-[10px] text-gray-500 m-0 mt-0.5">
+                  Conclude this follow-up by saving results and next-step notes.
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={() => setIsOutcomeOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="sr-only">Close modal</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto">
-              <form onSubmit={handleOutcomeSubmit} className="space-y-4">
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                  <p className="text-sm text-blue-800">
-                    Marking follow-up as complete for{' '}
-                    <span className="font-bold text-blue-900">{followUpToUpdate?.lead?.name}</span>
+
+            <form onSubmit={handleOutcomeSubmit} className="flex-1 flex flex-col justify-between">
+              <div className="p-6 space-y-4 overflow-y-auto">
+                <div className="p-3 bg-[#F8FAFC] rounded-[12px] border border-[#E2E8F0]">
+                  <span className="text-[9.5px] uppercase tracking-[0.08em] font-semibold text-[#8B92A5] block mb-0.5">
+                    Lead Interaction
+                  </span>
+                  <p className="text-[11px] font-semibold text-[#111827] m-0">
+                    {followUpToUpdate?.lead?.name || "Client"}
                   </p>
-                  {followUpToUpdate && (
-                    <div className="mt-2 text-xs text-blue-700 font-medium flex items-center gap-2">
-                      <span className="flex items-center gap-1"><span>📌</span> {followUpToUpdate.type}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><span>📅</span> {getShortDate(followUpToUpdate.scheduledAt)}</span>
-                    </div>
-                  )}
+                  <p className="text-[9.5px] text-[#64748B] m-0 mt-0.5">
+                    {followUpToUpdate?.type} • Scheduled for {getShortDate(followUpToUpdate?.scheduledAt)}
+                  </p>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                    Outcome / Remarks <span className="text-red-500">*</span>
+
+                <div>
+                  <label className="text-[10px] font-medium text-[#4A5565] mb-1 block">
+                    Outcome / Interaction Remarks <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent min-h-[120px] resize-y bg-gray-50 transition-all"
-                    placeholder="What was the result of this interaction?"
                     value={outcomeRemark}
                     onChange={(e) => setOutcomeRemark(e.target.value)}
+                    placeholder="Enter call notes, client decisions, or next scheduled action..."
+                    className="w-full p-2.5 text-[11px] text-[#111827] bg-white border border-[#D1D5DB] rounded-[10px] outline-none min-h-[90px] resize-none"
                   />
                 </div>
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setIsOutcomeOpen(false)}
-                    className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-50 transition-all shadow-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={actionLoading}
-                    className="px-5 py-2.5 bg-indigo-600 text-white font-semibold text-sm rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {actionLoading ? '⏳ Processing...' : '✅ Complete'}
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-gray-100 bg-gray-50/50">
+                <button
+                  type="button"
+                  onClick={() => setIsOutcomeOpen(false)}
+                  disabled={actionLoading}
+                  className="em-btn-clear"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading}
+                  className="em-add"
+                >
+                  {actionLoading ? "Saving..." : "Mark Completed"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
-    </div>
-      
-      {/* Preview Modal */}
+
+      {/* Modal Dialog: Preview Follow-up Details */}
       {previewFollowUp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setPreviewFollowUp(null)}></div>
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <span>📋</span> Follow-up Preview
-              </h2>
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="flex flex-col w-full max-w-[560px] max-h-[85vh] max-h-[85dvh] bg-white border border-gray-100 rounded-[24px] shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-[14px] font-semibold text-gray-900 m-0">
+                  Follow-up Details
+                </h2>
+                <p className="text-[10px] text-gray-500 m-0 mt-0.5">
+                  Detailed inspection of scheduled client interaction.
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={() => setPreviewFollowUp(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
               >
-                <span className="sr-only">Close modal</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            
-            <div className="p-6 overflow-y-auto space-y-6">
-              {/* Lead Details */}
-              {previewFollowUp.lead && (
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm">👤</div>
-                    <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Lead Information
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Name</span>
-                      <p className="font-medium text-gray-900">{previewFollowUp.lead.name || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Phone</span>
-                      <p className="font-medium text-gray-900">{previewFollowUp.lead.phone || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Email</span>
-                      <p className="font-medium text-gray-900 truncate">{previewFollowUp.lead.email || 'N/A'}</p>
-                    </div>
-                    {previewFollowUp.lead.company && (
-                      <div>
-                        <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Company</span>
-                        <p className="font-medium text-gray-900">{previewFollowUp.lead.company}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
 
-              {/* Schedule Details */}
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all hover:shadow-md">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg text-sm">📅</div>
-                  <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    Schedule Details
-                  </p>
+            {/* Body */}
+            <div className="flex-1 px-6 py-4 overflow-y-auto space-y-4" style={{ scrollbarWidth: "none" }}>
+              {/* Lead Card */}
+              <div className="bg-[#F8FAFC] rounded-[16px] p-4 border border-[#E2E8F0]">
+                <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#8B92A5] block mb-2">
+                  Client Information
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-[9.5px] text-[#64748B] block">Client Name</span>
+                    <span className="text-[11px] font-semibold text-[#111827]">
+                      {previewFollowUp.lead?.name || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[9.5px] text-[#64748B] block">Company</span>
+                    <span className="text-[11px] font-semibold text-[#111827]">
+                      {previewFollowUp.lead?.company || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[9.5px] text-[#64748B] block">Phone</span>
+                    <span className="text-[11px] font-semibold text-[#111827]">
+                      {previewFollowUp.lead?.phone || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[9.5px] text-[#64748B] block">Email</span>
+                    <span className="text-[11px] font-semibold text-[#111827] truncate block">
+                      {previewFollowUp.lead?.email || "N/A"}
+                    </span>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              </div>
+
+              {/* Schedule Info */}
+              <div className="bg-white rounded-[16px] p-4 border border-[#E2E8F0]">
+                <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#8B92A5] block mb-2">
+                  Schedule Overview
+                </span>
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Status</span>
-                    <div className="mt-1">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border inline-flex items-center gap-1 ${getStatusColor(previewFollowUp.status)}`}>
-                        {getStatusEmoji(previewFollowUp.status)} {previewFollowUp.status}
-                      </span>
-                    </div>
+                    <span className="text-[9.5px] text-[#64748B] block">Current Status</span>
+                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold mt-1 ${getStatusBadge(previewFollowUp.status)}`}>
+                      {previewFollowUp.status}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Type</span>
-                    <div className="mt-1 font-medium text-gray-900">
-                      <span className="inline-flex items-center gap-1">
-                        {getTypeEmoji(previewFollowUp.type)} {previewFollowUp.type || 'N/A'}
-                      </span>
-                    </div>
+                    <span className="text-[9.5px] text-[#64748B] block">Interaction Type</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9.5px] font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0] mt-1">
+                      {getTypeIcon(previewFollowUp.type)}
+                      <span>{previewFollowUp.type || "Call"}</span>
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Date</span>
-                    <p className="font-medium text-gray-900">{getShortDate(previewFollowUp.scheduledAt)}</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-400 block text-xs mb-1 uppercase tracking-wide">Time</span>
-                    <p className="font-medium text-gray-900">
-                      {previewFollowUp.scheduledAt ?
-                        new Date(previewFollowUp.scheduledAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true
-                        }) : 'N/A'
-                      }
-                    </p>
+                  <div className="col-span-2">
+                    <span className="text-[9.5px] text-[#64748B] block">Scheduled Time</span>
+                    <span className="text-[11px] font-medium text-[#111827]">
+                      {formatDate(previewFollowUp.scheduledAt)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Notes */}
               {previewFollowUp.notes && (
-                <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm">📝</div>
-                    <p className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                      Notes
-                    </p>
-                  </div>
-                  <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">{previewFollowUp.notes}</p>
+                <div className="bg-[#FFFBEB] rounded-[16px] p-4 border border-[#FDE68A]">
+                  <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#B45309] block mb-1">
+                    Agenda &amp; Notes
+                  </span>
+                  <p className="text-[10.5px] text-[#92400E] leading-relaxed m-0 whitespace-pre-wrap">
+                    {previewFollowUp.notes}
+                  </p>
                 </div>
               )}
 
               {/* Outcome */}
               {previewFollowUp.outcome && (
-                <div className="bg-green-50/50 rounded-xl p-4 border border-green-100/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-green-100 text-green-700 rounded-lg text-sm">✅</div>
-                    <p className="text-xs font-bold text-green-900 uppercase tracking-wider">
-                      Outcome
-                    </p>
-                  </div>
-                  <p className="text-sm text-green-800 leading-relaxed whitespace-pre-wrap">{previewFollowUp.outcome}</p>
+                <div className="bg-[#F0FDF4] rounded-[16px] p-4 border border-[#BBF7D0]">
+                  <span className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[#15803D] block mb-1">
+                    Concluded Outcome
+                  </span>
+                  <p className="text-[10.5px] text-[#166534] leading-relaxed m-0 whitespace-pre-wrap">
+                    {previewFollowUp.outcome}
+                  </p>
                 </div>
               )}
             </div>
 
-            {/* Actions Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-3 justify-end rounded-b-2xl">
-              {previewFollowUp.status !== 'Completed' && previewFollowUp.status !== 'Missed' && (
-                <>
-                  <button
-                    onClick={() => handleStatusChange(previewFollowUp, 'Completed')}
-                    disabled={actionLoading}
-                    className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
-                  >
-                    <span>✅</span> Complete
-                  </button>
-                  <button
-                    onClick={() => handleStatusChange(previewFollowUp, 'Rescheduled')}
-                    disabled={actionLoading}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
-                  >
-                    <span>🔄</span> Reschedule
-                  </button>
-                </>
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-gray-100 bg-gray-50/50">
+              {previewFollowUp.status !== "Completed" && (
+                <button
+                  type="button"
+                  onClick={() => handleStatusChange(previewFollowUp, "Completed")}
+                  disabled={actionLoading}
+                  className="em-add"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Complete</span>
+                </button>
               )}
               <button
+                type="button"
                 onClick={() => handleEdit(previewFollowUp)}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+                className="em-btn-clear"
               >
-                <span>✏️</span> Edit
+                Edit
               </button>
               <button
+                type="button"
                 onClick={() => handleDelete(previewFollowUp._id)}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-red-50 text-red-700 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1 disabled:opacity-50 shadow-sm"
+                className="em-btn-clear text-[#DC2626] hover:text-[#DC2626] hover:bg-[#FEE2E2]"
               >
-                <span>🗑️</span> Delete
+                Delete
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

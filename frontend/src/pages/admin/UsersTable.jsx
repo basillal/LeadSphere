@@ -15,8 +15,18 @@ const UsersTable = ({
   const { user } = useAuth();
 
   // Helper for status colors
-  const getStatusColor = (isActive) => {
-    return isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+  const getStatusBadge = (isActive) => {
+    return (
+      <span
+        className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+          isActive
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+            : "bg-rose-50 text-rose-700 border-rose-200"
+        }`}
+      >
+        {isActive ? "Active" : "Inactive"}
+      </span>
+    );
   };
 
   // Column definitions
@@ -26,23 +36,21 @@ const UsersTable = ({
       label: "Name",
       width: "w-1/4",
       render: (row) => (
-        <div>
-          <div className="font-medium text-black uppercase">{row.name}</div>
-        </div>
+        <span className="font-semibold text-gray-900 text-[11px]">{row.name}</span>
       ),
     },
     {
       id: "email",
       label: "Email",
       width: "w-1/4",
-      render: (row) => <span className="text-black">{row.email}</span>,
+      render: (row) => <span className="text-gray-600 text-[10.5px]">{row.email}</span>,
     },
     {
       id: "organization",
       label: "Organization",
       width: "w-1/4",
       render: (row) => (
-        <span className="text-sm font-medium text-slate-800">
+        <span className="text-[10.5px] text-gray-600">
           {row.organization?.name || "-"}
         </span>
       ),
@@ -53,10 +61,11 @@ const UsersTable = ({
       width: "w-1/4",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded text-base font-medium ${row.role?.isSystemRole
-            ? "bg-blue-100 text-blue-800"
-            : "bg-slate-100 text-black"
-            }`}
+          className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+            row.role?.isSystemRole
+              ? "bg-blue-50 text-blue-700 border-blue-200"
+              : "bg-gray-100 text-gray-700 border-gray-200"
+          }`}
         >
           {row.role?.roleName || "No Role"}
         </span>
@@ -66,15 +75,7 @@ const UsersTable = ({
       id: "status",
       label: "Status",
       width: "w-1/4",
-      render: (row) => (
-        <span
-          className={`px-2 py-0.5 rounded-full text-base font-medium ${getStatusColor(
-            row.isActive,
-          )}`}
-        >
-          {row.isActive ? "Active" : "Inactive"}
-        </span>
-      ),
+      render: (row) => getStatusBadge(row.isActive),
     },
   ];
 

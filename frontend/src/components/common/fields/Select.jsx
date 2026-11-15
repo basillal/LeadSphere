@@ -16,31 +16,35 @@ const Select = ({
     <div className="relative">
       <select
         name={name}
-        value={value}
+        value={value ?? ""}
         onChange={onChange}
-        className="w-full px-2 py-1.5 md:px-3 md:py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black appearance-none bg-white transition-colors"
+        className="w-full h-[34px] pl-3 pr-8 text-[11px] font-medium text-[#111827] bg-white border border-[#D1D5DB] rounded-[10px] outline-none appearance-none transition-all cursor-pointer"
         required={required}
         {...props}
       >
-        {/* Ensure a top 'None' option exists so dropdowns default to None when value is empty */}
-        {Array.isArray(options) && !options.some((o) => (typeof o === 'object' ? o.value === '' : o === '')) && (
-          <option value="">None</option>
-        )}
+        {Array.isArray(options) &&
+          !options.some((o) =>
+            typeof o === "object" ? o.value === "" : o === ""
+          ) && <option value="">Select option</option>}
 
-        {options.map((opt) => (
-          <option key={opt.value || opt} value={opt.value || opt}>
-            {opt.label || opt}
+        {options.map((opt, i) => (
+          <option
+            key={typeof opt === "object" ? opt.value || i : opt}
+            value={typeof opt === "object" ? opt.value : opt}
+          >
+            {typeof opt === "object" ? opt.label : opt}
           </option>
         ))}
       </select>
-      {/* Custom Arrow Icon */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#6B7280]">
         <svg
-          className="fill-current h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
+          className="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
         >
-          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </div>
     </div>

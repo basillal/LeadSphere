@@ -155,7 +155,7 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="mx-auto bg-white p-3 md:p-3 pb-20 rounded-lg">
+    <div className="em-card p-5 sm:p-6 bg-white font-inter">
       <form onSubmit={handleSubmit}>
         {/* 1. Basic Lead Information */}
         <SectionHeader
@@ -546,19 +546,19 @@ const LeadForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
 
         {/* Actions */}
-        <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-5">
+        <div className="mt-8 flex justify-end gap-2.5 border-t border-gray-100 pt-5">
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 bg-white border border-gray-300 text-black font-medium rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="em-btn-clear"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors shadow-sm"
+            className="em-add"
           >
-            Save Lead
+            {initialData ? "Update Lead" : "Save Lead"}
           </button>
         </div>
       </form>

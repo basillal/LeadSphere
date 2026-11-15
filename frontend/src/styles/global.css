@@ -18,12 +18,19 @@
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
 
+  /* --- Mentora UI Design Tokens --- */
+  --primary: #F54900;
+  --primary-rgb: 245, 73, 0;
+  --primary-hover: #D93F00;
+  --primary-soft: #FFF1EB;
+  --primary-contrast: #FFFFFF;
+
   /* --- Color Tokens --- */
-  --color-primary: #4F46E5;
-  --color-primary-light: #6366F1;
-  --color-primary-dark: #3730A3;
-  --color-primary-50: #EEF2FF;
-  --color-primary-100: #E0E7FF;
+  --color-primary: #F54900;
+  --color-primary-light: #FF6A26;
+  --color-primary-dark: #D93F00;
+  --color-primary-50: #FFF1EB;
+  --color-primary-100: #FFE2D4;
 
   --color-accent: #06B6D4;
   --color-accent-light: #22D3EE;
@@ -684,4 +691,174 @@ h4 { font-size: 1.125rem; }
   border-radius: 999px;
   background: #CBD5E1;
   margin: 0 auto 0.75rem;
+}
+
+/* ============================================================
+   MENTORA UI DESIGN SYSTEM - STANDARD COMPONENTS & TOKENS
+   ============================================================ */
+
+/* Zero Blue Focus Rings */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06) !important;
+  border-color: #111111 !important;
+}
+
+/* Primary Action Button (Pill) */
+.em-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 18px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: #FFFFFF;
+  background: var(--primary);
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgb(var(--primary-rgb) / 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.em-add:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+.em-add:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Secondary / Outlined Button */
+.em-btn-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 18px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: #374151;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.em-btn-clear:hover:not(:disabled) {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+  color: #111827;
+}
+
+/* Compact Round Icon-Only Buttons */
+.em-icon-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: #6B7280;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.em-icon-tool:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+/* Table Row Actions (Edit, Delete, View) */
+.em-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  color: #9CA3AF;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.em-icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.em-icon-view:hover {
+  color: var(--primary) !important;
+  background: var(--primary-soft) !important;
+}
+.em-icon-edit:hover {
+  color: #1D4ED8 !important;
+  background: #EFF6FF !important;
+}
+.em-icon-delete:hover {
+  color: #DC2626 !important;
+  background: #FEE2E2 !important;
+}
+
+/* Standard Content Card */
+.em-card {
+  background: #FFFFFF;
+  border: 1px solid #F0F0F0;
+  border-radius: 28px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+@media (max-width: 639px) {
+  .em-card {
+    border-radius: 20px;
+  }
+}
+
+/* Search Bar Wrapper */
+.search-bar {
+  width: 100%;
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 340px;
+}
+
+/* Shimmer Skeleton */
+.sk {
+  position: relative;
+  overflow: hidden;
+  background: #EEF0F3;
+  border-radius: 8px;
+}
+.sk::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
 }

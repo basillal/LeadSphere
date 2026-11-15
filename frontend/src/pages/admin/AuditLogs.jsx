@@ -140,36 +140,36 @@ const AuditLogs = () => {
   }, [logs, dateFilter]);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-base md:text-sm font-medium text-slate-800">
+    <div className="w-full flex flex-col gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2 px-1">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-[13px] font-semibold text-gray-900 tracking-tight">
               Audit Logs
             </h1>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-black text-base font-medium">
-              {filteredLogs.length} logs
+            <span className="inline-flex items-center px-2 py-0.2 rounded-full bg-gray-100 text-gray-700 text-[9.5px] font-semibold border border-gray-200">
+              {filteredLogs.length} events
             </span>
           </div>
-          <p className="text-base text-black">
-            Track system activity and security events
+          <p className="text-[10.5px] text-gray-400 mt-0.5">
+            Immutable log of system security events, data manipulations, and user actions.
           </p>
         </div>
         <button
           onClick={fetchLogs}
-          className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 bg-white border border-gray-300 rounded-lg text-black hover:bg-slate-50 transition-colors shadow-sm"
+          className="em-btn-clear h-[34px] w-[34px] p-0 flex items-center justify-center rounded-full"
           title="Refresh logs"
         >
-          <RefreshIcon fontSize="small" />
+          <RefreshIcon sx={{ fontSize: 18 }} />
         </button>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white p-4 md:p-5 rounded-md shadow-sm mb-6 border border-slate-200">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 text-black">
+      <div className="em-card p-4 rounded-[20px] bg-white border border-gray-100 mb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <div className="flex items-center gap-1.5 text-gray-700">
             <svg
-              className="w-5 h-5"
+              className="w-3.5 h-3.5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -181,10 +181,10 @@ const AuditLogs = () => {
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
               />
             </svg>
-            <h3 className="font-medium text-base md:text-base">Filter logs</h3>
+            <h3 className="font-semibold text-[11px] text-gray-900">Filter Event Logs</h3>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {[
               { id: "all", label: "All time" },
               { id: "today", label: "Today" },
@@ -195,10 +195,10 @@ const AuditLogs = () => {
                 key={opt.id}
                 type="button"
                 onClick={() => setDateFilter(opt.id)}
-                className={`px-3 py-1.5 rounded-full text-base md:text-base border transition-colors ${
+                className={`h-[28px] px-3 rounded-full text-[10px] font-semibold border transition-colors ${
                   dateFilter === opt.id
-                    ? "bg-black text-white border-black"
-                    : "bg-white text-black border-gray-300 hover:bg-slate-50"
+                    ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 {opt.label}
@@ -207,7 +207,7 @@ const AuditLogs = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <Input
             label="Action"
             name="action"
@@ -215,7 +215,7 @@ const AuditLogs = () => {
             onChange={(e) =>
               setFilters({ ...filters, action: e.target.value })
             }
-            placeholder="e.g. CREATE"
+            placeholder="e.g. CREATE, UPDATE"
           />
 
           <Input
@@ -225,7 +225,7 @@ const AuditLogs = () => {
             onChange={(e) =>
               setFilters({ ...filters, entity: e.target.value })
             }
-            placeholder="e.g. User"
+            placeholder="e.g. User, Lead"
           />
 
           <Input
@@ -256,16 +256,26 @@ const AuditLogs = () => {
             />
           )}
 
-          <div className="flex items-end">
+          <div className="flex items-center gap-2 pt-1 md:col-span-4 justify-end">
+            <button
+              onClick={() => {
+                setFilters({ action: "", entity: "", userId: "", organizationId: "" });
+                setAppliedFilters({ action: "", entity: "", userId: "", organizationId: "" });
+                setPagination({ ...pagination, page: 1 });
+              }}
+              className="em-btn-clear h-[34px] px-4 text-[11px] font-medium"
+            >
+              Clear
+            </button>
             <button
               onClick={() => {
                 setAppliedFilters(filters);
                 setPagination({ ...pagination, page: 1 });
               }}
-              className="w-full md:w-auto bg-black text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors font-medium flex items-center justify-center gap-2 text-base"
+              className="em-add h-[34px] px-5 text-[11px] font-medium inline-flex items-center gap-1.5"
             >
               <svg
-                className="w-4 h-4"
+                className="w-3.5 h-3.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -277,7 +287,7 @@ const AuditLogs = () => {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              Apply filters
+              <span>Apply Filters</span>
             </button>
           </div>
         </div>
@@ -293,10 +303,14 @@ const AuditLogs = () => {
                   width: "w-1/5",
                   render: (row) => (
                     <div className="flex flex-col">
-                      <span className="text-base font-medium">
-                        {new Date(row.createdAt).toLocaleDateString()}
+                      <span className="text-[11px] font-semibold text-gray-900">
+                        {new Date(row.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </span>
-                      <span className="text-base text-black">
+                      <span className="text-[10px] text-gray-400">
                         {new Date(row.createdAt).toLocaleTimeString()}
                       </span>
                     </div>
@@ -308,10 +322,10 @@ const AuditLogs = () => {
                   width: "w-1/5",
                   render: (row) => (
                     <div className="flex flex-col">
-                      <span className="text-base font-medium">
-                        {row.user?.name ? row.user.name.toUpperCase() : "UNKNOWN"}
+                      <span className="text-[11px] font-semibold text-gray-900">
+                        {row.user?.name || "SYSTEM"}
                       </span>
-                      <span className="text-base text-black">
+                      <span className="text-[10px] text-gray-400">
                         {formatEmailOrIp(row)}
                       </span>
                     </div>
@@ -322,7 +336,7 @@ const AuditLogs = () => {
                   label: "Action",
                   width: "w-1/6",
                   render: (row) => (
-                    <span className="inline-flex px-2 py-0.5 rounded-full text-base font-medium bg-slate-100 text-black">
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
                       {row.action}
                     </span>
                   ),
@@ -331,17 +345,24 @@ const AuditLogs = () => {
                   id: "entity",
                   label: "Entity",
                   width: "w-1/6",
-                  render: (row) => row.entity || "-",
+                  render: (row) => (
+                    <span className="text-[10.5px] text-gray-700 font-medium">
+                      {row.entity || "-"}
+                    </span>
+                  ),
                 },
                 {
                   id: "organization",
                   label: "Organization",
                   width: "w-1/6",
-                  render: (row) =>
-                    row.organization?.name ||
-                    (row.organization
-                      ? "Organization ID: " + row.organization
-                      : "Global/System"),
+                  render: (row) => (
+                    <span className="text-[10.5px] text-gray-500">
+                      {row.organization?.name ||
+                        (row.organization
+                          ? "Org ID: " + row.organization
+                          : "Global/System")}
+                    </span>
+                  ),
                 },
                 {
                   id: "details",
@@ -349,7 +370,7 @@ const AuditLogs = () => {
                   width: "w-1/3",
                   render: (row) => (
                     <span
-                      className="text-base text-black truncate max-w-xs block"
+                      className="text-[10.5px] text-gray-600 truncate max-w-xs block font-mono"
                       title={row.details}
                     >
                       {formatDetails(row.details)}
