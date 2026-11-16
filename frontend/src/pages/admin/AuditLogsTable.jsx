@@ -9,6 +9,7 @@ import {
   Paper,
   Chip,
 } from "@mui/material";
+import { formatDate, formatTime } from "../../utils/dateUtils";
 
 const getActionColor = (action) => {
   switch (action) {
@@ -80,10 +81,10 @@ const AuditLogsTable = ({ rows }) => {
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="text-base font-medium">
-                      {new Date(row.createdAt).toLocaleDateString()}
+                      {formatDate(row.createdAt)}
                     </span>
                     <span className="text-base text-black">
-                      {new Date(row.createdAt).toLocaleTimeString()}
+                      {formatTime(row.createdAt)}
                     </span>
                   </div>
                 </TableCell>

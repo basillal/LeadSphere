@@ -7,6 +7,7 @@ import followUpService from "../../services/followUpService";
 import activityService from "../../services/activityService";
 import billingService from "../../services/billingService";
 import Toast from "../../components/common/utils/Toast";
+import { formatDate, formatDateTime } from "../../utils/dateUtils";
 
 const ContactDetails = () => {
   const { id } = useParams();
@@ -124,17 +125,6 @@ const ContactDetails = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const getTagColor = (tag) => {
     const colors = {
@@ -437,7 +427,7 @@ const ContactDetails = () => {
                     <p
                       className={`font-medium ${new Date(contact.nextFollowUpDate) < new Date() ? "text-red-600" : "text-black"}`}
                     >
-                      {formatDate(contact.nextFollowUpDate)}
+                      {formatDateTime(contact.nextFollowUpDate)}
                     </p>
                   </div>
                 </div>
@@ -773,7 +763,7 @@ const ContactDetails = () => {
                         </span>
                       </div>
                       <p className="text-black font-medium">
-                        {formatDate(item.scheduledAt)}
+                        {formatDateTime(item.scheduledAt)}
                       </p>
                       {item.notes && (
                         <p className="text-base text-black mt-2 italic">
@@ -841,7 +831,7 @@ const ContactDetails = () => {
                           {bill.invoiceNumber}
                         </td>
                         <td className="px-6 py-3 text-black">
-                          {new Date(bill.billingDate).toLocaleDateString()}
+                          {formatDate(bill.billingDate)}
                         </td>
                         <td className="px-6 py-3 font-medium">
                           ₹{bill.grandTotal.toFixed(2)}

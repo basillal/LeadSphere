@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../components/auth/AuthProvider";
 import billingService from "../../services/billingService";
 import serviceService from "../../services/serviceService";
@@ -9,6 +9,7 @@ import Toast from "../../components/common/utils/Toast";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import ContactForm from "../contacts/ContactForm";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import { formatDate } from "../../utils/dateUtils";
 
 const BillingForm = ({ initialData, onSubmit, onCancel }) => {
   const [contacts, setContacts] = useState([]);
@@ -683,22 +684,39 @@ const Billings = () => {
     }
   };
 
+  const billingStats = useMemo(() => {
+    let totalInvoiced = 0;
+    let paidAmount = 0;
+    let pendingAmount = 0;
+    let overdueAmount = 0;
+
+    billings.forEach((b) => {
+      const amt = Number(b.grandTotal) || 0;
+      totalInvoiced += amt;
+      if (b.paymentStatus === "PAID") paidAmount += amt;
+      else if (b.paymentStatus === "OVERDUE") overdueAmount += amt;
+      else pendingAmount += amt;
+    });
+
+    return { totalInvoiced, paidAmount, pendingAmount, overdueAmount };
+  }, [billings]);
+
   const columns = [
     { 
       id: "invoiceNumber", 
       label: "Invoice #",
       render: (row) => (
-        <span className="font-semibold text-gray-900 text-[11px]">
+        <span className="font-mono text-[10.5px] font-semibold text-gray-900 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-[6px] whitespace-nowrap">
           {row.invoiceNumber || "-"}
         </span>
       )
     },
     {
       id: "contact",
-      label: "Client",
+      label: "Client / Account",
       render: (row) => (
-        <span className="font-semibold text-gray-800 text-[11px]">
-          {row.contact?.name || "UNKNOWN"}
+        <span className="font-semibold text-gray-900 text-[11px] whitespace-nowrap">
+          {row.contact?.name || "Client"}
         </span>
       ),
     },
@@ -706,47 +724,43 @@ const Billings = () => {
       id: "organization",
       label: "Organization",
       render: (row) => (
-        <span className="text-[10.5px] text-gray-600">
+        <span className="text-[10.5px] text-gray-600 whitespace-nowrap">
           {row.organization?.name || "-"}
         </span>
       ),
     },
     {
       id: "billingDate",
-      label: "Date",
+      label: "Issue Date",
       render: (row) => (
-        <span className="text-[10.5px] text-gray-700">
-          {new Date(row.billingDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
+        <span className="text-[10.5px] text-gray-600 whitespace-nowrap">
+          {formatDate(row.billingDate)}
         </span>
       ),
     },
     {
       id: "grandTotal",
-      label: "Amount",
+      label: "Total Amount",
       render: (row) => (
-        <span className="font-bold text-gray-900 text-[11px]">
-          ₹{(row.grandTotal || 0).toFixed(2)}
+        <span className="font-bold text-gray-900 text-[11.5px] whitespace-nowrap">
+          ₹{(row.grandTotal || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
     {
       id: "paymentStatus",
-      label: "Status",
+      label: "Payment Status",
       render: (row) => {
         const map = {
-          PAID: "bg-emerald-50 text-emerald-700 border-emerald-200",
-          PENDING: "bg-amber-50 text-amber-700 border-amber-200",
-          PARTIAL: "bg-blue-50 text-blue-700 border-blue-200",
-          OVERDUE: "bg-rose-50 text-rose-700 border-rose-200",
+          PAID: "bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]",
+          PENDING: "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]",
+          PARTIAL: "bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]",
+          OVERDUE: "bg-[#FEE2E2] text-[#DC2626] border-[#FECACA]",
         };
         return (
           <span
-            className={`inline-flex px-2 py-0.5 rounded-full text-[9.5px] font-semibold border ${
-              map[row.paymentStatus] || "bg-gray-100 text-gray-700 border-gray-200"
+            className={`inline-flex items-center justify-center whitespace-nowrap px-2.5 py-0.5 rounded-full text-[9.5px] font-semibold border ${
+              map[row.paymentStatus] || "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]"
             }`}
           >
             {row.paymentStatus}
@@ -802,69 +816,176 @@ const Billings = () => {
       </div>
 
       {view === "list" ? (
-        <AdvancedTable
-          data={billings}
-          columns={columns}
-          actions={[
-            {
-              label: "Edit",
-              onClick: handleEdit,
-            },
-            {
-              label: "Print",
-              onClick: (row) =>
-                window.open(`/print/invoice/${row._id}`, "_blank"),
-              icon: (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-                  />
-                </svg>
-              ),
-            },
-            {
-              label: "Delete",
-              onClick: (row) => handleDelete(row._id),
-            },
-          ]}
-          toolbar={{
-            search: {
-              value: filters.search,
-              onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
-            },
-            filters: [
+        <>
+          {/* Financial Revenue Summary Strip */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+            {/* Total Invoiced */}
+            <div className="bg-[#111827] text-white rounded-[18px] p-3.5 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-semibold tracking-[0.08em] uppercase text-gray-400">
+                  Total Invoiced
+                </span>
+                <span className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white text-[12px] font-bold">
+                  ₹
+                </span>
+              </div>
+              <div>
+                <div className="text-[18px] sm:text-[20px] font-bold leading-tight">
+                  ₹{billingStats.totalInvoiced.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                </div>
+                <p className="text-[9.5px] text-gray-400 m-0 mt-0.5">
+                  {billings.length} billing statements
+                </p>
+              </div>
+            </div>
+
+            {/* Paid / Collected */}
+            <div className="bg-white border border-gray-100 rounded-[18px] p-3.5 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-semibold tracking-[0.08em] uppercase text-[#15803D]">
+                  Collected Revenue
+                </span>
+                <div className="w-7 h-7 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div className="text-[18px] sm:text-[20px] font-bold text-[#15803D] leading-tight">
+                  ₹{billingStats.paidAmount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                </div>
+                <p className="text-[9.5px] text-gray-400 m-0 mt-0.5">
+                  Received in bank
+                </p>
+              </div>
+            </div>
+
+            {/* Pending Collection */}
+            <div className="bg-white border border-gray-100 rounded-[18px] p-3.5 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-semibold tracking-[0.08em] uppercase text-[#B45309]">
+                  Pending Collection
+                </span>
+                <div className="w-7 h-7 rounded-full bg-[#FEF3C7] text-[#B45309] flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div className="text-[18px] sm:text-[20px] font-bold text-[#B45309] leading-tight">
+                  ₹{billingStats.pendingAmount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                </div>
+                <p className="text-[9.5px] text-gray-400 m-0 mt-0.5">
+                  Awaiting payment
+                </p>
+              </div>
+            </div>
+
+            {/* Overdue */}
+            <div className={`rounded-[18px] p-3.5 border transition-all flex flex-col justify-between ${
+              billingStats.overdueAmount > 0
+                ? "bg-[#FEF2F2] border-[#FECACA] shadow-sm"
+                : "bg-white border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[9px] font-semibold tracking-[0.08em] uppercase ${
+                  billingStats.overdueAmount > 0 ? "text-[#DC2626]" : "text-[#8B92A5]"
+                }`}>
+                  Overdue Receivables
+                </span>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                  billingStats.overdueAmount > 0 ? "bg-[#FEE2E2] text-[#DC2626]" : "bg-gray-100 text-gray-500"
+                }`}>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div className={`text-[18px] sm:text-[20px] font-bold leading-tight ${
+                  billingStats.overdueAmount > 0 ? "text-[#B91C1C]" : "text-gray-900"
+                }`}>
+                  ₹{billingStats.overdueAmount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                </div>
+                <p className={`text-[9.5px] m-0 mt-0.5 ${
+                  billingStats.overdueAmount > 0 ? "text-[#DC2626] font-medium" : "text-gray-400"
+                }`}>
+                  {billingStats.overdueAmount > 0 ? "Requires follow-up" : "Zero overdue"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <AdvancedTable
+            data={billings}
+            columns={columns}
+            actions={[
               {
-                value: filters.paymentStatus,
-                onChange: (v) => setFilters((prev) => ({ ...prev, paymentStatus: v })),
-                options: [
-                  { value: "", label: "Payment status" },
-                  { value: "PAID", label: "Paid" },
-                  { value: "PENDING", label: "Pending" },
-                  { value: "PARTIAL", label: "Partial" },
-                  { value: "OVERDUE", label: "Overdue" },
-                ],
+                label: "Edit",
+                onClick: handleEdit,
+                color: "em-icon-edit",
               },
               {
-                value: filters.category,
-                onChange: (v) => setFilters((prev) => ({ ...prev, category: v })),
-                options: [
-                  { value: "", label: "All Categories" },
-                  ...categories.map((cat) => ({ value: cat._id, label: cat.name })),
-                ],
+                label: "Print",
+                onClick: (row) =>
+                  window.open(`/print/invoice/${row._id}`, "_blank"),
+                color: "em-icon-view",
+                icon: (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.8}
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                    />
+                  </svg>
+                ),
               },
-            ],
-          }}
-          emptyMessage="No invoices found."
-        />
+              {
+                label: "Delete",
+                onClick: (row) => handleDelete(row._id),
+                color: "em-icon-delete",
+              },
+            ]}
+            toolbar={{
+              title: "Invoice Ledger",
+              search: {
+                value: filters.search,
+                onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
+              },
+              filters: [
+                {
+                  value: filters.paymentStatus,
+                  onChange: (v) => setFilters((prev) => ({ ...prev, paymentStatus: v })),
+                  options: [
+                    { value: "", label: "Payment status" },
+                    { value: "PAID", label: "Paid" },
+                    { value: "PENDING", label: "Pending" },
+                    { value: "PARTIAL", label: "Partial" },
+                    { value: "OVERDUE", label: "Overdue" },
+                  ],
+                },
+                {
+                  value: filters.category,
+                  onChange: (v) => setFilters((prev) => ({ ...prev, category: v })),
+                  options: [
+                    { value: "", label: "All Categories" },
+                    ...categories.map((cat) => ({ value: cat._id, label: cat.name })),
+                  ],
+                },
+              ],
+            }}
+            emptyMessage="No invoices found."
+          />
+        </>
       ) : (
         <div className="max-w-5xl mx-auto w-full">
           <BillingForm

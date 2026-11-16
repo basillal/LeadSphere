@@ -6,19 +6,11 @@ import ReferrersTable from "./ReferrersTable";
 import ReferrerForm from "./ReferrerForm";
 import Toast from "../../components/common/utils/Toast";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
+import { formatDate } from "../../utils/dateUtils";
 
 // Preview Modal Component
 const PreviewModal = ({ referrer, stats, onClose }) => {
   if (!referrer) return null;
-
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">

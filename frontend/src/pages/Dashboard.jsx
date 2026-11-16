@@ -16,6 +16,7 @@ import {
 import dashboardService from "../services/dashboardService";
 import { useAuth } from "../components/auth/AuthProvider";
 import TimeRangeFilter, { getDateRange } from "../components/common/TimeRangeFilter";
+import { formatDate } from "../utils/dateUtils";
 
 const CHART_COLORS = ["#F54900", "#10B981", "#3B82F6", "#F59E0B", "#8B5CF6", "#06B6D4"];
 
@@ -254,10 +255,9 @@ const Dashboard = () => {
                 tick={{ fontSize: 9.5, fill: "#9CA3AF" }}
                 tickFormatter={(value) => {
                   if (revenueInterval === "yearly") return value;
-                  const date = new Date(value);
                   return revenueInterval === "daily"
-                    ? date.toLocaleDateString("default", { day: "numeric", month: "short" })
-                    : date.toLocaleDateString("default", { month: "short", year: "2-digit" });
+                    ? formatDate(value)
+                    : new Date(value).toLocaleDateString("default", { month: "short", year: "2-digit" });
                 }}
                 interval={revenueInterval === "daily" ? 2 : 0}
               />
@@ -271,7 +271,7 @@ const Dashboard = () => {
                 content={<CustomTooltip formatFn={formatCurrency} />}
                 labelFormatter={(v) => {
                   if (revenueInterval === "yearly") return v;
-                  return new Date(v).toLocaleDateString("default", { day: "numeric", month: "long", year: "numeric" });
+                  return formatDate(v);
                 }}
               />
               <Bar dataKey="totalRevenue" name="Revenue" fill="#10B981" radius={[4, 4, 0, 0]} barSize={16} />
@@ -389,7 +389,7 @@ const Dashboard = () => {
                       </td>
                       <td className="py-2 px-3 text-gray-500 whitespace-nowrap">{lead.source}</td>
                       <td className="py-2 px-3 text-right text-gray-400 whitespace-nowrap">
-                        {new Date(lead.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        {formatDate(lead.createdAt)}
                       </td>
                     </tr>
                   ))
@@ -438,7 +438,7 @@ const Dashboard = () => {
                       </p>
                     )}
                     <p className="text-[9.5px] text-gray-400 mt-1">
-                      {activity.relatedId?.name || "Client"} • {new Date(activity.activityDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      {activity.relatedId?.name || "Client"} • {formatDate(activity.activityDate)}
                     </p>
                   </div>
                 </div>

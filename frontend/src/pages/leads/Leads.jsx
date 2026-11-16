@@ -10,6 +10,7 @@ import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
+import { formatDate } from "../../utils/dateUtils";
 
 // Simple Modal for Preview (Tailwind based)
 // We could use MUI Drawer/Dialog, but user asked for "removed all MUI" earlier, although some imports remain in this file.
@@ -158,9 +159,7 @@ const PreviewModal = ({ lead, onClose }) => {
             <div className="bg-white rounded-[12px] p-3 border border-[#E2E8F0]">
               <span className="text-[9px] uppercase tracking-wider text-[#8B92A5] block mb-0.5">Closure</span>
               <p className="font-semibold text-[11px] text-[#111827] m-0">
-                {lead.expectedClosureDate
-                  ? new Date(lead.expectedClosureDate).toLocaleDateString()
-                  : "-"}
+                {formatDate(lead.expectedClosureDate)}
               </p>
             </div>
           </div>

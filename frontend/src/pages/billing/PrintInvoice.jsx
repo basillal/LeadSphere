@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import billingService from "../../services/billingService";
+import { formatDate as formatDateUtil } from "../../utils/dateUtils";
 
 const PrintInvoice = () => {
   const { id } = useParams();
@@ -48,13 +49,7 @@ const PrintInvoice = () => {
     }).format(amount);
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  const formatDate = (dateString) => formatDateUtil(dateString);
 
   if (loading)
     return (

@@ -1,5 +1,6 @@
 import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
+import { formatDateTime } from "../../utils/dateUtils";
 
 const FollowUpList = ({
   followUps,
@@ -11,17 +12,7 @@ const FollowUpList = ({
   onLimitChange,
   loading = false,
 }) => {
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatDate = (dateString) => formatDateTime(dateString);
 
   const getStatusColor = (status) => {
     const colors = {

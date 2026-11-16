@@ -177,13 +177,7 @@ const UsersTable = ({
           <h3 className="font-medium text-black text-base">{row.name}</h3>
           <p className="text-base text-black">{row.email}</p>
         </div>
-        <span
-          className={`px-2 py-0.5 rounded-full text-base font-medium ${getStatusColor(
-            row.isActive,
-          )}`}
-        >
-          {row.isActive ? "Active" : "Inactive"}
-        </span>
+        {getStatusBadge(row.isActive)}
       </div>
       <div className="text-base text-black mb-2">
         <span className="font-medium">Role:</span>{" "}

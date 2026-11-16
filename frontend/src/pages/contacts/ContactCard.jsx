@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDate as formatDateUtil } from "../../utils/dateUtils";
 
 const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
   const getTagColor = (tag) => {
@@ -12,14 +13,7 @@ const ContactCard = ({ contact, onEdit, onDelete, onView }) => {
     return colors[tag] || colors.Other;
   };
 
-  const formatDate = (date) => {
-    if (!date) return "Never";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+  const formatDate = (date) => formatDateUtil(date, "Never");
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:shadow-md transition-shadow">

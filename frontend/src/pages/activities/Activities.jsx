@@ -9,6 +9,7 @@ import { useData } from "../../context/DataContext";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
+import { formatDate } from "../../utils/dateUtils";
 
 // Preview Modal Component
 const PreviewModal = ({ activity, onClose }) => {
@@ -45,15 +46,6 @@ const PreviewModal = ({ activity, onClose }) => {
       Urgent: "bg-red-100 text-red-600",
     };
     return colors[priority] || "bg-slate-100 text-black";
-  };
-
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   return (
@@ -496,10 +488,12 @@ const Activities = () => {
   };
 
   const handleStatClick = (filter) => {
-    // Existing stat click logic might need adjustment if it used dateFilter
-    // For now we'll just let it be or update it to set timeRange
-    if (filter === 'today') {
-      setTimeRange('today');
+    if (filter === "Call" || filter === "Meeting" || filter === "Email") {
+      setActiveTab(filter);
+    } else if (filter === "overdue") {
+      setFilters((prev) => ({ ...prev, status: "Scheduled" }));
+    } else if (filter === "today") {
+      setTimeRange("today");
     }
   };
 
@@ -517,11 +511,12 @@ const Activities = () => {
   };
 
   const tabs = [
-    { id: "all", label: "All Activities" },
-    { id: "Call", label: "Calls" },
-    { id: "Meeting", label: "Meetings" },
-    { id: "Email", label: "Emails" },
-    { id: "Note", label: "Notes" },
+    { id: "all", label: "All Activities", icon: "⚡" },
+    { id: "Call", label: "Calls Logged", icon: "📞" },
+    { id: "Meeting", label: "Meetings & Demos", icon: "🤝" },
+    { id: "Email", label: "Emails", icon: "✉️" },
+    { id: "Note", label: "Notes & Memos", icon: "📝" },
+    { id: "Task", label: "Tasks", icon: "✅" },
   ];
 
   return (
@@ -586,13 +581,14 @@ const Activities = () => {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`inline-flex items-center gap-2 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
+                  className={`inline-flex items-center gap-1.5 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
                     activeTab === tab.id
                       ? "bg-[#111827] text-white shadow-sm"
                       : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
                   }`}
                 >
-                  {tab.label}
+                  <span className="text-[11.5px]">{tab.icon}</span>
+                  <span>{tab.label}</span>
                 </button>
               ))}
             </div>

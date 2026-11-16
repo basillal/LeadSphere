@@ -65,14 +65,14 @@ const MainLayout = () => {
 
       {/* Main Content */}
       <main
-        className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full custom-scrollbar"
+        className="flex-grow w-full max-w-full overflow-y-auto overflow-x-hidden h-full custom-scrollbar flex flex-col"
         style={{
           paddingTop: "60px",
           transition: "all 0.3s ease",
           background: "#F4F7FE",
         }}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 pt-3 pb-8 font-inter flex flex-col gap-2">
+        <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 pt-2 pb-2 font-inter flex flex-col gap-1.5 flex-1 min-h-0">
           <Breadcrumbs />
           <Outlet />
         </div>

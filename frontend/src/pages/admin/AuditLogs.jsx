@@ -8,6 +8,7 @@ import Toast from "../../components/common/utils/Toast";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Input from "../../components/common/fields/Input";
 import Select from "../../components/common/fields/Select";
+import { formatDate, formatTime } from "../../utils/dateUtils";
 
 const AuditLogs = () => {
   const { user } = useAuth();
@@ -303,14 +304,10 @@ const AuditLogs = () => {
                   render: (row) => (
                     <div className="flex flex-col whitespace-nowrap">
                       <span className="text-[11px] font-semibold text-gray-900">
-                        {new Date(row.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        {formatDate(row.createdAt)}
                       </span>
                       <span className="text-[9.5px] text-gray-400">
-                        {new Date(row.createdAt).toLocaleTimeString()}
+                        {formatTime(row.createdAt)}
                       </span>
                     </div>
                   ),

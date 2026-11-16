@@ -5,6 +5,7 @@ import BasicModal from "../../components/common/modals/BasicModal";
 import expenseService from "../../services/expenseService";
 import Toast from "../../components/common/utils/Toast";
 import TimeRangeFilter, { getDateRange } from "../../components/common/TimeRangeFilter";
+import { formatDate } from "../../utils/dateUtils";
 
 const Expenses = () => {
   const { selectedOrganization } = useAuth();
@@ -139,11 +140,7 @@ const Expenses = () => {
       label: "Date",
       render: (row) => (
         <span className="text-[10.5px] text-gray-700">
-          {new Date(row.expenseDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
+          {formatDate(row.expenseDate)}
         </span>
       ),
     },
@@ -181,8 +178,18 @@ const Expenses = () => {
     },
   ];
 
+  const totalSpend = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const claimsCount = expenses.length;
+  const avgExpense = claimsCount > 0 ? Math.round(totalSpend / claimsCount) : 0;
+  const categorySpend = expenses.reduce((acc, curr) => {
+    const cat = curr.category || "General";
+    acc[cat] = (acc[cat] || 0) + (Number(curr.amount) || 0);
+    return acc;
+  }, {});
+  const topCategory = Object.keys(categorySpend).sort((a, b) => categorySpend[b] - categorySpend[a])[0] || "-";
+
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2 font-inter">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2 px-1">
         <div>
@@ -217,6 +224,77 @@ const Expenses = () => {
             </svg>
             <span>Add Expense</span>
           </button>
+        </div>
+      </div>
+
+      {/* Spend Outflow Summary Strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              Total Spend Outflow
+            </span>
+            <span className="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-[11px] font-bold">
+              ₹
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between">
+            <span className="text-[18px] font-bold text-gray-900 leading-tight">
+              {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(totalSpend)}
+            </span>
+            <span className="text-[9.5px] text-gray-400 font-medium">Logged expenses</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              Expense Vouchers
+            </span>
+            <span className="w-6 h-6 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center text-[11px]">
+              🧾
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between">
+            <span className="text-[18px] font-bold text-gray-900 leading-tight">
+              {claimsCount}
+            </span>
+            <span className="text-[9.5px] text-gray-400 font-medium">Approved claims</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              Average Claim
+            </span>
+            <span className="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[11px]">
+              📊
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between">
+            <span className="text-[18px] font-bold text-gray-900 leading-tight">
+              {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(avgExpense)}
+            </span>
+            <span className="text-[9.5px] text-gray-400 font-medium">Per voucher avg</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              Top Category
+            </span>
+            <span className="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-[11px]">
+              🏷️
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between">
+            <span className="text-[14px] font-bold text-gray-800 leading-tight truncate">
+              {topCategory}
+            </span>
+            <span className="text-[9.5px] text-gray-400 font-medium">Primary driver</span>
+          </div>
         </div>
       </div>
 

@@ -1,92 +1,105 @@
 import React from "react";
 
-const ReferrerStats = ({ stats, mobileMode = false }) => {
-  const StatCard = ({ title, value, icon, iconBg, iconColor }) => (
-    <div className="bg-white p-3.5 rounded-[20px] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
-      <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-[10px] ${iconBg} ${iconColor} flex items-center justify-center shrink-0`}>
-          {icon}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[9.5px] font-semibold text-gray-400 uppercase tracking-wider truncate mb-0.5">
-            {title}
-          </p>
-          <p className="text-[17px] font-bold text-gray-900 leading-tight">
-            {value}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+const ReferrerStats = ({ stats = {}, mobileMode = false }) => {
+  const conversionRate = stats.avgConversionRate || 0;
 
   return (
-    <div className={mobileMode ? "grid grid-cols-2 gap-2 mb-3" : "hidden md:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-4"}>
-      <StatCard
-        title="Total Referrers"
-        value={stats.totalReferrers || 0}
-        iconBg="bg-orange-50"
-        iconColor="text-[var(--primary)]"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Active"
-        value={stats.activeReferrers || 0}
-        iconBg="bg-emerald-50"
-        iconColor="text-emerald-600"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Total Leads"
-        value={stats.totalLeadsReferred || 0}
-        iconBg="bg-sky-50"
-        iconColor="text-sky-600"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Converted"
-        value={stats.convertedLeads || 0}
-        iconBg="bg-teal-50"
-        iconColor="text-teal-600"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 5.04M12 2.944c1.25 0 2.455.19 3.584.542m-7.168 0A11.947 11.947 0 005.403 6m13.194 0c-.339 2.272-1.254 4.354-2.597 6.13M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12s4.03 8.25 9 8.25z" />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Conversion"
-        value={`${stats.avgConversionRate || 0}%`}
-        iconBg="bg-amber-50"
-        iconColor="text-amber-600"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-          </svg>
-        }
-      />
-      <StatCard
-        title="Recent (7d)"
-        value={stats.recentReferrals || 0}
-        iconBg="bg-rose-50"
-        iconColor="text-rose-600"
-        icon={
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        }
-      />
+    <div
+      className={
+        mobileMode
+          ? "grid grid-cols-2 gap-2 mb-3 font-inter"
+          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 font-inter"
+      }
+    >
+      {/* 1. Partner Roster */}
+      <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            Affiliate Network
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
+            {stats.activeReferrers || 0} Active
+          </span>
+        </div>
+        <div className="flex items-baseline justify-between">
+          <span className="text-[20px] font-bold text-gray-900 leading-tight">
+            {stats.totalReferrers || 0}
+          </span>
+          <span className="text-[10px] text-gray-500 font-medium">
+            Registered Partners
+          </span>
+        </div>
+      </div>
+
+      {/* 2. Referral Pipeline */}
+      <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            Referred Pipeline
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
+            {stats.convertedLeads || 0} Won Deals
+          </span>
+        </div>
+        <div className="flex items-baseline justify-between">
+          <span className="text-[20px] font-bold text-gray-900 leading-tight">
+            {stats.totalLeadsReferred || 0}
+          </span>
+          <span className="text-[10px] text-gray-500 font-medium">
+            Total Leads Introduced
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Conversion Success Rate */}
+      <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            Conversion Efficiency
+          </span>
+          <span className="text-[10.5px] font-bold text-emerald-600">
+            {conversionRate}%
+          </span>
+        </div>
+        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden mb-1.5">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${
+              conversionRate >= 40
+                ? "bg-emerald-500"
+                : conversionRate >= 20
+                  ? "bg-[var(--primary)]"
+                  : "bg-amber-400"
+            }`}
+            style={{ width: `${Math.min(conversionRate, 100)}%` }}
+          />
+        </div>
+        <span className="text-[9.5px] text-gray-400 font-medium">
+          Ratio of referred leads converted to clients
+        </span>
+      </div>
+
+      {/* 4. Recent Momentum */}
+      <div className="bg-white p-3.5 rounded-[18px] border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            7-Day Activity
+          </span>
+          <div className="w-5 h-5 rounded-md bg-[#FFF1EB] text-[var(--primary)] flex items-center justify-center">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div className="flex items-baseline justify-between">
+          <span className="text-[20px] font-bold text-gray-900 leading-tight">
+            +{stats.recentReferrals || 0}
+          </span>
+          <span className="text-[10px] text-gray-500 font-medium">
+            New leads this week
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

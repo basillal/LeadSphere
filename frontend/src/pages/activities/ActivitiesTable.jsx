@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EmptyTableState from "../../components/common/EmptyTableState";
+import { formatDate } from "../../utils/dateUtils";
 
 const ActivitiesTable = ({
   activities,
@@ -116,15 +117,6 @@ const ActivitiesTable = ({
         {priority}
       </span>
     );
-  };
-
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   const handleSelectAll = (e) => {
@@ -328,9 +320,9 @@ const ActivitiesTable = ({
                       />
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      <span className="text-[13px]" title={activity.activityType}>
+                      <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center text-[12.5px] border border-gray-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" title={activity.activityType}>
                         {getActivityTypeIcon(activity.activityType)}
-                      </span>
+                      </div>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <div className="text-[11px] font-semibold text-gray-900 line-clamp-1">

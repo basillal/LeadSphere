@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import auditLogService from "../../services/auditLogService";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
 import BasicModal from "../../components/common/modals/BasicModal";
+import { formatDateTime } from "../../utils/dateUtils";
 
 const UserLogs = ({ user, onBack }) => {
     const [logs, setLogs] = useState([]);
@@ -41,11 +42,7 @@ const UserLogs = ({ user, onBack }) => {
             label: "Date",
             render: (row) => (
                 <span className="text-[10.5px] text-gray-700 whitespace-nowrap">
-                    {new Date(row.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                    })} {new Date(row.createdAt).toLocaleTimeString()}
+                    {formatDateTime(row.createdAt)}
                 </span>
             ),
         },
@@ -146,7 +143,7 @@ const UserLogs = ({ user, onBack }) => {
                         <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-2 gap-4">
                             <div>
                                 <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Date & Time</h4>
-                                <p className="text-sm font-medium text-slate-800">{new Date(selectedLog.createdAt).toLocaleString()}</p>
+                                <p className="text-sm font-medium text-slate-800">{formatDateTime(selectedLog.createdAt)}</p>
                             </div>
                             <div>
                                 <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wider mb-1">Entity</h4>

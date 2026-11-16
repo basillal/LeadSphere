@@ -21,13 +21,20 @@ const ReferrersTable = ({
       id: "name",
       label: "Name",
       render: (row) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-gray-900 text-[11px]">
-            {row.name}
-          </span>
-          {row.designation && (
-            <span className="text-[10px] text-gray-400">{row.designation}</span>
-          )}
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+            {row.name ? row.name.charAt(0).toUpperCase() : "P"}
+          </div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-gray-900 text-[11px]">
+              {row.name}
+            </span>
+            {row.designation ? (
+              <span className="text-[10px] text-gray-400">{row.designation}</span>
+            ) : (
+              <span className="text-[9.5px] text-amber-600 font-medium">Partner</span>
+            )}
+          </div>
         </div>
       ),
     },
@@ -88,10 +95,23 @@ const ReferrersTable = ({
       sortable: false,
       render: (row) => {
         const stats = referrerStats?.[row._id] || {};
+        const pct = Math.round(stats.conversionPercentage || 0);
         return (
-          <span className="font-semibold text-[var(--primary)] text-[11px]">
-            {stats.conversionPercentage || 0}%
-          </span>
+          <div className="flex items-center gap-2">
+            <div className="w-12 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  pct >= 50
+                    ? "bg-emerald-500"
+                    : pct >= 20
+                      ? "bg-[var(--primary)]"
+                      : "bg-gray-300"
+                }`}
+                style={{ width: `${Math.min(pct, 100)}%` }}
+              />
+            </div>
+            <span className="font-bold text-gray-800 text-[10.5px]">{pct}%</span>
+          </div>
         );
       },
     },

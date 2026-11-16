@@ -12,6 +12,7 @@ import ConversionDialog from "../leads/ConversionDialog"; // Importing from lead
 import Toast from "../../components/common/utils/Toast";
 import StatsWrapper from "../../components/common/sections/StatsWrapper";
 import Loader from "../../components/common/Loader";
+import { formatDate, formatDateTime } from "../../utils/dateUtils";
 
 // Preview Modal Component
 const PreviewModal = ({ contact, onClose }) => {
@@ -26,15 +27,6 @@ const PreviewModal = ({ contact, onClose }) => {
       Other: "bg-gray-50 text-gray-700 border-gray-200",
     };
     return colors[tag] || colors.Other;
-  };
-
-  const formatDate = (date) => {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
   };
 
   return (
@@ -161,7 +153,7 @@ const PreviewModal = ({ contact, onClose }) => {
               </div>
               <div className="bg-white rounded-lg p-3 border border-indigo-100 shadow-sm">
                 <div className="text-xs text-indigo-500 uppercase mb-1 font-medium">Next Follow-up</div>
-                <div className="text-sm font-semibold text-blue-600">{formatDate(contact.nextFollowUpDate)}</div>
+                <div className="text-sm font-semibold text-blue-600">{formatDateTime(contact.nextFollowUpDate)}</div>
               </div>
             </div>
           </div>
@@ -389,6 +381,7 @@ const Contacts = () => {
   });
   // const [loading, setLoading] = useState(false);
   const [view, setView] = useState("list"); 
+  const [viewMode, setViewMode] = useState("table"); // 'table' or 'grid'
   const { categories } = useData();
   const [currentContact, setCurrentContact] = useState(null);
   const [previewContact, setPreviewContact] = useState(null);
@@ -659,44 +652,221 @@ const Contacts = () => {
         <>
           <ContactStats stats={stats} />
 
-          {/* Quick Filter Tabs */}
-          <div className="mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-            <div className="flex items-center gap-1.5 min-w-max">
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`inline-flex items-center gap-2 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
-                      isActive
-                        ? "bg-[#111827] text-white shadow-sm"
-                        : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+          {/* Quick Filter Tabs & Layout Switcher */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div className="overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+              <div className="flex items-center gap-1.5 min-w-max">
+                {tabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`inline-flex items-center gap-1.5 h-[30px] px-3.5 rounded-full text-[10.5px] font-medium transition-all ${
+                        isActive
+                          ? "bg-[#111827] text-white shadow-sm"
+                          : "bg-white border border-[#E5E7EB] text-[#4B5563] hover:bg-[#F9FAFB]"
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex items-center self-end sm:self-auto bg-white border border-[#E5E7EB] rounded-full p-0.5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium transition-all ${
+                  viewMode === "table"
+                    ? "bg-[#111827] text-white"
+                    : "text-[#64748B] hover:text-[#111827]"
+                }`}
+                title="Table List View"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M3 6h18M3 18h18" />
+                </svg>
+                <span>Table</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium transition-all ${
+                  viewMode === "grid"
+                    ? "bg-[#111827] text-white"
+                    : "text-[#64748B] hover:text-[#111827]"
+                }`}
+                title="Directory Cards Grid"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span>Directory</span>
+              </button>
             </div>
           </div>
 
-          <ContactsTable
-            contacts={contacts}
-            categories={categories} // Pass categories
-            onCreate={() => setView("create")}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onView={handleView}
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            pagination={pagination}
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            handleStartConversion={handleStartConversion}
-            // loading={loading}
-          />
+          {viewMode === "grid" ? (
+            <div>
+              {contacts.length === 0 ? (
+                <div className="em-card p-12 text-center text-gray-500 text-[11px]">
+                  No contacts found matching your criteria.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {contacts.map((contact) => (
+                    <div
+                      key={contact._id}
+                      onClick={() => handleView(contact)}
+                      className="em-card p-4 hover:border-gray-300 transition-all cursor-pointer flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Top: Avatar + Name + Co */}
+                        <div className="flex items-start justify-between gap-2.5 mb-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-9 h-9 rounded-full bg-[#FFF1EB] text-[var(--primary)] text-[12px] font-bold flex items-center justify-center shrink-0">
+                              {contact.name ? contact.name.charAt(0).toUpperCase() : "C"}
+                            </div>
+                            <div className="min-w-0">
+                              <h3 className="text-[12px] font-semibold text-gray-900 truncate m-0">
+                                {contact.name}
+                              </h3>
+                              <p className="text-[10px] text-gray-400 truncate m-0">
+                                {contact.designation || "Contact"} • {contact.organizationName || "-"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {contact.category?.name && (
+                            <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#FAF5FF] text-[#7E22CE] border border-[#E9D5FF] px-2 py-0.5 text-[9px] font-semibold shrink-0">
+                              {contact.category.name}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Contact Chips */}
+                        <div className="space-y-1 mb-3">
+                          {contact.phone && (
+                            <div className="flex items-center gap-1.5 text-[10.5px] text-gray-600">
+                              <svg className="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                              </svg>
+                              <span className="truncate">{contact.phone}</span>
+                            </div>
+                          )}
+                          {contact.email && (
+                            <div className="flex items-center gap-1.5 text-[10.5px] text-gray-600">
+                              <svg className="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              </svg>
+                              <span className="truncate">{contact.email}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Tags */}
+                        {contact.tags && contact.tags.length > 0 && (
+                          <div className="flex items-center gap-1 flex-wrap mb-3">
+                            {contact.tags.map((tag, i) => (
+                              <span
+                                key={i}
+                                className="inline-flex items-center justify-center whitespace-nowrap rounded-full px-2 py-0.5 text-[9px] font-semibold bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0]"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bottom Action Ribbon */}
+                      <div
+                        className="flex items-center justify-between pt-2.5 border-t border-gray-100"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleView(contact)}
+                          className="text-[10px] font-medium text-[var(--primary)] hover:underline"
+                        >
+                          View Profile →
+                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(contact)}
+                            className="em-icon-btn em-icon-edit"
+                            title="Edit"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(contact._id)}
+                            className="em-icon-btn em-icon-delete"
+                            title="Delete"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Grid Pagination Footer */}
+              {pagination.pages > 1 && (
+                <div className="mt-4 px-4 py-2 em-card flex items-center justify-between">
+                  <span className="text-[10px] text-gray-500">
+                    Page {pagination.page} of {pagination.pages} ({pagination.total} contacts)
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(pagination.page - 1)}
+                      disabled={pagination.page === 1}
+                      className="h-[28px] px-3 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-700 disabled:opacity-40"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(pagination.page + 1)}
+                      disabled={pagination.page >= pagination.pages}
+                      className="h-[28px] px-3 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-700 disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <ContactsTable
+              contacts={contacts}
+              categories={categories} // Pass categories
+              onCreate={() => setView("create")}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleView}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              handleStartConversion={handleStartConversion}
+              // loading={loading}
+            />
+          )}
         </>
       ) : view === "selectLead" ? (
         <LeadSelectionView

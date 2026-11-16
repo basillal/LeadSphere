@@ -1,5 +1,6 @@
 import React from "react";
 import AdvancedTable from "../../components/common/advancedTables/AdvancedTable";
+import { formatDate as formatDateUtil } from "../../utils/dateUtils";
 
 const ContactsTable = ({
   contacts,
@@ -28,14 +29,7 @@ const ContactsTable = ({
     return colors[tag] || colors.Other;
   };
 
-  const formatDate = (date) => {
-    if (!date) return "Never";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+  const formatDate = (date) => formatDateUtil(date, "Never");
 
   // Column definitions
   const columns = [
